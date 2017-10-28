@@ -1,4 +1,11 @@
-<<<<<<< HEAD
+# 结构
+- dist 输出文件文件夹，用于直接进行APICloud项目打包，存在的css,html,icon,image,launch,script里大部分文件都为静态资源复制压缩而来，.vue等少部分开始进行组件的文件为编译生成。
+- .syncignore APICloud真机同步忽略文件
+- configu.xml APIcluod项目配置文件，存放各平台appid ，key等
+- src 开发环境文件夹，里面静态资源以及文件目录结构都与打包文件结构保持一直，方便进行编译后能直接进行APICloud打包
+- dev-server.js 进行热更新
+- webpackage.config.js webpackage打包配置文件
+
 # 目录结构
 
 ## Widget包结构
