@@ -7,27 +7,20 @@ window.apiready = function(){
     vm = new Vue({
         el: "#app",
         data: {
-            card: {
-                head: {
-                    text: '1234',
-                    icon: 'tea-icon-cross'
-                },
-                content: {
-                    list: [{
-                        text: '123',
-                        icon: 'tea-icon-check',
-                        vip: true
-                    },{
-                        text: '123',
-                        icon: 'tea-icon-check',
-                        vip: false                        
-                    }]
-                },
-                foot: {
-                    text: '抢单',
-                    color: 'tea-text-yellow',
-                    klass: 'aui-border-t'
-                }
+            head: {
+                text: '',
+                icon: 'aui-icon-right'
+            },
+            foot: {
+                text: '抢单',
+                color: 'tea-text-yellow',
+                klass: 'aui-border-t'
+            },
+            list: [],
+            content: {
+                list: [{
+
+                }]
             }
         },
         components: {
@@ -50,6 +43,31 @@ window.apiready = function(){
             }
         },
         created: function(){
+            alert(2)
+            $api.post(website + '/exempt_salesman/index.php?action=list', {
+                values: {
+                    ID: $api.getStorage('ID'),
+                    token: $api.getStorage('token')
+                }
+            }, (ret, err) => {
+                _alert(ret)
+                if (!ret) {
+                    tea.toast('ajax');
+                    return false;
+                }
+                if (ret.succ == 1) {
+                    this.list = ret.data;
+                    this.list.forEach(function(item, index) {
+                        item.content = {
+                            list: [{
+                                text: item.address,
+                                icon: 'tea-icon-location',
+                                vip: true
+                            }]
+                        }
+                    }, this);
+                }
+            });
         }
     });
 }

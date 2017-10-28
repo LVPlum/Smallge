@@ -111,6 +111,10 @@
 /* 地址相关 */
 .tea-icon-editor:before {content: "\e609";}
 /*END *LVPlum*/
+
+/* 业务员相关 */
+.tea-icon-location:before {content: "\e686";}
+
 /*****************************modify aui通用样式*********************************/
 
 /*modify aui mask*/

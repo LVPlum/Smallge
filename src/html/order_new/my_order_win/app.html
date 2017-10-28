@@ -14,7 +14,17 @@
     <!-- 小马哥通用样式 -->
     <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
     <style type="text/css">
-
+        /* .tea-text-triangle-down:after, .tea-text-triangle-down:after {
+            border-color: #333;
+        } */
+        .aui-tab {
+            height: 2.025rem !important;
+            line-height: 2.025rem !important;
+        }
+        .aui-tab-item {
+            height: 2rem !important;
+            line-height: 2rem !important;
+        }
     </style>
 </head>
 
@@ -26,10 +36,12 @@
                 <a class="aui-btn aui-pull-left" tapmode onclick="closeWin()">
                     <span class="aui-iconfont aui-icon-left tea-text-title"></span>
                 </a>
-                <span :class="[mask ? 'tea-text-triangle-up' : 'tea-text-triangle-down']">{{title[orderType]}}</span>
+                <div class="aui-title" v-cloak>
+                    <span :class="[mask ? 'tea-text-triangle-up' : 'tea-text-triangle-down']">{{title[orderType]}}</span>
+                </div>
             </section>
-            <section class="aui-tab aui-border-b" style="border-bottom: 1px solid #ededed">
-                <div v-for="(item, index) in statusList" class="aui-tab-item" :class="{ 'aui-active' : index == statusIndex }" @click="setStatusIndex(index)">{{item}}</div>
+            <section class="aui-tab aui-border-b">
+                <div  v-cloak v-for="(item, index) in statusList" class="aui-tab-item tea-text-default" :class="{ 'aui-active' : index == statusIndex }" @click="setStatusIndex(index)">{{item}}</div>
             </section>
         </header>
 
@@ -98,7 +110,7 @@ function init() {
             toggleFrame: function(){
                 if (vm.mask) {
                     api.setFrameAttr({
-                        name: 'order_type_frm',
+                        name: 'order_type',
                         hidden: true
                     });
                     vm.mask = false;
@@ -106,8 +118,8 @@ function init() {
                 else {
                     vm.mask = true;
                     api.openFrame({
-                        name: 'order_type_frm',
-                        url: './order_type_frm.html',
+                        name: 'order_type',
+                        url: './order_type.html',
                         rect: {
                             x: 0,
                             y: titleH,
@@ -182,15 +194,15 @@ function closeWin() {
 // 打开Frame,不需要打开Frame请删除
 function openFrame() {
 
-    var frameName = api.winName.replace('win', 'frm');
+    var frameName = api.winName.replace('_win', '');
     api.openFrame({
         name: frameName,
         url: './' + frameName + '.html',
         rect: {
-            x: 0,
+            x: 1,
             y: headerH,
             w: 'auto',
-            h: api.winHeight - headerH - footerH
+            h: api.winHeight - headerH - footerH - 1
         },
         pageParam: api.pageParam,
         // 页面是否弹动

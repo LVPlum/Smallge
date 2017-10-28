@@ -1,0 +1,238 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <header id="header" class="aui-bar aui-bar-nav aui-bar-light">
+            <a class="aui-btn aui-pull-left" tapmode onclick="closeWin()">
+                <span class="aui-iconfont aui-icon-left tea-text-title"></span>
+            </a>
+            <div class="aui-title tea-text-title">订单详情</div>
+        </header>
+    
+        <section id="main"></section>
+    
+
+        <footer v-if="isShow" class="aui-bar aui-bar-tab aui-border-t" id="footer" @click="closeFrm">
+            <div class="aui-bar-tab-item aui-border-r tea-text-default" style="width: 50%;" @click="openFrmOrderFee()">
+                <span class="aui-font-size-12">总计</span>
+                <span id="down-price" class="aui-margin-r-5 tea-text-red">¥{{tea.formatMoney(orderPrice) || 0}}</span>
+                <span v-if="type == 'insure'" class="aui-font-size-12 tea-text-arrow-down">明细</span>
+            </div>
+    
+            <div class="aui-bar-tab-item tea-bg-orange aui-text-white" tapmode @click="openWinPay()" style="width: 50%;">
+                立即支付
+            </div>
+        </footer>
+    </div>
+
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- HTML模板渲染引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var header, footer;
+
+// 声明全局变量
+var headerH, footerH, vm;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    var data = api.pageParam;
+    data.fee = {};
+    data.frm = false;
+    vm = new Vue({
+        el: '#app',
+        data: data,
+        methods: {
+            openWinPay: function(){
+                api.sendEvent({
+                    name: 'orderPost',
+                    extra: {
+                        orderPrice: vm.orderPrice
+                    }
+                });
+            },
+            toPay: function(){
+                alert('请到线下门店付款');
+            },
+            openFrmOrderFee: function(){
+                if (this.frm) {
+                    return false;
+                }
+                api.openFrame({
+                    name: 'order_fee',
+                    url: './order_fee.html',
+                    rect: {
+                        x: 0,
+                        y: 0,
+                        w: 'auto',
+                        h: api.winHeight - footerH
+                    },
+                    pageParam: vm.fee,
+                    bounces: false,
+                    bgColor: 'rgba(0,0,0,0.6)',
+                    vScrollBarEnabled: true,
+                    hScrollBarEnabled: true
+                });
+            },
+            closeFrm: function(){
+                if (this.frm) {
+                    api.closeFrame({
+                        name: 'order_fee_frm'
+                    });
+                    this.frm = false;
+                }              
+            }
+        },
+        computed: {
+            isShow: function(){
+                if (this.type == 'insure' && this.status == 2 && this.insureCheck == 1) {
+                    return true;
+                }
+                if (this.type == 'vip' && this.status == 2) {
+                    return true;
+                }
+                return false;
+            },
+            // 实际支付价格 = 订单价格 + 邮费 - 优惠券
+            orderPrice: function(){
+                var fee = this.fee;
+                return fee.orderFee? parseFloat(fee.orderFee) + parseFloat(fee.postFee) - parseFloat(fee.couponFee) : this.money;
+            },
+            // 小马哥送礼 = 发票价格 + 交强险 - 订单价格
+        },
+        watch: {
+
+        }
+    })
+
+    // 初始化变量
+    init();
+
+    // 打开Frame
+    openFrame();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    // 处理沉浸式效果，计算header和footer的高度
+    header = $api.byId('header');
+    $api.fixStatusBar(header);
+    headerH = $api.offset(header).h;
+    footer = $api.byId('footer');
+    footerH = footer ? $api.offset(footer).h : 0;
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+    api.addEventListener({
+        name: 'updateOrderFee'
+    }, function(ret, err){    
+        vm.fee = ret.value;
+        // 小马哥送礼 = 发票价格 + 交强险 - 订单价格
+        var fee = vm.fee;
+        fee.billBenefit = parseFloat(fee.needpay) + parseFloat(fee.travelFee) - parseFloat(fee.orderFee);
+    });
+
+    api.setFrameClient({
+        frameName: 'order_fee_frm'
+    }, function(ret, err) {
+        if (ret.state == 2) {
+            vm.frm = true;
+        }
+    })
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+
+/**********************************DOM响应**********************************/
+// 回退关闭窗口
+function closeWin(){
+    api.closeWin();
+}
+
+/**********************************打开Frame**********************************/
+// 打开Frame,不需要打开Frame请删除
+function openFrame(){
+
+    var frameName = api.winName.replace('_win', '');
+    api.openFrame({
+        name: frameName,
+        url: './' + frameName + '.html',
+        rect: {
+            x: 0,
+            y: headerH,
+            w: 'auto',
+            h: api.winHeight - headerH - footerH
+        },
+        pageParam: api.pageParam,
+        // 页面是否弹动
+        bounces: false
+    });
+
+}
+
+/**********************************其他函数**********************************/
+
+</script>
+</html>

@@ -42,7 +42,7 @@ window.apiready = function(){
                 //vm.closeFrm();
                 api.openWin({
                     name: 'saler_order_detail_win',
-                    url: '../win/win.html',
+                    url: '../unit/win.html',
                     bounces: false,
                     pageParam: {
                         title : '订单详情',

@@ -146,9 +146,13 @@ function openFrame(){
 /**********************************其他函数**********************************/
 function openWinApply(){
     api.openWin({
-        name: 'oil_select_win',
-        url: './oil_select_win.html',
-        pageParam: {name: 'pageparamname'}
+        name: 'oil_apply_win',
+        url: '../unit/win.html',
+        bounces: false,
+        pageParam: {
+            folder: 'oil',
+            title: '超值加油'
+        }
     });
 }
 </script>

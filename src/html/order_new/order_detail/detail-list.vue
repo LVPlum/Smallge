@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import pic from '../common/pic.vue'
+import pic from 'public/pic.vue'
 
 export default {
     name: 'detailList',

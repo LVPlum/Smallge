@@ -29,7 +29,6 @@ window.apiready = function(){
             }
         },
         created: function(){
-            alert(134)
         }
     });
 

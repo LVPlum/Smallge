@@ -21,11 +21,11 @@ globmaths.forEach(function(name) {
     let n = name.slice(name.lastIndexOf('src/') + 4, name.length - 3);
 
     // 带app的js则使用文件夹名字
-    let index = n.indexOf('app');
+    let index = n.lastIndexOf('app');
     if ( ~index && index == n.length - 3) {
         n = n.substring(0, n.length - 4);
     }
-    
+
     entries[n] = [name];
     entries[n].push(hotMiddlewareScript);
     chunks.push(n);
@@ -60,6 +60,8 @@ let config = {
             script: path.join(__dirname, '/src/script'),
             html: path.join(__dirname, '/src/html'),
             assets: path.join(__dirname, 'src'),
+            unit: path.join(__dirname, '/src/html/unit'),
+            public: path.join(__dirname, '/src/html/public'),
             root: path.join(__dirname, 'node_modules')
         }
     },
@@ -71,9 +73,9 @@ let config = {
     module: {
         noParse: /scr\/(image|css|script\.*)/,
         rules: [{
-                test: /\.vue$/,
-                use: 'vue-loader'
-            },
+            test: /\.vue$/,
+            use: 'vue-loader'
+        },
             {
                 test: /\.js$/,
                 use: 'babel-loader?cacheDirectory=true',
@@ -139,7 +141,7 @@ htmls.forEach(function(pathname) {
     let fileBasename = pathname;
 
     // 带app的html则使用文件夹名字
-    let index = pathname.indexOf('app');
+    let index = pathname.lastIndexOf('app');
     if ( ~index && index == pathname.length - 3) {
         fileBasename = pathname.substring(0, pathname.length - 4);
     }
@@ -151,7 +153,7 @@ htmls.forEach(function(pathname) {
         filename: fileBasename + '.html', //生成的html存放路径，相对于path
         template: 'src/' + pathname + '.html', //html模板路径
     };
-    
+
     if (~chunks.indexOf(fileBasename)) {
         conf.inject = 'body';
         conf.chunks = [fileBasename];
@@ -165,7 +167,7 @@ htmls.forEach(function(pathname) {
             assetsArr.push({ from: path.resolve(__dirname, './src/' + pathname + '.html'), to: path.resolve(__dirname, './dist/' + pathname + '.html')})
         }
     }
-    
+
 });
 
 config.plugins.push(new CopyWebpackPlugin(assetsArr));
@@ -184,7 +186,7 @@ if (process.env.NODE_ENV === 'production') {
         new webpack.optimize.UglifyJsPlugin({
             sourceMap: false,
             compress: {
-               warnings: false
+                warnings: false
             }
         }),
         // 压缩html
@@ -196,4 +198,4 @@ if (process.env.NODE_ENV === 'production') {
 
 if(module.hot){
     module.hot.accpet() //接受模块更新的事件，同时阻止这个事件继续冒泡
- }
+}

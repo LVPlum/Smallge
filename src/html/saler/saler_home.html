@@ -18,9 +18,9 @@
 <body>
     
     <div id="app" v-cloak>
-        <card v-bind="card" :index="index" v-for="(item, index) in 5" @foot="openFrm(index)">
+        <card :head="head" :foot="foot" :content="item.content" :index="index" v-for="(item, index) in list" @foot="openFrm(index)">
             <div>
-                <span class="tea-text-title">今天15:00</span>
+                <span class="tea-text-title">{{item.booktime}}</span>
                 <span class="tea-text-gray">(12月15日)</span>
             </div>
         </card>

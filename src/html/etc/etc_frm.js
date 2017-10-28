@@ -2,10 +2,10 @@
  * Created by LVPlum on 2017/10/25.
  */
 
-import plate from '../oil/input-plate.vue'
-import option from '../oil/input-option.vue'
-import address from '../oil/option-send.vue'
-import coupon from '../order_new/coupon.vue'
+import plate from 'public/input-plate.vue'
+import option from 'public/input-option.vue'
+import address from 'public/option-send.vue'
+import coupon from 'public/coupon.vue'
 
 window.apiready = function(){
 

@@ -1,187 +1,9 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
-    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
-    <title></title>
-    <!-- api样式 -->
-    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
-    <!-- aui样式 -->
-    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
-    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
-    <link rel="stylesheet" type="text/css" href="../../css/swiper-3.4.2.min.css" />
-    <!-- 小马哥通用样式 -->
-    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
-    <style type="text/css">
+import Buttons from './buttons.vue';
 
-        .aui-btn {
-            margin-left: 0.5rem;
-            width: 3.65rem;
-            height: 1.5rem;
-            line-height: 1.5rem;
-            color: #666;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 0.25rem;
-        }
-        .btn-blue {
-            color: #3399ff;
-            border-color: #0099ff;
-        }
-        .dele-btn{
-            width: 2.75rem;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 100%;
-            display: flex;
-            align-items: center;
-        }
-        .swipeleft{
-            transform:translateX(-16%);
-            -webkit-transform:translateX(-16%);
-        }
-        .aui-list-item-media {
-            width: auto !important;
-            /*padding: 0.75rem 0.5rem 0.75rem 0 !important;*/
-        }
-        .aui-list-item-arrow {
-            position: relative;
-            padding-right: 0.9rem; 
-        }
-        .aui-list-item-arrow:before {
-            right: 0.1rem;
-            z-index: 99;
-        }
-        .aui-iconfont:before {
-            font-size: 2.0rem;
-            /*行高1.5会撑开容器*/
-            line-height: 1;
-        }
-        .flex-start {
-            -webkit-align-self: flex-start;
-                    align-self: flex-start;
-        }
-    </style>
-</head>
-<body>
-    <div id="app" >
-        
-        <section v-if="orderNum == 0" class="tea-nothing">
-            <img src="../../image/nothing_img.png">
-            <p>您还没有任何定单哦~</p>
-        </section>
-        
-        <div class="aui-content aui-margin-b-15">
-            <ul class="aui-list aui-media-list swiper-container" v-for="(item, index) in list" :id="index" v-show="isShow(item.item, item.list.status)">
-                <li class="swiper-wrapper">
-                    <div class="aui-list-item aui-padded-15 swiper-slide"  @click="openWinDetail(item, index)">
-                        <div class="aui-media-list-item-inner">
-                            <div class="aui-list-item-media aui-padded-0 aui-padded-r-10">
-                                <div class="aui-iconfont" :class="type[item.item].icon" :style=" 'color:' + type[item.item].color"></div>   
-                            </div>
-                            <div class="aui-list-item-inner aui-padded-0 aui-padded-b-5">
-                                <div class="aui-list-item-text">
-                                    <div class="aui-list-item-title aui-margin-b-10" style="max-width: 70%">
-                                        <div class="aui-ellipsis-1 aui-list-item-arrow">
-                                            <span class="aui-font-size-16 tea-font-weight-bold">{{type[item.item].title}}</span>
-                                            <span class="aui-font-size-14" v-if="item.item == 'exempt'">(六年免检)</span>
-                                        </div>
-                                        <div class="aui-font-size-12 tea-text-gray aui-ellipsis-1">{{item.list.addtime}}</div>
-                                    </div>
-                                    <div class="aui-list-item-right flex-start aui-font-size-14 tea-text-blue">{{formatStatus(item.list.status, item.item)}}</div>
-                                </div>
-                                <div class="aui-list-item-title tea-text-default aui-font-size-14 aui-ellipsis-1 aui-ellipsis">
-                                   <span>{{type[item.item].carnum(item.list)}}</span>
-                                   <span>{{type[item.item].desc(item.list)}}</span>
-                                </div>
-                                <div class="aui-list-item-title aui-font-size-14 tea-font-weight-bold aui-margin-t-5">
-                                   <span class="aui-ellipsis aui-ellipsis-1">{{type[item.item].price(item.list)}}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="aui-info aui-padded-0 aui-margin-0">
-                            <div></div>
-                            <Buttons :type="item.item" :status="item.list.status" :money="item.list.money" @click.native="action(event, item, index)"></Buttons>    
-                        </div>
-                    </div>
-                    
-                    <div v-if="item.list.status == 12" class="aui-bg-danger aui-text-white aui-text-center swiper-slide dele-btn aui-list-item-center" @click="delOrder(index)">
-                        删除
-                    </div>             
-                </li>
-            </ul>
-        </div>
+let vm;
 
-    </div>
-</body>
-
-<script type="text/javascript" src="../../script/api.js" ></script>
-<!-- 快速点击 -->
-<script type="text/javascript" src="../../script/fastclick.min.js"></script>
-<!--Swiper 引入-->
-<script type="text/javascript" src="../../script/swiper-3.4.2.min.js"></script>
-<!-- ajax相关 -->
-<script type="text/javascript" src="../../script/conn.js"></script>
-<!-- JavaScript模板引擎 -->
-<script type="text/javascript" src="../../script/vue.min.js"></script>
-<!-- 小马哥通用函数库 -->
-<script type="text/javascript" src="../../script/tea.js"></script>
-<!-- HTML模板 -->
-<script type="text/template" id="template">
-
-</script>
-
-<script type="text/javascript">
-
-/**********************************声明全局变量**********************************/
-// 声明DOM对象
-var dom = {}, vm = null, mySwiper = {};
-
-
-/**********************************apiready**********************************/
-apiready = function(){
+window.apiready = function(){
     
-    var Buttons = {
-        template: '<div><span class="aui-btn" :class="item.klass" v-for="(item, index) in activeBtns" :data-action="item.action">{{item.text}}</span></div>',
-        props: ['type', 'status', 'money'],
-        data: function(){
-            var data = {
-                btns: {
-                    pay: {
-                        action: 'pay',
-                        text: '去支付',
-                        klass: 'btn-blue',
-                    },
-                    cancel: {
-                        action: 'cancel',
-                        text: '取消',
-                        klass: ''
-                    },
-                    comment: {
-                        action: 'comment',
-                        text: '评价',
-                        klass: 'btn-blue'
-                    }
-                }
-            };
-            return data;
-        },
-        computed: {
-            activeBtns: function(){
-                var arr = [];
-                if (this.money && this.status == 2) {
-                    arr.push(this.btns.pay);
-                }
-                if (this.status == 1 ) {
-                    arr.push(this.btns.comment);
-                }
-                return arr;
-            }
-        }
-    };
-
     vm = new Vue({
         el: '#app',
         data: {
@@ -320,7 +142,7 @@ apiready = function(){
             }
         },
         components: {
-            'buttons': Buttons
+            'buttons': h => h(Buttons)
         },
         methods: {
             isShow: function(type, status) {
@@ -415,6 +237,8 @@ apiready = function(){
                     url: './order_detail_win.html',
                     bounces: false,
                     pageParam: {
+                        folder: 'order_new',
+                        title: '订单详情',
                         id: item.list.id,
                         type: item.item,
                         status: item.list.status,
@@ -441,11 +265,13 @@ apiready = function(){
                     case 'comment':
                         api.openWin({
                             name: 'comment_win',
-                            url: './comment_win.html',
+                            url: '../unit/win.html',
                             bounces: false,
                             pageParam: {
                                 orderId: item.list.id,
                                 orderType: item.item,
+                                folder: 'order_new',
+                                title: '评论'
                             }
                         });
                         break;                    
@@ -474,6 +300,11 @@ apiready = function(){
     init();
 
 };
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {}, mySwiper = {};
+
 
 /**********************************初始化变量**********************************/
 function init(){
@@ -591,8 +422,8 @@ function getData(){
                         mySwiper[index] = new Swiper('#' + index , {
                             slidesPerView: 'auto',
                             initialSlide: 0,
-                            resistanceRatio: .7,
-                            // slideToClickedSlide: true,
+                            resistanceRatio: .6,
+                            slideToClickedSlide: true,
                             freeMode: true,
                             freeModeSticky: true,
                             autoplayStopOnLast: true
@@ -621,5 +452,3 @@ function getData(){
     
 
 }
-</script>
-</html>

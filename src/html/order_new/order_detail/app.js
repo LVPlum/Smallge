@@ -1,7 +1,7 @@
-import profile from './profile.vue'
-import detailList from './detail-list.vue'
-import bill from './bill.vue'
-import coupon from './coupon.vue'
+import Profile from './profile.vue'
+import DetailList from './detail-list.vue'
+import Bill from './bill.vue'
+import Coupon from 'public/coupon.vue'
 
 window.apiready = function(){
     vm = new Vue({
@@ -305,10 +305,10 @@ window.apiready = function(){
             }
         },
         components: {
-            'profile': h => h(profile),
-            'detail': h => h(detailList),
-            'bill': h => h(bill),
-            'coupon': h => h(coupon)
+            'profile': h => h(Profile),
+            'detail': h => h(DetailList),
+            'bill': h => h(Bill),
+            'coupon': h => h(Coupon)
         },
         watch: {
             fee: {

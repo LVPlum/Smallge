@@ -61,7 +61,7 @@
 
     <footer id="footer" class="aui-bar aui-bar-tab">
         <div class="aui-bar-tab-item tea-border-t" tapmode @click="openWinFee" style="width: auto;">
-            <span class="tea-text-orange tea-font-weight-bold aui-font-size-16 aui-ellipsis-1" v-cloak>¥{{ tea.formatMoney(money) }}</span>
+            <span class="tea-text-orange tea-font-weight-bold aui-font-size-16" v-cloak>¥{{ tea.formatMoney(money) }}</span>
             <span v-show="!is" :class="frm ? 'tea-text-arrow-up' : 'tea-text-arrow-down' " class="aui-font-size-12">明细</span>
         </div>
         <div :class="is ? 'tea-bg-light-gray' : 'tea-bg-blue' " class="aui-bar-tab-item aui-text-white" tapmode @click="pay" style="width: 50%;">
@@ -137,6 +137,7 @@ function init(){
                 });
             },
             openWinFee: function(){
+                if(vm.is) return false;
                 if (vm.frm) {
                     vm.frm = false;
                     api.closeFrame({

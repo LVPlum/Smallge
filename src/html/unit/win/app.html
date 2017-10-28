@@ -24,20 +24,18 @@
     </style>
 </head>
 <body>
+    <div id="app">
+        <header id="header" class="aui-bar aui-bar-nav aui-bar-light" >
+            <a class="aui-btn aui-pull-left" @click="closeWin()">
+                <span class="aui-iconfont aui-icon-left tea-text-title"></span>
+            </a>
+            <div id="title" class="aui-title tea-text-title" v-text="title"></div>
+        </header>
 
-    <header id="header" class="aui-bar aui-bar-nav aui-bar-light" >
-        <a class="aui-btn aui-pull-left" tapmode onclick="closeWin()">
-            <span class="aui-iconfont aui-icon-left tea-text-title"></span>
-        </a>
-        <div id="title" class="aui-title tea-text-title">标题</div>
-    </header>
+        <section id="main"></section>
 
-    <section id="main"></section>
-
-    <footer id="footer"></footer>
-
-
-
+        <footer id="footer"></footer>
+    </div>
 </body>
 
 <script type="text/javascript" src="../../script/api.js" ></script>

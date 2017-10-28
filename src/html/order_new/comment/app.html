@@ -1,0 +1,135 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        html, body {
+            text-align: center;
+            background-color: #fff;
+        }
+        .img:before {
+            font-size: 3rem;
+            margin: 0.5rem;
+        }
+        i:before {
+            font-size: 1.6rem;
+            color: #ccc;
+            line-height: 1;
+        }
+        i ~ i {
+            margin-left: 0.75rem;
+        }
+
+        section {
+            margin: 1rem auto;
+            width: 13.75rem;
+        }
+
+        .aui-row-padded {
+            margin-left: -0.375rem;
+            margin-right: -0.375rem;
+        }
+        .aui-col-xs-6 {
+            padding: 0.75rem 0.375rem 0 !important;
+        }
+        .aui-btn {
+            height: 1.7rem;
+            line-height: 1.7rem;
+            font-size: 0.7rem;
+            color: #666;
+            border-radius: 0.85rem;
+            border: 1px solid #ccc;
+            background-color: #fff; 
+        }
+        textarea {
+            margin: 0;
+            padding: 0.5rem;
+            height: 3.75rem;
+            border: 1px solid #ccc;
+            border-radius: 0.25rem;
+            background-color: #f7f7f7;             
+        }
+
+        footer {
+            width: 15.0rem;
+            margin: 0.75rem auto;
+        }
+
+        footer .aui-btn {
+            height: 2.3rem;
+            line-height: 2.3rem;
+            border-radius: 2.3rem;
+            color: #fff;
+            background-color: #ed7474;
+        }
+        .star-active:before {
+            color: #ffcc33;
+        }
+        .tab-active {
+            color: #e53838;
+            border: 1px solid #e53838;
+            background-color: #fcebeb;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <header>
+            <i class="aui-iconfont img" :class="typeArr[type].icon" :style=" 'color:' + typeArr[type].color"></i>  
+            <p class="tea-text-title aui-font-size-16" style="margin: 0.325rem 0">{{typeArr[type].title}}</p>
+            <p class="tea-text-gray">评论可获得
+                <span class="tea-text-orange">30积分</span>
+            哦</p>
+            <div style="margin: 1.25rem auto 0.75rem">
+                <i class="aui-iconfont tea-icon-star" v-for="index in 5" :class="{'star-active': index <= star}" tapmode @click="setStar(index)"></i>
+            </div>
+            <p class="tea-text-gray aui-font-size-12">您的评论会让小马哥审车做得更好</p>
+        </header>
+
+        <section>
+            <p class="aui-text-left">请选择标签</p>
+            <div class="aui-grid">
+                <div class="aui-row aui-row-padded">
+                    <div class="aui-col-xs-6" tapmode @click="setTab(item)" v-for="(item, index) in tabNow">
+                        <div class="aui-btn aui-btn-block" :class="{'tab-active': ~tabSettedNow.indexOf(item)}">{{item}}</div>
+                    </div>
+                </div>
+            </div>                       
+        </section>
+        <section>
+            <textarea v-model="opinion" placeholder="请输入其他建议"></textarea>
+        </section>
+
+        <footer>
+            <div class="aui-btn aui-btn-block" :class="{'tea-active' : !errorMsg}" tapmode @click="submit()">提交评价</div>
+        </footer>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+</script>
+</html>

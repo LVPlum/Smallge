@@ -1,10 +1,10 @@
 /**
  * Created by LVPlum on 2017/10/21.
  */
-import plate from './input-plate.vue'
-import time from './input-time.vue'
-import option from './input-option.vue'
-import address from './option-send.vue'
+import plate from 'public/input-plate.vue'
+import time from 'public/input-time.vue'
+import option from 'public/input-option.vue'
+import address from 'public/option-send.vue'
 
 window.apiready = function(){
 

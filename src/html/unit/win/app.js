@@ -1,16 +1,26 @@
 window.apiready = function() {
     let header = document.getElementById('header');
     let footer = document.getElementById('footer');
+    $api.fixStatusBar(header);
     let headerH = $api.offset(header).h;
     let footerH = $api.offset(footer).h;
     let winH = api.winHeight;
-    $api.fixStatusBar(header);
 
     let data = api.pageParam;
-    let url = data.url;
-    let title = data.title;
 
-    document.getElementById('title').innerHTML = title;
+    let vm = new Vue({
+        el: "#app",
+        data: {
+            title: api.pageParam.title,
+            folder: api.pageParam.folder
+        },
+        methods: {
+            closeWin: function(){
+                api.closeWin();
+            }
+        }
+    })
+
     let pageload = 0;
     if (api.systemType == "ios") {
         openFrame();
@@ -25,15 +35,12 @@ window.apiready = function() {
             pageload++;
         });
     }
-    openFrame();
     
     function openFrame(){
         let frmName = api.winName.replace('_win', '');
-        alert(frmName)
-        return
         api.openFrame({
             name: frmName,
-            url: '../' + data.folder + '/' + frmName + '.html',
+            url: '../' + api.pageParam.folder + '/' + frmName + '.html',
             rect: {
                 x: 0,
                 y: headerH,
@@ -46,8 +53,4 @@ window.apiready = function() {
             hScrollBarEnabled: true
         });
     }
-}
-
-function closeWin(){
-    api.closeWin();
 }
