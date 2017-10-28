@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui_old.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+</head>
+<style type="text/css">
+
+</style>
+<body>
+	    <p class="aui-padded-10 aui-text-center">设置保险到期提醒</p>
+	    <div class="aui-content aui-card">
+	        <div class="aui-form">
+	            <div class="aui-input-row">
+	                <span class="aui-input-addon">保险到期时间</span>
+	                <input type="text" class="aui-input" placeholder="点击选择保险到期时间" id="btime" onclick="selecttime('btime');" readonly="readonly"/>
+	            </div>
+
+	            <div class="aui-input-row">
+	                <span class="aui-input-addon">保险差不多到期时自动通知</span>
+		                <input type="checkbox" class="aui-switch aui-pull-right" id="ck2" onclick="getck(2);" checked>
+	            </div>
+	    <div class="aui-content" id="rd2">
+
+	    </div>
+	    </div>
+	    </div>
+	    <div class="aui-btn-row">
+	            <div class="aui-btn aui-btn-block aui-btn-danger" tapmode onclick="postdate()">确定</div>
+	    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript">
+apiready = function() {
+    api.parseTapmode();
+    $api.html($api.byId('rd2'), sethtml(2));
+	api.addEventListener({
+	    name: 'selecttime'
+	}, function(ret, err){
+	    var obj = $api.byId(ret.value.pagetype);
+	    var val = ret.value.time1 + '-' + ret.value.time2 + '-' + ret.value.time3;
+	    $api.val(obj, val);
+	});
+};
+    function sethtml(index){
+    var html = '';
+	        html += '<div class="aui-form" id="rdo'+ index +'">';
+	        html += '<div class="aui-input-row">';
+	        html += '<label class="aui-input-addon">提前三天每天通知</label>';
+	        html += '<input class="aui-pull-right aui-radio" type="radio" name="rad'+ index +'" value="3" checked>';
+	        html += '</div>';
+	        html += '<div class="aui-input-row">';
+	        html += '<label class="aui-input-addon">提前一周每天通知</label>';
+	        html += '<input class="aui-pull-right aui-radio" type="radio" name="rad'+ index +'" value="7">';
+	        html += '</div>';
+	        html += '<div class="aui-input-row">';
+	        html += '<label class="aui-input-addon">提前一个月每天通知</label>';
+	        html += '<input class="aui-pull-right aui-radio" type="radio" name="rad'+ index +'" value="30">';
+	        html += '</div>';
+	        html += '</div>';
+	 return html;
+    }
+    function getck(index){
+	    var ckobj = $api.byId("ck" + index);
+	    if(ckobj.checked){
+           $api.html($api.byId('rd' + index), sethtml(index));
+	    }else{
+	       var obj = $api.byId("rdo" + index);
+	       $api.remove(obj);
+	    }
+    }
+    function selecttime(val){
+				api.openFrame({
+				    name: 'selecttime',
+				    url: 'selecttime_frm.html',
+				    pageParam: {pagetype:val},
+				    rect: {
+				        x: 0,
+				        y: 320,
+				        w: api.frameWidth,
+				        h: api.winHeight -320
+				    },
+				    bounces: false,
+				    bgColor: 'rgba(0,0,0,0)',
+				    vScrollBarEnabled: false,
+				    hScrollBarEnabled: false
+				});
+    }
+    function getradselect(index){
+        var obj = document.getElementsByName("rad"+index);
+        for ( i = 0; i < obj.length; i++) {
+                if (obj[i].checked) {
+                      return obj[i].value;
+                }
+        }
+    }
+    function postdate(){
+        var bxtips = $api.val($api.byId('ck2')) == '' ? '0' : getradselect(2);   //保险到期提醒设置时间
+        var btime = $api.val($api.byId('btime'));
+        if(btime == ''){
+           api.toast({
+	           msg:'时间没有选择，请选择时间'
+           });
+           return false;
+        }
+         api.sendEvent({
+		    name: 'addbtime',
+		    extra: {
+		        n1: btime,
+		        n2: bxtips
+		    }
+		 });
+        api.closeWin();
+    }
+</script>
+</html>

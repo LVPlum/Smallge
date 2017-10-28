@@ -1,0 +1,270 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>找代办</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+        }
+
+        section {
+            position: relative;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header id="header" class="aui-bar aui-bar-nav tea-bg-blue" tapmode onclick="showPopup()">
+        <a class="aui-btn aui-pull-left" tapmode onclick="closeWin();event.stopPropagation();">
+            <span class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <div class="aui-title">找代办</div>
+        <a class="aui-pull-right aui-btn" >
+            <span class="aui-iconfont aui-icon-menu"></span>
+        </a>
+    </header>
+
+    <section id="main" class="tea-body-bg-blue"></section>
+
+    <footer id="footer"></footer>
+
+
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- HTML模板渲染引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript">
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 处理沉浸式效果，计算header和footer的高度
+    header = $api.byId('header');
+    $api.fixStatusBar(header);
+    headerH = $api.offset(header).h;
+    footer = $api.byId('footer');
+    footerH = $api.offset(footer).h;
+
+    // 初始化DOM对象
+    initDOM();
+
+    // 初始化变量
+    initVar();
+
+    // 初始化监听
+    initEventListener();
+
+    // 初始化其他模块
+    initModule();
+
+    // 初始化Frame
+    //initFrame();
+
+    // ajax请求数据
+    getData();
+
+
+};
+
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var header, footer, mask;
+
+// 声明全局变量
+var headerH, footerH, popup;
+
+/**********************************初始化变量**********************************/
+// 初始化DOM对象
+function initDOM(){
+
+    mask = $api.byId('mask');
+
+};
+
+// 初始化变量
+function initVar(){
+
+
+};
+
+/**********************************初始化Frame**********************************/
+// 初始化Frame,不需要打开Frame请删除
+function initFrame(data_){
+
+    api.openFrame({
+        name: 'agency_frm',
+        url: './agency_frm.html',
+        rect: {
+            x: 15,
+            y: headerH + 15,
+            w: api.winWidth - 30,
+            h: api.winHeight - headerH - footerH - 30
+        },
+        pageParam: {
+            data : data_,
+            order: api.pageParam.order
+        },
+        // frame的背景颜色
+        // 页面是否弹动
+        bounces: false,
+        allowEdit: true,
+        vScrollBarEnabled: false,
+        hScrollBarEnabled: true
+    });
+}
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+    // api.addEventListener({
+    //     name: 'maskInAgency'
+    // }, function(ret, err){
+    //     if( ret ){
+    //         if (ret.value.maskIn){
+    //             $api.addCls(mask, 'aui-mask-in');
+    //         }
+    //         else {
+    //             $api.removeCls(mask, 'aui-mask-in');
+    //         }
+    //     }else{
+    //         //alert( JSON.stringify( err ) );
+    //     }
+    // });
+
+}
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+    api.ajax({
+        url: website + 'api_q.php?action=get_daiban',
+        method: 'post',
+        data: {
+            values: {
+                name: 'haha'
+            }
+        }
+    },function(ret, err){
+        if (ret) {
+            initFrame(ret);
+            //alert( JSON.stringify( ret ) );
+        } else {
+            tea.toast('ajax');
+        }
+    });
+
+
+    // 更新变量
+    updateVar();
+
+    // 更新HTML
+    updateHTML();
+
+}
+
+/**********************************更新变量**********************************/
+// 更新DOM对象
+function updateDOM(){
+
+
+
+}
+
+// 更新变量
+function updateVar(){
+
+
+
+}
+
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+
+
+/**********************************广播消息**********************************/
+function sendEvent(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+// 回退关闭窗口
+function closeWin(){
+    api.closeWin();
+}
+
+// function hideFrame(){
+
+//     $api.removeCls(mask, 'aui-mask-in');
+
+//     api.execScript({
+//         frameName: 'agency_frm',
+//         script: '$api.removeCls(mask, "aui-mask-in");'
+//     });
+
+// }
+
+
+
+
+function showPopup(){
+
+    api.openFrame({
+        name: 'mask_frm',
+        url: './mask_frm.html',
+        rect: {
+            x: 0,
+            y: 0,
+            w: 'auto',
+            h: 'auto'
+        },
+        pageParam: {
+            name: 'test'
+        },
+        bounces: false,
+        bgColor: 'rgba(0,0,0,0.2)',
+        vScrollBarEnabled: true,
+        hScrollBarEnabled: true
+    });
+}
+/**********************************其他函数**********************************/
+
+/**********************************功能模块1**********************************/
+
+</script>
+</html>

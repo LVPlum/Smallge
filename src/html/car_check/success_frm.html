@@ -1,0 +1,190 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+		html,body {
+            height: 100%;
+            overflow: auto;
+            text-align: center;
+            font-size: 0.7rem;
+		}
+        section ~ section {
+            margin-top: 1.5rem;
+        }
+        .success {
+            margin: 2.0rem auto 0.75rem;
+            height: 3.15rem;
+            width: 3.15rem;
+            border-radius: 50%;
+        }
+        .aui-icon-correct {
+            top: 0.3rem;
+            font-size: 1.75rem;
+            font-weight: bold;
+            color: #FFFFFF;
+        }
+
+    </style>
+</head>
+<body>
+    <section>
+        <div class="success tea-bg-blue">
+            <i class="aui-iconfont aui-icon-correct"></i>
+        </div>
+        <div class="tea-text-title aui-font-size-16">预约成功</div>
+    </section>
+
+    <section>
+        <div class="tea-text-defautlt aui-font-size-14">
+            您的爱车：
+            <span id="plate"></span>
+        </div>
+        <div class="tea-text-defautlt aui-font-size-14">
+            预约时间：
+            <span id="time"></span>
+        </div>
+    </section>
+
+    <section>
+        <div>请带行驶证</div>
+        <div>请带好交强险有效期内保单</div>
+        <div>若未买保险，请到小马哥审查出单点购买</div>
+        <div>返利全市最高</div>
+    </section>
+
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明全局变量
+
+// 声明DOM对象
+var time, plate;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化DOM对象
+    initDOM();
+
+    // 初始化变量
+    initVar();
+
+    // ajax请求数据
+    getData();
+
+    // 初始化监听
+    initEventListener();
+
+    // 初始化其他
+    init();
+
+};
+
+/**********************************初始化全局变量**********************************/
+// 初始化DOM对象
+function initDOM(){
+
+    time = $api.byId('time');
+    plate = $api.byId('plate');
+
+};
+
+// 初始化变量
+function initVar(){
+
+
+
+};
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+    // 更新变量
+    updateVar();
+
+    // 更新HTML
+    updateHTML();
+
+}
+
+
+/**********************************更新全局变量**********************************/
+// 更新DOM对象
+function updateDOM(){
+
+
+
+}
+
+// 更新变量
+function updateVar(){
+
+
+
+}
+
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+    time.innerHTML = api.pageParam.time;
+    plate.innerHTML = api.pageParam.plate;
+
+}
+
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************初始化其他模块**********************************/
+function init(){
+
+
+
+}
+
+/**********************************广播消息**********************************/
+function addEvent(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+
+
+
+/**********************************其他函数**********************************/
+
+/**********************************功能模块1**********************************/
+
+
+</script>
+</html>

@@ -1,0 +1,371 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        .btn-code {
+            width: 7rem;
+        }
+        footer {
+            margin: 2.5rem 1.125rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <ul class="aui-list aui-form-list aui-list-noborder">
+            <li class="aui-list-item tea-bg-default">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title" style="height:2.625rem; line-height:2.625rem">
+                        请输入手机
+                        <span class="tea-text-blue">{{ tel.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2") }}</span>
+                        收到的验证码
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-input">
+                        <input id="code" type="tel" placeholder="请输入短信验证码" maxlength="6" v-model="code">
+                    </div>
+                    <div class="btn-code tea-border-l aui-text-center aui-font-size-14 tea-text-default" :class="{'tea-text-red' : time == 0}" @click="sendCode" tapmode>
+                        {{ time == 0? '重新发送' : time + '秒后重发' }}
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <footer>
+            <div class="aui-btn aui-btn-block tea-btn-submit" :class="{'tea-active' : !errorMsg}" @click="sumbit()">提交</div>
+        </footer>
+
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 快速点击 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- md5加密 -->
+<script type="text/javascript" src="../../script/md5.min.js"></script>
+<!-- 账号通用js -->
+<script type="text/javascript" src="../../script/account.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {}, vm = null, ajax = null;
+
+/**********************************apiready**********************************/
+apiready = function(){
+    //alert(account);
+    vm = new Vue({
+        el: '#app',
+        data: {
+            tel: api.pageParam.tel,
+            code: '',
+            time: 0,
+            count: 60,
+            sending: false
+        },
+        methods: {
+            sumbit: function(){
+                // 验证表单
+                if (vm.errorMsg) {
+                    api.toast({
+                        msg: vm.errorMsg,
+                        duration: 2000,
+                        location: 'middle'
+                    });
+                    return false;
+                }
+                ajax[api.pageParam.type]();
+            },
+            sendCode: function(){
+                api.showProgress({
+                    style: 'default',
+                    animationType: 'fade',
+                    title: '努力加载中...',
+                    text: '先喝杯茶...',
+                    modal: false
+                });
+                api.ajax({
+                    url: website + 'smscode.php',
+                    method: 'post',
+                    timeout: 30,
+                    data: {
+                        values: {
+                            ID: $api.getStorage('ID'),
+                            token: $api.getStorage('token'),
+                            tel: vm.tel,
+                            temp: 3,
+                            templateSMS: vm.formatSMS(),
+                            systemType: api.systemType,
+                            systemVersion: api.systemVersion,
+                            deviceId: api.deviceId,
+                            deviceModel: api.deviceModel,
+                            deviceName: api.deviceName,
+                            operator: api.operator,
+                            connectionType: api.connectionType
+                        }
+                    },
+                    returnAll:false
+                },function(ret,err){
+                    api.hideProgress();
+                    if (ret) {
+                        if (ret.succ == 1) {
+                            api.toast({
+                                msg: '发送成功',
+                                duration: 2000,
+                                location: 'middle'
+                            });
+                            if (vm.sending) return;
+                            vm.sending = true;
+                            vm.time = vm.count;
+                            var coutnnum = setInterval(function () {
+                                if(vm.time == 0){
+                                    clearInterval(coutnnum);
+                                    vm.sending = false;
+                                    return;
+                                }else{
+                                    vm.time -= 1;
+                                }
+                            },'1000');
+                        }
+                        else {
+                            vm.sending = false;
+                            api.toast({
+                                msg: '验证码发送失败',
+                                duration: 2000,
+                                location: 'middle'
+                            });
+                        }
+                    } else {
+                        tea.toast('ajax');
+                    };
+                });
+            },
+            formatSMS: function(){
+                switch (api.pageParam.type) {
+                    case 'login': // 登录
+                        return '158243';
+                    case 'register': // 注册
+                        return '16463';
+                    case 'borrow': // 马上借申请借钱
+                        return '118895';
+                    case 'reset': // 重置密码
+                        return '24468';
+                    default :
+                        return '118895';
+                }
+            }
+        },
+        computed: {
+            errorMsg: function(type){
+                var rule = new tea.checkRule();
+                rule.add(this.code, [{
+                    condition: 'isCode',
+                    errorMsg: '请输入四位验证码'
+                }]);
+                var errorMsg = rule.start();
+                return errorMsg;
+            },
+        }
+
+    })
+
+    // 初始化
+    init();
+
+    vm.sendCode();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    ajax = {
+        reset: function(){
+            // 验证短信验证码是否正确
+            api.ajax({
+                url: website + 'user_api.php?action=forgot',
+                method: 'post',
+                timeout: 30,
+                data: {
+                    values: {
+                        tel: vm.tel,
+                        smscode: vm.code
+                    }
+                },
+                dataType: 'json',
+                returnAll:false
+            },function(ret,err){
+                if (ret) {
+                    // 验证码正确
+                    if (ret.succ == 2) {
+                        api.openWin({
+                            name: 'password_set_win',
+                            url: '../account/password_set_win.html',
+                            bounces: false,
+                            pageParam: {
+                                type: 'reset',
+                                tel : vm.tel,
+                                code: vm.code
+                            }
+                        });
+                    }
+                    else {
+                        api.toast({
+                            msg: ret.msg,
+                            duration: 2000,
+                            location: 'middle'
+                        });
+                    }
+                } else {
+                    tea.toast('ajax');
+                }; 
+            })           
+        },
+        register: function(){
+
+            // 提交表单
+            api.showProgress({
+                style: 'default',
+                animationType: 'fade',
+                title: '努力加载中...',
+                text: '先喝杯茶...',
+                modal: false
+            });
+            $api.post(website + 'user_api.php?action=register', {
+                values: { 
+                    tel: vm.tel,
+                    smscode: vm.code
+                },                    
+            }, function(ret){
+                api.hideProgress();
+                if (!ret) {
+                    tea.toast('ajax');
+                    return false;
+                }
+                if (ret.succ == 1) {
+                    account.loginSucc(ret.data, 'register');
+                    return true;                
+                }
+                if (ret.succ == 2) {
+                    alert('该号码已注册，请直接登陆');
+                    api.pageParam.type = 'login';
+                    api.openWin({
+                        name: 'login_other_win',
+                        url: '../account/login_other_win.html',
+                        pageParam: {
+                            tel: vm.tel
+                        }
+                    });
+                    return false;
+                }
+                api.toast({
+                    msg: ret.msg,
+                    duration: 2000,
+                    location: 'middle'
+                });                
+            });
+        },
+        login: account.loginByCode
+    }
+
+    updateHTML();
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+    var offset = $api.offset($api.byId('code'));
+    var UIInput = api.require('UIInput');
+    UIInput.open({
+        rect: {
+            x: offset.l,
+            y: offset.t + 1,
+            w: offset.w,
+            h: offset.h - 1
+        },
+        styles: {
+            bgColor: '#fff',
+            size: 16,
+            color: '#333',
+            placeholder: {
+                color: '#ccc'
+            }
+        },
+        autoFocus: true,
+        maxRows: 1,
+        placeholder: '请输入短信验证码',
+        keyboardType: 'number',
+        fixedOn: api.frameName
+    }, function(ret, err) {
+        if (ret) {
+            //alert(JSON.stringify(ret));
+            UIInput.value(function(ret, err) {
+                if (ret) {
+                    if (ret.msg.length > 6) {
+                        UIInput.value({
+                            msg: ret.msg.substr(0,6)
+                        });
+                    }
+                    vm.code = ret.msg;
+                }
+            });
+        }
+    });
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+}
+
+
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+function getSingle(fn){
+    var result;
+    return function() {
+        return result || ( result = fn.apply(this, arguments) );
+    }
+}
+</script>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+		html,body {
+            height: 100%;
+            overflow: auto;
+            background: none;
+		}
+
+    </style>
+</head>
+<body>
+
+<div id="search" class="aui-content aui-margin-b-15 aui-hide" tapmode onclick="addfriend()">
+    <ul class="aui-list aui-media-list aui-list-noborder">
+        <li class="aui-list-item aui-list-item-middle">
+            <div class="aui-media-list-item-inner">
+                <div class="aui-list-item-media" style="width: 3rem;">
+                    <img src="../../image/carfriend_s.png" class="aui-img-round aui-list-img-sm">
+                </div>
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-text">
+                        <div class="aui-list-item-title aui-font-size-14">点击查找手机号/昵称</div>
+                        <!--<div class="aui-list-item-right">08:00</div>-->
+                    </div>
+                    <div id="value" class="aui-list-item-text tea-text-blue">
+                        www.auicss.com
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/aui-toast.js" ></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化DOM对象
+    initDOM();
+
+    // 初始化变量
+    initVar();
+
+    // 更新HTML
+    initHTML();
+
+    // 初始化监听
+    initEventListener();
+
+    // 初始化其他模块
+    initModule();
+
+    // ajax请求数据
+    getData();
+
+};
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {};
+
+/**********************************初始化变量**********************************/
+// 初始化DOM对象
+function initDOM(){
+
+    dom.search = $api.byId('search');
+    dom.value = $api.byId('value');
+    dom.body = $api.dom('body');
+
+};
+
+// 初始化变量
+function initVar(){
+
+    values.value = '';
+
+};
+
+// 初始化HTML
+function initHTML(){
+
+    if ( typeof api.pageParam.event != "undefined" && api.pageParam.event == 'addFriend') {
+        tea.toast('success');
+    }
+
+}
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+    api.addEventListener({
+        name: 'showSearch'
+    }, function(ret, err){
+        $api.addCls(dom.body, 'tea-bg-default');
+        $api.removeCls(dom.search, 'aui-hide');
+        values.value = ret.value.str
+        dom.value.innerHTML = values.value;
+    });
+
+}
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************更新变量**********************************/
+// 更新DOM对象
+function updateDOM(){
+
+
+
+}
+
+// 更新变量
+function updateVar(){
+
+
+
+}
+
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+
+
+/**********************************广播消息**********************************/
+function sendEvent(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+
+
+function hide() {
+    $api.removeCls(dom.body, 'tea-bg-default');
+    $api.addCls(dom.search, 'aui-hide');
+    values.value = '';
+    dom.value.innerHTML = '';
+}
+
+/**********************************其他函数**********************************/
+function addfriend(){
+    api.showProgress({
+        style: 'default',
+        animationType: 'fade',
+        title: '数据查找中...',
+        text: '请稍候...',
+        modal: true
+    });
+    var telphone = $api.getStorage('telphone');
+    var token = gettoken(telphone);
+    var nickname = $api.getStorage('nickname');
+    var seachval = values.value;
+    if(seachval.length == 0){
+        tea.toast('fail','不能输入空字符');
+        api.hideProgress();
+        return false;
+    }
+    if (seachval == telphone || seachval == nickname) {
+        tea.toast('fail','不能添加自己</br>到通讯录');
+        api.hideProgress();
+        return false;
+    }
+    api.ajax({
+        url: website + 'api.php?action=addfriend',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        returnAll:false,
+        data:{
+            values: {token: token,frival: seachval},
+        }
+    },function(ret,err){
+        if (ret) {
+            if(!ret.errmsg){
+                    //var urlJson = JSON.stringify(ret);
+                    //api.alert({msg: urlJson});
+                    //return false;
+                    if(ret.succ == 'no'){
+                        api.alert({msg:(ret.msg)});
+                    }else{
+                        var mdiv = $api.byId('seelogo');
+                        api.openWin({
+                            name: '详细资料',
+                            url: './friendinfo_win.html',
+                            vScrollBarEnabled: false,
+                            pageParam : {friid: ret.friid, fritoken:ret.fritoken}
+                        });
+
+                    }
+                    api.hideProgress();
+            }
+        }else {
+            api.hideProgress();
+            api.alert({
+                msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+            });
+        }
+    });
+}
+function sendaddfriendevnt(fritoken){
+    var telphone = $api.getStorage('telphone');
+    var nickname = $api.getStorage('nickname');
+    var token = gettoken(telphone);
+    api.ajax({
+        url: website + 'friendship.php?action=sendfrimsg',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        returnAll:false,
+        data:{
+            values: {token: token,fritoken: fritoken, myname: nickname},
+        }
+    },function(ret,err){
+        if (ret) {
+            if(!ret.errmsg){
+                        if(ret.succ == 'no'){
+                            api.alert({
+                                msg:(ret.msg)
+                            });
+                        }else{
+                            //var mdiv = $api.byId('pm');
+                            //$api.html(mdiv, '');
+                            //showmsg(ret.msg);
+                                //sendtitle(fritoken); 发融云
+                                //pushmessage('您有一个新好友请求','在通讯录-新的朋友就可以看到新朋友的请求',fritoken);
+                                api.sendEvent({
+                                name: 'reloaddate',
+                                });
+                                api.closeWin();
+                        }
+            }
+        }else {
+            api.alert({
+                msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+            });
+        }
+    });
+}
+function sendtitle(val){
+    var title = '您有一个好友请求';
+    var content = '您有一个新的好友请求，点击查看';
+    api.ajax({
+        url: website + 'jpush/push_message.php',
+        method: 'post',
+        timeout: 30,
+        dataType: 'text',
+        returnAll:false,
+        data:{
+            values: {users: val,content: content,title: title},
+        }
+    },function(ret,err){
+
+    });
+}
+function showmsg(str){
+        var div = $api.byId('toptitle');
+        $api.after(div, '<div id="errbox" style="text-align: center;background: #6e8aaf; width:50%; height:auto; margin:10px auto;">'+ str +'</div>');
+        setTimeout("codefans()",2000);
+}
+function codefans(){
+    var box=document.getElementById("errbox");
+    box.style.display="none";
+}
+
+</script>
+</html>

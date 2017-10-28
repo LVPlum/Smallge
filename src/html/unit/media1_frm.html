@@ -1,0 +1,333 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+		html,body {
+            overflow: auto;
+            background-color: #f2f5f8;
+		}
+		.img-box {
+			position: relative;
+			height: 0;
+			margin: 0;
+			padding-bottom: 100%;
+			/* border: 1px solid red; */
+			overflow: hidden;
+			background-color: #FFF;
+		    background-position: center;
+		    background-repeat: no-repeat;
+		    background-size: cover;
+		}
+
+		/* .aui-col-xs-4 img{
+            position: absolute; margin: auto;
+            width: 100%;
+            min-height: 100%
+		} */
+		/* .camera {
+            overflow: auto;
+            background: none;
+            text-align: center;
+            height: 100%;
+            text-align: center;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content:center;
+                    justify-content:center;
+            -webkit-align-items: center;
+                    align-items: center;
+            -webkit-flex-direction: column;
+                    flex-direction: column;
+		} */
+    </style>
+</head>
+<body>
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-media-list aui-list-noborder">
+            <li class="aui-list-item tea-bg-default">
+                <div class="aui-list-item-inner">
+                    <div class="aui-row aui-row-padded" id="list">
+                        <div class="aui-col-xs-4 aui-text-center camera" tapmode onclick="usercamera()">
+                           <i class="aui-iconfont aui-icon-camera" style="font-size:35px;"></i>
+                           <p>使用相机</p>
+                        </div>
+                        <!-- <div class="aui-col-xs-4">
+                        	<div class="img-box" style="background-image:url(../../image/lisence_m.png)"></div>
+                        </div>
+                        <div class="aui-col-xs-4">
+                        	<div class="img-box" style="background-image:url(../../image/denglu.png)">
+                        	</div>
+                        </div>   -->
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化DOM对象
+    initDOM();
+
+    // 初始化变量
+    initVar();
+
+    // 更新HTML
+    initHTML();
+
+    // 初始化监听
+    initEventListener();
+
+    // 初始化其他模块
+    initModule();
+
+    // ajax请求数据
+    getData();
+
+};
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {}, UIMediaScanner = null, imageBrowser = null, isIOS = false, limit = null, imgId = null;
+
+/**********************************初始化变量**********************************/
+// 初始化DOM对象
+function initDOM(){
+
+
+
+};
+
+// 初始化变量
+function initVar(){
+
+	limit = api.pageParam.limit;
+	imgId = api.pageParam.imgId;
+    isIOS = api.systemType == "ios" ? true : false;
+    UIMediaScanner = api.require('UIMediaScanner');
+    imageBrowser = api.require('imageBrowser');
+
+};
+
+// 初始化HTML
+function initHTML(){
+
+	showp('相册准备中','');
+		UIMediaScanner.scan({
+		    type: 'picture',
+		    count: 30,
+		    sort: {
+		        key: 'time',
+		        order: 'desc'
+		    },
+		    thumbnail: {
+		        w: 800,
+		        h: 800
+		    }
+		}, function( ret ){
+		    if( ret ){
+		        var obj = $api.byId('list');
+		        var html = '';
+	            for (var i = 0, len = ret.list.length; i < len; i++) {
+	                var r = ret.list[i];
+	                html += '<div class="aui-col-xs-4">';
+	                if(limit == 1){
+	                	html += '<div class="img-box" style="background-image:url(' + r.thumbPath + ')" tapmode onclick="sendimg(\''+ r.path +'\')"></div>';
+	                }else{
+	                	html += '<img src="'+ r.thumbPath +'" tapmode onclick="openbigimg(\''+ r.path +'\')"><input type="checkbox" date-img="'+ r.path +'" class="aui-checkbox chbox" tapmode="" name="checkbox" onclick="checksel()">';
+	                }
+	                html += '</div>';
+	             }
+	             $api.append(obj, html);
+	             api.hideProgress();
+		    }
+		});
+
+}
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+	// 懒加载
+	api.addEventListener({
+	    name:'scrolltobottom',
+	    extra:{
+	        threshold:0            //设置距离底部多少距离时触发，默认值为0，数字类型
+	    }
+	}, function(ret, err){
+	    updateHTML();
+	});
+
+}
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************更新变量**********************************/
+// 更新DOM对象
+function updateDOM(){
+
+
+
+}
+
+// 更新变量
+function updateVar(){
+
+
+
+}
+
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+    api.showProgress({
+        style: 'default',
+        animationType: 'fade',
+        title: '图片加载中...',
+        text: '',
+        modal: false
+    });
+	UIMediaScanner.fetch(function( ret, err ){
+	    if( ret ){
+	        var obj = $api.byId('list');
+	        var html = '';
+            for (var i = 0, len = ret.list.length; i < len; i++) {
+                var r = ret.list[i];
+                html += '<div class="aui-col-xs-4">';
+                if(limit == 1){
+                	html += '<div class="img-box" style="background-image:url(' + r.thumbPath + ')" tapmode onclick="sendimg(\''+ r.path +'\')"></div>';
+                }else{
+                	html += '<img src="'+ r.thumbPath +'" tapmode onclick="openbigimg(\''+ r.path +'\')"><input type="checkbox" date-img="'+ r.path +'" class="aui-checkbox chbox" tapmode="" name="checkbox" onclick="checksel()">';
+                }
+                html += '</div>';
+             }
+             $api.append(obj, html);
+	    }else{
+	         api.toast({
+                 msg:'没有更多图片了'
+             });
+	    }
+	    api.hideProgress();
+	});
+
+}
+
+
+
+/**********************************广播消息**********************************/
+function sendEvent(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+function sendimg(simg,tag){    //tag 0是直接在相册里面调用，1是相机的，因为相机无需转换路径
+    api.showProgress({
+        style: 'default',
+        animationType: 'fade',
+        title: '图片加载中...',
+        text: '',
+        modal: false
+    });
+    if(isIOS && typeof tag == "undefined"){
+		UIMediaScanner.transPath({
+		   path: simg
+		}, function(ret, err){
+    		if( ret ){
+                 var img = ret.path;
+		         api.sendEvent({
+				    name: 'getimgarr',
+				    extra: {
+						img: img,
+						imgId: imgId
+				    }
+				 });
+            	api.closeWin();
+            	api.hideProgress();
+		    }
+		});
+    }else{
+         api.sendEvent({
+		    name: 'getimgarr',
+		    extra: {
+				img: simg,
+				imgId: imgId
+		    }
+		 });
+    	api.closeWin();
+    	api.hideProgress();
+    }
+}
+
+function usercamera(){
+	api.getPicture({
+		sourceType : "camera",
+		encodingType : "jpg",
+		destinationType : "url",
+		mediaValue : "pic",
+		quality : 100,
+		saveToPhotoAlbum : true
+	}, function(ret, err) {
+		if (ret && ret.data) {
+			// 拍照返回的本地路径
+			//var returnUrl = ret.data;
+            //imgarr.push(ret.data);   //相机在这里用完
+            sendimg(ret.data,1);
+		} else {
+			api.toast({
+				msg : '没有选择，或者选择出错'
+			});
+		}
+	});
+}
+/**********************************其他函数**********************************/
+
+
+</script>
+</html>

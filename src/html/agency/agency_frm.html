@@ -1,0 +1,589 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+		html,body {
+            overflow-x: hidden;
+            overflow-y: auto;
+            background: none;
+		}
+
+        section {
+            padding-top: 0.25rem;
+            width: 100%;
+            height: 100%;
+            background-color: #FFF;
+            border-radius: 0.25rem;
+            position: relative;
+        }
+
+        footer {
+            position: relative;
+            width: 100%;
+            padding: 0.75rem;
+            /* top: auto;
+            left: 5%;
+            bottom: 1.5rem;
+            width: 100%; */
+        }
+
+        footer .aui-btn {
+            display: block;
+            width: 90%;
+            margin: 0 auto;
+            height: 2.2rem;
+            line-height: 2.2rem;
+            border-radius: 1.1rem;
+        }
+
+        .aui-list-item.show {
+            border: none;
+            background-size: 100% 0 !important;
+        }
+
+    </style>
+</head>
+<body>
+
+    <section class="tea-bg-white tea-border-radius-10">
+        <div class="aui-content-padded aui-margin-l-0 aui-margin-b-15">
+            <ul class="aui-list aui-form-list aui-list-noborder aui-list-in">
+                <li class="aui-list-item aui-list-item-arrow" tapmode onclick="openFrameCity()">
+                    <div class="aui-list-item-label-icon">
+                        <i class="aui-iconfont aui-icon-location"></i>
+                    </div>
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-title">选择城市</div>
+                        <div id="area" class="aui-list-item-right">北海</div>
+                    </div>
+                </li>
+                <li class="aui-list-item">
+                    <div class="aui-list-item-label-icon">
+                        <i class="aui-iconfont aui-icon-pencil"></i>
+                    </div>
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-title tea-text-star-red-after">选择车型</div>
+                        <label tapmode onclick="selectType(1)"><label id="c-radio" class="aui-radio aui-checked" type="radio" name="car_type"></label> 轿车</label>
+                        <label tapmode onclick="selectType(2)"><label id="v-radio" class="aui-radio" type="radio" name="car_type"></label> 货车</label>
+                    </div>
+                </li>
+                <li class="aui-list-item">
+                    <div class="aui-list-item-label-icon">
+                        <i class="aui-iconfont aui-icon-phone"></i>
+                    </div>
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-title tea-text-star-red-after">手机号码</div>
+                        <label style="max-width: 60%;">
+                            <input id="telphone" style="width: auto;" type="tel" placeholder="请输入车主手机" oninput="changePhone(this)">
+                        </label>
+                    </div>
+                </li>
+                <li id="business" class="aui-list-item aui-list-item-arrow tea" tapmode onclick="agencyToggle(this)">
+                    <div class="aui-list-item-label-icon">
+                        <i class="aui-iconfont aui-icon-edit"></i>
+                    </div>
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-title">代办项目</div>
+                    </div>
+                </li>
+                <li id="car-business" class="aui-list-item aui-hide"></li>
+                <li id="truck-business" class="aui-list-item aui-hide"></li>
+                <li class="aui-list-item aui-list-item-arrow" tapmode onclick="openWinDateSelect()">
+                    <div class="aui-list-item-label-icon">
+                        <i class="aui-iconfont aui-icon-date"></i>
+                    </div>
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-title">预约时间</div>
+                        <div id="time" class="aui-list-item-right"></div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <footer>
+            <div class="aui-btn tea-active" tapmode onclick="openWinAgencies()">选择代办机构</div>
+        </footer>
+    </section>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui 弹出菜单js -->
+<script type="text/javascript" src="../../script/aui-popup.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+
+<!-- HTML模板 -->
+<script type="text/template" id="car-template">
+    <div class="aui-list-item-inner aui-padded-15 aui-padded-t-5 aui-padded-l-0">
+        <div id="businessList" class="aui-row aui-row-padded">
+            {{ var i = 0; for(var prop in it){ }}
+            <div class="aui-col-xs-6 tea-text-gray aui-ellipsis-1" tapmode onclick="selectBusiness({{=i}},{{=prop}})">
+                <span class="aui-text-left" style="width: 10%;">{{=i + 1}}</span>
+
+                <div class="aui-btn aui-ellipsis-1 {{=(values.carBusinessArr.indexOf(i) > -1 ? 'tea-active': '')}}" style="width: 85%;">
+                    {{=it[prop]}}
+                </div>
+
+
+            </div>
+            {{ i++;} }}
+        </div>
+    </div>
+</script>
+
+<script type="text/template" id="truck-template">
+    <div class="aui-list-item-inner aui-padded-15 aui-padded-t-5 aui-padded-l-0">
+        <div id="businessList" class="aui-row aui-row-padded">
+            {{ var i = 0; for(var prop in it){ }}
+            <div class="aui-col-xs-6 tea-text-gray aui-ellipsis-1" tapmode onclick="selectBusiness({{=i}},{{=prop}})">
+                <span class="aui-text-left" style="width: 10%;">{{=i + 1}}</span>
+
+
+                <div class="aui-btn aui-ellipsis-1 {{=(values.truckBusinessArr.indexOf(i) > -1 ? 'tea-active': '')}}" style="width: 85%;">
+                    {{=it[prop]}}
+                </div>
+
+            </div>
+            {{ i++;} }}
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript">
+
+    var popup = new auiPopup();
+
+    function showPopup(){
+        popup.show(document.getElementById("top-right"));
+
+        api.sendEvent({
+            name: 'maskInAgency',
+            extra: {
+                maskIn: true
+            }
+        });
+
+    }
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化DOM对象
+    initDOM();
+
+    // 初始化变量
+    initVar();
+
+    // 初始化HTML
+    initHTML();
+
+    // 初始化监听
+    initEventListener();
+
+    // 初始化其他模块
+    initModule();
+
+    // ajax请求数据
+    getData();
+
+};
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data, values = {}, order;
+
+/**********************************初始化变量**********************************/
+// 初始化DOM对象
+function initDOM(){
+
+    dom.mask = $api.byId('mask');
+    dom.time = $api.byId('time');
+    dom.area = $api.byId('area');
+    dom.business = $api.byId('business');
+    dom.carBusiness = $api.byId('car-business');
+    dom.truckBusiness = $api.byId('truck-business');
+    dom.telphone = $api.byId('telphone');
+
+
+};
+
+// 初始化变量
+function initVar(){
+
+    data = api.pageParam.data;
+    values.type = 1;
+
+    // 获取地区及地区id数组
+    data.areas = [];
+    data.areaIdArr = [];
+    for (var key in data.area) {
+        var citys = data.area[key];
+        for (var key in citys) {
+            var areas = citys[key];
+            for (var key in areas) {
+                data.areas.push(areas[key]);
+                data.areaIdArr.push(key);
+            }
+        }
+    }
+    // 地区数组索引
+    values.areaIndex = 0;
+
+
+    // 业务数组, 默认值为第一项的id
+    values.carBusinessArr = [parseInt(Object.keys(data.c_business)[0])];
+    values.truckBusinessArr = [parseInt(Object.keys(data.v_business)[0])];
+
+    values.telphone = tea.getStorage('telphone');
+
+    values.book_time = '';
+
+    // 初始化订单信息
+    order = api.pageParam.order;
+    if (typeof order != "undefined") {
+        updateVar();
+    }
+
+};
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+    // 监听时间选择
+    api.addEventListener({
+        name: 'selectretime'
+    }, function(ret, err){
+        if( ret ){
+            var time = $api.byId('time');
+            time.innerHTML = ret.value.strtime;
+            values.book_time = ret.value.realtime;
+            //testForm();
+            //alert( JSON.stringify( ret ) );
+        }else{
+            //alert( JSON.stringify( err ) );
+        }
+    });
+
+    // 监听地区选择
+    api.addEventListener({
+        name: 'areaSelect'
+    }, function(ret, err){
+        if( ret ){
+            values.areaIndex = ret.value.areaIndex;
+            dom.area.innerHTML = data.areas[values.areaIndex];
+        }else{
+            //alert( JSON.stringify( err ) );
+        }
+    });
+
+}
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+    // 更新变量
+    //updateVar();
+
+    // 更新HTML
+    updateHTML();
+
+}
+
+/**********************************更新变量**********************************/
+// 更新DOM对象
+function updateDOM(){
+
+
+
+}
+
+// 更新变量
+function updateVar(){
+
+    values.type = order.car_type;
+    // 地区数组索引
+    var area = order.area.qu;
+    values.areaIndex = data.areaIdArr.indexOf(area);
+
+    values.telphone = order.telphone;
+    // 不选则默认为"1970-01-01 08:00:00"
+    values.book_time = order.booktime == "1970-01-01 08:00:00"? '' : order.booktime;
+
+    var idArr = [];
+    for (var key in order.business) {
+        idArr.push(order.business[key].id);
+    }
+    if (values.type == 1) {
+        values.carBusinessArr = idArr;
+        return;
+    }
+    values.truckBusinessArr = idArr;
+
+}
+
+/**********************************更新HTML**********************************/
+function initHTML(){
+
+    dom.area.innerHTML = data.areas[values.areaIndex];
+    $api.val(dom.telphone, values.telphone);
+    dom.time.innerHTML = values.book_time;
+    // 如果不为1类型, 则先设置为1类型, 再触发点击事件
+    if (values.type != 1) {
+        values.type = 1;
+        selectType(2);
+    }
+    // 如果是订单修改，则展开项目
+    if (typeof order != "undefined") {
+        agencyToggle(dom.business);
+    }
+
+}
+
+
+function updateHTML(){
+
+    tea.doT(data.c_business, 'car-template', dom.carBusiness);
+    // 获取全部小车业务按钮
+    dom.carBusinessBtn = $api.domAll(dom.carBusiness, '.aui-btn');
+
+    tea.doT(data.v_business, 'truck-template', dom.truckBusiness)
+    // 获取全部卡车业务按钮
+    dom.truckBusinessBtn = $api.domAll(dom.truckBusiness, '.aui-btn');
+
+}
+
+/**********************************广播消息**********************************/
+function sendEvent(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+// 回退关闭窗口
+function closeWin(){
+    api.closeWin();
+}
+
+// 打开地区选择
+function openFrameCity(){
+
+    api.sendEvent({
+        name: 'areaChange',
+        extra: {
+            areaIndex: values.areaIndex,
+        }
+    });
+
+    api.openFrame({
+        name: 'agency_city_frm',
+        url: './agency_city_frm.html',
+        rect: {
+            x: 0,
+            y: 0,
+            w: 'auto',
+            h: 'auto'
+        },
+        pageParam: {
+            areas: data.areas,
+            areaIndex: values.areaIndex
+        },
+        bounces: false,
+        bgColor: 'rgba(0,0,0,0.6)',
+        vScrollBarEnabled: true,
+        hScrollBarEnabled: true
+    });
+
+
+}
+
+
+// 切换项目展示
+function agencyToggle(el_){
+
+    tea.toggle(el_,'show');
+    if (values.type == 1){
+       tea.toggle(dom.carBusiness);
+    }
+    else{
+       tea.toggle(dom.truckBusiness);
+    }
+
+
+}
+
+// 打开预约时间窗口
+function openWinDateSelect(){
+
+    api.openWin({
+        name: 'dateSelect',
+        url: '../unit/date_select_win.html',
+        pageParam: {
+            winName: 'agency_win'
+        }
+    });
+
+}
+
+// 打开选择机构窗口
+function openWinAgencies(){
+
+    if (values.type == 1){
+        values.business = values.carBusinessArr;
+    }
+    else {
+        values.business = values.truckBusinessArr;
+    }
+    values.area = data.areaIdArr[values.areaIndex];
+    if (testValues(values)){
+        $api.setStorage('agency', values);
+        //$api.setStorage('agencyOrder', order);
+        api.ajax({
+            url: website + 'api_q.php?action=get_daiban_agency',
+            method: 'post',
+            data: {
+                values: values,
+            }
+        },function(ret, err){
+            if (ret) {
+                //alert( JSON.stringify( ret ) );
+                api.openWin({
+                    name: 'agencies_win',
+                    url: './agencies_win.html',
+                    pageParam: {
+                        data: tea.objToArr(ret),
+                        order: order
+                    }
+                });
+            } else {
+                //alert( JSON.stringify( err ) );
+            }
+        });
+    }
+
+
+}
+
+// 相应切换车辆类型
+function selectType(index_){
+
+    // if 不是当前选中项目
+    if (index_ != values.type){
+        var c = $api.byId('c-radio');
+        var v = $api.byId('v-radio');
+        tea.toggle(c,'aui-checked');
+        tea.toggle(v,'aui-checked');
+        values.type = index_;
+        // 更新展示
+        if ($api.hasCls(dom.business, 'show')){
+            tea.toggle(dom.carBusiness);
+            tea.toggle(dom.truckBusiness);
+        }
+
+    }
+
+}
+
+// 选择相应业务
+function selectBusiness(index_,id_){
+
+    if (values.type == 1) {
+        setBusiness(dom.carBusinessBtn, values.carBusinessArr, index_, id_);
+    }
+    else {
+        setBusiness(dom.truckBusinessBtn, values.truckBusinessArr, index_, id_);
+    }
+
+}
+
+function changePhone(el_){
+
+    values.telphone = $api.val(el_);
+
+}
+
+
+/**********************************其他函数**********************************/
+function setBusiness(el_, arr_, index_, id_){
+
+    var btn = el_[index_];
+    if ($api.hasCls(btn, 'tea-active')) {
+        if (arr_.length > 1) {
+            // 移除选中样式
+            $api.removeCls(btn, 'tea-active');
+
+            // 删除指定id
+            var i = arr_.indexOf(id_);
+            if (i > -1) {
+                arr_.splice(i, 1);
+            }
+        }
+        // 选中且当前项目数量不大于1，则弹出提示
+        else {
+            api.toast({
+                msg: '至少要选择一个业务~',
+                duration: 2000,
+                location: 'middle'
+            });
+        }
+    }
+    else {
+        $api.addCls(btn, 'tea-active');
+        arr_.push(id_);
+    }
+
+}
+
+function testValues(values_){
+    values.telphone = tea.toNum(values.telphone);
+    if (!tea.checkPhone(values_.telphone)) {
+        api.toast({
+            msg: '请输入格式正确的11位手机号码~',
+            duration: 2000,
+            location: 'middle'
+        });
+        return false;
+    }
+    // if (values_.book_time === ''){
+    //     api.toast({
+    //         msg: '请选择预约时间~',
+    //         duration: 2000,
+    //         location: 'middle'
+    //     });
+    //     return false;
+    // }
+    return true
+}
+/**********************************功能模块1**********************************/
+
+</script>
+</html>

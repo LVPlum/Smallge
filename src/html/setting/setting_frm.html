@@ -1,0 +1,308 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+		html,body {
+            height: 100%;
+            overflow: auto;
+		}
+
+    </style>
+</head>
+<body>
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-list-noborder">
+            <li class="aui-list-item aui-list-item-middle" tapmode onclick="openWinReset()">
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-title">修改密码</div>
+                </div>
+            </li>
+            <li class="aui-list-item" tapmode onclick="openWinAbout()">
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-title">关于我们</div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="aui-content aui-margin-b-15" tapmode onclick="loginOut()">
+        <ul class="aui-list aui-list-noborder">
+            <li class="aui-list-item aui-list-item-middle">
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-title">退出登录</div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/aui-dialog.js" ></script>
+<script type="text/javascript" src="../../script/aui-toast.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    initVar();
+
+    // 更新HTML
+    initHTML();
+
+    // 初始化监听
+    initEventListener();
+
+    // 初始化其他模块
+    initModule();
+
+    // ajax请求数据
+    getData();
+
+};
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {};
+
+/**********************************初始化变量**********************************/
+
+// 初始化变量
+function initVar(){
+
+    values = {
+        isIOS: api.systemType == "ios"? true : false,
+        update: false,
+        url: ''
+    }
+
+};
+
+// 初始化HTML
+function initHTML(){
+
+
+
+}
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+    // --------------------------------------
+    return false;
+
+    api.showProgress({
+        style: 'default',
+        animationType: 'fade',
+        title: '努力加载中...',
+        text: '请稍候...',
+        modal: false
+    });
+
+    var appVersion = api.appVersion;
+    api.ajax({
+        url: website + '/api.php?action=showversion',
+        method: 'post',
+        data: {
+            values: {
+                id: $api.getStorage('ID'),
+                version: appVersion
+            }
+        }
+    },function(ret, err){
+        api.hideProgress();
+        if (ret) {
+
+            // 判断是否需要更新
+            var local = values;
+            if (local.isIOS) {
+                if (ret.ios_version > appVersion) {
+                    updateVar(ret.ios_url);
+                }
+            }
+            else {
+                if (ret.an_version > appVersion) {
+                    updateVar(ret.an_url);
+                }
+            }
+
+            // 需要版本更新的响应函数
+            function updateVar(url){
+                local.url = url;
+                local.update = true;
+                var badge = $api.byId('badge');
+                $api.removeCls(badge, 'aui-hide');
+            }
+
+            //alert( JSON.stringify( ret ) );
+        } else {
+            alert( JSON.stringify( err ) );
+        }
+    });
+
+
+}
+
+/**********************************更新变量**********************************/
+// 更新DOM对象
+function updateDOM(){
+
+
+
+}
+
+// 更新变量
+function updateVar(){
+
+
+
+}
+
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+
+
+/**********************************广播消息**********************************/
+function sendEvent(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+function loginOut(){
+    api.confirm({
+        title: '退出登录',
+        msg: '退出不会删除历史数据，下次登录仍可使用本账号。',
+        buttons: ['确定', '取消']
+    }, function(ret, err) {
+        if (ret.buttonIndex === 1) {
+            $api.rmStorage('token');
+            $api.rmStorage('rongtoken');
+            $api.rmStorage('ID');
+            api.sendEvent({
+                name: 'loginOut',
+                extra: {
+                }
+            });
+            api.closeToWin({
+                name: 'main_win',
+                animation: {
+                    type: 'none'
+                }
+            });
+        }
+    })
+}
+
+function openWinReset(){
+    tea.openWin({
+        name: 'password_reset_win',
+        url: './password_reset_win.html',
+        bounces: false,
+        pageParam: {key : 'value'}
+    });
+}
+
+function openWinAbout(){
+    tea.openWin({
+        name: 'about_win',
+        url: './about_win.html',
+        bounces: false,
+        pageParam: {key : 'value'}
+    });
+}
+
+function openUrlUpdate(){
+
+    var local = values;
+
+    if (!local.update) {
+        tea.toast('custom', '当前是最新版本')
+        return false;
+    }
+
+    if (local.isIOS) {
+        api.openApp({
+            iosUrl: local.url
+        });
+        return;
+    }
+
+    api.actionSheet({
+        title: '是否更新至最新版本',
+        cancelTitle: '取消',
+        destructiveTitle: '下载新版本',
+        buttons: []
+    }, function(ret, err){
+        if( ret ){
+            if (ret.buttonIndex == 1 ){
+                tea.toast('custom' , '后台下载中...');
+                // 安卓后台直接下载更新，无回调
+                api.openFrame({
+                    name: 'download',
+                    url: local.url,
+                    rect: {
+                        x: 0,
+                        y: 0,
+                        w: 0,
+                        h: 0
+                    }
+                });
+            }
+        }else{
+            alert( JSON.stringify( err ) );
+        }
+    });
+
+}
+/**********************************其他函数**********************************/
+
+
+</script>
+</html>

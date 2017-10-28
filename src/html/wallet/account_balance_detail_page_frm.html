@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+		html,body {
+            height: 100%;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+		}
+		#info{
+		 overflow: scroll;
+  		-webkit-overflow-scrolling: touch;
+		}
+    </style>
+</head>
+<body>
+
+<div class="aui-content aui-margin-b-15">
+    <ul id="info" class="aui-list aui-form-list">
+
+    </ul>
+</div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+
+/**********************************apiready**********************************/
+	apiready = function(){
+
+		api.parseTapmode();
+
+		var id = api.pageParam.id;
+
+		loaddate(id);
+
+	};
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {};
+
+
+function loaddate(id){
+			 showp('数据读取中...','请等候...');
+			api.ajax({
+			    url: website + 'mymoney.php?action=info',
+			    method: 'post',
+			    timeout: 30,
+			    dataType: 'json',
+			    returnAll:false,
+			    data:{
+			        values: {id: id},
+			    }
+			},function(ret,err){
+			    if (ret) {
+                    var obj = $api.byId("info");
+                    var html = '';
+
+                    html += '<li class="aui-list-item"><div class="aui-list-item-inner" style = "min-height:3rem;" ><div class="aui-list-item-label-icon">项目：</div><div class="aui-list-item-input">'+ret.paytype+'</div></div></li>';
+
+                    html += '<li class="aui-list-item"><div class="aui-list-item-inner" style = "min-height:3rem;"><div class="aui-list-item-label-icon">金额：</div><div class="aui-list-item-input">'+ret.moneyval+'</div></div></li>';
+
+                    html += '<li class="aui-list-item"><div class="aui-list-item-inner" style = "min-height:3rem;"><div class="aui-list-item-label-icon">操作前余额：&nbsp;</div><div class="aui-list-item-input">'+ret.be_money+'</div></div></li>';
+
+                    html += '<li class="aui-list-item"><div class="aui-list-item-inner" style = "min-height:3rem;"><div class="aui-list-item-label-icon">操作后余额：&nbsp;</div><div class="aui-list-item-input">'+ ret.la_money+'</div></div></li>';
+
+                    html += '<li class="aui-list-item"><div class="aui-list-item-inner" style = "min-height:3rem;"><div class="aui-list-item-label-icon">支出用户：</div><div class="aui-list-item-input">'+ret.payusername +'</div></div></li>';
+
+                    html += '<li class="aui-list-item"><div class="aui-list-item-inner" style = "min-height:3rem;"><div class="aui-list-item-label-icon">收入用户：</div><div class="aui-list-item-input">'+ret.forusername+'</div></div></li>';
+
+                    html += '<li class="aui-list-item"><div class="aui-list-item-inner" style = "min-height:3rem;"><div class="aui-list-item-label-icon">时间：</div><div class="aui-list-item-input">'+ret.addtime+'</div></div></li>';
+
+                    $api.html(obj, html);
+                     api.hideProgress();
+
+			    }
+			});
+		}
+</script>
+</html>

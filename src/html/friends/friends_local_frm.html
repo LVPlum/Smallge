@@ -1,0 +1,533 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <!--Swiper样式-->
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            height: 100%;
+            /*overflow: auto;
+            -webkit-overflow-scrolling:touch;*/
+        }
+
+
+        .flex-center{
+            display: flex;
+            display:-webkit-box;
+            display: -moz-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            justify-content: center !important;
+            align-items:center !important;
+            /*兼容*/
+            /*-webkit-align-items:center !important;
+            box-align:center !important;
+            -moz-box-align:center !important;
+            -webkit-box-align:center !important;
+            -webkit-justify-content:center !important;
+            justify-content:center !important;
+            -moz-box-pack:center !important;
+            -webkit--moz-box-pack:center !important;
+            box-pack:center !important;*/
+        }
+        .justify-content-star{
+            justify-content: flex-start !important;
+            -webkit-justify-content: flex-start !important;
+        }
+
+        /*.level{
+            width: 1.45rem;
+            height: 0.8rem;
+            font-size: 0.5rem;
+            text-align: center;
+            border:1px solid #ff6666;
+            border-bottom-right-radius: 25px;
+            border-top-right-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 3px;
+        }*/
+        .accept-btn{
+            width: 2.5rem;
+            height: 1.55rem;
+            border-radius: 30px;
+            text-align: center;
+            line-height: 1.55rem;
+        }
+        .tea-text-light-red{
+            color: #FF6666 !important;
+        }
+        .dele-btn{
+            width: 2.95rem;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            right: -2.95rem;
+            display: flex;
+            align-items: center;
+        }
+        .swipeleft{
+            transform:translateX(-16%);
+            -webkit-transform:translateX(-16%);
+        }
+        .level{
+            width: 1.5rem;
+            height: 0.8rem;
+            line-height: 0.8rem;
+            margin-left: -1px;
+            /*margin-top: -1px;
+            margin-left: -1px;
+            border-left: none;*/
+            border-top-right-radius: 30px;
+            border-bottom-right-radius: 30px;
+            text-align: center;
+            font-size: 0.5rem !important;
+        }
+        .red{
+            border: 1px solid #FF6666;
+            color: #FF6666;
+        }
+        .blue{
+            border: 1px solid #5CADFF;
+            color: #5CADFF;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="aui-content aui-margin-b-15" v-cloak>
+        <ul v-show="list.length" id="list" class="aui-list aui-media-list">
+            <li v-for="(value,index) in list" tapmode @click="openInfo(value)" class="aui-list-item swiper-container" style="padding: 0">
+                <div class="swiper-wrapper">
+                    <div class="aui-media-list-item-inner swiper-slide content">
+                        <div class="aui-list-item-media" style="padding: 0.75rem 0.5rem">
+                            <img :src=" value.img ? website + value.img : '../../image/avatar.png' ">
+                        </div>
+                        <div class="aui-list-item-inner" style="padding: 0.75rem 0rem">
+                            <div class="aui-list-item-text justify-content-star">
+                                <div class="aui-ellipsis aui-list-item-title aui-font-size-14" style="max-width: 50%">{{ value.nickname }}</div>
+                                <i :class="value.sex == 'male' ? 'tea-icon-men tea-text-blue' : 'tea-icon-women tea-text-light-red' " class="aui-iconfont aui-margin-l-5 aui-font-size-16"></i>
+                                <span :class="value.sex == 'male' ? 'blue' : 'red' " class="tea-font-size-11 level">{{ value.tx }}</span>
+                            </div>
+                            <div v-show="value.profile" class="aui-list-item-text" style="margin-bottom: 2px">
+                                <p class="aui-ellipsis aui-font-size-14">{{ value.profile }}</p>
+                            </div>
+                            <div v-if="value.status == 0 || value.status == 1" class="aui-list-item-text justify-content-star">
+                                <i class="aui-iconfont aui-icon-location" style="font-size: 0.5rem"></i>
+                                <p class="aui-ellipsis tea-font-size-11 aui-margin-l-5">{{ distanceBlur(value.distance,value.city) }}</p>
+                            </div>
+                            <div v-else class="aui-list-item-text justify-content-star">
+                                <i class="aui-iconfont aui-icon-date" style="font-size: 0.5rem"></i>
+                                <p class="aui-ellipsis tea-font-size-11 aui-margin-l-5">{{ intervalTime(value.lasttime) }}</p>
+                            </div>
+                        </div>
+                        <div class="aui-list-item-media aui-border-l flex-center" style="padding: 0; margin: 0.75rem 0">
+                            <div v-if="value.status == 1" class="tea-text-light-gray aui-font-size-14">等待加入</div>
+                            <div v-else-if="value.status == 2" class="aui-text-white tea-bg-blue accept-btn" tapmode @click.stop="acceptRequest(value,index)">接受</div>
+                            <div v-else-if="value.status == 3" class="tea-text-light-gray aui-font-size-14">已添加</div>
+                            <div v-else class="tea-text-blue aui-font-size-14" tapmode @click.stop="opneWinSayhi(value.ID)">打招呼</div>
+                        </div>
+                    </div>
+                    <div class="aui-bg-danger aui-text-white aui-text-center swiper-slide dele-btn aui-list-item-center">删除</div>
+                </div>
+            </li>
+            <!--<li class="aui-list-item swiper-container" style="padding: 0">
+                <div class="swiper-wrapper">
+                    <div class="aui-media-list-item-inner swiper-slide content">
+                        <div class="aui-list-item-media" style="padding: 0.75rem 0.5rem">
+                            <img src="../../image/friends/friend_pic.png">
+                        </div>
+                        <div class="aui-list-item-inner" style="padding: 0.75rem 0rem">
+                            <div class="aui-list-item-text aui-margin-b-5 justify-content-star">
+                                <div class="aui-ellipsis aui-list-item-title aui-font-size-14">P222222</div>
+                                <i class="aui-iconfont tea-icon-women aui-margin-l-5 tea-text-light-red aui-font-size-16"></i>
+                                <span class="tea-font-size-11 level red">连长</span>
+                            </div>
+                            <div class="aui-list-item-text" style="margin-bottom: 2px">
+                                <p class="aui-ellipsis aui-font-size-14">骏马是跑出来的，强兵是打出来的</p>
+                            </div>
+                            <div class="aui-list-item-text justify-content-star">
+                                <i class="aui-iconfont aui-icon-date" style="font-size: 0.5rem"></i>
+                                <p class="aui-ellipsis tea-font-size-11 aui-margin-l-5">1小时前</p>
+                            </div>
+                        </div>
+                        <div class="aui-list-item-media aui-border-l flex-center" style="padding: 0; margin: 0.75rem 0">
+                            &lt;!&ndash;<div class="tea-text-blue aui-font-size-14">打招呼</div>&ndash;&gt;
+                            <div class="tea-text-light-gray aui-font-size-14">等待加入</div>
+                        </div>
+                    </div>
+                    <div class="aui-bg-danger aui-text-white aui-text-center swiper-slide dele-btn aui-list-item-center">删除</div>
+                </div>
+            </li>-->
+        </ul>
+        <p v-show="!list.length" class="aui-text-center">您附近暂无车友或检查是否开启定位功能</p>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!--Vue 引入-->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!--Swiper 引入-->
+<script type="text/javascript" src="../../script/swiper-3.4.2.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, vm = null;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    dom = {
+    };
+
+    data = {
+    };
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+            website: website,
+            location: [0,0],
+            list: [],
+        },
+        methods: {
+            /*openUserInfo:function(value){
+                api.openWin({
+                    name: 'user_info_win',
+                    url: '../location/user_info_win.html',
+                    pageParam: {
+                        friendID: value.ID,
+                        status: value.status,
+                        sex: value.sex,
+                    },
+                    vScrollBarEnabled: false
+                });
+            },*/
+            openInfo: function(value){
+                api.openWin({
+                    name: 'user_info_win',
+                    url: '../location/user_info_win.html',
+                    pageParam: {
+                        friendID: value.ID,
+                        pageType: 'location'
+                    },
+                    vScrollBarEnabled: false
+                });
+                /*api.openWin({
+                    name: 'friendinfo_win',
+                    url: './friendinfo_win.html',
+                    pageParam: {
+                        id: value.ID
+                    },
+                    vScrollBarEnabled: false
+                });*/
+            },
+            opneWinSayhi: function(friendID){
+
+                api.openWin({
+                    name: 'friends_sayhi_win',
+                    url: './friends_sayhi_win.html',
+                    bounces: false,
+                    pageParam: {
+                        friendID : friendID
+                    }
+                });
+            },
+            acceptRequest: function(value,index){
+                adoptFriend(value.accept_id,index);
+            },
+            swiperDele: function(){
+                this.list;
+                this.$nextTick(function(){
+                    /*滑动模块*/
+                    var swiper = new Swiper('.swiper-container', {
+                        slidesPerView: 'auto',
+                        initialSlide: 0,
+                        resistanceRatio: .1,
+                        slideToClickedSlide: true
+                    });
+                })
+            },
+            /* 时间间隔处理 */
+            intervalTime: function(times){
+                var interval;               //3600 =1h 86400 = 1day
+                if(times >= 86400){
+                    interval = Math.floor(times/86400) + '天前';
+                }else if(times >= 3600 && times <86400 ){
+                    interval = Math.floor(times/3600) + '小时前';
+                }else if(times >= 60 && times< 3600){
+                    interval = Math.floor(times/60) + '分钟前';
+                }else {
+                    interval = '刚刚';
+                }
+                return interval;
+            },
+            /* 距离处理 */
+            distanceBlur: function(distance,city){
+                if(Number(distance) < 1000){
+                    return distance.toString()+'m'
+                }else if(Number(distance) > 50000){
+                    return distance = city;
+                }
+                else {
+                    distance = distance.toString();
+                    return distance.slice(0,-3)+'km'
+                }
+            }
+        },
+        computed: {
+
+        }
+    });
+
+    getLocation();
+
+    updateHTML();
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+    //判断是否设置过性别默认设置成女
+    if($api.getStorage('is_set_sex') == '0'){
+        api.confirm({
+            title: '',
+            msg: '请选择您的性别',
+            buttons: ['女', '男']
+        }, function(ret, err) {
+//            _alert(ret)
+            if(ret.buttonIndex == 1){
+                settingSex('female');
+            }
+            if(ret.buttonIndex == 2){
+                settingSex('male');
+            }
+        });
+    }
+
+    /*滑动模块*/
+    /*var swiper = new Swiper('.swiper-container', {
+        slidesPerView: 'auto',
+        initialSlide: 0,
+        resistanceRatio: .1,
+        slideToClickedSlide: true
+    });*/
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+    /* 好友请求（打招呼）成功后，重新获取同城车友状态 */
+    api.addEventListener({
+        name: 'msgOK'
+    }, function (ret, err) {
+        api.toast({
+            msg: '发送成功',
+            duration: 3000,
+            location: 'middle'
+        });
+        getLocation();
+    });
+
+    //location/user_ionfo_frm页面发送来的更新页面列表
+    api.addEventListener({
+        name: 'updataList'
+    }, function (ret, err) {
+        getLocation(); //重新更新通讯录页面
+    });
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+}
+
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+/* 获取位置信息 */
+function getLocation(){
+    tea.showp('定位中...','请稍候...')
+    var bMap = api.require('bMap');
+    bMap.getLocation({
+        accuracy: '100m',
+        autoStop: true,
+        filter: 1
+    }, function (ret, err) {
+        if(!ret){
+            api.hideProgress();
+            tea.toast('ajax');
+            return false;
+        }
+        if(ret.status){
+            vm.location = [ret.lon,ret.lat]; //[经度,纬度]
+            getFriends();
+            return true
+        }
+        if(!ret.status){
+            api.hideProgress();
+            alert('定位失败，请检查设备是否打开定位功能');
+            return false;
+        }
+        api.toast({
+            msg: err.msg,
+            duration: 2000,
+            location: 'middle',
+        });
+    });
+}
+
+/* 获取好友列表 */
+function getFriends(sex){
+    if(sex == 1){
+        sex = 'female'
+    }
+    if(sex == 2){
+        sex = 'male'
+    }
+    if(sex == 3){
+        sex = ''
+    }
+    api.ajax({
+        url: website + 'nearby.php?action=near',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        data: {
+            values: {
+                ID: $api.getStorage('ID'),
+                longitude: vm.location[0],
+                latitude: vm.location[1],
+//                longitude: '113.946941',
+//                latitude: '22.530691',
+                sex: sex,
+            }
+        }
+    }, function (ret, err){
+        api.hideProgress();
+        if(!ret){
+            tea.toast('ajax');
+            return false
+        }
+        if(ret.succ == 1){
+            vm.list = ret.data;
+            return true;
+//            vm.swiperDele(); //dom更新晚之后绑定swiper事件
+        }
+        if(ret.succ == 0){
+            vm.list = [];
+        }
+        api.toast({
+            msg: ret.msg,
+            duration: 2000,
+            location: 'middle'
+        });
+    });
+}
+
+/* 通过好友请求 */
+function adoptFriend(accept_id,index){
+    tea.showp('数据加载中...','请稍候...');
+    api.ajax({
+        url: website + 'friendship.php?action=agrequest',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        returnAll: false,
+        data: {
+            values: {
+                ID: accept_id
+            },
+        }
+    }, function (ret, err) {
+        api.hideProgress();
+        if(!ret){
+            tea.toast('ajax');
+            return false;
+        }
+        if(ret.succ == 'ok'){
+//            getLocation();
+            vm.list[index].status = 3; //添加成功修改当前项的状态
+        }
+        /*api.toast({
+            msg: ret.msg,
+            duration: 2000,
+            location: 'middle'
+        });*/
+    });
+}
+//未设置过性别的进入设置性别，默认设置为女
+function settingSex(sex){
+    api.ajax({
+        url: website + 'user_api.php?action=edit',
+        method: 'post',
+        timeout: 30,
+        data: {
+            values: {
+                ID: $api.getStorage('ID'),
+                sex: sex,
+            }
+        }
+    }, function (ret, err) {
+        if (!ret) {
+            tea.toast('ajax');
+            return false;
+        };
+        if (ret.succ == 1) {
+            $api.setStorage('sex',sex);
+            $api.setStorage('is_set_sex','1');
+            return true;
+        }
+    });
+}
+</script>
+</html>

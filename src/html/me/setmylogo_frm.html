@@ -1,0 +1,197 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/common.css" />
+</head>
+<style type="text/css">
+body {background-color: #f4f4f4;padding-top: 20px;}
+img{
+	/*max-width:100%;*/
+	width: 100%;
+	height:auto;
+	position: absolute;
+	top: 50%;
+	margin-top: -50%;
+}
+</style>
+<body>
+	<img src="" id="mylogo">
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+var telphone = null, nickname = null, token = null, ID = null;
+apiready = function() {
+    api.parseTapmode();
+    var mylogo = $api.byId('mylogo');
+    mylogo.src = $api.getStorage('img');
+
+    telphone = $api.getStorage('telphone');
+    nickname = $api.getStorage('nickname');
+    token = $api.getStorage('token');
+    ID = $api.getStorage('ID');
+
+	api.addEventListener({
+	    name: 'photo'
+	}, function(ret, err){
+        var img = $api.getStorage('mylogo');
+        var bimg = $api.getStorage('bimg');
+
+        mylogo.src = img;
+
+		newUpLogo(img,bimg)
+	});
+};
+
+function newUpLogo(photo,bimg){
+	tea.showp('图像处理中...','请稍候...',true);
+	api.ajax({
+		url: website + 'user_api.php?action=upheadimg',
+		method: 'post',
+		timeout: 30,
+		dataType: 'json',
+		data: {
+			values: {
+				ID: ID
+			},
+			files: {
+				"upfile[]" : [photo,bimg]
+			}
+		}
+	}, function (ret, err) {
+		api.hideProgress();
+		if(!ret){
+			tea.toast('ajax');
+			return false;
+		}
+		if(ret.succ == 1){
+			api.toast({
+				msg:'头像更改成功'
+			});
+//			$api.setStorage('rongtoken',ret.token);
+			$api.setStorage('img',ret.bimg);
+			$api.rmStorage('bimg');
+			$api.rmStorage('mylogo');
+			api.sendEvent({
+				'name': 'save_personal_data',
+				extra: {
+					img: ret.bimg
+				}
+			});
+			updataRongyun(ret.bimg);
+			return true;
+		}
+	});
+};
+function updataRongyun(upImg){
+	api.ajax({
+		url: website + 'rong/index2.php?action=getrongtoken',
+		method: 'post',
+		timeout: 30,
+		dataType: 'json',
+		data: {
+			values: {
+				ID: ID,
+				nickname: nickname,
+				img: upImg
+			},
+		}
+	}, function (ret, err) {
+		if (!ret) {
+			tea.toast('ajax');
+			return false;
+		}
+		if(ret.code == 200){
+			$api.setStorage('rongtoken',ret.token);
+			return true;
+		}
+		api.toast({
+			msg: '错误码：'+ret.code,
+			duration: 2000,
+			location: 'middle'
+		});
+	});
+}
+/*function uplogo(photo,bimg,id,nickname){
+     	tea.showp('图像处理中...','请稍候...')
+		api.ajax({
+		    url: website + 'index.php?action=chlogo',
+		    method: 'post',
+		    timeout: 100,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {img: photo,ID: ID},
+					files : {
+						"upfile" : bimg,
+					}
+		        }
+			//{"file[]":["path1","path2"]}
+		},function(ret,err){
+		    if (ret) {
+		       if(!ret.errmsg){
+	                 //	先取图片路径
+					var imgurl = ret.imgurl;
+					api.ajax({
+						url: website + 'rong/index2.php?action=getrongtoken',
+						method: 'post',
+						timeout: 30,
+						dataType: 'json',
+						returnAll:false,
+						data:{
+							values: {ID: ID,nickname: nickname,img: ret.imgurl},
+						}
+					},function(ret,err){
+						if (ret) {
+							console.log(JSON.stringify(ret,null,4))
+						   if(!ret.errmsg){
+									api.toast({
+										msg:'头像更改成功'
+									});
+									$api.setStorage('rongtoken',ret.token);
+									$api.setStorage('img',imgurl);
+									$api.rmStorage('bimg');
+									$api.rmStorage('mylogo');
+									console.log(mylogo.src);
+									//api.sendEvent({'name': 'relistinfo'});
+									api.sendEvent({
+										'name': 'save_personal_data',
+										 extra: {
+											img: imgurl
+										}
+									});
+									api.hideProgress();
+							}
+						}else {
+							api.hideProgress();
+							api.alert({
+								msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+							});
+						}
+					});
+
+		        }
+		    }else {
+		        api.alert({
+		            msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+		        });
+		    }
+		});
+     }*/
+</script>
+</html>

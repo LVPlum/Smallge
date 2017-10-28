@@ -1,0 +1,295 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/account.css" />
+    <style type="text/css">
+        header {
+            margin: 5rem auto 0.5rem;
+        }
+        header img {
+            height: 3.7rem;
+            width: 3.7rem;
+            margin: auto;
+            margin-bottom: 0.5rem;
+            border-radius: 50%;
+        }
+        header p {
+            font-size: 1rem;
+            color: #333;
+        }
+        .btn-code {
+            width: 7.5rem;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div id="app" v-cloak>
+        <header>
+            <img src="../../image/logo108.png">
+            <p>{{ tel.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2") }}</p>
+        </header>
+
+        <ul class="aui-list aui-form-list aui-list-noborder" v-show="type == 'code'">
+            <li class="aui-list-item aui-padded-l-10">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-input aui-font-size-16">
+                        <input id="code" type="tel" placeholder="请输入短信验证码" maxlength="6" v-model="code" @keyup.enter="submit">
+                    </div>
+                    <div class="btn-code aui-border-l aui-text-center aui-font-size-16 tea-text-default" 
+                        :class="{'tea-text-red' : time == 0 || time == '获取验证码'}" @click="sendCode()">
+                        {{ formatTime }}
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <label for="password" v-show="type == 'password'">
+            <i class="aui-iconfont tea-icon-lock icon-left"></i>
+            <input id="password" :type="display? 'text' : 'password'" placeholder="请输入您的密码" maxlength="15" :class="{ 'center': password }" v-model="password" @keyup.enter="submit">
+            <i class="aui-iconfont tea-icon-display  icon-right" :class="{ 'aui-hide' : !password}" @click="toggleDisplay()"></i>
+        </label>
+
+        <p class="tea-text-blue aui-font-size-16 aui-text-left aui-margin-l-10 aui-margin-t-15" @click="toggleType()">{{type == 'code'? '用密码登录' : '用验证码登录'}}</p>
+        <footer class="aui-margin-t-10 aui-margin-b-0">
+            <div class="aui-btn aui-btn-block tea-btn-submit" :class="{'tea-active' : !errorMsg}" @click="submit()">登录</div>
+        </footer>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 账号通用 -->
+<script type="text/javascript" src="../../script/account.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {}, vm = null;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    dom = {
+    };
+    var tel = $api.getStorage('tel')? $api.getStorage('tel') : '';
+    tel = api.pageParam.tel? api.pageParam.tel : tel;
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+            type: 'password',
+            display: false,
+            tel: tel,
+            password: '',
+            code: '',
+            time: '获取验证码',
+            count: 60,
+            sending: false
+        },
+        methods: {
+            clear: function(key){
+                this[key] = '';
+            },
+            toggleType: function(){
+                if (this.type == 'code') {
+                    this.type = 'password';
+                }
+                else {
+                    this.type = 'code';
+                }
+            },
+            toggleDisplay: function(){
+                this.display = !this.display;
+            },
+            submit: function(){
+                // 验证表单
+                if (vm.errorMsg) {
+                    api.toast({
+                        msg: vm.errorMsg,
+                        duration: 2000,
+                        location: 'middle'
+                    });
+                    return false;
+                }
+                if (this.type == "password") {
+                    account.loginByPassword();              
+                }
+                else {
+                    account.loginByCode();
+                }
+
+            },
+            sendCode: function(){
+                api.showProgress({
+                    style: 'default',
+                    animationType: 'fade',
+                    title: '努力加载中...',
+                    text: '请稍候...',
+                    modal: false
+                });
+                api.ajax({
+                    url: website + 'smscode.php',
+                    method: 'post',
+                    timeout: 30,
+                    data: {
+                        values: {
+                            ID: $api.getStorage('ID'),
+                            token: $api.getStorage('token'),
+                            tel: vm.tel,
+                            temp: 3,
+                            templateSMS: '158243',
+                            systemType: api.systemType,
+                            systemVersion: api.systemVersion,
+                            deviceId: api.deviceId,
+                            deviceModel: api.deviceModel,
+                            deviceName: api.deviceName,
+                            operator: api.operator,
+                            connectionType: api.connectionType
+                        }
+                    },
+                    returnAll:false
+                },function(ret,err){
+                    api.hideProgress();
+                    if (ret) {
+                        if (ret.succ == 1) {
+                            api.toast({
+                                msg: '发送成功',
+                                duration: 2000,
+                                location: 'middle'
+                            });
+                            if (vm.sending) return;
+                            vm.sending = true;
+                            vm.time = vm.count;
+                            var coutnnum = setInterval(function () {
+                                if(vm.time == 0){
+                                    clearInterval(coutnnum);
+                                    vm.sending = false;
+                                    return;
+                                }else{
+                                    vm.time -= 1;
+                                }
+                            },'1000');
+                        }
+                        else {
+                            vm.sending = false;
+                            api.toast({
+                                msg: '验证码发送失败',
+                                duration: 2000,
+                                location: 'middle'
+                            });
+                        }
+                    } else {
+                        tea.toast('ajax');
+                    };
+                });
+            }
+        },
+        computed: {
+            formatTime: function(){
+                switch (this.time) {
+                    case '获取验证码': 
+                        return '获取验证码';
+                        break;
+                    case 0:
+                        return '重新发送';
+                        break;
+                    default :
+                        return this.time + '秒后重发';
+                } 
+            },
+            errorMsg: function(type){
+                var rule = new tea.checkRule();
+                if (this.type == 'password') {
+                    rule.add(this.password, [{
+                        condition: 'minLength:6',
+                        errorMsg: '密码至少6位'
+                    }]);                    
+                }
+                else {
+                    rule.add(this.code, [{
+                        condition: 'isCode',
+                        errorMsg: '请输入正确的验证码'
+                    }]);
+                }
+                var errorMsg = rule.start();
+                return errorMsg;
+            },
+        }
+    })
+    
+    //vm.sendCode();
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+function blur(){
+    var arr = $api.domAll('input');
+    for (var i = arr.length - 1; i >= 0; i--) {
+        arr[i].blur();
+    }
+    // arr.forEach(function(item){
+    //     item.blur();
+    // })
+}
+
+/**********************************其他函数**********************************/
+
+</script>
+</html>

@@ -1,0 +1,333 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            height: 100%;
+            overflow: auto;
+            background: none;
+            text-align: center;
+        }
+
+        section {
+            position: absolute;
+            overflow: scroll;
+            top: 50%;
+            left: 50%;
+            margin-top: -8.05rem;
+            margin-left: -7.5rem;
+            width: 15.0rem;
+            height: 16.1rem;
+            background-color: #FFF;
+        }
+        header, footer, .aui-list-item{
+            height: 2.6rem;
+            line-height: 2.6rem;
+        }
+        .aui-list-item-label{
+            width: 45% !important;
+        }
+    </style>
+</head>
+<body tapmode ontouchend="tea.closeFrame(event,'section')">
+    <section id="section" class="tea-content-radius-10 aui-padded-l-15 aui-padded-r-15" >
+        <header id="header" class="aui-bar aui-bar-nav aui-bar-light" >
+            <div class="tea-text-title" style="width: 100%">手动输入</div>
+        </header>
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        车架号
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input id="license-num" type="text" placeholder="请输入车辆识别代号" tapmode oninput="input(0)">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        姓名
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input id="real-name" type="text" placeholder="请输入本人姓名" tapmode oninput="input(1)">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        身份证号
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input id="id-num" type="text" placeholder="请输入18位身份证号" tapmode oninput="input(2)">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        手机号码
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input id="telphone" type="tel" placeholder="请输入手机号码" tapmode oninput="input(3)">
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <footer id="footer">
+            <div class="aui-content">
+                <ul class="aui-list aui-list-noborder aui-form-list">
+                    <li class="aui-list-item aui-row aui-padded-r-15">
+                        <div class="aui-col-xs-6 aui-border-r" tapmode onclick="hideFrame()">
+                            取消
+                        </div>
+                        <div class="aui-col-xs-6 tea-text-blue" tapmode onclick="openWinInsurePrice()">
+                            下一步
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </footer>
+    </section>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化DOM对象
+    initDOM();
+
+    // 初始化变量
+    initVar();
+
+    // 更新HTML
+    initHTML();
+
+    // 初始化监听
+    initEventListener();
+
+    // 初始化其他模块
+    initModule();
+
+    // ajax请求数据
+    getData();
+
+};
+
+/**********************************声明全局变量**********************************/
+// 声明全局变量
+var dom = {};
+
+// 声明DOM对象
+var data = {}, values = {};
+
+/**********************************初始化变量**********************************/
+// 初始化DOM对象
+function initDOM(){
+
+    dom.inputs = $api.domAll('input');
+
+};
+
+// 初始化变量
+function initVar(){
+
+    values = api.pageParam.values;
+
+    // 初始化表单各项
+    for (var i = 0; i < dom.inputs.length; i++) {
+        var id = $api.attr(dom.inputs[i], 'id').replace(/-(\w)/g,upper);
+        values[id] = '';
+    }
+    if ($api.getStorage('telphone') !== undefined) {
+        values.telphone = $api.getStorage('telphone');
+    }
+
+    // 初始化订单信息
+    order = api.pageParam.order;
+    if (typeof order != "undefined") {
+        updateVar();
+    }
+
+};
+
+// 初始化HTML
+function initHTML(){
+
+    $api.val(dom.inputs[0], values.licenseNum);
+    $api.val(dom.inputs[1], values.realName);
+    $api.val(dom.inputs[2], values.idNum);
+    $api.val(dom.inputs[3], values.telphone);
+
+}
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************更新变量**********************************/
+// 更新DOM对象
+function updateDOM(){
+
+
+}
+
+// 更新变量
+function updateVar(){
+
+    values.licenseNum = order.cjh;
+    values.realName = order.xm;
+    values.idNum = order.sfz;
+    values.telphone = order.telphone;
+
+}
+
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+
+
+/**********************************广播消息**********************************/
+function sendEvent(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+// 隐藏层
+function hideFrame(){
+    api.setFrameAttr({
+        hidden: true
+    });
+}
+
+// 打开报价页面
+function openWinInsurePrice(){
+    if(check()){
+        api.openWin({
+            name: 'insure_price_win',
+            url: './insure_price_win.html',
+            pageParam: {
+                values: values,
+                order: order
+            }
+        });
+    }
+}
+
+// 输入响应函数
+function input(index_){
+    var el_ = dom.inputs[index_];
+    var val = $api.val(el_);
+    var id = $api.attr(el_, 'id').replace(/-(\w)/g,upper);
+    values[id] = val;
+}
+
+// 大写
+function upper(all, letter, index, originText){
+    console.log("匹配的完整文本：" + all);
+    console.log("匹配的捕获：" + letter);
+    console.log("索引：" + index);
+    console.log("源字符串：" + originText);
+    return letter.toUpperCase();
+}
+
+
+
+/**********************************其他函数**********************************/
+function check(){
+
+    if (values.lisenceNum === ''){
+        api.toast({
+            msg: '请输入格式正确的车辆识别代码~',
+            duration: 2000,
+            location: 'middle'
+        });
+        //tea.scroll('bottom');
+        return false;
+    }
+    if (values.realName === ''){
+        api.toast({
+            msg: '请输入本人真实姓名~',
+            duration: 2000,
+            location: 'middle'
+        });
+        return false;
+    }
+    if (!tea.checkIdNum(values.idNum)){
+        api.toast({
+            msg: '请输入格式正确的身份证号码~',
+            duration: 2000,
+            location: 'middle'
+        });
+        return false;
+    }
+    values.telphone = tea.toNum(values.telphone);
+    if (!tea.checkPhone(values.telphone)) {
+        api.toast({
+            msg: '请输入格式正确的11位手机号码~',
+            duration: 2000,
+            location: 'middle'
+        });
+        //phone.focus();
+        return false;
+    }
+
+    return true
+
+}
+/**********************************功能模块1**********************************/
+
+</script>
+</html>

@@ -1,0 +1,520 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>手机充值</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+		html,body {
+            height: 100%;
+            overflow: auto;
+		}
+ html,body{
+        background-color: #fff;
+        color: #333;
+    }
+    input::-webkit-input-placeholder { /* WebKit browsers */
+        color:    #ccc;
+    }
+    input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+        color:    #ccc;
+    }
+    input::-moz-placeholder { /* Mozilla Firefox 19+ */
+        color:    #ccc;
+    }
+    input:-ms-input-placeholder { /* Internet Explorer 10+ */
+        color:    #ccc;
+    }
+    .aui-col-xs-4{
+        display: table;
+    }
+    .money-type{
+        width: 100%;
+        height: 3.15rem;
+        text-align: center;
+        color: #999;
+        border: 1px solid #999;
+        border-radius: 0.25rem;
+        display:table-cell;
+        vertical-align: middle;
+    }
+    .active-money-type{
+        color: #3399ff;
+        border: 1px solid #3399ff;
+    }
+    .btn{
+        width:15rem;
+        margin: 0 auto;
+        border-radius: 99px;
+        opacity: 0.5;
+    }
+    .active-btn{
+        opacity: 1;
+    }
+    .select_nomey{
+    	background-color:#3399ff;
+    	color:#fff;
+    	border: none;
+    }
+	.coupon-active{
+		font-size: 0.8rem !important;
+		color: #FF6600 !important;
+	}
+    </style>
+</head>
+<body>
+
+<div class="aui-content aui-margin-t-15">
+    <div class="aui-list aui-form-list aui-padded-t-10 aui-list-noborder">
+            <div class="aui-list-item-inner aui-padded-l-15">
+                <div class="aui-list-item-input">
+                    <input id="phone-val" type="tel" maxlength="11" placeholder="请输入手机号码" style="font-size:1.5rem;color: #333;" tapmode oninput="isNumber(this)">
+                </div>
+                <div class="aui-list-item-label aui-iconfont tea-icon-contacts aui-margin-r-15" style="width: auto;font-size: 1.3rem;color: #3399ff;" tapmode onclick="historyPaynum()"></div>
+            </div>
+        <div id="operator" class="aui-list-header aui-padded-b-15 aui-font-size-14 aui-border-b" style="background-color: #fff; color: #ccc;">
+        	    <!--所属运营商：中国移动-->
+        </div>
+    </div>
+</div>
+<div class="aui-content aui-margin-b-15">
+    <div class="aui-card-list-content-padded">
+        <div class="aui-list-item-inner">
+            <div class="aui-list-item-title aui-margin-b-10 aui-margin-t-15" style="color: #333;">充话费</div>
+            <div id="pay-ytpe-content" class="aui-row aui-row-padded">
+               <!--此处动态加载内容区域-->
+            </div>
+        </div>
+    </div>
+<!--新增：现金券的使用 *LVPlum-->
+	<ul class="aui-list aui-list-in aui-form-list aui-border-b">
+		<li class="aui-list-item aui-list-item-arrow" style="margin-right: 0.75rem">
+			<div class="aui-list-item-inner" tapmode onclick="openCouponLists()">
+				<div class="aui-list-item-label" style="width: 4rem">
+					<span class="tea-text-title">现金券</span>
+				</div>
+				<div id="coupon" class="aui-font-size-14 tea-text-gray">暂无可用现金券</div>
+			</div>
+		</li>
+	</ul>
+<!--END *LVPlum-->
+    <div id="pay-hint" class="aui-list-item-title aui-margin-b-10 aui-margin-t-15" style="text-align: center;color: #3399ff;"></div><!--充值20元,支付19.99元-->
+    <div id="btn" class="aui-btn aui-btn-info aui-btn-block aui-btn-sm btn" tapmode onclick="submit()">确定充值，去支付</div>
+    <div class="aui-content-padded aui-padded-t-15">
+        <p>因充值平台业务量较大，有时会有充值失败的情况出现，尤其在月初。如遇充值失败，充值金额会原路退回，请隔一段时间后再重试充值。</p>
+    </div>
+</div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/zepto.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+
+/**********************************apiready**********************************/
+apiready = function(){
+	 api.parseTapmode();
+	 init('0');
+	 listmytel();
+
+/*新增：选择现金券监听事件 *LVPlum*/
+	 //获取现金券列表
+	 getCoupon();
+	 //监听到选择现金券事件，在这里修改页面金额和下次打开现金券列表的下标
+	 api.addEventListener({
+		 name: 'selectCoupon'
+	 },function(ret){
+		 values.coupon_id = ret.value.coupon['ID'];
+		 values.coupon_m = ret.value.coupon['coupon_m'];
+		 values.except_money = ret.value.coupon['except'].except_money;
+
+		 data.couponsIndex = ret.value.couponsIndex;
+		 updateHTML();
+
+		 //判定金额选中的情况下，改变现金券金额，更新dom
+		 if($('.select_nomey').length){
+			 select_nomey();
+		 }
+	 });
+/*END *LVPlum*/
+
+	 // 监听用户点击历史手机号码
+	 api.addEventListener({
+		     name:'selecttel'
+	     },function(ret,err){
+	     	if(ret){
+	     		if(ret.value.tel){
+	     			 $api.val($api.byId('phone-val'),ret.value.tel);
+	     			 init('1');
+	     		}else{
+//	     			init('0');
+					return ;
+	     		}
+	     	}
+	     });
+
+};
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {};
+
+/*新增：现金券所需全局变量 *LVPlum*/
+	data = {
+		result: [],　　　　//存放本页面所需对应现金券的结果数组
+		couponsIndex : 0,　//现金券页面需要选中项的下标
+		isUse: true
+	}
+	values = {           //初始化现金券id和现金券金额
+		coupon_id: '',
+		coupon_m: 0,
+		except_money: 0,
+	}
+/*END  *LVPlum*/
+
+// 加载充值金额
+function init(index){
+	if(index == '1'){
+		showp('数据载入中','');
+		var cztel = trim($api.val($api.byId('phone-val')));// 要充值的手机号码
+		api.ajax({
+			    url: website + 'cz.php?action=cztypelist',
+			    method: 'post',
+			    timeout: 30,
+			    dataType: 'json',
+			    returnAll:false,
+			    data:{
+			        values: {cztype: index, cztel: cztel},
+			    }
+			},function(ret,err){
+				if(ret){
+
+					if(ret.succ == "1"){
+					    	var obj = $api.byId('pay-ytpe-content');
+					    	var html = '';
+							for (var i = 0, len = ret.content.length; i < len; i++) {
+			               		 var r = ret.content[i];
+			               		 if(r.isuse == 1){
+									 html +='<div class="aui-col-xs-4" data-id= "'+r.ID+'" >'+
+										        '<div class="money-type active-money-type" data-id="'+r.ID+'" data-price = "'+r.price+'" data-cost = "'+r.m+'" tapmode onclick="select_nomey(this)">'+
+										            '<div class="aui-font-size-16 ">'+r.price+'</div>'+
+										            '<div class="aui-font-size-12 ">售价：'+r.m+'元</div>'+
+										        '</div>'+
+										    '</div>';
+										     api.parseTapmode();
+			               		 }else if(r.isuse == 0){
+				               		   html +='<div class="aui-col-xs-4" data-id= "'+r.ID+'" >'+
+										        '<div class="money-type">'+
+										            '<div class="aui-font-size-16 ">'+r.price+'</div>'+
+										            '<div class="aui-font-size-12 ">无货</div>'+
+										        '</div>'+
+										    '</div>';
+			               		 }
+			                }
+			                $api.html($api.byId('operator'), '所属运营商：'+ret.yysstr);
+			               	$api.html($api.byId('pay-ytpe-content'), html);
+			               	$api.addCls($api.byId('btn'), 'active-btn');
+		                }else{
+		                	api.toast({
+		                        msg:ret.msg
+	                        });
+		                }
+				}
+				 api.hideProgress();
+			});
+	}else{
+		var html = '<div class="aui-col-xs-4">'+
+	                    '<div class="money-type">'+
+	                        '<div class="aui-font-size-16 ">10元</div>'+
+	                    '</div>'+
+	                '</div>'+
+	                '<div class="aui-col-xs-4">'+
+	                    '<div class="money-type">'+
+	                        '<div class="aui-font-size-16" >20元</div>'+
+	                    '</div>'+
+	                '</div>'+
+	                '<div class="aui-col-xs-4">'+
+	                    '<div class="money-type">'+
+	                        '<div class="aui-font-size-16">30元</div>'+
+	                    '</div>'+
+	                '</div>'+
+	                '<div class="aui-col-xs-4">'+
+	                    '<div class="money-type">'+
+	                        '<div class="aui-font-size-16">40元</div>'+
+	                    '</div>'+
+	                '</div>'+
+	                '<div class="aui-col-xs-4">'+
+	                    '<div class="money-type">'+
+	                       ' <div class="aui-font-size-16">50元</div>'+
+	                    '</div>'+
+	                '</div>'+
+	                '<div class="aui-col-xs-4">'+
+	                    '<div class="money-type">'+
+	                        '<div class="aui-font-size-16" >100元</div>'+
+	                    '</div>'+
+	                '</div>';
+		$api.html($api.byId('pay-ytpe-content'), html);
+		$api.html($api.byId('operator'), '');
+		$api.html($api.byId('pay-hint'), '');
+		$api.removeCls($api.byId('btn'), 'active-btn');
+
+	}
+}
+function isNumber(me){
+	me.value=me.value.replace(/[^\d]/g,'');
+	if(me.value.length >=11){
+		init('1');
+	}else{
+		init('0');
+	}
+}
+
+	function listmytel(){
+		showp('号码载入中','');
+		api.ajax({
+		    url: website + 'cz.php?action=lasttel',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {userid: $api.getStorage('ID')},
+		    }
+		},function(ret,err){
+		    if (ret) {
+		       if(ret.tel != null){
+		            $api.val($api.byId('phone-val'), formattel(ret.tel));
+			   }else{
+			    	$api.val($api.byId('phone-val'), formattel($api.getStorage('telphone')));
+		       }
+		       checkinput($api.val($api.byId('phone-val')));
+		    }
+		    api.hideProgress();
+		});
+	}
+
+	function checkinput(str){
+		var val = trim(str)
+		if(val.length >= 11){
+			init(1);
+		}else{
+			init(0);
+		}
+		$api.val($api.byId('phone-val'), formattel(val));
+	}
+
+    function trim(str){   //去除所有空格
+        var result;
+        result = str.replace(/(^\s+)|(\s+$)/g,"");
+        result = result.replace(/\s/g,"");
+        return result;
+	}
+	// 选择充值金额
+	function select_nomey(me){
+		/*$(me).addClass("select_nomey").parent().siblings().find('.money-type').removeClass('select_nomey');
+		var cost = $(me).attr('data-cost');
+		var price = $(me).attr('data-price');
+		var id = $(me).attr('data-id');
+		$("#pay-hint").html("充值"+price+"，支付<span id='cost' data-id ="+id+" >"+cost+"</span>");*/
+
+	/*修改：不同情况下的金额刷新 *LVPlum*/
+		if(me){
+			// 现金券选中的情况下，选择不同的金额话费，进行更新dom
+			$(me).addClass("select_nomey").parent().siblings().find('.money-type').removeClass('select_nomey');
+			var cost = $(me).attr('data-cost');
+			var price = $(me).attr('data-price');
+
+			var id = $(me).attr('data-id');
+			if(Number(price.replace('元','')) >= Number(values.except_money)){
+				data.isUse = true;
+				updateHTML();
+				var result_m = parseFloat(cost)-parseFloat(values.coupon_m);
+			}else{
+				data.isUse = false;
+				updateHTML();
+				var result_m = parseFloat(cost);
+			}
+			$("#pay-hint").html("充值"+price+"，支付<span id='cost' data-id ="+id+" >"+result_m.toFixed(2)+"元</span>");
+		}else {
+			// 选中金额确定的情况下，选择不同现金券金额时，进行dom更新（在现金券选择监听中运行）
+			var checked = $('.select_nomey');
+			var cost = checked.attr('data-cost');
+			var price = checked.attr('data-price');
+			var id = checked.attr('data-id');
+
+			if(price.replace('元','') >= values.except_money){
+				data.isUse = true;
+				updateHTML();
+				var result_m = parseFloat(cost)-parseFloat(values.coupon_m);
+			}else{
+				data.isUse = false;
+				updateHTML();
+				var result_m = parseFloat(cost);
+			}
+			$("#pay-hint").html("充值"+price+"，支付<span id='cost' data-id ="+id+" >"+result_m.toFixed(2)+"元</span>");
+		}
+	/*修改：选择充值金额 *LVPlum*/
+	}
+
+	function formattel(tel){      //格式化号码 中间加空格
+		var reg = /^(\d{3})(\d{4})(\d{4})$/;
+		var matches = reg.exec(tel);
+		var newNum = matches[1] + ' ' + matches[2] + ' ' + matches[3];
+		return newNum;
+	}
+
+// 手机号验证
+function isVerifyPhoneNum(phone) {
+	var res = (/^1(3|4|5|7|8)\d{9}$/.test(phone));
+	return res;
+}
+// 提交按钮
+function submit(){
+	var phone_val = trim($api.val($api.byId('phone-val')));
+	if(phone_val.length===0){
+		api.toast({
+	        msg:'请输入要充值的手机号码'
+        });
+	}else if(isVerifyPhoneNum(phone_val)){
+		var cost_val =$("#cost").html();
+		var pay_id = $("#cost").attr("data-id");
+		if(cost_val){
+			// 跳转到支付金额页面
+			openPaynum_win(phone_val,cost_val,pay_id);
+		}else{
+			api.toast({
+	       	 msg:'请选择要充值的项目'
+        	});
+		}
+	}else{
+		api.toast({
+	        msg:'手机号码格式不对'
+        });
+	}
+
+}
+// 跳转到支付金额页面
+function openPaynum_win(telnum,cost,pay_id){
+	api.openWin({
+		        name: 'pay_win',
+		        url: '../pay/pay_win.html',
+		        pageParam: {
+					title: '支付充值费用(' + telnum + ')',
+					money: parseFloat(cost) + parseFloat(values.coupon_m),
+					result_m: parseFloat(cost),
+					type: 'phoneRecharge',
+					values: {
+						paymoney: cost,
+						czindex: pay_id,
+						cztel: telnum,
+						mtype: '19',
+						coupon_id: values.coupon_id, //现金券id
+						coupon_m: values.coupon_m,    //优惠金额
+					}
+				},
+		        vScrollBarEnabled: false
+		   	 })
+}
+// 打开历史充值号码和通讯录
+function historyPaynum(){
+	_openWin('历史充值号码','./history_paynum_win.html');// 打开新页面win
+}
+
+/*新增：现金券的使用  *LVPlum*/
+	//获取现金券列表
+	function getCoupon(){
+		api.ajax({
+			url: website + 'api_cj.php?action=my_coupon',
+			method: 'post',
+			timeout: 30,
+			data: {
+				values: {
+					userid : $api.getStorage('ID'),
+					state : '2', //2为可用现金券列表
+				},
+			}
+		}, function (ret, err) {
+			if(!ret){
+				tea.toast('ajax');
+				return false
+			}
+			if(ret){
+				if(ret.length){
+					/*数组排序*/
+					ret.sort(function(a,b){
+						return parseFloat(a.coupon_m) > parseFloat(b.coupon_m) ? 1 : -1;
+					});
+					for(i in ret){
+						if(ret[i].coupon_type == 'hf'){
+							data.result.unshift(ret[i]);
+						}else {
+							data.result.push(ret[i]);
+						}
+					}
+					if(data.result[0].coupon_type == 'hf'){
+						values.coupon_m = data.result[0].coupon_m;
+						values.coupon_id = data.result[0].ID;
+						values.except_money = data.result[0].except.except_money
+					}
+				}
+				updateHTML();
+			}
+		});
+	}
+	//更新现金券dom
+	function updateHTML(){
+		var coupon =  $api.byId('coupon');
+		if(data.isUse){
+			if(values.coupon_m != 0){
+				$api.text(coupon, '-¥'+values.coupon_m);
+				$api.addCls(coupon, 'coupon-active');
+			}else {
+				$api.text(coupon, '暂无可用现金券');
+				$api.removeCls(coupon, 'coupon-active');
+			}
+		}else {
+			$api.text(coupon, '暂无可用现金券');
+			$api.removeCls(coupon, 'coupon-active');
+		}
+	}
+	//打开可用现金券列表
+	function openCouponLists(){
+		api.openWin({
+			name: 'coupon_list_win',
+			url: '../unit/coupon_list_win.html',
+			pageParam: {
+				coupons: data.result,
+				couponType: 'hf',　　　//本页面对应的现金券的类型
+				couponsIndex: data.couponsIndex,
+			}
+		});
+	}
+
+
+/*END *LVPlum*/
+
+</script>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        .tea-bg-dard {
+            height: 5.75rem !important;
+            line-height: 1 !important;
+            background-color: #333 !important;
+        }
+        .aui-list-item-media img{
+            width: 3.3rem !important;
+            height: 3.3rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <section class="aui-content">
+            <div class="aui-list aui-media-list aui-list-noborder tea-bg-dard">
+                <div class="aui-list-item aui-list-item-middle tea-bg-dard">
+                    <div class="aui-media-list-item-inner tea-bg-dard">
+                        <div class="aui-list-item-media" style="width:4.5rem;">
+                            <img src="../../image/avatar.png" class="aui-img-round" >
+                        </div>
+                        <div class="aui-list-item-inner aui-list-item-arrow">
+                            <div class="aui-list-item-text aui-text-white aui-font-size-18">业务员</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <ul class="aui-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title">我的订单</div>
+                    <div class="aui-list-item-right" style="line-height: 1.2rem">
+                        <span class="aui-radio aui-checked aui-margin-l-5"></span>
+                        <span class="aui-font-size-16 tea-text-title">只看未完成</span> 
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <card v-bind="card" :index="index" v-for="(item, index) in 5">
+            <span class="tea-text-title tea-font-weight-bold">客户姓名</span>
+            <span class="tea-text-yellow">待去车主家取证</span>
+        </card>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+
+
+<script type="text/javascript">
+
+
+</script>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui20/aui.2.0.css" />
+    <style type="text/css">
+	body{background-color: #fff}
+	.chbox{
+	position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 99;	
+	}
+    </style>
+</head>
+<body>
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-media-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-row aui-row-padded" id="list">
+                        <div class="aui-col-xs-3 aui-text-center" tapmode onclick="usercamera()">
+                           <i class="aui-iconfont aui-icon-camera" style="font-size:35px"></i>
+                           <p>使用相机</p>
+                        </div>                     
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript">
+var UIMediaScanner = null, imageBrowser = null, isIOS = false, limit = null, sid = null;
+var imgarr = new Array();
+    apiready = function(){
+    	limit = api.pageParam.limit;
+    	sid = api.pageParam.sid;
+        isIOS = api.systemType == "ios" ? true : false;
+        UIMediaScanner = api.require('UIMediaScanner'); 
+        imageBrowser = api.require('imageBrowser');   
+        api.parseTapmode();
+        loaddate();
+		api.addEventListener({
+		    name:'scrolltobottom',
+		    extra:{
+		        threshold:0            //设置距离底部多少距离时触发，默认值为0，数字类型
+		    }
+		}, function(ret, err){        
+		    loadmorepic();
+		});    
+		api.addEventListener({
+		    name: 'openview'
+		}, function(ret, err){
+			if(imgarr.length > 0){
+				openbigimg(imgarr,1);
+			}
+		});		
+		api.addEventListener({
+		    name: 'postok'
+		}, function(ret, err){
+			
+		});	    
+    }
+    function loaddate(){
+    showp('相册准备中','');
+		UIMediaScanner.scan({
+		    type: 'all',
+		    count: 30,
+		    sort: {
+		        key: 'time',
+		        order: 'desc'
+		    },
+		    thumbnail: {
+		        w: 100, 
+		        h: 100
+		    }
+		}, function( ret ){
+		    if( ret ){
+		        var obj = $api.byId('list');
+		        var html = '';
+	            for (var i = 0, len = ret.list.length; i < len; i++) {
+	                var r = ret.list[i];
+	                html += '<div class="aui-col-xs-3">';
+	                if(limit == 1){
+                    	html += '<img src="'+ r.thumbPath +'" tapmode onclick="openbigimg(\''+ r.path +'\')">';
+                    }else{
+                    	html += '<img src="'+ r.thumbPath +'" tapmode onclick="openbigimg(\''+ r.path +'\')"><input type="checkbox" date-img="'+ r.path +'" class="aui-checkbox chbox" tapmode="" name="checkbox" onclick="checksel()">';
+                    }
+                    html += '</div>';
+	             }  
+	             $api.append(obj, html);
+	             api.hideProgress();
+		    }
+		});    
+    }
+    function loadmorepic(){
+    showp('图片加载中','');
+		UIMediaScanner.fetch(function( ret, err ){
+		    if( ret ){
+		        var obj = $api.byId('list');
+		        var html = '';
+	            for (var i = 0, len = ret.list.length; i < len; i++) {
+	                var r = ret.list[i];
+	                html += '<div class="aui-col-xs-3">';
+	                if(limit == 1){
+                    	html += '<img src="'+ r.thumbPath +'" tapmode onclick="openbigimg(\''+ r.path +'\')">';
+                    }else{
+                    	html += '<img src="'+ r.thumbPath +'" tapmode onclick="openbigimg(\''+ r.path +'\')"><input type="checkbox" date-img="'+ r.path +'" class="aui-checkbox chbox" tapmode="" name="checkbox" onclick="checksel()">';
+                    }
+                    html += '</div>';
+	             }  
+	             $api.append(obj, html);               
+		    }else{
+		         api.toast({
+	                 msg:'没有更多图片了'
+                 });
+		    }
+		    api.hideProgress();
+		});    
+    }
+
+    function openbigimg(path,isarr){
+    	if(limit == 1 && !isarr){
+    		sendimg(path, 0);
+    		return false;
+    	}
+
+		    if(isIOS){
+		    	showp('图片处理中...','');
+				UIMediaScanner.transPath({
+				   path: path[0]
+				}, function(ret, err){
+				    if( ret ){
+						imageBrowser.openImages({
+							showList : false,
+						    imageUrls: [ret.path]
+						}); 
+						api.hideProgress();						
+				    }
+				});		    	
+		    }else{
+				imageBrowser.openImages({
+					showList : false,
+				    imageUrls: path
+				}); 		
+			}  
+
+    }
+	function usercamera(){
+			api.getPicture({
+				sourceType : "camera",
+				encodingType : "jpg",
+				destinationType : "url",
+				mediaValue : "pic",
+				quality : 100,
+				saveToPhotoAlbum : true
+			}, function(ret, err) {
+				if (ret && ret.data) {
+					// 拍照返回的本地路径
+					//var returnUrl = ret.data;
+                    //imgarr.push(ret.data);   //相机在这里用完
+                    sendimg(ret.data,1);                   
+				} else {
+					api.toast({
+						msg : '没有选择，或者选择出错'
+					});
+				}
+			});
+	}
+	function checksel(){
+	  showp('图像处理中...','请稍候');
+	  var cht = $api.domAll('input[type=checkbox]');
+	  var alcheck = 0;
+	  imgarr = [];
+        for (var i = 0, len = cht.length; i < len; i++) {
+             if(cht[i].checked){
+             		alcheck ++ ;
+			        if(limit == 1){
+			        	if(alcheck > 1){
+				        	api.alert({msg:('只能选择一张图片')});
+				        	cht[i].checked = false;
+				        	api.hideProgress();
+				        	return false;
+			        	}      
+			         }              	                	                
+	                var img = $api.attr(cht[i], 'date-img');
+	                	imgarr.push(img); 
+			        api.sendEvent({         //发送按钮上色
+					    name: 'dis',
+					});                 	
+                }
+	        api.sendEvent({         //发送已经选择了多少个
+			    name: 'alcheck',
+			    extra: {
+			        num: alcheck, 
+			    }
+			});			                
+       	}       
+       	api.hideProgress();
+	}
+	function sendimg(simg,tag){    //tag 0是直接在相册里面调用，1是相机的，因为相机无需转换路径
+				showp('图像处理中...','请稍候');
+	            if(isIOS && tag ==0){
+					UIMediaScanner.transPath({
+					   path: simg
+					}, function(ret, err){
+			    		if( ret ){
+	                         var img = ret.path;
+					         api.sendEvent({
+							    name: 'getimgarr',
+							    extra: {
+									img: img,
+									sid: sid
+							    }
+							 });                	                	
+		                	api.closeWin();	  
+		                	api.hideProgress();                        
+					    }
+					});                
+	            }else{
+			         api.sendEvent({
+					    name: 'getimgarr',
+					    extra: {
+							img: simg,
+							sid: sid
+					    }
+					 });                	                	
+	            	api.closeWin();	 
+	            	api.hideProgress();               		
+	            }                              	
+	}
+</script>
+</html>

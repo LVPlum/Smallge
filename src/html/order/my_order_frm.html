@@ -1,0 +1,441 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            overflow: auto;
+            height: 100%;
+        }
+
+        body {
+            padding-bottom: 0.5rem;
+        }
+
+        .aui-card-list-content-padded {
+            padding-right: 1rem;
+        }
+
+        .aui-card-list {
+            margin: 0;
+        }
+        /*.aui-icon-my:before {
+            display: inline-block;
+            transform: rotate(45deg)
+        }*/
+        .aui-card-list-header {
+            line-height: 2.3rem;
+            height: 2.3rem;
+        }
+
+        .aui-iconfont {
+            margin-right: 0.25rem !important;
+            font-size: 1.05rem !important;
+        }
+    </style>
+</head>
+<body>
+<section id="nothing" class="tea-nothing aui-hide">
+    <img src="../../image/nothing.png">
+    <p>您还没有任何订单哦~</p>
+</section>
+<section id="order-list"></section>
+<section id="order-done-list"></section>
+<!--<section class="aui-padded-10 aui-padded-b-0">
+    <div class="aui-card-list tea-content-radius-10">
+        <div class="aui-card-list-header aui-border-b">
+            <div>
+                <i class="aui-iconfont aui-icon-my"></i>
+                <span class="aui-list-item-title"> 最近联系人</span>
+            </div>
+            <div class="aui-list-item-right tea-text-blue">未完成</div>
+        </div>
+        <div class="aui-card-list-content-padded aui-border-b aui-list-item-arrow" tapmode onclick="openWinOrderDetail('{{=value.item}}',{{=value.data.ID}})">
+            <div class="aui-list-item-title aui-ellipsis-1">内容区域，卡片列表布内容区域，卡片列表布</div>
+            <div class="aui-list-item-title">内容区域，卡片列表布</div>
+            <div class="aui-list-item-text">内容区域，卡片列表布</div>
+        </div>
+        <div class="aui-card-list-header">
+            <div> </div>
+            <div class="aui-btn aui-btn-outlined aui-btn-sm tea-btn-blue tea-btn-radius">去点评</div>
+        </div>
+    </div>
+</section>
+<section class="aui-padded-10">
+    <div class="aui-card-list tea-content-radius-10">
+        <div class="aui-card-list-header aui-border-b">
+            <div>
+                <i class="aui-iconfont aui-icon-my"></i>
+                <span class="aui-list-item-title"> 最近联系人</span>
+            </div>
+            <div class="aui-list-item-right tea-text-blue">未完成</div>
+        </div>
+        <div class="aui-card-list-content-padded aui-border-b aui-list-item-arrow">
+            <div class="aui-list-item-title aui-ellipsis-1">内容区域，卡片列表布内容区域，卡片列表布</div>
+            <div class="aui-list-item-title">内容区域，卡片列表布</div>
+            <div class="aui-list-item-text">内容区域，卡片列表布</div>
+        </div>
+        <div class="aui-card-list-header">
+            <div> </div>
+            <div class="aui-btn aui-btn-outlined aui-btn-sm tea-btn-blue tea-btn-radius">去点评</div>
+        </div>
+    </div>
+</section>-->
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!--aui toast-->
+<script type="text/javascript" src="../../script/aui-toast.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+    {{~it:value:index}}
+    {{?value.item == '特权卡'}}
+    <section class="aui-padded-10 aui-padded-b-0">
+        <div class="aui-list aui-card-list tea-content-radius-10">
+            <div class="aui-card-list-header aui-border-b">
+                <div>
+                    <i class="aui-iconfont tea-icon-vip aui-margin-r-10" style="color: #ffc50f"></i>
+                    <span class="aui-list-item-title">VIP</span>
+                </div>
+                <div class="aui-list-item-right tea-text-blue">{{=value.data.status}}</div>
+            </div>
+            <div class="aui-card-list-content-padded aui-list-item-arrow" tapmode onclick="openWinOrderDetail('{{=value.item}}',{{=value.data.id}},'{{=value.data.pay_status}}')">
+                <div class="aui-list-item-title">种类：{{=value.item}}</div>
+                <div class="aui-list-item-title">车牌：{{=value.data.car_num}}</div>
+                <div class="aui-list-item-title">
+                    费用：
+                    <span class="{{=(value.data.status == '未完成'? 'tea-text-blue': '')}}">
+                        ¥{{=value.data.money}} {{=(value.data.status == '未完成'? '去支付': '')}}
+                    </span>
+                </div>
+                <div class="aui-list-item-text">购买时间：{{=value.data.addtime}}</div>
+            </div>
+        </div>
+    </section>
+    {{?}}
+    {{?value.item == '网约审车'}}
+    <section class="aui-padded-10 aui-padded-b-0">
+        <div class="aui-list aui-card-list tea-content-radius-10">
+            <div class="aui-card-list-header aui-border-b">
+                <div>
+                    <i class="aui-iconfont tea-icon-check" style="color: #41a4ec"></i>
+                    <span class="aui-list-item-title">{{=value.item}}</span>
+                </div>
+                <div class="aui-list-item-right tea-text-blue">{{=(value.data.status == '未完成'? '已提交': value.data.status)}}</div>
+            </div>
+            <div class="aui-card-list-content-padded aui-list-item-arrow" tapmode onclick="openWinOrderDetail('{{=value.item}}',{{=value.data.ID}})">
+                <div class="aui-list-item-title">监测站：{{=value.data.name}}</div>
+                <div class="aui-list-item-title">车牌：{{=value.data.carnum}}</div>
+                <div class="aui-list-item-title aui-ellipsis-2">业务：{{=value.data.business}}</div>
+                <div class="aui-list-item-text">提交时间：{{=value.data.addtime}}</div>
+            </div>
+        </div>
+    </section>
+    {{?}}
+    {{?value.item == '手机充值'}}
+    <section class="aui-padded-10 aui-padded-b-0">
+        <div class="aui-list aui-card-list tea-content-radius-10">
+            <div class="aui-card-list-header aui-border-b">
+                <div>
+                    <i class="aui-iconfont tea-icon-check" style="color: #41a4ec"></i>
+                    <span class="aui-list-item-title">{{=value.item}}</span>
+                </div>
+                <div class="aui-list-item-right tea-text-blue">{{=value.data.status}}</div>
+            </div>
+            <div class="aui-card-list-content-padded">
+                <div class="aui-list-item-title">充值号码：{{=value.data.cztel}}</div>
+                <div class="aui-list-item-text">充值提交时间：{{=value.data.addtime}}</div>
+                <div class="aui-list-item-text">充值面额：¥{{=value.data.fm}}</div>
+                <div class="aui-list-item-text ">实际支付：¥{{=value.data.m}}</div>
+                <div class="aui-list-item-text ">状态：{{=value.data.ret}}</div>
+            </div>
+        </div>
+    </section>
+    {{?}}
+    {{?value.item == '车辆保险'}}
+    <section class="aui-padded-10 aui-padded-b-0">
+        <div class="aui-list aui-card-list tea-content-radius-10">
+            <div class="aui-card-list-header aui-border-b">
+                <div>
+                    <i class="aui-iconfont tea-icon-insure" style="color: #ff855e"></i>
+                    <span class="aui-list-item-title">{{=value.item}}</span>
+                </div>
+                <div class="aui-list-item-right tea-text-blue">{{=value.data.status}}</div>
+            </div>
+            <div class="aui-card-list-content-padded aui-list-item-arrow" tapmode onclick="openWinOrderDetail('{{=value.item}}',{{=value.data.ID}},{{=value.data.sh}},'{{=value.data.status}}')">
+                {{?value.data.bxcom}}
+                <div class="aui-list-item-title">{{=value.data.bxcom}}</div>
+                {{?}}
+                <div class="aui-list-item-title">{{=(value.data.carnum == '' ? '新车':'车牌：' + value.data.carnum)}}</div>
+                <div class="aui-list-item-text">提交时间：{{=value.data.addtime}}</div>
+                <div class="aui-list-item-text ">{{=(value.data.sh == 0? '投保价格：审核中': '投保价格：¥' + value.data.youhuipay)}}</div>
+            </div>
+        </div>
+    </section>
+    {{?}}
+    {{?value.item == '找代办'}}
+    <section class="aui-padded-10 aui-padded-b-0">
+        <div class="aui-list aui-card-list tea-content-radius-10">
+            <div class="aui-card-list-header aui-border-b">
+                <div>
+                    <i class="aui-iconfont tea-icon-agency" style="color: #00be9b"></i>
+                    <span class="aui-list-item-title">{{=value.item}}</span>
+                </div>
+                <div class="aui-list-item-right tea-text-blue">{{=value.data.status}}</div>
+            </div>
+            <div class="aui-card-list-content-padded aui-list-item-arrow" tapmode onclick="openWinOrderDetail('{{=value.item}}',{{=value.data.id}})">
+                {{?value.data.name}}
+                <div class="aui-list-item-title">{{=value.data.name}}</div>
+                {{?}}
+                {{?value.data.car_num}}
+                <div class="aui-list-item-title">车牌：{{=value.data.car_num}}</div>
+                {{?}}
+                <div class="aui-list-item-title aui-ellipsis-2">业务：{{=value.data.business}}</div>
+                <div class="aui-list-item-text">提交时间：{{=value.data.addtime}}</div>
+            </div>
+            {{?value.item == '已完成'}}
+            <div class="aui-card-list-header aui-border-t">
+                <div> </div>
+                <div class="aui-btn aui-btn-outlined aui-btn-sm tea-btn-blue tea-btn-radius">去点评</div>
+            </div>
+            {{?}}
+        </div>
+    </section>
+    {{?}}
+    {{?value.item == '加盟申请'}}
+    <section class="aui-padded-10 aui-padded-b-0">
+        <div class="aui-list aui-card-list tea-content-radius-10">
+            <div class="aui-card-list-header aui-border-b">
+                <div>
+                    <i class="aui-iconfont tea-icon-join" style="color: #00be9b"></i>
+                    <span class="aui-list-item-title">{{=value.item}}</span>
+                </div>
+                <div class="aui-list-item-right tea-text-blue">{{=value.data.status}}</div>
+            </div>
+            <div class="aui-card-list-content-padded aui-list-item-arrow" tapmode onclick="openWinOrderDetail('{{=value.item}}',{{=value.data.id}})">
+                <div class="aui-list-item-title">{{=value.data.agency_name}}</div>
+                <div class="aui-list-item-title">{{=value.data.shop_address}}</div>
+                <div class="aui-list-item-text">提交时间：{{=value.data.addtime}}</div>
+            </div>
+        </div>
+    </section>
+    {{?}}
+    {{~}}
+</script>
+
+<script type="text/javascript">
+
+    /**********************************apiready**********************************/
+    apiready = function(){
+
+        // 初始化DOM对象
+        initDOM();
+
+        // 初始化变量
+        initVar();
+
+        // 更新HTML
+        //initHTML();
+
+        // 初始化监听
+        initEventListener();
+
+        // 初始化其他模块
+        initModule();
+
+        // ajax请求数据
+        getData();
+
+        //updateHTML();
+
+    };
+
+    /**********************************声明全局变量**********************************/
+// 声明DOM对象
+    var dom = {};
+
+    // 声明全局变量
+    var data = {}, values = {};
+
+    /**********************************初始化变量**********************************/
+// 初始化DOM对象
+    function initDOM(){
+
+
+
+    };
+
+    // 初始化变量
+    function initVar(){
+
+        data = tea.objToArr(api.pageParam.data);
+
+    };
+
+    // 初始化HTML
+    function initHTML(){
+
+        tea.doT(data, 'template', 'order-list');
+
+    }
+    /**********************************初始化监听**********************************/
+    function initEventListener(){
+
+        api.addEventListener({
+            name: 'typeSelected'
+        }, function(ret, err){
+            if(ret){
+                getData(ret.value.type);
+            }
+        });
+
+    }
+
+    /**********************************初始化模块**********************************/
+    function initModule(){
+
+        toast = new auiToast();
+
+    }
+
+
+    /**********************************ajax请求数据**********************************/
+    function getData(condition_){
+
+        var url_ = "api_q.php?action=get_one_order_list";
+        if (typeof condition_ == "undefined" || condition_ == "我的订单") {
+            url_ = 'api_q.php?action=get_all_order_list';
+        }
+
+        condition_ = tea.check(condition_);
+
+        values.userid = $api.getStorage('ID');
+        values.type = api.pageParam.index;
+        values.condition = condition_;
+
+        tea.toast("loading");
+
+        tea.ajax({
+            url: website + url_,
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data: {
+                values: values
+            }
+        },function(ret,err){
+            toast.hide();
+            if (ret) {
+//            _alert(ret);
+                var nothing = $api.byId('nothing');
+                if (ret.succ == 0) {
+                    $api.removeCls(nothing, 'aui-hide');
+                    data = {};
+                    initHTML();
+                    return;
+                }
+                $api.addCls(nothing, 'aui-hide');
+                data = tea.objToArr(ret);
+                initHTML();
+            } else {
+                tea.toast('ajax');
+            };
+        });
+
+
+    }
+
+    /**********************************更新变量**********************************/
+// 更新DOM对象
+    function updateDOM(){
+
+
+
+    }
+
+    // 更新变量
+    function updateVar(){
+
+
+
+    }
+
+    /**********************************更新HTML**********************************/
+    function updateHTML(){
+
+        values.userid = $api.getStorage('ID');
+        values.condition = 'carre';
+        api.ajax({
+            url: website + 'api_q.php?action=get_one_order_list',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data: {
+                values: values
+            }
+        },function(ret,err){
+            if (ret) {
+                data = tea.objToArr(ret);
+                tea.doT(data,'template','order-list');
+            } else {
+                tea.toast('ajax');
+            };
+        });
+
+    }
+
+
+
+    /**********************************广播消息**********************************/
+    function sendEvent(){
+
+
+
+    }
+
+    /**********************************DOM响应**********************************/
+
+    function openWinOrderDetail(type_, id_, sh_, status_){
+
+        tea.check(sh_);
+
+        if (tea.token()) {
+            api.openWin({
+                name: 'order_detail_win',
+                url: './order_detail_win.html',
+                pageParam: {
+                    type: type_,
+                    id: id_,
+                    sh: sh_,
+                    status: status_
+                }
+            });
+        }
+    }
+    /**********************************其他函数**********************************/
+
+
+</script>
+</html>

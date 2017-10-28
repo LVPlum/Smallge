@@ -1,0 +1,567 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            /* height: 100%; */
+            overflow: auto;
+        }
+
+        .aui-radio {
+            position: absolute !important;
+            top: 0.2rem;
+            right: 0.2rem;
+            text-align: center;
+            z-index: 2;
+        }
+
+        .aui-disabled {
+            background-color: rgba(0, 0, 0, .5) !important;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-media-list aui-list-noborder">
+            <li class="aui-list-item tea-bg-default">
+                <div class="aui-list-item-inner">
+                    <div id="list" class="aui-row aui-row-padded">
+                        <!-- <div id="video" class="aui-col-xs-4 aui-text-center aui-hide" tapmode onclick="newVideo()">
+                           <i class="aui-iconfont aui-icon-video" style="font-size:35px;"></i>
+                           <p>拍新视频</p>
+                        </div>       -->
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+
+    {{?values.type == 'picture'}}
+    <div class="aui-col-xs-4 aui-text-center" tapmode onclick="openCamera()">
+       <i class="aui-iconfont aui-icon-camera" style="font-size:35px;"></i>
+       <p id = "text">拍新照片</p>
+    </div>
+    {{~it:value:index}}
+    <div class="aui-col-xs-4">
+        {{?values.limit == 1}}
+            <div class="tea-img-box" style="background-image:url({{=value.thumbPath}})" tapmode onclick="set('{{=value.path}}')"></div>
+        {{??true}}
+            <div class="tea-img-box" style="background-image:url({{=value.thumbPath}})" tapmode onclick="openbigimg('{{=value.path}}', this)"></div>
+            <div class="aui-radio aui-disabled tea-big" onclick="select(this, '{{=value.path}}')"></div>
+        {{?}}
+    </div>
+    {{~}}
+
+    {{??values.type == 'video'}}
+    <div class="aui-col-xs-4 aui-text-center" tapmode onclick="openCamera()">
+       <i class="aui-iconfont aui-icon-camera" style="font-size:35px;"></i>
+       <p id = "text">拍新视频</p>
+    </div>
+    {{~it:value:index}}
+    <div class="aui-col-xs-4" tapmode onclick="openVideo('{{=value.path}}', '{{=value.thumbPath}}')">
+        <div class="tea-img-box" style="background-image:url({{=value.thumbPath}})"></div>
+        <img class="tea-play-box"/>
+    </div>
+    {{~}}
+    {{?}}
+
+</script>
+
+<script type="text/template" id="append-template">
+
+    {{?values.type == 'picture'}}
+
+    {{~it:value:index}}
+    <div class="aui-col-xs-4">
+        {{?values.limit == 1}}
+            <div class="tea-img-box" style="background-image:url({{=value.thumbPath}})" tapmode onclick="set('{{=value.path}}')"></div>
+        {{??true}}
+            <div class="tea-img-box" style="background-image:url({{=value.thumbPath}})" tapmode onclick="openbigimg('{{=value.path}}', this)"></div>
+            <div class="aui-radio aui-disabled tea-big" onclick="select(this, '{{=value.path}}')"></div>
+        {{?}}
+    </div>
+    {{~}}
+
+    {{??values.type == 'video'}}
+
+    {{~it:value:index}}
+    <div class="aui-col-xs-4" tapmode onclick="openVideo('{{=value.path}}', '{{=value.thumbPath}}')">
+        <div class="tea-img-box" style="background-image:url({{=value.thumbPath}})"></div>
+        <img class="tea-play-box"/>
+    </div>
+    {{~}}
+    {{?}}
+
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {}, UIMediaScanner = null, imageBrowser = null, videoKit = null;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    initVar(api.pageParam);
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+    // ajax请求数据
+    getData();
+
+};
+
+/**********************************初始化变量**********************************/
+function initVar(data_){
+
+    dom = {
+
+    };
+
+    data = {
+    };
+
+    values = {
+        text: '图片',
+        isIOS: api.systemType == "ios" ? true : false,
+        to: data_.to,
+        type: data_.type,
+        limit: data_.limit,
+        imgId: data_.imgId,
+        imgArr: [],
+        elArr: [],
+        thumbnail: [],
+        flag: 0
+    };
+
+    if (values.type == 'video') {
+        values.text = '视频';
+        //dom.text.innerHTML = values.text;
+    }
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+    UIMediaScanner = api.require('UIMediaScanner');
+    imageBrowser = api.require('imageBrowser');
+    // 引入过滤压缩模块
+    //imageFilter = api.require("imageFilter");
+    videoKit = api.require("videoKit");
+    updateHTML(true);
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+    // 懒加载
+    api.addEventListener({
+        name:'scrolltobottom',
+        extra:{
+            threshold:0 //设置距离底部多少距离时触发，默认值为0，数字类型
+        }
+    }, function(ret, err){
+        updateHTML();
+    });
+
+    api.addEventListener({
+        name: 'saveVideo'
+    }, function(ret, err){
+        if( ret ){
+            values.thumbnail[0] = ret.value.thumbnail;
+            set(ret.value.url);
+        }else{
+            alert( JSON.stringify( err ) );
+        }
+    });
+
+    api.addEventListener({
+        name: 'sure'
+    }, function(ret, err){
+        if( ret ){
+            sure();
+        }else{
+             alert( JSON.stringify( err ) );
+        }
+    });
+
+    api.addEventListener({
+        name: 'reload'
+    }, function(ret, err){
+        if( ret ){
+            initVar(ret.value);
+            updateHTML(true);
+        }else{
+            alert( JSON.stringify( err ) );
+        }
+    });
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************更新变量**********************************/
+function updateVar(){
+
+
+}
+
+function updateDom(){
+
+
+
+}
+/**********************************更新HTML**********************************/
+function updateHTML(_first){
+
+    var num = 20;
+    api.showProgress({
+        style: 'default',
+        animationType: 'fade',
+        title: values.text + '加载中...',
+        text: '请稍候...',
+        modal: false
+    });
+    if (_first == true) {
+        UIMediaScanner.scan({
+            type: values.type,
+            count: 20,
+            sort: {
+                key: 'time',
+                order: 'desc'
+            },
+            thumbnail: {
+                w: 800,
+                h: 800
+            }
+        }, function( ret ){
+            if( ret ){
+                tea.doT(ret.list, 'template', 'list');
+                api.hideProgress();
+            }
+        });
+        return;
+    }
+    UIMediaScanner.fetch(function( ret, err ){
+        api.hideProgress();
+        if( ret.list.length > 1 ){
+            tea.doT(ret.list, 'append-template', 'list', 'append');
+            api.hideProgress();
+        }else{
+            tea.toast('custom','没有更多' + values.text + '了');
+        }
+    });
+
+}
+
+/**********************************DOM响应**********************************/
+
+function openCamera(){
+    var mediaValue = values.type == 'video'? 'video':'pic';
+    api.getPicture({
+        sourceType : "camera",
+        encodingType : "jpg",
+        destinationType : "url",
+        mediaValue : mediaValue,
+        videoQuality: 'high', // 只对IOS有效
+        quality : 100,
+        saveToPhotoAlbum : true
+    }, function(ret, err) {
+        if (ret && ret.data) {
+            values.imgArr.push(ret.data);   //相机在这里用完
+            sure(true);
+        } else {
+
+        }
+    });
+}
+
+function openbigimg(url_, el_){
+
+    // 获取选择元素及序号
+    var select = $api.next(el_);
+    var index = $api.text(select);
+
+    // 有序号则展示列表，无则展示单张照片
+    if (index) {
+        transPath(values.imgArr, function(urls, arr){
+            values.imgArr = urls;
+            imageBrowser.openImages({
+                imageUrls: arr,
+                showList: false,
+                activeIndex: index - 1
+            });
+        })
+    }
+    else {
+        transPath(url_, function(urls, arr){
+            imageBrowser.openImages({
+                imageUrls: arr,
+                showList: false,
+                tapClose: true
+            });
+        })
+    }
+}
+
+function openVideo(url_, thumbnail_){
+
+    transPath(url_, function(urls, arr){
+        openFrame(arr[0], thumbnail_);
+    })
+
+    function openFrame(url_, thumbnail_){
+        api.openFrame({
+            name: 'video_frm',
+            url: './video_frm.html',
+            rect: {
+                x: 0,
+                y: 0,
+                w: api.winWidth,
+                h: api.winHeight
+            },
+            pageParam: {
+                url: url_ ,
+                thumbnail: thumbnail_,
+                type: 'pick',
+                autoPlay: false,
+            },
+            bounces: false,
+            bgColor: 'rgba(0,0,0,0)',
+            vScrollBarEnabled: true,
+            hScrollBarEnabled: true
+        });
+    }
+
+
+
+}
+
+function set(url_){
+    values.imgArr[0] = url_;
+    sure();
+}
+
+function select(el_ , url_){
+
+    // 获取序号
+    var index = $api.text(el_);
+
+    if (values.imgArr.length > 8 && !index) {
+        api.toast({
+            msg: '最多选择9张',
+            duration: 2000,
+            location: 'middle'
+        });
+        return false;
+    }
+
+    // 如果是显示打勾，则去掉数字
+    if (tea.toggle(el_, 'aui-disabled')) {
+        $api.text(el_, '');
+    }
+
+    tea.toggle(el_, 'tea-active');
+
+    // 有序号则删除此元素, 无序号则添加此元素
+    if (index) {
+        values.elArr.splice(index - 1, 1);
+        values.imgArr.splice(index - 1, 1);
+    }
+    else {
+        values.elArr.push(el_);
+        values.imgArr.push(url_);
+    }
+    setOrder();
+
+    function setOrder(){
+        for (var i = 0; i < values.elArr.length; i++) {
+            $api.text(values.elArr[i], i + 1);
+        }
+    }
+}
+
+
+/**********************************其他函数**********************************/
+function sure(_camera){
+    if (values.imgArr.length < 1) {
+        tea.toast('fail', '请先选择' + values.text);
+        return;
+    }
+    if (_camera) {
+        if (values.type == "video") {
+            api.showProgress({
+                title: values.text + '处理中...',
+                text: '',
+                modal: true
+            });
+            if (values.isIOS) {
+                var videoTool = api.require('videoTool');
+                videoTool.captureScreen({
+                    path: values.imgArr[0],
+                    startTime: 0
+                },function(ret,err){
+                    if (ret.state == 0) {
+                        api.hideProgress();
+                        values.thumbnail[0] = ret.imgPath;
+                        send();
+                    }
+                });
+
+            }
+            else {
+                videoKit.captureScreen({
+                    path: values.imgArr[0],
+                    startTime: '0'
+                }, function(ret, err) {
+                    if (ret && ret.status) {
+                        api.hideProgress();
+                        values.thumbnail[0] = ret.info;
+                        send();
+                    }
+                });
+            }
+        }
+        else {
+            send()
+        }
+    }
+    else {
+        send();
+    }
+
+}
+
+function send(){
+    if (values.type == 'video') {
+        api.sendEvent({
+            name: 'sendImg',
+            extra: {
+                to: values.to,
+                type: values.type,
+                img: values.imgArr,
+                imgId: values.imgId,
+                thumbnail: values.thumbnail
+            }
+        });
+        return;
+    }
+    transPath(values.imgArr, function(urls, arr){
+        api.sendEvent({
+            name: 'sendImg',
+            extra: {
+                to: values.to,
+                type: values.type,
+                img: arr,
+                imgId: values.imgId,
+                thumbnail: values.thumbnail
+            }
+        });
+    })
+
+
+}
+
+
+
+
+
+
+function transPath(urls, callback){
+
+    if (!$api.isArray(urls)) {
+        urls = [urls];
+    }
+
+    // 只有ios 需要转换
+    if (api.systemType != 'ios') {
+        callback(urls, urls);
+        return
+    }
+
+    var arr = [];
+    var flag = 0;
+    api.showProgress({
+        title: values.text + '加载中...',
+        text: '请稍候',
+        modal: true
+    });
+
+    for (var i = 0, length = urls.length; i < length; i++) {
+        (function(e){
+            // 不需要压缩的情况
+            if (urls[e].substr(0, 4) == 'tran') {
+
+                arr[e] = urls[e].substr(4);
+                flag ++;
+                if (flag == length) {
+                    callback(urls, arr);
+                    api.hideProgress();
+                }
+            }
+            else {
+                // 压缩
+                UIMediaScanner.transPath({
+                    path: urls[e]
+                }, function(ret, err){
+                    if( ret ){
+                        urls[e] = 'tran' + ret.path;
+                        arr[e] = ret.path;
+                        flag ++;
+                        if (flag == length) {
+                            callback(urls, arr);
+                            api.hideProgress();
+                        }
+                    }
+                });
+            }
+
+        })(i);  //闭包结束
+    }
+}
+
+</script>
+</html>

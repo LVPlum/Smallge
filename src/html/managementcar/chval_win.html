@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <link rel="stylesheet" type="text/css" href="../../css/aui_old.css" />
+    <style>
+
+
+    </style>
+</head>
+<body>
+    <header class="aui-bar aui-bar-nav" id="aui-header">
+        <a class="aui-btn aui-pull-left" style="  background-color: transparent;"tapmode onclick="closeWin()">
+            <span class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <div class="aui-title" id="title"></div>
+    </header>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript">
+    apiready = function(){
+    	$api.html($api.byId('title'), '修改' + api.pageParam.itname);
+        api.parseTapmode();
+        var header = $api.byId('aui-header');
+        $api.fixIos7Bar(header);
+          $api.fixStatusBar(header);// 马秋强，添加 2017-4-24
+        var headerPos = $api.offset(header);
+        var body_h = $api.offset($api.dom('body')).h;
+        api.openFrame({
+            name: 'chval_frm',
+            url: './chval_frm.html',
+            bounces: false,
+            pageParam: {itname: api.pageParam.itname, item: api.pageParam.item, chval: api.pageParam.chval,carid: api.pageParam.carid},
+ 	    	vScrollBarEnabled: false,
+	   		hScrollBarEnabled: false,
+            rect: {
+                x: 0,
+                y: headerPos.h,
+                w: 'auto',
+                h: 'auto'
+            }
+        })
+
+
+    };
+    function closeWin(){
+        api.closeWin({
+        });
+    }
+</script>
+</html>

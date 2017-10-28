@@ -1,0 +1,391 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        html, body {
+            width: 100%;
+            overflow-x: hidden;
+        }
+        .content {
+            padding: 1.25rem 0;
+            background-color: #fff;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 1.625rem;
+        }
+        
+        .aui-grid [class*=aui-col-] {
+            padding: 0
+        }
+        .aui-grid-label {
+            color: #333;
+            margin-top: 0 !important;
+        }
+        
+        .dot {
+            position: relative;
+            z-index: 2;
+            height: 0.35rem;
+            width: 0.35rem;
+            border-radius: 50%;
+            background-color: #fad9b6;
+            position: absolute;
+            left: 50%;
+            margin-left: -0.18rem;
+        }
+        .dot.dot-active {
+            background-color: #ff9933;
+        }
+        .dot.dot-now {
+            box-shadow: 0 0 0 0.15rem rgba(255,204,153,.4);
+        }
+        .aui-col-5 .dot {
+            bottom: -0.71rem;
+        }
+        .aui-col-5.tea .dot{
+            top: -0.71rem;
+        }
+        .aui-col-5.tea {
+            float: right;
+        }
+        /* 第二排4等分，为对齐第一排，每一等分的实际大小仍要为1/5，
+        如此中间空隙为1- 1/5 * 4 = 1/5，
+        一共3个空隙，长度为1/15，
+        每一空隙的1/2为每个元素的内间距，即1/30 */
+        /*.aui-row-padded {
+            margin-left: -3.333%;
+            margin-right: -3.333%;
+        }
+        .aui-col-xs-3 {
+            padding: 0 3.333%;
+            float: right;
+        }*/
+
+        .square {
+            position: relative;
+            width: 80%;
+            height: 3.0rem;
+            margin: 0.45rem auto;
+            /*background-image: -webkit-linear-gradient(right, #ff9933 20%, #fad9b6 80%), -webkit-linear-gradient(bottom, #ff9933 20%, #fad9b6 50%), -webkit-linear-gradient(left, #ff9933 20%, #fad9b6 50%);
+            background-image: linear-gradient(to right, #ff9933 20%, #fad9b6 20%), linear-gradient(to bottom, #ff9933 20%, #fad9b6 20%), linear-gradient(to left, #ff9933 20%, #fad9b6 20%);*/
+            background-size: 100% 0.2rem, 0.2rem 100%, 100% 0.2rem;
+            background-repeat: no-repeat;
+            background-position: left top, right bottom, center bottom;
+        }
+
+        .aui-btn {
+            height: 1rem;
+            line-height: 1rem;
+            border-radius: 0;
+            position: absolute;
+            top: 50%;
+            margin-top: -0.5rem;
+            font-size: 0.6rem;
+        }
+
+        .tip-box {
+            padding: 1.25rem 0.925rem;
+        }
+
+        img {
+            display: inline-block;
+            width: 1.05rem;
+            vertical-align:text-bottom
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <section class="content">
+            <header>
+                <div class="tea-text-title aui-font-size-16 tea-font-weight-bold">{{list[pointIndex].rank}}</div>
+                <!-- <div class="tea-text-gray tea-font-size-11">已连续签到7天</div> -->
+            </header>
+            <section class="aui-grid aui-margin-b-15">
+                <div class="aui-row">
+                    <div class="aui-col-5" v-for='(item, index) in list' v-if="index < 5">
+                        <div class="aui-grid-label">{{item.rank}}</div>
+                        <div class="aui-grid-label">{{item.point}}</div>
+                        <div class="dot" :class="[{'dot-active': index <= pointIndex}, {'dot-now': index == pointIndex}]"></div>
+                    </div>
+                </div>
+                <div id="square" class="square" :style="style.squareStyle">
+                    <div class="aui-btn aui-btn-sm tea-bg-orange aui-text-white" :style="style.tipStyle">当前{{point}}分</div>
+                </div>
+                <div class="aui-row">
+                    <div class="aui-col-5 tea" v-for='(item, index) in list' v-if="index > 4">
+                        <div class="aui-grid-label">{{item.rank}}</div>
+                        <div class="aui-grid-label">{{item.point}}</div>
+                        <div class="dot" :class="[{'dot-active': index <= pointIndex}, {'dot-now': index == pointIndex}]"></div>
+                    </div>
+                </div>
+            </section>
+        </section> 
+        <section class="tip-box">
+            <div class="tea-font-weight-bold tea-text-title">
+                <img src="../../image/diamond.png" alt="">
+                获得积分方式
+            </div>
+            <p>1.每天签到可获得抽奖机会，通过抽奖可获得积分或现金券；</p>
+            <p>2.购买特权卡获得500积分；</p>
+            <p>3.网约审车获得100积分；</p>
+            <p>4.购买汽车保险，每10元获得1积分；</p>    
+            <p>5.邀请好友且好友成功注册小马哥可获得50积分；</p>
+            <p>6.头衔达到军长可获得终身免费审车荣誉(VIP特权卡，限一台)</p> 
+            <p>7.积分可用于提高小马哥账户等级，等级提升后，后续会有各种福利，敬请期待~</p>  
+        </section>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {}, vm = null;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    dom = {
+    };
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+            list: [{
+                point: 0,
+                rank: '散兵'
+            },{
+                point: 200,
+                rank: '班长'
+            },{
+                point: 600,
+                rank: '排长'                
+            },{
+                point: 1000,
+                rank: '连长'                
+            },{
+                point: 2000,
+                rank: '营长'
+            },{
+                point: 3500,
+                rank: '团长'
+            },{
+                point: 6000,
+                rank: '旅长'
+            },{
+                point: 10000,
+                rank: '师长'
+            },{
+                point: 18000,
+                rank: '军长'
+            },{
+                point: 30000,
+                rank: '司令'
+            }],
+            point: 0,
+        },
+        methods: {
+
+        },
+        computed: {
+            pointIndex: function(){
+                var point = this.point;
+                var list = this.list;
+
+                // 低于散兵属于散兵等级
+                if (point <= list[0].point) return 0;
+
+                for (var i = 0; i < list.length; i++) {
+                    if (list[i].point > point) {
+                        return i - 1;
+                    }
+                }
+
+                // 超出30000的情况
+                return this.list.length - 2;
+            },
+            // 算出占所在区间的百分比
+            percent: function(){
+                var index = this.pointIndex;
+                var endPoint = parseFloat(this.list[index + 1].point);
+                var startPoint = parseFloat(this.list[index].point);
+                return (this.point - startPoint) / (endPoint - startPoint);
+            },
+            style: function(){
+                    // 各背景图片的渐变百分比
+                    var percentTop = 0, percentLeft = 0, percentBottom = 0, tipStyle = '';
+                    if (this.pointIndex < 4) {
+                        percentTop = (this.percent / 4 + (this.pointIndex) * 0.25) * 100;
+
+                        // 积分总数提示文字右端对齐进度条
+                        tipStyle = 'right:' + (100 - percentTop) + '%';
+                        // 防止太靠近边缘
+                        if (percentTop > 90) {
+                            tipStyle = 'right:' + 10 + '%';
+                        }
+                        if (percentTop < 10) {
+                            tipStyle = 'left:' + 10 + '%';
+                        }
+                    }
+                    if (this.pointIndex == 4) {
+                        percentTop = 100;
+                        percentLeft = this.percent * 100;
+
+                        tipStyle = 'right:' + 10 + '%';
+                    }
+                    if (this.pointIndex > 4) {
+                        percentTop = 100;
+                        percentLeft = 100;
+                        percentBottom = (this.percent / 4 + (this.pointIndex - 5) * 0.25) * 100;
+
+                        // 积分总数提示文字左端对齐进度条
+                        tipStyle = 'left:' + (100 - percentBottom) + '%';
+                        // 防止太靠近边缘
+                        if (percentBottom > 90) {
+                            tipStyle = 'left:' + 10 + '%';
+                        }
+                        if (percentBottom < 10) {
+                            tipStyle = 'right:' + 10 + '%';
+                        }
+                    }
+                    var style = {
+                        tipStyle: tipStyle,
+                        squareStyle: 'background-image:' +
+                                    '-webkit-linear-gradient(right, #ff9933 ' + percentTop + '%, #fad9b6 ' + percentTop + '%),' +
+                                    '-webkit-linear-gradient(bottom, #ff9933 ' + percentLeft + '%, #fad9b6 ' + percentLeft + '%),' +
+                                    '-webkit-linear-gradient(left, #ff9933 ' + percentBottom + '%, #fad9b6 ' + percentBottom + '%);' +
+                                    'background-image:' +
+                                    'linear-gradient(to right, #ff9933 ' + percentTop + '%, #fad9b6 ' + percentTop + '%),' +
+                                    'linear-gradient(to bottom, #ff9933 ' + percentLeft + '%, #fad9b6 ' + percentLeft + '%),' +
+                                    'linear-gradient(to left, #ff9933 ' + percentBottom + '%, #fad9b6 ' + percentBottom + '%);'
+                    }
+                    return style;
+            }
+
+        },
+        watch: {
+        }
+    })
+
+    getData();
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+    api.showProgress({
+        style: 'default',
+        animationType: 'fade',
+        title: '数据读取中...',
+        text: '请稍候...',
+        modal: false
+    });
+    api.ajax({
+        url: website + 'inteinfo.php?action=userinte',
+        method: 'post',
+        timeout: 30,
+        data:{
+            values:{
+                ID: $api.getStorage('ID'),
+                token: $api.getStorage('token')
+            }
+        },
+        dataType: 'json',
+        returnAll: false
+    },function(ret,err){
+        api.hideProgress();
+        if (!ret) {
+            tea.toast('ajax');
+            return false;
+        };
+        if (ret.succ == 1) {
+            vm.point = parseFloat(ret.inte);
+            vm.list = ret.rank;
+            return true;
+        }
+        api.toast({
+            msg: ret.message,
+            duration: 2000,
+            location: 'bottom'
+        });
+    });
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+function openIntegral(){
+    if(vm.point == 0){
+        api.toast({
+            msg: '您当前还没有积分',
+            duration: 2000,
+            location: 'middle'
+        });
+        return false;
+    }else {
+        tea.openWin({
+            name: 'integral_detail_win',
+            url: './integral_detail_win.html',
+            pageParam: {
+                name: 'test'
+            }
+        });
+    }
+}
+</script>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/common.css" />
+</head>
+<style type="text/css">
+.tp{margin-left: 38px;}
+.th{display:inline;}
+
+</style>
+<body>
+<div class="aui-content">
+    <ul class="aui-list-view">
+        <li class="aui-list-view-cell" onclick="openmore(1)">
+            <a class="aui-arrow-right">
+             <i class="aui-iconfont aui-icon-edit aui-bg-info"></i>
+             <div class="th">意见与反馈</div>
+             <span class="aui-badge aui-badge-info" id="report"></span>
+             </a>
+        </li>
+
+        <li class="aui-list-view-cell" onclick="openmore(2)">
+            <a class="aui-arrow-right">
+             <i class="aui-iconfont aui-icon-edit aui-bg-danger"></i>
+             <div class="th">红包通知</div>
+             <span class="aui-badge aui-badge-danger" id="hongbao"></span>
+             </a>
+        </li>
+
+        <li class="aui-list-view-cell" onclick="openmore(3)">
+            <a class="aui-arrow-right">
+             <i class="aui-iconfont aui-icon-edit aui-bg-success"></i>
+             <div class="th">好友通知</div>
+             <span class="aui-badge aui-badge-success" id="fri"></span>
+             </a>
+        </li>
+       <li class="aui-list-view-cell" onclick="openmore(4)">
+            <a class="aui-arrow-right">
+             <i class="aui-iconfont aui-icon-edit aui-bg-warning"></i>
+             <div class="th">系统消息</div>
+             <span class="aui-badge aui-badge-success" id="sys"></span>
+             </a>
+        </li>
+    </ul>
+</div>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript">
+var ID = null;
+	apiready = function() {
+		ID = $api.getStorage('ID');
+	    api.parseTapmode();
+	    getreport_noread();
+	    gethongbao_noread();
+	    getfri_noread();
+	    //刷新未读意见次数
+	    getsys_noread();
+	    //得到未读系统消息
+		api.addEventListener({
+		    name: 'rereportcount'
+		}, function(ret, err){
+	       getreport_noread();
+		});
+		api.addEventListener({
+		    name: 'rehb'
+		}, function(ret, err){
+	       gethongbao_noread();
+	       getsys_noread();
+		});
+	};
+	function openmore(sid){
+	    if(sid ==1){
+				api.openWin({
+			        name: 'report_index',
+			        url: '../report/index_win.html',
+			        vScrollBarEnabled: false
+			   	 });
+		 }
+	    if(sid ==2){
+				api.openWin({
+			        name: 'hongbao_center_list_win',
+			        url: './hongbao_center_list_win.html',
+			        vScrollBarEnabled: false
+			   	 });
+		 }
+		 if(sid == 3){
+				api.openWin({
+			        name: 'new_friends_win',
+			        url: '../friends/new_friends_win.html',
+			        vScrollBarEnabled: false
+			   	 });
+		 }
+		 if(sid == 4){
+				api.openWin({
+			        name: 'sysnews_win',
+			        url: './sysnews_win.html',
+			        vScrollBarEnabled: false
+			   	 });
+		 }
+	}
+	function getreport_noread(){
+	showp('数据加载中...','请梢候');
+		api.ajax({
+		    url: website + 'report.php?action=getnoreadcount',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {ID: ID},
+		    }
+		},function(ret,err){
+		    if (ret) {
+                  var obj = $api.byId('report');
+                  $api.text(obj, ret.report_noread);
+		    }
+		    api.hideProgress();
+		});
+	}
+	function gethongbao_noread(){
+		api.ajax({
+		    url: website + 'hongbao.php?action=getnoread',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {ID: ID},
+		    }
+		},function(ret,err){
+		    if (ret) {
+                  var obj = $api.byId('hongbao');
+                  $api.text(obj, ret.count);
+			}
+		});
+	}
+	function getfri_noread(){
+		api.ajax({
+		    url: website + 'friendship.php?action=getnoread',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {ID: ID},
+		    }
+		},function(ret,err){
+		    if (ret) {
+                  var obj = $api.byId('fri');
+                  $api.text(obj, ret.count);
+			}
+		});
+	}
+	function getsys_noread(){
+		api.ajax({
+		    url: website + 'pushcenter.php?action=getnoread',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {ID: ID},
+		    }
+		},function(ret,err){
+		    if (ret) {
+                  var obj = $api.byId('sys');
+                  $api.text(obj, ret.count);
+			}
+		});
+	}
+</script>
+</html>

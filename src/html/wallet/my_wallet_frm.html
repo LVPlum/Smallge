@@ -1,0 +1,225 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>我的钱包</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+		html,body {
+            height: 100%;
+            overflow: auto;
+	        background-color: #f2f5f8;
+	    }
+	    .my-purse{
+	        color: #333;
+	    }
+	    .my-purse>i{
+	        color: #2bbbff;
+	    }
+	    .my-balance{
+	        position: absolute;
+	        top: 2rem;
+	        left: 1.75rem;
+	        color: #fff;
+	    }
+        /*.aui-iconfont {
+            height: 2rem !important;
+            font-size: 2rem !important;
+            line-height: 2rem !important;
+        }
+
+        .aui-grid-label{
+            margin-top: 0.75rem !important;
+            font-size: 0.8rem !important;
+            line-height: 0.8rem !important;
+        }*/
+        .tea-border-b {
+            border-bottom: 1px solid #ededed;
+        }
+    </style>
+</head>
+<body>
+
+<section class="aui-grid aui-margin-b-15 ">
+    <div class="aui-padded-15 " style="position: relative;  background-color: #f2f5f8;">
+        <img src="../../image/my_icon/money_bg@2x.png" style="-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;">
+        <div class="my-balance">
+            <div class="aui-font-size-16">我的余额</div>
+            <div id="my-balance-val" style="font-size: 2.2rem">￥00.00</div>
+        </div>
+    </div>
+    <div class="aui-row aui-list-noborder" id="list">
+        <div class="aui-col-xs-4 my-purse tea-border-b" tapmode onclick="openWinRecharge()">
+            <i class="aui-iconfont tea-icon-sum"></i>
+            <div class="aui-grid-label">余额充值</div>
+        </div>
+        <div class="aui-col-xs-4 my-purse tea-border-b aui-border-l"tapmode onclick="accountBalance()">
+            <i class="aui-iconfont tea-icon-detail"></i>
+            <div class="aui-grid-label">收支明细</div>
+        </div>
+        <div class="aui-col-xs-4 my-purse tea-border-b aui-border-l"tapmode onclick="cash()">
+            <i class="aui-iconfont tea-icon-cash"></i>
+            <div class="aui-grid-label">提现</div>
+        </div>
+        <div class="aui-col-xs-4 my-purse " tapmode onclick="phonePay()">
+            <i class="aui-iconfont tea-icon-phone"></i>
+            <div class="aui-grid-label">手机充值</div>
+        </div>
+        <div class="aui-col-xs-4 my-purse  aui-border-l" tapmode onclick="transfer('支付管理功能即将开通')">
+            <i class="aui-iconfont tea-icon-paysafety"></i>
+            <div class="aui-grid-label">支付管理</div>
+        </div>
+        <div class="aui-col-xs-4 my-purse aui-border-l" tapmode onclick="transfer('转账功能即将开通')">
+            <i class="aui-iconfont tea-icon-transfer"></i>
+            <div class="aui-grid-label">转账</div>
+        </div>
+    </div>
+</section>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+
+/**********************************apiready**********************************/
+apiready = function(){
+	 api.parseTapmode();
+    showp('数据读取中...','请等候...');
+    var token = $api.getStorage('token');
+	tea.ajax({
+	    url: website + 'tokengetmoney.php',
+	    method: 'post',
+	    timeout: 30,
+	    dataType: 'json',
+	    returnAll:false,
+	    data:{
+	        values: {token: token},
+	    }
+	},function(ret,err){
+	    if (ret) {
+	          $api.html($api.byId('my-balance-val'),'￥' + ret.mymoney);
+	          api.hideProgress();
+	    }
+	});
+	// 监听提现是否成功后，刷新页面
+	api.addEventListener({
+	    name:'txok'
+    },function(ret,err){
+    	tea.ajax({
+		    url: website + 'tokengetmoney.php',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {token: token},
+		    }
+		},function(ret,err){
+		    if (ret) {
+		          $api.html($api.byId('my-balance-val'),'￥' + ret.mymoney);
+		          api.hideProgress();
+		    }
+		});
+    });
+    checkft();
+};
+
+// 打开收支明细页面
+function accountBalance(){
+
+		_openWin('收支明细','./account_balance_win.html');// 打开新页面win
+}
+
+// 转账
+function transfer(msg){
+	api.toast({
+	    msg:msg,
+	    location: 'middle'
+    });
+}
+// 支付密码
+function paycode(){
+_openWin('支付密码','../pay/paycode_win.html');// 打开新页面win
+
+}
+
+// 手机充值
+function phonePay(){
+_openWin('手机充值','./phone_pay_win.html');// 打开新页面win
+
+}
+// 提现
+function cash(){
+_openWin('提现','./cash_win.html');// 打开新页面win
+
+}
+
+function openWinRecharge(){
+    if (tea.appleCheck()) {
+        alert('暂不支持充值!');
+        return;
+    }
+    tea.openWin({
+        name: 'recharge_win',
+        url: '../wallet/recharge_win.html',
+        bounces: true,
+        pageParam: {key : 'value'}
+    });
+}
+
+function checkft(){   //检查饭堂权限
+    var userid = $api.getStorage('ID');
+    if (typeof userid == 'undefined') {
+        return;
+    }
+    api.ajax({
+        url: website + 'fantang/sm/fantang.php?action=checkuser',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        returnAll:false,
+        data:{
+            values: {userid: userid},
+        }
+    },function(ret,err){
+        if (ret) {
+            if(ret.ft == 1){
+                var obj = $api.byId('list');
+                var html = '<li class="aui-col-xs-4 aui-text-center" onclick="fantang()">';
+                    html += '<span class="aui-iconfont aui-icon-my tea-text-blue"></span>';
+                    html += '<p>饭堂管理</p>';
+                html += '</li>  ';
+                $api.append(obj, html);
+            }
+        }
+    });
+}
+function fantang(){   //进入饭堂
+        api.openWin({
+            name: 'ftindex',
+            url: '../fantang/ftindex_win.html',
+            vScrollBarEnabled: false
+         });
+}
+</script>
+</html>

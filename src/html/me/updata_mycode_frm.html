@@ -1,0 +1,170 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        .boxShadow{
+            border-radius: 0.2rem;
+            -moz-box-shadow:0 0.1rem 0.5rem #c6e2f1;
+            -webkit-box-shadow:0 0.1rem 0.5rem #c6e2f1;
+            box-shadow:0 0.1rem 0.5rem #c6e2f1;
+        }
+        .avatar{
+            width: 3rem;
+            height: 3rem;
+        }
+        .flexStart{
+            -webkit-justify-content: flex-start !important;
+            justify-content: start !important;
+        }
+        .saveBtn{
+            width: 65%;
+            height: 2.3rem;
+            line-height: 2.3rem;
+            background: #FFF;
+            margin: 1rem auto 0;
+            text-align: center;
+            border-radius: 46px 46px 46px 46px;
+            border: solid 1px rgba(204, 204, 204, 1);
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <div class="aui-card-list aui-content-padded boxShadow">
+            <div class="aui-card-list-header flexStart" style="padding: 1rem 0.75rem 0rem">
+                <div class="avatar">
+                    <img class="aui-img-round" :src="avatar">
+                </div>
+                <p class="aui-margin-l-15 aui-font-size-16 tea-text-title">{{ nickname }}</p>
+            </div>
+            <div style="padding-bottom: 2rem">
+                <img :src="code ? code : '../../image/me/default_code.jpg' "  alt="二维码" style="margin: 0 auto">
+            </div>
+        </div>
+        <div class="saveBtn tea-text-title" tapmode @click="saveCode">保存到相册</div>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {}, vm = null;
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    dom = {
+    };
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+            avatar : $api.getStorage('img') ? $api.getStorage('img') : '../../image/me/default_famale.png',
+            nickname: $api.getStorage('nickname') ? $api.getStorage('nickname') : '昵称',
+            code: ''
+        },
+        methods: {
+            saveCode: function(){
+                var FNScanner = api.require('FNScanner');
+                FNScanner.encodeImg({
+                    content: 'adf:' + $api.getStorage('telphone'),
+                    saveToAlbum: true,
+                    saveImg: {
+                        w: 400,
+                        h: 400
+                    }
+                },function( ret, err ){
+                    if(ret.status){
+                        api.toast({
+                            msg:'保存成功'
+                        });
+                    }else{
+                        alert( JSON.stringify(err) );
+                    }
+                });
+            }
+        },
+        computed: {
+
+        }
+    })
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+    /*二维码生成模块*/
+    var FNScanner = api.require('FNScanner');
+    FNScanner.encodeImg({
+        content: 'adf:' + $api.getStorage('telphone'),
+        saveImg: {
+            path: 'fs://myqrcode.png',
+            w: 300,
+            h: 300
+        }
+    },function( ret, err ){
+        if(ret.status){
+            vm.code = ret.imgPath;
+        }else{
+            alert( JSON.stringify( err ) );
+        }
+    });
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+
+</script>
+</html>

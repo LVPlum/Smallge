@@ -1,0 +1,937 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+		html,body {
+            height: 100%;
+            background: none;
+		}
+
+        .tea-btn-title {
+            display: inline;
+            zoom: 1;
+            margin: 0 auto;
+            padding: 0.5rem 1rem;
+            height: 1.7rem;
+            line-height: 1.7rem;
+            font-size: 0.7rem;
+            color: #333;
+            background-color: #e5f5ff;
+            border-right: 6px solid #3399ff;
+            border-left: 6px solid #3399ff;
+        }
+
+        .aui-icon-close:before {
+            font-size: 0.7rem;
+            padding: 0.1rem;
+            margin-left: 0.25rem;
+            border: 1px solid #999;
+            border-radius: 50%;
+        }
+
+        .aui-list-item.show {
+            border: none;
+            background-size: 100% 0 !important;
+        }
+
+        .aui-list-item-inner.tea {
+            width: 5.0rem;
+            padding-right: 0;
+        }
+        .aui-list-item-inner.aui-text-right {
+            width: 4.0rem !important;
+            padding-right: 0 !important;
+        }
+
+        img {
+            width: 3rem !important;
+            height: 3rem !important;
+        }
+        .aui-list .aui-list-item-media {
+            width: 5rem;
+        }
+        .aui-list-item-media.tea {
+            padding-right: 1.5rem;
+        }
+
+        .aui-media-list-item-inner {
+            -webkit-justify-content: space-between;
+            justify-content: space-between;
+        }
+
+        #car-business .tea-acitve {
+            background-color: #ff9933 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="tea-bg-white tea-border-radius-10">
+        <section class="aui-margin-b-15 aui-padded-t-10">
+            <div class="aui-text-center aui-margin-b-10">
+                <div class="tea-btn-title">加盟条件</div>
+            </div>
+            <div class="aui-content-padded aui-margin-l-0">
+                <ul class="aui-list aui-form-list aui-list-in">
+                    <li class="aui-list-item">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-label tea-red-star-after">
+                                <span class="tea-text-star-red-after">机构名称</span>
+                            </div>
+                            <div class="aui-list-item-input">
+                                <input id="agency-name" type="text" placeholder="请输入机构名称" oninput="input(0)">
+                            </div>
+                        </div>
+                    </li>
+                    <li id="lisence-box" class="aui-list-item show">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-label tea-red-star-after">
+                                <span id="business-license" class="tea-text-star-red-after">营业执照</span>
+                            </div>
+                            <span tapmode onclick="selectLicense(1)"><label class="aui-radio aui-checked" data-type=1 ></label>有</span>
+                            <span tapmode onclick="selectLicense(0)"><label class="aui-radio" data-type=0></label>无</span>
+                            <span tapmode onclick="selectLicense(2)"><label class="aui-radio" data-type=2></label>办理中</span>
+                        </div>
+                    </li>
+                </ul>
+                <ul class="aui-list aui-media-list aui-list-in">
+                    <li id="lisence-upload" class="aui-list-item">
+                        <div class="aui-media-list-item-inner">
+                            <div class="aui-list-item-inner tea">
+                            </div>
+                            <div class="aui-media-list-item-media">
+                                <div class="aui-media-list-item-inner">
+                                    <div class="aui-list-item-media tea">
+                                        <img class="aui-hide" src="../../image/lisence.png" tapmode onclick="event.stopPropagation();openBigImg(0)">
+                                        <i class="aui-iconfont aui-icon-close tea-big aui-hide" tapmode onclick="delImg(0)"></i>
+                                    </div>
+                                    <div class="aui-list-item-inner aui-text-right tea" tapmode onclick="openWinMedia(0)">
+                                        <span class="tea-text-blue aui-font-size-14">点击上传 ></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="aui-list-item">
+                        <div class="aui-media-list-item-inner">
+                            <div class="aui-list-item-inner tea">
+                                <span class="tea-text-star-red-after">店铺照片</span>
+                            </div>
+                            <div class="aui-media-list-item-media">
+                                <div class="aui-media-list-item-inner">
+                                    <div class="aui-list-item-media tea">
+                                        <img class="aui-hide" src="../../image/lisence.png" tapmode onclick="event.stopPropagation();openBigImg(1)">
+                                        <i class="aui-iconfont aui-icon-close aui-hide tea-big" tapmode onclick="delImg(1)"></i>
+                                    </div>
+                                    <div class="aui-list-item-inner aui-text-right tea" tapmode onclick="openWinMedia(1)">
+                                        <span class="tea-text-blue aui-font-size-14">点击上传 ></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="aui-list-item">
+                        <div class="aui-media-list-item-inner">
+                            <div class="aui-list-item-inner tea">
+                                <span class="tea-text-star-red-after">2寸法人照片</span>
+                            </div>
+                            <div class="aui-media-list-item-media">
+                                <div class="aui-media-list-item-inner">
+                                    <div class="aui-list-item-media tea">
+                                        <img class="aui-hide" src="../../image/lisence.png" tapmode onclick="event.stopPropagation();openBigImg(2)">
+                                        <i class="aui-iconfont aui-icon-close aui-hide tea-big" tapmode onclick="delImg(2)"></i>
+                                    </div>
+                                    <div class="aui-list-item-inner aui-text-right tea" tapmode onclick="openWinMedia(2)">
+                                        <span class="tea-text-blue aui-font-size-14">点击上传 ></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <ul class="aui-list aui-form-list aui-list-in">
+
+                    <li class="aui-list-item">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-label tea-red-star-after">
+                                <span class="tea-text-star-red-after">手机号码</span>
+                            </div>
+                            <div class="aui-list-item-input">
+                                <input id="telphone" type="tel" placeholder="请输入法人手机号码" oninput="input(1)">
+                            </div>
+                        </div>
+                    </li>
+                    <li class="aui-list-item">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-label tea-red-star-after">
+                                <span class="tea-text-star-red-after">服务电话</span>
+                            </div>
+                            <div class="aui-list-item-input">
+                                <input id="service-call" type="tel" placeholder="请输入服务电话" oninput="input(2)">
+                            </div>
+                        </div>
+                    </li>
+                    <li class="aui-list-item">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-label tea-red-star-after">
+                                <span class="tea-text-star-red-after">店铺地址</span>
+                            </div>
+                            <div class="aui-list-item-input">
+                                <input id="shop-address" type="text" placeholder="请输入店铺地址" oninput="input(3)">
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+        <section>
+            <div class="aui-text-center aui-margin-10">
+                <div class="tea-btn-title">选择您的擅长</div>
+            </div>
+            <ul class="aui-list aui-list-noborder">
+                <li id="car-business" class="aui-list-item">
+                    <div class="aui-list-item-inner aui-padded-15 aui-padded-t-5">
+                        <!--<div id="businessList" class="aui-row aui-row-padded">
+                            <div class="aui-col-xs-6 tea-text-gray aui-ellipsis-1">
+                                <span>1</span>
+                                <div class="aui-btn aui-ellipsis-1 tea-active" style="width: 85%">审车</div>
+                            </div>
+                            <div class="aui-col-xs-6 tea-text-gray">
+                                <span>2</span>
+                                <div class="aui-btn tea" >环检</div>
+                            </div>
+                            <div class="aui-col-xs-6">
+                                <span>3</span>
+                                <div class="aui-btn tea">二级维护</div>
+                            </div>
+                            <div class="aui-col-xs-6">
+                                <span>4</span>
+                                <div class="aui-btn tea">等级评定</div>
+                            </div>
+                        </div>-->
+                    </div>
+                </li>
+                <li id="truck-business" class="aui-list-item aui-hide"></li>
+                <li class="aui-list-item">
+                    <div class="aui-list-item-inner aui-padded-r-15 aui-padded-t-5">
+                        <div class="aui-row aui-row-padded" style="width: 100%">
+                            <div class="aui-col-xs-6 tea-text-gray aui-ellipsis-1" tapmode onclick="selectType(0)">
+                                <span class="aui-text-left" style="width: 10%;"></span>
+                                <div class="aui-btn aui-ellipsis-1 tea-active type" style="width: 85%;">
+                                    轿车业务
+                                </div>
+                            </div>
+                            <div class="aui-col-xs-6 tea-text-gray aui-ellipsis-1" tapmode onclick="selectType(1)">
+                                <span class="aui-text-left" style="width: 10%;"></span>
+                                <div class="aui-btn aui-ellipsis-1 type" style="width: 85%;">
+                                    货车业务
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div class="aui-margin-l-15">
+                <span><i class="aui-iconfont">
+                    <div class="aui-icon-info"></div>
+                </i></span>
+                <span><p>请不要选择您不擅长的项目，造成客户对您差评</p></span>
+            </div>
+            <div class="aui-padded-15" tapmode onclick="postApply()">
+                <div class="aui-btn tea-active aui-btn-block aui-btn-outlined aui-btn-sm tea-btn-radius">提交申请</div>
+            </div>
+        </section>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="car-template">
+    <div class="aui-list-item-inner aui-padded-r-15 aui-padded-t-5 ">
+        <div class="aui-row aui-row-padded">
+            {{ var i = 0; for(var prop in it){ }}
+            <div class="aui-col-xs-6 tea-text-gray aui-ellipsis-1" tapmode onclick="selectBusiness({{=i}},{{=prop}})">
+                <span class="aui-text-left" style="width: 10%;">{{=i + 1}}</span>
+                <div class="aui-btn aui-ellipsis-1 {{=(values.carBusinessArr.indexOf(parseInt(prop)) > -1 ? 'tea-active': '')}}" style="width: 85%;">
+                    {{=it[prop]}}
+                </div>
+            </div>
+            {{ i++;} }}
+        </div>
+    </div>
+</script>
+
+<script type="text/template" id="truck-template">
+    <div class="aui-list-item-inner aui-padded-r-15 aui-padded-t-5 ">
+        <div class="aui-row aui-row-padded">
+            {{ var i = 0; for(var prop in it){ }}
+            <div class="aui-col-xs-6 tea-text-gray aui-ellipsis-1" tapmode onclick="selectBusiness({{=i}},{{=prop}})">
+                <span class="aui-text-left" style="width: 10%;">{{=i + 1}}</span>
+                <div class="aui-btn aui-ellipsis-1 {{=(values.truckBusinessArr.indexOf(i) > -1 ? 'tea-active': '')}}" style="width: 85%;">
+                    {{=it[prop]}}
+                </div>
+            </div>
+            {{ i++;} }}
+        </div>
+    </div>
+</script>
+<script type="text/javascript">
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化DOM对象
+    initDOM();
+
+    // 初始化变量
+    initVar();
+
+    // 初始化监听
+    initEventListener();
+
+    // 初始化其他模块
+    initModule();
+
+    // ajax请求数据
+    getData();
+
+};
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data={}, values = {}, imageFilter = null, imageBrowser = null, order;
+
+
+/**********************************初始化变量**********************************/
+// 初始化DOM对象
+function initDOM(){
+
+    dom.lisenceBox = $api.byId('lisence-box');
+    dom.lisenceUpload = $api.byId('lisence-upload');
+    dom.business = $api.byId('business');
+    dom.carBusiness = $api.byId('car-business');
+    dom.truckBusiness = $api.byId('truck-business');
+    dom.inputs = $api.domAll('input');
+    dom.radios = $api.domAll('.aui-radio');
+    dom.imgs = $api.domAll('img');
+    dom.close = $api.domAll('.aui-icon-close');
+    dom.imgBox = $api.domAll('img-box');
+    dom.type = $api.domAll('.type');
+
+};
+
+// 初始化变量
+function initVar(){
+
+
+    values.lisence = 1;
+    values.imgLocal0 = null;
+    values.imgLocal1 = null;
+    values.imgLocal2 = null;
+    values.business_license_image = null;
+    values.legal_person_image = null;
+    values.shop_image = null;
+    values.types = [0];
+
+    // 初始化表单各项
+    for (var i = 0; i < dom.inputs.length; i++) {
+        var id = $api.attr(dom.inputs[i], 'id').replace(/-/g,'_');
+        values[id] = '';
+    }
+    if ($api.getStorage('telphone') !== undefined) {
+        values.telphone = $api.getStorage('telphone');
+        $api.val(dom.inputs[1], values.telphone);
+    }
+
+
+
+};
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+    api.addEventListener({
+        name: 'getimgarr'
+    }, function(ret, err){
+        var imgId = ret.value.imgId;
+        values['imgLocal' + imgId] = ret.value.img;
+        postImg(imgId);
+        $api.attr(dom.imgs[imgId], 'src', ret.value.img);
+        $api.removeCls(dom.imgs[imgId], 'aui-hide');
+        $api.removeCls(dom.close[imgId], 'aui-hide');
+
+    });
+
+}
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+    // 引入过滤压缩模块
+    imageFilter = api.require("imageFilter");
+    // 引入图片浏览模块
+    imageBrowser = api.require('imageBrowser');
+
+}
+
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+    api.showProgress({
+        style: 'default',
+        animationType: 'fade',
+        title: '努力加载中...',
+        text: '请稍候...',
+        modal: false
+    });
+    api.ajax({
+        url: website + 'api_q.php?action=get_agent_business',
+        method: 'post',
+        data: {
+        }
+    },function(ret, err){
+        if (ret) {
+            //alert( JSON.stringify( ret ) );
+            api.hideProgress();
+
+            // 更新变量
+            updateVar(ret);
+
+            // 初始化订单信息
+            order = api.pageParam.order;
+            if (typeof order != "undefined") {
+                updateOrderVar();
+            }
+
+            // 更新HTML
+            updateHTML(ret);
+        } else {
+            tea.toast('ajax');
+        }
+    });
+
+
+
+}
+
+/**********************************更新变量**********************************/
+// 更新DOM对象
+function updateDOM(){
+
+
+
+}
+
+// 更新变量
+function updateVar(ret_){
+
+    data = ret_;
+    // 业务数组
+    values.carBusinessArr = [parseInt(Object.keys(data.c_business)[0])];
+    values.truckBusinessArr = [parseInt(Object.keys(data.v_business)[0])];
+
+}
+
+function updateOrderVar(){
+
+    values.lisence = order.business_license;
+
+    if (order.business_license_image != 'null') {
+        values.imgLocal0 = website + 'agent_apply_img/' + order.business_license_image;
+        values.business_license_image = order.business_license_image;
+    }
+    if (order.legal_person_image != 'null') {
+        values.imgLocal1 = website + 'agent_apply_img/' + order.legal_person_image;
+        values.legal_person_image = order.legal_person_image;
+    }
+    if (order.shop_image != 'null') {
+        values.imgLocal2 = website + 'agent_apply_img/' + order.shop_image;
+        values.shop_image = order.shop_image;
+    }
+
+    values.agency_name = order.agency_name;
+    values.telphone = order.telphone;
+    values.service_call = order.service_call;
+    values.shop_address = order.shop_address;
+
+
+    // 更新所选业务类型数组
+    var arr = [];
+    if (!tea.isEmpty(order.c_business)){
+        arr.push(0);
+        values.carBusinessArr = getBusinessArr(order.c_business);
+    }
+    else {
+        // 无小车则点击取消小车
+        selectType(0);
+    }
+    if (!tea.isEmpty(order.v_business)){
+        arr.push(1);
+        // 有货车则选中货车
+        selectType(1);
+        values.truckBusinessArr = getBusinessArr(order.v_business);
+    }
+    values.types = arr;
+
+    values.id = order.id;
+    values.able = 1;
+
+}
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+    tea.doT(data.c_business, 'car-template', dom.carBusiness);
+    // 获取全部小车业务按钮
+    dom.carBusinessBtn = $api.domAll(dom.carBusiness, '.aui-btn');
+
+    tea.doT(data.v_business, 'truck-template', dom.truckBusiness)
+    // 获取全部卡车业务按钮
+    dom.truckBusinessBtn = $api.domAll(dom.truckBusiness, '.aui-btn');
+
+    selectLicense(values.lisence);
+
+    for (var i = 0; i < dom.imgs.length; i++) {
+        if (values['imgLocal' + i] != null) {
+            $api.attr(dom.imgs[i], 'src', values['imgLocal' + i]);
+            $api.removeCls(dom.imgs[i], 'aui-hide');
+            $api.removeCls(dom.close[i], 'aui-hide');
+        }
+    }
+
+    for (var i = 0; i < dom.inputs.length; i++) {
+        var el = dom.inputs[i];
+        var id = $api.attr(el, 'id').replace(/-/g,'_');
+        $api.val(el, values[id]);
+    }
+
+}
+
+
+/**********************************广播消息**********************************/
+function sendEvent(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+// 回退关闭窗口
+function closeWin(){
+    api.closeWin();
+}
+
+function selectLicense(type_){
+
+    if (values.lisence != type_) {
+        values.lisence = type_;
+
+        for (var i = dom.radios.length - 1; i >= 0; i--) {
+            var radioType_ = $api.attr(dom.radios[i], 'data-type');
+
+            if (radioType_ == type_){
+                $api.addCls(dom.radios[i], 'aui-checked');
+            }
+            else {
+                $api.removeCls(dom.radios[i], 'aui-checked');
+            }
+
+        }
+
+        if (type_ == 1) {
+            $api.removeCls(dom.lisenceUpload, 'aui-hide');
+            $api.addCls(dom.lisenceBox, 'show');
+        }
+        else {
+            $api.addCls(dom.lisenceUpload, 'aui-hide');
+            $api.removeCls(dom.lisenceBox, 'show');
+        }
+    }
+
+
+}
+
+function postApply(){
+
+    values.user_id = tea.getStorage('ID');
+    values.business_license = values.lisence;
+
+    if (values.types.indexOf(0) > -1) {
+        values.c_business = values.carBusinessArr.join(',');
+    }
+    if (values.types.indexOf(1) > -1) {
+        values.v_business = values.truckBusinessArr.join(',');
+    }
+    if (check()) {
+        //_alert(values)
+        api.ajax({
+            url: website + 'api_q.php?action=agent_apply_post',
+            method: 'post',
+            data: {
+                values: values
+            }
+        },function(ret, err){
+            if (ret.succ) {
+                //_alert( JSON.stringify( ret ) );
+                api.openWin({
+                    name: 'success_win',
+                    url: '../unit/success_win.html',
+                    pageParam: {
+                        title: '我要加盟',
+                        result: '提交成功',
+                        data: {
+                            '0': ['等待小马哥公司审核通过，会与您联系','请保持通讯工具畅通']
+                        }
+                    }
+                });
+            } else {
+                tea.toast('ajax');
+            }
+        });
+
+
+    }
+
+}
+
+// 输入响应函数
+function input(index_){
+    var el_ = dom.inputs[index_];
+    var val = $api.val(el_);
+    var id = $api.attr(el_, 'id').replace(/-/g,'_');
+    values[id] = val;
+}
+
+// 大写
+function upper(all, letter, index, originText){
+    console.log("匹配的完整文本：" + all);
+    console.log("匹配的捕获：" + letter);
+    console.log("索引：" + index);
+    console.log("源字符串：" + originText);
+    return letter.toUpperCase();
+}
+
+// 打开媒体选择窗口
+function openWinMedia(id_){
+    api.openWin({
+        name: 'media1_win',
+        url: '../unit/media1_win.html',
+        pageParam: {
+            limit: 1,
+            imgId: id_
+        }
+    });
+}
+
+// 删除图片
+function delImg(id_){
+    var imgId = id_;
+    values['imgLocal' + imgId] = null;
+    // $api.attr(dom.imgs[imgId], 'src', ret.value.img);
+    switch (id_) {
+        case 0:
+            values.business_license_image = null;
+            break;
+        case 1:
+            values.shop_image = null;
+            break;
+        case 2:
+            values.legal_person_image = null;
+            break;
+        default:
+            break;
+    }
+    $api.addCls(dom.imgs[imgId], 'aui-hide');
+    $api.addCls(dom.close[imgId], 'aui-hide');
+
+}
+
+// 查看大图
+function openBigImg(id_){
+
+    // var imageUrls = [values.imgLocal0, values.imgLocal1, values.imgLocal2];
+    // imageUrls = imageUrls.filter(function(n){ return n != null });
+
+    var imageUrls = values['imgLocal' + id_]
+
+    imageBrowser.openImages({
+        showList : false,
+        imageUrls: [imageUrls]
+    });
+}
+
+function postImg(id_){
+
+    var img_ = values['imgLocal' + id_];
+    api.showProgress({
+        style: 'default',
+        animationType: 'fade',
+        title: '图片上传中...',
+        text: '请稍候...',
+        modal: false
+    });
+    imgCompress(img_, 0.8, 0.8, getExt(img_), function(compressImg) {
+        uploadFile(compressImg, function(serverImg) {
+            switch (id_) {
+                case 0:
+                    values.business_license_image = serverImg;
+                    break;
+                case 1:
+                    values.shop_image = serverImg;
+                    break;
+                case 2:
+                    values.legal_person_image = serverImg;
+                    break;
+                default:
+                    break;
+            }
+            api.hideProgress();
+        });
+    });
+
+}
+
+// 相应切换车辆类型
+function selectType(type_){
+
+    var el_ = dom.type[type_];
+    var index_ = values.types.indexOf(type_);
+    if (index_ > -1){
+        if( values.types.length > 1) {
+            values.types.splice(index_,1);
+            tea.toggle(el_, 'tea-active');
+
+            if (type_ == 1){
+                tea.toggle(dom.carBusiness);
+                tea.toggle(dom.truckBusiness);
+            }
+
+        }
+        else {
+            api.toast({
+                msg: '请至少选择一个业务类型~',
+                duration: 2000,
+                location: 'middle'
+            });
+        }
+    }
+    else {
+        values.types.push(type_);
+        tea.toggle(el_, 'tea-active');
+
+        if (type_ == 1) {
+            tea.toggle(dom.carBusiness);
+            tea.toggle(dom.truckBusiness);
+        }
+    }
+
+}
+
+// 选择相应业务
+function selectBusiness(index_,id_){
+
+    setBusiness(dom.carBusinessBtn, values.carBusinessArr, index_, id_);
+
+    setBusiness(dom.truckBusinessBtn, values.truckBusinessArr, index_, id_);
+
+}
+/**********************************其他函数**********************************/
+
+/**********************************功能模块1**********************************/
+function uploadFile(data, callback) {
+    api.ajax({
+        url : website + 'api_q.php?action=up_agent_apply',
+        method : 'post',
+        timeout : 30,
+        dataType : 'json',
+        returnAll : false,
+        data : {
+            files : {
+                "upfile" : data
+            }
+        }
+    }, function(ret, err) {
+        if (ret) {
+           callback(ret.path);
+        }
+    });
+}
+function imgCompress(imgsrc, quality, scale, ext, callback) {
+    // 压缩文件的保存目录
+    var savePath = api.cacheDir + "/" + getNowFormatDate() + "/";
+    // 压缩文件生成的随机文件名称
+    var savename = NewGuid() + "." + ext;
+    imageFilter.compress({
+        img : imgsrc,
+        quality : quality,
+        scale : quality,
+        save : {
+            album : false,
+            imgPath : savePath,
+            imgName : savename
+        }
+    }, function(ret, err) {
+        if (ret) {
+            callback(savePath + savename);
+        } else {
+            //alert(JSON.stringify(err));
+        }
+    });
+}
+function NewGuid() {
+    function S4() {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    }
+
+    return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+}
+
+// 获取当前的时间，拼接成2015-11-09这样的格式，主要用于对图片进行时间分类
+function getNowFormatDate() {
+    var date = new Date();
+    var seperator1 = "-";
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    var strDate = date.getDate();
+    if (month >= 1 && month <= 9) {
+        month = "0" + month;
+    }
+    if (strDate >= 0 && strDate <= 9) {
+        strDate = "0" + strDate;
+    }
+    var currentdate = year + seperator1 + month + seperator1 + strDate
+    return currentdate;
+}
+
+// 获取文件拓展名
+function getExt(fileName) {
+    return fileName.substring(fileName.lastIndexOf('.') + 1);
+}
+
+// 验证表单
+function check(){
+    if (values.agency_name === ''){
+        api.toast({
+            msg: '请输入机构名称~',
+            duration: 2000,
+            location: 'middle'
+        });
+        return false;
+    }
+    if (values.business_license === 1 && values.business_license_image === null) {
+         api.toast({
+            msg: '请上传营业执照~',
+            duration: 2000,
+            location: 'middle'
+        });
+        return false;
+    }
+    if (values.shop_image === null) {
+         api.toast({
+            msg: '请上传店铺照片~',
+            duration: 2000,
+            location: 'middle'
+        });
+        return false;
+    }
+    if (values.legal_person_image === null) {
+         api.toast({
+            msg: '请上传2寸法人照片~',
+            duration: 2000,
+            location: 'middle'
+        });
+        return false;
+    }
+    values.telphone = tea.toNum(values.telphone);
+    if (!tea.checkPhone(values.telphone)) {
+        api.toast({
+            msg: '请输入格式正确的11位手机号码~',
+            duration: 2000,
+            location: 'middle'
+        });
+        return false;
+    }
+    if (values.service_call === '') {
+        api.toast({
+            msg: '请输入格式正确的服务电话~',
+            duration: 2000,
+            location: 'middle'
+        });
+        return false;
+    }
+    if (values.shop_address === '') {
+         api.toast({
+            msg: '请输入店铺地址~',
+            duration: 2000,
+            location: 'middle'
+        });
+        return false;
+    }
+    return true;
+}
+
+function setBusiness(el_, arr_, index_, id_){
+
+    var btn = el_[index_];
+    if ($api.hasCls(btn, 'tea-active')) {
+        if (arr_.length > 1) {
+            // 移除选中样式
+            $api.removeCls(btn, 'tea-active');
+
+            // 删除指定id
+            var i = arr_.indexOf(id_);
+            if (i > -1) {
+                arr_.splice(i, 1);
+            }
+        }
+        // 选中且当前项目数量不大于1，则弹出提示
+        else {
+            api.toast({
+                msg: '至少要选择一个业务~',
+                duration: 2000,
+                location: 'middle'
+            });
+        }
+    }
+    else {
+        $api.addCls(btn, 'tea-active');
+        arr_.push(id_);
+    }
+
+}
+
+// 获取业务id组成的数组
+function getBusinessArr(obj_){
+    var arr_ = [];
+    for (var key in obj_) {
+        arr_.push(parseInt(obj_[key].id));
+    }
+    return arr_;
+}
+</script>
+</html>

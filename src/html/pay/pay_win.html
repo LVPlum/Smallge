@@ -1,0 +1,207 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <header id="header" class="aui-bar aui-bar-nav aui-bar-light" >
+        <a class="aui-btn aui-pull-left" tapmode onclick="closeWin()">
+            <span class="aui-iconfont aui-icon-left tea-text-title"></span>
+        </a>
+        <div class="aui-title tea-text-title">选择支付方式</div>
+    </header>
+
+    <section id="main"></section>
+
+    <footer id="footer"></footer>
+
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- aui -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 处理沉浸式效果，计算header和footer的高度
+    header = $api.byId('header');
+    $api.fixStatusBar(header);
+    headerH = $api.offset(header).h;
+    footer = $api.byId('footer');
+    footerH = $api.offset(footer).h;
+
+    // 初始化DOM对象
+    initDOM();
+
+    // 初始化变量
+    initVar();
+
+    // 初始化HTML
+    initHTML();
+
+    // 初始化监听
+    initEventListener();
+
+    // 初始化其他模块
+    initModule();
+
+    // 打开Frame
+    openFrame();
+
+    // ajax请求数据
+    getData();
+
+};
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var header, footer;
+
+// 声明全局变量
+var headerH, footerH;
+
+/**********************************初始化变量**********************************/
+// 初始化DOM对象
+function initDOM(){
+
+
+};
+
+// 初始化变量
+function initVar(){
+
+
+
+};
+
+// 初始化HTML
+function initHTML(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************更新变量**********************************/
+// 更新DOM对象
+function updateDOM(){
+
+
+
+}
+
+// 更新变量
+function updateVar(){
+
+
+
+}
+
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+
+
+/**********************************广播消息**********************************/
+function sendEvent(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+// 回退关闭窗口
+function closeWin(){
+    api.closeWin();
+}
+
+/**********************************打开Frame**********************************/
+// 打开Frame,不需要打开Frame请删除
+function openFrame(){
+//    _alert(api.pageParam);
+    api.openFrame({
+        name: 'pay_frm',
+        url: './pay_frm.html',
+        rect: {
+            x: 0,
+            y: headerH,
+            w: 'auto',
+            h: api.winHeight - headerH -footerH
+        },
+        pageParam: {
+           data: api.pageParam
+        },
+        // frame的背景颜色
+        bgColor: '#f2f5f8',
+        // 页面是否弹动
+        bounces: false
+    });
+
+}
+
+/**********************************其他函数**********************************/
+
+
+
+</script>
+</html>

@@ -1,0 +1,635 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>我</title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        html,body {
+            height: 100%;
+            overflow: auto;
+        }
+        header {
+            text-align: center;
+            width: 100%;
+            color: white;
+            background-image: url("../../image/me/me-bg.png");
+            background-size: 100% 100%;
+            position: relative;
+            padding: 2.2rem 0.75rem;
+        }
+        .message{
+            margin-top: -2rem;
+        }
+        .aui-bar-btn .aui-bar-btn-item{
+            border: none;
+            line-height: inherit;
+        }
+
+        .aui-list .aui-list-item-media.avatar{
+            width: 2.8rem;
+            height: 2.8rem;
+            padding: 0;
+        }
+        .aui-list .aui-list-item-media.level{
+            width: 4rem;
+            height: 4rem;
+            padding: 0;
+            /*border: 1px solid white;*/
+            border-radius: 50%;
+            position: absolute;
+            right: 0;
+            bottom: -0.5rem;
+            display: inherit;
+            flex-direction: column;
+            justify-content: center;
+            -webkit-justify-content: center;
+            align-items: center;
+        }
+        .clear-bg{
+            background: transparent !important;
+        }
+        .vip{
+            width: 3.5rem;
+            font-size: 0.5rem;
+            color: white;
+            height: 0.9rem;
+            line-height: 0.9rem;
+            background-image: linear-gradient(-24deg, rgba(26, 26, 26, 1) 0%, rgba(77, 77, 77, 1) 100%), linear-gradient(rgba(26, 26, 26, 1), rgba(26, 26, 26, 1));
+            background-blend-mode: normal, normal;
+            border-radius: 18px 18px 18px 18px;
+        }
+        .nav-icon{
+            height: 1.3rem;
+            width: 1.3rem;
+            margin: 0.5rem 0 0rem 0;
+            display: inline-block;
+        }
+        /*修改aui .aui-list-item-inner子项对齐方式*/
+        .aui-list .aui-list-item-inner{
+            -webkit-justify-content: flex-start;
+            justify-content: flex-start;
+        }
+        .icon{
+            font-size: 1.1rem !important;
+        }
+
+
+        .circleProgress_wrapper{
+            width: 4rem;
+            height: 4rem;
+            position: absolute;
+            left: 0;
+            top:0;
+        }
+        .wrapper{
+            width: 2rem;
+            height: 4rem;
+            position: absolute;
+            top:0;
+            overflow: hidden;
+        }
+        .right{
+            right:0;
+        }
+        .left{
+            left:0;
+        }
+        .circleProgress{
+            width: 4rem;
+            height: 4rem;
+            border:4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            position: absolute;
+            top:0;
+            -webkit-transform: rotate(45deg);
+        }
+        .rightcircle{
+            border-top:4px solid #FFFFFF;
+            border-right:4px solid #FFFFFF;
+            right:0;
+            /*-webkit-transform: rotate(-135deg);*/
+            /*-webkit-animation: circleProgressLoad_right 5s linear;*/
+        }
+        .leftcircle{
+            border-bottom:4px solid #FFFFFF;
+            border-left:4px solid #FFFFFF;
+            left:0;
+            /*-webkit-transform: rotate(-135deg);*/
+            /*-webkit-animation: circleProgressLoad_left 5s linear;*/
+        }
+        /*@-webkit-keyframes circleProgressLoad_right{
+            0%{
+                -webkit-transform: rotate(45deg);
+            }
+            50%,100%{
+                -webkit-transform: rotate(225deg);
+            }
+        }
+        @-webkit-keyframes circleProgressLoad_left{
+            0%,50%{
+                -webkit-transform: rotate(45deg);
+            }
+            100%{
+                -webkit-transform: rotate(225deg);
+            }
+        }*/
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <header>
+            <div class="message aui-pull-left" tapmode @click="goTo('setting')">
+                <i class="aui-iconfont tea-icon-new-setting" style="font-size: 1.15rem"></i>
+            </div>
+            <div class="message aui-pull-right" tapmode @click="goTo('msg')">
+                <i class="aui-iconfont tea-icon-message-box" style="font-size: 1.15rem"></i>
+            </div>
+            <ul class="aui-list aui-media-list clear-bg" style="margin-top: 1.5rem">
+                <li class="aui-list-item clear-bg aui-padded-0">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-media avatar" tapmode @click="goTo('personal')">
+                            <img class="aui-img-round" :src=" userInfo.avatar ? userInfo.avatar : '../../image/me/default_male.png' " alt="个人头像">
+                        </div>
+                        <div class="aui-list-item-inner aui-padded-0 aui-margin-l-10">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-text-white tea-font-weight-bold">{{ userInfo.nickname ? userInfo.nickname : '小马哥' }}</div>
+                            </div>
+                            <div class="aui-list-item-text aui-margin-t-5">
+                                <div v-if="userInfo.vipCount" class="vip">
+                                    <i class="aui-iconfont tea-icon-new-vip" style="font-size: 0.5rem"></i>
+                                    <span>特权VIP</span>
+                                </div>
+                                <div v-else class="vip" style=" opacity: 0.4;background-color: gray;background-image:none">
+                                    <i class="aui-iconfont tea-icon-new-vip" style="font-size: 0.5rem"></i>
+                                    <span>特权VIP</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="aui-list-item-media level" tapmode @click="goTo('tx')">
+                            <div class="circleProgress_wrapper">
+                                <div class="wrapper right">
+                                    <div class="circleProgress rightcircle" :style="style.rightStyle"></div>
+                                </div>
+                                <div class="wrapper left">
+                                    <div class="circleProgress leftcircle" :style="style.leftStyle"></div>
+                                </div>
+                            </div>
+                            <div class="aui-font-size-18 aui-text-white tea-font-weight-bold">{{ userInfo.integral }}</div>
+                            <div class="aui-font-size-12 aui-text-white">{{ userInfo.tx }}</div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </header>
+        <div class="aui-bar-btn tea-bg-white aui-padded-b-10">
+            <div v-for="val in nav" class="aui-bar-btn-item" tapmode @click="goTo(val.func)">
+                <div class="nav-right-icon nav-icon"><img :src="val.icon" :alt="val.title"></div>
+                <p class="aui-font-size-12 aui-text-default">{{ val.title }}</p>
+            </div>
+        </div>
+        <section style="margin-top: 0.75rem">
+            <ul class="aui-list aui-list-noborder">
+                <li v-for="val in items" class="aui-list-item aui-list-item-arrow" tapmode @click="goTo(val.func)" style="margin-left: 0.75rem;padding: 0">
+                    <div class="aui-list-item-inner">
+                        <i class="aui-iconfont icon" :class="val.icon" :style="{color: val.color}"></i>
+                        <div class="aui-list-item-title aui-margin-l-10">{{ val.title }}</div>
+                    </div>
+                    <div v-if="val.remarks" class="aui-list-item-inner aui-font-size-14 tea-text-gray" style="padding-right: 1.2rem;justify-content: flex-end;">
+                        {{ val.remarks }}
+                    </div>
+                </li>
+            </ul>
+        </section>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+    // 声明DOM对象
+    var dom = {}, vm = null;
+/*vm = new Vue({
+    el: '#app',
+    data: {
+        nav: [
+            {title:'签到送礼',icon:'../../image/me/icon-check.png',func:'benefit'},
+            {title:'超值加油',icon:'../../image/me/icon-oil.png',func:'oil'},
+            {title:'ETC服务',icon:'../../image/me/icon-etc.png',func:'etc'},
+            {title:'话费充值',icon:'../../image/me/icon-phone.png',func:'phone'},
+        ],
+        items:[
+            {title:'我的钱包',icon:'tea-icon-wallet',color:'#FFCC66',func:'wallet'},
+            {title:'邀请有奖',icon:'tea-icon-new-invite',color:'#ff6666',func:'invite',remarks:'邀好友送券得积分'},
+            {title:'我的订单',icon:'tea-icon-order',color:'#FF9999',func:'order'},
+            {title:'车辆管理',icon:'tea-icon-car',color:'#6699FF',func:'car'},
+            {title:'意见反馈',icon:'tea-icon-feedback',color:'#33CCCC',func:'feedback'},
+            {title:'问题解答',icon:'tea-icon-question',color:'#6699FF',func:'question'},
+        ],
+        userInfo: {
+            avatar: '../../image/me/default_male.png',
+            nickname: '二十六画',
+            integral: 18000,
+            tx: '军长',
+            phoneNum: '18537454545',
+        }
+    },
+    methods: {
+    },
+    computed: {
+        style: function(){
+            var leftStyle,rightStyle,deg;
+            if(Number(this.userInfo.integral) >= 15000){
+                deg = (Number(this.userInfo.integral)-15000)*0.012-135;
+                leftStyle = '-webkit-transform: rotate(45deg)';
+                rightStyle = '-webkit-transform: rotate('+deg+'deg)';
+            }else {
+                deg = Number(this.userInfo.integral)*0.012-135;
+                leftStyle = '-webkit-transform: rotate('+deg+'deg)';
+                rightStyle = '-webkit-transform: rotate(-135deg)';
+            }
+            var style = {
+                leftStyle: leftStyle,
+                rightStyle: rightStyle,
+            }
+            return style;
+        },
+        isVIP: function(){
+            if(this.userInfo.vipCount == 0){
+
+            }
+        }
+    }
+})*/
+/**********************************apiready**********************************/
+    apiready = function(){
+
+        // 初始化变量
+        init();
+
+    };
+
+/**********************************初始化变量**********************************/
+    function init(){
+
+        dom = {
+        };
+
+        vm = new Vue({
+            el: '#app',
+            data: {
+                nav: [
+                    {title:'签到送礼',icon:'../../image/me/icon-check.png',func:'benefit'},
+                    {title:'超值加油',icon:'../../image/me/icon-oil.png',func:'oil'},
+                    {title:'ETC服务',icon:'../../image/me/icon-etc.png',func:'etc'},
+                    {title:'话费充值',icon:'../../image/me/icon-phone.png',func:'phone'},
+                ],
+                items:[
+                    {title:'我的钱包',icon:'tea-icon-wallet',color:'#FFCC66',func:'wallet'},
+                    {title:'邀请有奖',icon:'tea-icon-new-invite',color:'#ff6666',func:'invite',remarks:'邀好友送券得积分'},
+                    {title:'我的订单',icon:'tea-icon-order',color:'#FF9999',func:'order'},
+                    {title:'车辆管理',icon:'tea-icon-car',color:'#6699FF',func:'car'},
+                    {title:'意见反馈',icon:'tea-icon-feedback',color:'#33CCCC',func:'feedback'},
+                    {title:'问题解答',icon:'tea-icon-question',color:'#6699FF',func:'question'},
+                ],
+                userInfo: {
+                    avatar: '',
+                    nickname: '',
+                    tx: '散兵',
+                    phoneNum: '66666666666',
+                    integral: 0,
+                    vipCount: 0,
+                }
+            },
+            methods: {
+                goTo: function(func){
+                    switch (func){
+                        case 'wallet':
+                            openWinWallet();
+                            break;
+                        case 'order':
+                            openWinOrder();
+                            break;
+                        case 'car':
+                            openWinCarManage();
+                            break;
+                        case 'setting':
+                            openWinSetting();
+                            break;
+                        case 'feedback':
+                            openWinFeedback();
+                            break;
+                        case 'question':
+                            openWinQuestion();
+                            break;
+                        case 'benefit':
+                            openWinBenefit();
+                            break;
+                        case 'invite':
+                            openWinInvite();
+                            break;
+                        case 'personal':
+                            openWinPersonal();
+                            break;
+                        case 'tx':
+                            openWinIntegral();
+                            break;
+                        case 'etc':
+                            openWinEtc();
+                            break;
+                        case 'phone':
+                            openWinPhone();
+                            break;
+                        case 'oil':
+                            openWinOil();
+                            break;
+                        case 'msg':
+                            openWinMsgCenter();
+                            break;
+                        default:
+                            toast();
+                    }
+                }
+            },
+            computed: {
+                style: function(){
+                    var leftStyle,rightStyle,deg;
+                    if(Number(this.userInfo.integral) >= 15000){
+                        deg = (Number(this.userInfo.integral)-15000)*0.012-135;
+                        leftStyle = '-webkit-transform: rotate(45deg)';
+                        rightStyle = '-webkit-transform: rotate('+deg+'deg)';
+                    }else {
+                        deg = Number(this.userInfo.integral)*0.012-135;
+                        leftStyle = '-webkit-transform: rotate('+deg+'deg)';
+                        rightStyle = '-webkit-transform: rotate(-135deg)';
+                    }
+                    var style = {
+                        leftStyle: leftStyle,
+                        rightStyle: rightStyle,
+                    }
+                    return style;
+                },
+            }
+        })
+
+        //获取数据
+        getData();
+
+        // 初始化模块
+        initModule();
+
+        // 初始化监听
+        initEventListener();
+
+    };
+
+/**********************************初始化模块**********************************/
+    function initModule(){
+
+
+
+    }
+
+/**********************************初始化监听**********************************/
+    function initEventListener(){
+        //登录成功后更新页面数据
+        api.addEventListener({
+            name: 'loginSuccess'
+        }, function (ret, err) {
+            getData();
+        });
+    }
+
+/**********************************ajax请求数据**********************************/
+    function getData(){
+        tea.showp('数据加载中...');
+        api.ajax({
+            url: website + 'getmyinfo.php',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll: false,
+            data: {
+                values: {
+                    token: $api.getStorage('token')
+                },
+            }
+        }, function (ret, err) {
+            api.hideProgress();
+            if(ret){
+                $api.setStorage('vipcount',ret.vipcount);
+                $api.setStorage('mymoney',ret.mymoney);
+                $api.setStorage('img',ret.img);
+                $api.setStorage('ac',ret.ac);
+                $api.setStorage('tx',ret.tx);
+                $api.setStorage('integral',ret.jf);
+                $api.setStorage('lastcheck',ret.lastcheck);
+                $api.setStorage('is_set_sex',ret.is_set_sex);
+                updataInfo();
+            }
+        });
+    }
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+/*更新页面个人信息数据*/
+    function updataInfo(){
+        vm.userInfo.avatar = $api.getStorage('img');
+        vm.userInfo.nickname = $api.getStorage('nickname');
+        vm.userInfo.tx = $api.getStorage('tx');
+        vm.userInfo.phoneNum = $api.getStorage('telphone');
+        vm.userInfo.integral = $api.getStorage('integral');
+        vm.userInfo.vipCount = $api.getStorage('vipcount')
+    }
+
+/*跳转方法*/
+    //积分等级
+    function openWinIntegral(){
+        tea.openWin({
+            name: 'integral_win',
+            url: './integral_win.html',
+            pageParam: {
+            }
+        });
+    }
+    //钱包
+    function openWinWallet(){
+        if (tea.appleCheck()) {
+            api.toast({
+                msg: '级别尚未达到要求',
+                duration: 2000,
+                location: 'middle'
+            });
+            return;
+        }
+        tea.openWin({
+            name: 'my_wallet_win',
+            url: '../wallet/my_wallet_win.html',
+            bounces: false,
+            pageParam: {key : 'value'}
+        });
+    }
+    //订单
+    function openWinOrder(){
+        tea.openWin({
+            name: 'my_order_win',
+            url: '../order_new/my_order_win.html',
+            pageParam: {
+            }
+        });
+    }
+    //车辆管理
+    function openWinCarManage(){
+        tea.openWin({
+            name: 'car_manage_win',
+            url: '../car_manage/car_manage_win.html',
+            bounces: false,
+            pageParam: {key : 'value'}
+        });
+    }
+    //系统设置
+    function openWinSetting(){
+        tea.openWin({
+            name: 'setting_win',
+            url: '../setting/setting_win.html',
+            bounces: false,
+            pageParam: {key : 'value'}
+        });
+    }
+    //问题反馈
+    function openWinFeedback(){
+        api.openWin({
+            name: 'report_index_win',
+            url: '../report/index_win.html',
+            bounces: false,
+            pageParam: {key : 'value'}
+        });
+    }
+    //问题解答
+    function openWinQuestion(){
+        api.openWin({
+            name: 'wd_index_new_win',
+            url: '../wd/wd_index_new_win.html',
+            bounces: false,
+            pageParam: {key : 'value'}
+        });
+    }
+    //跳转我的好处（现金券）
+    function openWinBenefit(){
+        if (tea.appleCheck()) {
+            tea.toast('disable');
+            return false;
+        }
+        tea.openWin({
+            name:'benefit_win',
+            url:'../benefit/benefit_win.html',
+            bounces: false,
+            pageParam: {key : 'value'}
+        });
+    }
+    //跳转邀请页面
+    function openWinInvite(){
+        tea.openWin({
+            name: 'invite_win',
+            url: '../invite/invite_win.html',
+            bounces: false,
+            pageParam: {
+                key: 'value'
+            }
+        });
+    }
+    //个人信息
+    function openWinPersonal(){
+//        tea.openWin({
+//            name: 'personal_homepage_win',
+//            url: './personal_homepage_win.html',
+//            bounces: false,
+//            pageParam: {
+//                key: 'value'
+//            }
+//        });
+        tea.openWin({
+            name: 'personal_info_win',
+            url: './personal_info_win.html',
+            bounces: false,
+            pageParam: {
+                key: 'value'
+            }
+        });
+    };
+    //ETC
+    function openWinEtc(){
+        tea.openWin({
+            name: 'etc_win',
+            url: '../etc/etc_win.html',
+            bounces: false,
+            pageParam: {
+                key: 'value'
+            }
+        });
+    }
+    //手机充值
+    function openWinPhone(){
+        tea.openWin({
+            name: 'phone_pay_win',
+            url: '../wallet/phone_pay_win.html',
+            bounces: false,
+            pageParam: {
+                key: 'value'
+            }
+        });
+    }
+    //油卡
+    function openWinOil(){
+        tea.openWin({
+            name: 'oil_win',
+            url: '../oil/oil_win.html',
+            bounces: false,
+            pageParam: {
+                key: 'value'
+            }
+        });
+    }
+    //消息中心
+    function openWinMsgCenter(){
+        tea.openWin({
+            name: 'message_center_win',
+            url: '../notice/message_center_win.html',
+            bounces: false,
+            pageParam: {
+                key: 'value'
+            }
+        });
+    }
+    //提示
+    function toast(){
+        api.toast({
+            msg: '此功能暂未开通，敬请期待~',
+            duration: 2000,
+            location: 'middle'
+        });
+    }
+</script>
+</html>

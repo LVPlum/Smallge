@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui20/aui.2.0.css" />
+    <style type="text/css">
+    </style>
+</head>
+<body>
+<div class="aui-content">
+	<ul class="aui-list">
+		<li class="aui-list-item">
+		    <div class="aui-list-item-inner">
+				<div class="aui-list-item-title" tapmode onclick="openview()">预览</div>
+			
+		     <div class="aui-list-item-right aui-list-item-btn">
+			 	<div class="aui-btn aui-margin-r-5" id="ok" tapmode onclick="postok()">确定<span id="num"></span></div>
+			 </div>	
+			</div> 		
+		</li>
+	</ul>
+</div>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript">
+	apiready = function(){
+	    api.parseTapmode();
+		api.addEventListener({
+		    name: 'alcheck'
+		}, function(ret, err){
+		    var num = ret.value.num;
+			$api.text($api.byId('num'), '(' + num + ')');
+		});	
+		api.addEventListener({
+		    name: 'dis'
+		}, function(ret, err){
+			$api.addCls($api.byId('ok'), 'aui-btn-info');
+		});				        
+	}
+	function openview(){
+         api.sendEvent({
+		    name: 'openview'
+		 });	
+	}
+	function postok(){
+         api.sendEvent({
+		    name: 'postok'
+		 });		 
+	}
+</script>
+</html>

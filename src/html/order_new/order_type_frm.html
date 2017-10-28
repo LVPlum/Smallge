@@ -1,0 +1,138 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        html, body {
+            background: none;
+            height: 100%;
+        }
+        .aui-col-xs-4 .aui-btn {
+            width: 90%;
+            padding: 0 0.2rem;
+            line-height: 2.2rem;
+            height: 2.2rem;
+            border-radius: 0.25rem;
+        }
+
+    </style>
+</head>
+<body ontouchend="vm.hideFrame()">
+    <div id="app" v-cloak>
+        <ul class="aui-list aui-media-list aui-list-noborder ware-type">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner aui-padded-b-0">
+                    <div class="aui-row aui-row-padded">
+                        <div v-for="(item, index) in list" class="aui-col-xs-4" tapmode @click="setType(index)">
+                            <div class="aui-btn aui-btn-outlined aui-ellipsis-1 aui-margin-b-15" :class="{'tea-active' : index == titleIndex}">{{item}}</div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {}, vm = null;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+            titleIndex: 0,
+            list: ['全部', '找代办', '汽车保险', '网约审车', 'VIP', '手机充值'],
+            type: ['all', 'agency', 'insure', 'check', 'vip', 'tel']
+        },
+        methods: {
+            setType: function(index){
+                vm.titleIndex = index;
+                api.sendEvent({
+                    name: 'setOrderType',
+                    extra: {
+                        index: index,
+                        type: this.type[index]
+                    }
+                });
+            },
+            hideFrame: function(){
+                api.setFrameAttr({
+                    hidden: true
+                });
+                api.sendEvent({
+                    name: 'setOrderMaskOut',
+                });
+            }
+        },
+        watch: {
+
+        }
+    })
+
+    // 初始化
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    dom = {
+    };
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+
+</script>
+</html>

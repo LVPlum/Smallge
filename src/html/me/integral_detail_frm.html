@@ -1,0 +1,132 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+		html,body {
+            height: 100%;
+            overflow: auto;
+		}
+	 	.header{
+			width: 100%;
+			height: 5.4rem;
+			background-color: #3399ff;
+			color: #fff;
+			text-align: center;
+			/*background: url(../../image/me/integral_banner@2x.png) no-repeat;*/
+			background-size: 100%;
+		}
+		.aui-font-size-40{
+			font-size: 2rem !important;
+		}
+    </style>
+</head>
+<body>
+	<div class="aui-card-list">
+		<div id="header" class="header">
+			<div class="aui-list-item-text">
+				<div id="total" class="aui-list-item-title aui-font-size-20"  style="padding-top: 0.5rem;"><span id = "totalInte" class="aui-font-size-40"></span></div>
+				<div class="aui-list-item-text aui-font-size-14">总积分 </div>
+			</div>
+		</div>
+		<div class="aui-card-list-content">
+			<ul id="list-ul" class="aui-list aui-media-list">
+
+			</ul>
+		</div>
+	</div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+var lis = '';
+/**********************************apiready**********************************/
+apiready = function(){
+				 showp('数据读取中...','请等候...');
+//              alert("mqq:"+$api.jsonToStr(api.pageParam));//
+                tea.ajax({
+				    url: website + 'inteinfo.php?action=jflistinfo',
+				    method: 'post',
+				    timeout: 30,
+				    dataType: 'json',
+				    returnAll:false,
+				    data:{
+				        values: {ID: $api.getStorage("ID")},
+				    }
+				},function(ret,err){
+					api.hideProgress();// 关闭正在加载。。提示框
+//					_alert(ret);
+					if(ret){
+						var totalInte = 0;
+//						var nickname = $api.getStorage('nickname');
+//						$api.html($api.byId('total'), nickname)
+						for(var i = 0,len = ret.length; i<len; i++){
+							var inte = ret[i].inte;//影响到的积分
+							totalInte += parseInt(inte);
+							var intetype = ret[i].intetype;//原因，文本
+							var addtime = ret[i].addtime;//发生时间
+							    var lis = ' <li class="aui-list-item aui-list-item-middle">'+
+						                    '<div class="aui-media-list-item-inner aui-list-item-text">'+
+						                        '<div class="aui-list-item-inner">'+
+						                            '<div class="aui-list-item-text">'+
+						                                 ' <div class="aui-list-item-title aui-font-size-16">'+intetype+'</div>'+
+						                            '</div>'+
+						                            '<div class="aui-list-item-text aui-font-size-12">'+
+						                                addtime+
+						                            '</div>'+
+						                       '</div>'+
+						                       '<div class="aui-list-item-right aui-font-size-20 aui-margin-r-15" style="width: 50%;text-align: right;color:#333;">'+
+						                             '+'+inte++
+						                       '</div>'+
+						                    '</div>'+
+						                '</li>';
+						                $api.append($api.byId('list-ul'),lis);
+						}
+
+						 $api.html($api.byId('totalInte'), totalInte);
+
+					}
+				});
+
+};
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {};
+
+/**********************************初始化变量**********************************/
+
+/**********************************DOM响应**********************************/
+
+
+/**********************************其他函数**********************************/
+
+
+</script>
+</html>

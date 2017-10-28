@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui20/aui.2.0.css" />
+    <style type="text/css">
+		body{background: #fff}
+		.noread{color:#000000;}
+    </style>
+</head>
+<body>
+        <div class="aui-card-list-content">
+            <ul class="aui-list aui-media-list" id="list">
+
+           </ul>
+         </div>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript" src="../../script/tea.js" ></script>
+<script type="text/javascript" src="../../script/aui-toast.js" ></script>
+<script type="text/javascript">
+var userid = null, url = null;
+    apiready = function(){
+    	userid = $api.getStorage('ID');
+    	url = api.pageParam.url;
+        api.parseTapmode();
+        loaddate();
+    }
+    function loaddate(){
+    	showp("数据加载中...","");
+		api.ajax({
+		    url: website + 'pushcenter.php?action=list',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {userid: userid},
+		    }
+		},function(ret,err){
+			api.hideProgress();
+		    if (ret) {
+		    	var html = '';
+		    	var obj = $api.byId('list');
+	            for (var i = 0, len = ret.length; i < len; i++) {
+	                var r = ret[i];
+		                html += '<li class="aui-list-item aui-list-item-middle" tapmode onclick="openurl(\''+ r.murl +'\')">';
+		                html += '    <div class="aui-media-list-item-inner">';
+		                html += '        <div class="aui-list-item-inner aui-list-item-arrow">';
+		                html += '            <div class="aui-list-item-text">';
+		                html += '                <div class="aui-list-item-title aui-font-size-14">'+ r.pushtitle +'</div>';
+		                html += '                <div class="aui-list-item-right">'+ r.addtime +'</div>';
+		                html += '            </div>';
+		                html += '            <div class="aui-list-item-text">';
+		                if(r.ok == 0){
+		                	html += '<b class="noread">'+ r.pushcontent +'</b>';
+		                }else{
+		                	html += r.pushcontent;
+		                }
+		                html += '            </div>';
+		                html += '        </div>';
+		                html += '    </div>';
+		                html += '</li>';
+	            }
+	            $api.html(obj, html);
+		        api.sendEvent({
+				    name: 'rehb'
+				});
+		    }
+			else {
+				tea.toast('custom','暂无系统消息');
+			}
+		});
+    }
+	function openurl(url){
+			api.openWin({
+		        name: 'openurl',
+		        url: url,
+		        vScrollBarEnabled: false
+		   	 });
+	}
+</script>
+</html>

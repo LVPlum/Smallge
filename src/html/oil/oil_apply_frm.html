@@ -1,0 +1,452 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*修改value的placeholder的颜色*/
+        input::-webkit-input-placeholder, textarea::-webkit-input-placeholder{
+            color:   #CCCCCC;
+        }
+        input:-moz-placeholder, textarea:-moz-placeholder {
+            color:    #CCCCCC;
+        }
+        input:-ms-input-placeholder, textarea:-ms-input-placeholder {
+            color:    #CCCCCC;
+        }
+
+        .aui-list .aui-list-item-label.icon{
+            width: 1.15rem;
+            height: 1.15rem;
+        }
+        .btn{
+            width: 1rem !important;
+            height: 1rem !important;
+            vertical-align: sub !important;
+            margin-left: 0.5rem;
+        }
+        *{
+            background-image: none !important;
+        }
+        .aui-btn-block{
+            height: 2.2rem;
+            line-height: 2.2rem;
+            font-size: 0.8rem;
+            font-weight: 100;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <ul class="aui-list aui-media-list">
+            <li class="aui-list-item aui-padded-0">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-inner aui-padded-l-15">
+                        <div class="aui-info" style="padding:0">
+                            <div class="aui-list-item-label icon">
+                                <img :src="card_brand == 'cnpc' ? '../../image/oil/icon_cnpc.png' : '../../image/oil/icon_sg.png' " class="aui-img-round">
+                            </div>
+                            <div class="aui-list-item-input aui-font-size-16 tea-font-weight-bold tea-text-title">
+                                <!--中国石油·汽油卡-->
+                                {{card_brand == 'cnpc' ? '中国石油' : '中国石化'}}·{{card_type == 'petrol' ? '汽油卡' : '柴油卡' }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <!--<input-plate :province="province" :number="number"></input-plate>
+            <input-time :time="time"></input-time>-->
+            <!--<li class="aui-list-item aui-padded-0">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-inner aui-padded-l-15">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title tea-text-blue aui-font-size-14">车牌号码</div>
+                        </div>
+                        <div class="aui-info aui-padded-0">
+                            <div class="aui-list-item-label" style="width: 4rem;line-height: normal"  @click="goto('province')">
+                                <span class="tea-text-title aui-font-size-16 tea-text-star-red tea-text-arrow-down">{{ province }}</span>
+                            </div>
+                            <div class="aui-list-item-input aui-font-size-16">
+                                <input type="text" placeholder="请输入车牌后5位数"
+                                       v-model = "number">
+                            </div>
+                            <div class="tea-text-round tea-big"  @click="goto('plate')">选</div>
+                        </div>
+                    </div>
+                </div>
+            </li>-->
+            <!--<li class="aui-list-item aui-padded-0 aui-list-item-arrow"  @click="goto('date')">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-inner aui-padded-l-15">
+                        <div class="aui-list-item-text aui-margin-b-5">
+                            <div class="aui-list-item-title tea-text-blue aui-font-size-14">预约时间</div>
+                        </div>
+                        <div class="aui-info aui-padded-0">
+                            <div class="aui-font-size-16 tea-text-title">{{ time }}</div>
+                        </div>
+                    </div>
+                </div>
+            </li>-->
+            <!--<li class="aui-list-item aui-padded-0">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-inner aui-padded-l-15">
+                        <div class="aui-list-item-text aui-margin-b-5">
+                            <div class="aui-list-item-title tea-text-blue aui-font-size-14">取卡方式</div>
+                        </div>
+                        <div class="aui-font-size-16 tea-text-title">
+                            <span class="aui-margin-r-15" @click="checked('1')">到店拿<label :class="checkedOn == '1' ? 'aui-checked' : '' " class="aui-radio btn"></label></span>
+                            <span class="aui-margin-l-15" @click="checked('2')">邮寄<span>￥10</span><label :class="checkedOn == '2' ? 'aui-checked' : '' " class="aui-radio btn"></label></span>
+                        </div>
+                    </div>
+                </div>
+            </li>-->
+        </ul>
+        <!--<div v-show="checkedOn == '1' " class="aui-list">
+            <div class="aui-list-item">
+                <div class="aui-info aui-padded-0">
+                    <div class="aui-info-item aui-font-size-16 tea-text-title">
+                        <span>店铺地址</span>
+                        <span class="aui-margin-l-10">{{store}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="aui-list-item">
+                <div class="aui-info aui-padded-0">
+                    <div class="aui-info-item aui-font-size-16 tea-text-title">
+                        <span>手机号码</span>
+                        <span class="aui-margin-l-10">
+                            <input type="tel" placeholder="请输入您的手机号码" maxlength="11"
+                                   v-model = "tel">
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>-->
+        <!--<div v-show="checkedOn == '2' " class="aui-list aui-media-list" tapmode @click="goto('address')">
+            <div class="aui-list-item aui-list-item-arrow">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div v-if="address" class="aui-font-size-16 tea-text-title">{{ address.name }} {{ address.tel.replace(/^(\d{3})(\d{4})(\d{4})$/, "$1 $2 $3") }}</div>
+                            <div v-else class="aui-font-size-16 tea-text-light-gray">请添加新地址</div>
+                        </div>
+                        <div v-if="address" class="aui-info" style="padding:0">
+                            <div class="aui-font-size-16 tea-text-title aui-ellipsis-2">{{  address.region+' '+address.detail }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>-->
+        <input-plate :province="province" v-model="number" @updata="updataMsg"></input-plate>
+        <input-time :time="time" @updata="updataMsg"></input-time>
+        <input-option :checked="checkedOn" :config="optionConfig" @checked="checked"></input-option>
+        <div v-show="checkedOn == '1' " class="aui-list">
+            <div class="aui-list-item">
+                <div class="aui-info aui-padded-0">
+                    <div class="aui-info-item aui-font-size-16 tea-text-title">
+                        <span>店铺地址</span>
+                        <span class="aui-margin-l-10">{{store}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="aui-list-item">
+                <div class="aui-info aui-padded-0">
+                    <div class="aui-info-item aui-font-size-16 tea-text-title">
+                        <span>手机号码</span>
+                        <span class="aui-margin-l-10">
+                            <input type="tel" placeholder="请输入您的手机号码" maxlength="11"
+                                   v-model = "tel">
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <site v-show="checkedOn == '2' " :address="address" @updata="updataMsg"></site>
+        <footer style="margin: 2rem" @click="goto('recharge')">
+            <div class="aui-btn aui-btn-block aui-text-white tea-btn-radius" :class="errorMsg ? 'tea-bg-light-blue' : 'tea-bg-blue' ">下一步</div>
+        </footer>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var vm = null;
+
+/**********************************apiready**********************************/
+/*apiready = function(){
+
+    // 初始化变量
+    init();
+
+};*/
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+            province: '桂E',
+            number: '',
+            time: '2017-01-10 10点',
+            tel: '',
+            address: '',
+            index: 0,      //地址下标，默认为0
+            checkedOn: '',
+            store: '合浦还珠南路小马哥审车处',
+            card_brand: api.pageParam.card_brand,
+            card_type: api.pageParam.card_type,
+        },
+        methods: {
+            goto: function(type){
+                switch (type){
+                    case 'province':
+                        openWinPlateProvince();
+                        break;
+                    case 'plate':
+                        openWinPlateNum();
+                        break;
+                    case 'date':
+                        openWinDateSelect();
+                        break;
+                    case 'address':
+                        openWinAddress(vm.address.addrid);
+                        break;
+                    case 'recharge':
+                        openWinRecharge();
+                        break;
+                }
+            },
+            checked: function(type){
+                vm.checkedOn = type
+            }
+        },
+        computed: {
+            errorMsg: function(){
+                var rule = new tea.checkRule();
+                rule.add(this.number, [{
+                    condition: 'isNoEmpty',
+                    errorMsg: '请输入车牌号码'
+                }]);
+                rule.add(this.time, [{
+                    condition: 'isNoEmpty',
+                    errorMsg: '请选择预约时间'
+                }]);
+                rule.add(this.checkedOn, [{
+                    condition: 'isNoEmpty',
+                    errorMsg: '请选择取卡方式'
+                }]);
+                if(this.checkedOn=='1'){
+                    rule.add(this.tel, [{
+                        condition: 'isPhone',
+                        errorMsg: '请输入手机号码'
+                    }]);
+                }
+                if(this.checkedOn == '2'){
+                    rule.add(this.address, [{
+                        condition: 'isNoEmpty',
+                        errorMsg: '请选择地址'
+                    }]);
+                }
+                var errorMsg = rule.start();
+                return errorMsg;
+            }
+        },
+        watch: {
+
+        }
+    })
+    //初始化数据
+    getData();
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+    //监听选择车牌前缀省份
+    /*api.addEventListener({
+        name: 'selectPlateProvince'
+    }, function (ret, err) {
+        vm.province = ret.value.province + ret.value.city;
+    });*/
+    //监听选择历史车牌号码
+    /*api.addEventListener({
+        name: 'addOldCar'
+    }, function (ret, err) {
+        vm.province = ret.value.car.slice(0,2);
+        vm.number = ret.value.car.slice(2);
+        vm.tel = ret.value.tel;
+    });*/
+    //监听选择预约时间
+    /*api.addEventListener({
+        name: 'selectretime'
+    }, function(ret, err){
+        vm.time = ret.value.strtime;
+    });*/
+    //监听地址选择
+    /*api.addEventListener({
+        name: 'selectAddress'
+    }, function (ret, err) {
+        vm.address = ret.value.address;
+        vm.add = ret.value.index
+    });*/
+    /*api.addEventListener({
+        name: 'saveOk'
+    }, function (ret, err) {
+        getData();
+    });
+    api.addEventListener({
+        name: 'editorOk'
+    }, function (ret, err) {
+        getAddressDetail(ret.value.addrid);
+    });*/
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+//    tea.showp('加载中...')
+    api.ajax({
+        url: website + 'oil_api.php?action=index',
+        method: 'post',
+        timeout: 30,
+        data: {
+            values: {
+                ID: $api.getStorage('ID')
+            }
+        }
+    }, function (ret, err) {
+//        api.hideProgress();
+        if(ret.succ == '1'){
+            vm.province = ret.data.carnum.slice(0,2);
+            vm.number = ret.data.carnum.slice(2);
+            vm.time = ret.data.booktime;
+            vm.address = ret.data.address;
+            return true
+        }
+    });
+
+
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+/*跳转方法*/
+    //车牌省份前缀
+    /*function openWinPlateProvince(){
+        event.stopPropagation();
+        api.openWin({
+            name: 'plate_province_win',
+            url: '../car_plate/plate_province_win.html',
+        });
+    }
+    //车牌历史列表
+    function openWinPlateNum(){
+        api.openWin({
+            name: 'plate_num_win',
+            url: '../car_plate/plate_num_win.html',
+        });
+    }
+    //预约时间选择器
+    function openWinDateSelect(){
+        api.openWin({
+            name: 'date_select_win',
+            url: '../unit/date_select_win.html',
+            pageParam: {
+                winName: 'oil_apply_win'
+            }
+        });
+    }
+    //地址列表页面
+    function openWinAddress(addrid){
+        api.openWin({
+            name: 'address_list_win',
+            url: '../address/address_list_win.html',
+            pageParam: {
+                addrid: addrid
+            }
+        });
+    }*/
+    function openWinRecharge(){
+        if(!vm.errorMsg){
+            api.openWin({
+                name: 'oil_recharge_win',
+                url: './oil_recharge_win.html',
+                pageParam: {
+                    carnum: vm.province+vm.number, //车牌号码
+                    booktime: vm.time,             //预约时间
+                    card_brand: vm.card_brand,            //油卡品牌：中石油cnpc,中石化sg
+                    card_type: vm.card_type,           //油卡类型：汽油petrol，柴油
+                    way: vm.checkedOn,             //取卡方式
+                    store_address: vm.store,       //店铺地址
+                    tel: vm.tel,                   //手机号
+                    addrid: vm.address.addrid,     //邮寄地址id
+                }
+            })
+        }else {
+            api.toast({
+                msg: vm.errorMsg,
+                duration: 2000,
+                location: 'middle'
+            });
+        }
+    }
+    function getAddressDetail(addrid){
+        tea.showp('加载中...')
+        api.ajax({
+            url: website + 'exempt_api.php?action=addrinfo',
+            method: 'post',
+            timeout: 30,
+            data: {
+                values: {
+                    ID: $api.getStorage('ID'),
+                    addrid: addrid,
+                },
+            }
+        },function(ret,err){
+            api.hideProgress();
+            if(ret.succ == '1'){
+                vm.address = ret.data
+            }
+        });
+    }
+/*跳转END*/
+</script>
+</html>

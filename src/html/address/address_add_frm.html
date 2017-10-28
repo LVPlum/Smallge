@@ -1,0 +1,355 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*修改value的placeholder的颜色*/
+        input::-webkit-input-placeholder, textregion::-webkit-input-placeholder{
+            color:   #CCCCCC;
+        }
+        input:-moz-placeholder, textregion:-moz-placeholder {
+            color:    #CCCCCC;
+        }
+        input:-ms-input-placeholder, textregion:-ms-input-placeholder {
+            color:    #CCCCCC;
+        }
+        /*修改aui-list间隔线位置*/
+        .aui-list.aui-list-in .aui-list-item{
+            background-position: 0 bottom;
+        }
+        .hide{
+            opacity: 0;
+        }
+        .input-warp{
+            /*position: absolute;
+            top: 25%;*/
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <ul class="aui-list aui-list-in aui-form-list aui-list-noborder">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label" tapmode onclick="openWinPlateProvince()" style="width: 4rem">姓名</div>
+                    <div class="aui-list-item-input aui-padded-l-15">
+                        <input type="text" placeholder="请输入您的姓名"
+                        v-model="name">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label" tapmode onclick="openWinPlateProvince()" style="width: 4rem">手机号码</div>
+                    <div class="aui-list-item-input aui-padded-l-15">
+                        <!--<div class="input-warp">{{ tel.length === 11 ? tel.replace(/^(\d{3})(\d{4})(\d{4})$/, '$1 $2 $3') : tel }}</div>-->
+                        <input type="tel" placeholder="请输入您的手机号码"
+                        v-model.trim="tel">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item" tapmode @click="openFrmRegion">
+                <div class="aui-list-item-inner aui-list-item-arrow aui-margin-r-15">
+                    <div class="aui-list-item-label"  style="width: 4rem">所在区域</div>
+                    <div class="aui-pull-right aui-margin-r-15 aui-ellipsis-1" :class="region ? '' : 'tea-text-gray' ">{{ region ? region : '请选择' }}</div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <textarea placeholder="请填写详细地址"
+                    v-model=" detail "></textarea>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {},data={}, vm = null;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    dom = {
+    };
+    /*data = {
+        name: api.pageParam.value.name,
+        tel: api.pageParam.value.tel,
+        region: api.pageParam.value.region,
+        detail: api.pageParam.value.detail,
+        selectedInfo: api.pageParam.value.region_code,
+    }*/
+    vm = new Vue({
+        el: '#app',
+        data: {
+            name: '',
+            tel: '',
+            region: '',
+            detail: '',
+            selectedInfo: [19, 4, 4],
+        },
+        methods: {
+            openFrmRegion: function(){
+                /*区域选择器*/
+                openFrmSelect()
+            }
+        },
+        computed: {
+            errorMsg: function(){
+                var rule = new tea.checkRule();
+                rule.add(this.name, [{
+                    condition: 'isNoEmpty',
+                    errorMsg: '请输入姓名'
+                }]);
+                rule.add(this.tel, [{
+                    condition: 'isPhone',
+                    errorMsg: '请输入正确的手机号码'
+                }]);
+                rule.add(this.region, [{
+                    condition: 'isNoEmpty',
+                    errorMsg: '请选择区域'
+                }]);
+                rule.add(this.detail, [{
+                    condition: 'isNoEmpty',
+                    errorMsg: '请输入详细地址'
+                }]);
+                var errorMsg = rule.start();
+                return errorMsg;
+            }
+        },
+        watch: {
+            //判断是否是修改订单
+            initialize: {
+                handler: function(){
+                    if(api.pageParam.value){
+                        this.name = api.pageParam.value.name;
+                        this.tel = api.pageParam.value.tel;
+                        this.region = api.pageParam.value.region;
+                        this.detail = api.pageParam.value.detail;
+                        this.selectedInfo = api.pageParam.value.region_code.split(',');
+                    }
+                },
+                immediate: true
+            },
+            //验证数据完善发送到win,改变保存状态颜色
+            errorMsg: {
+                handler: function(){
+                    api.sendEvent({
+                        name: 'isReady',
+                        extra: {errorMsg: this.errorMsg}
+                    });
+                },
+                immediate: true //立即调用
+            }
+        }
+    });
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+/*保存地址*/
+function postData(){
+    if (vm.errorMsg){
+        api.toast({
+            msg: vm.errorMsg,
+            duration: 2000,
+            location: 'middle'
+        });
+        return false
+    }
+    api.ajax({
+        url: website + 'exempt_api.php?action=newaddr',
+        method: 'post',
+        timeout: 30,
+        data: {
+            values: {
+                ID: $api.getStorage('ID'),
+                name: vm.name,
+                tel: vm.tel,
+                region: vm.region,
+                region_code: vm.selectedInfo.join(','),
+                detail: vm.detail,
+            },
+        }
+    }, function (ret, err) {
+        if(!ret) return false;
+        if(ret.succ == '1'){
+            api.sendEvent({
+                name: 'saveOk',
+                extra: {key1: 'value', key2: 'value'}
+            });
+            api.closeToWin({
+                name: api.pageParam.origin,
+                animation: {
+                    type: 'flip',
+                    subType: 'from_bottom',
+                    duration: 500
+                }
+            });
+        }
+    });
+}
+/*编辑、修改地址提交*/
+function editorAdd(){
+    api.ajax({
+        url: website + 'exempt_api.php?action=editaddr',
+        method: 'post',
+        timeout: 30,
+        data: {
+            values: {
+                ID: $api.getStorage('ID'),
+                addrid: api.pageParam.value.addrid,
+                name: vm.name,
+                tel: vm.tel,
+                region: vm.region,
+                region_code: vm.selectedInfo.join(','),
+                detail: vm.detail,
+            },
+        }
+    }, function (ret, err) {
+        if(!ret) return false;
+        if(ret.succ == '1'){
+            api.sendEvent({
+                name: 'editorOk',
+                extra: {addrid: api.pageParam.value.addrid}
+            });
+            api.closeToWin({
+                name: api.pageParam.origin,
+                animation: {
+                    type: 'flip',
+                    subType: 'from_bottom',
+                    duration: 500
+                }
+            });
+        }
+    });
+}
+
+function openFrmSelect(){
+    /*地区三级联动*/
+    var UIActionSelector = api.require('UIActionSelector');
+    UIActionSelector.open({
+        datas: 'widget://html/address/city_new.json',
+        layout: {
+            row: 5,
+            col: 3,
+            height: 40,
+            size: 12,
+            sizeActive: 14,
+            rowSpacing: 5,
+            colSpacing: 10,
+            maskBg: 'rgba(0,0,0,0.6)',
+            bg: '#ededed',
+            color: '#999',
+            colorSelected: '#333'
+        },
+        animation: true,
+        cancel: {
+            text: '取消',
+            size: 16,
+            w: 90,
+            h: 35,
+            bg: '#f5f5f5',
+            bgActive: '#f5f5f5',
+            color: '#3399ff',
+            colorActive: '#3399ff'
+        },
+        ok: {
+            text: '完成',
+            size: 16,
+            w: 90,
+            h: 35,
+            bg: '#f5f5f5',
+            bgActive: '#f5f5f5',
+            color: '#3399ff',
+            colorActive: '#3399ff'
+        },
+        title: {
+            text: '',
+            size: 12,
+            h: 44,
+            bg: '#f5f5f5',
+            color: '#888'
+        },
+        actives: vm.selectedInfo,
+    }, function(ret, err) {
+        if (ret.eventType == 'ok') {
+            var arr = [];  //选中城市的下标
+            var region = ''; //选中城市名称
+            for(i in ret.selectedInfo){
+                region += ret.selectedInfo[i].name;
+                arr.push(ret.selectedInfo[i].index);
+            }
+            vm.region = region;
+            vm.selectedInfo = arr;
+        } else {
+
+        }
+    });
+}
+</script>
+</html>

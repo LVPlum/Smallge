@@ -1,0 +1,97 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <!--<title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/common.css" />-->
+    <title>title</title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background: white;
+        }
+        ul li{
+            position: relative;
+        }
+        ul li:before{
+            content: '';
+            display: inline-block;
+            width: 0.2rem;
+            height: 0.2rem;
+            background: #3399ff;
+            border-radius: 0.5rem;
+            z-index: 99;
+            vertical-align: middle;
+            margin-right: 0.25rem;
+            margin-top: -3px;
+        }
+    </style>
+</head>
+<body>
+      <!--<div class="aui-content aui-content-padded">
+            小马哥积分与头衔关系计算方式如下：
+            <ul>
+                <li>600分以下的头衔为"散兵"</li>
+                <li>600分或以上获得头衔"排长"</li>
+                <li>1000分或以上获得头衔"连长"</li>
+                <li>2000分或以上获得头衔"营长"</li>
+                <li>3000分或以上获得头衔"旅长"</li>
+                <li>5000分或以上获得头衔"师长"</li>
+                <li>8000分或以上获得头衔"军长"</li>
+                <li>10000分或以上获得头衔"司令"</li>
+            </ul>
+            更多获得积分的方式将在后续的版本推出
+      </div>-->
+    <div class="aui-content aui-content-padded">
+        <p class="aui-font-size-14 tea-text-title" style="margin-bottom: 0.5rem">小马哥积分与头衔关系计算方式：</p>
+        <ul class="aui-font-size-16 tea-text-title aui-margin-l-5">
+            <!--<li>600分以下的头衔为"散兵"</li>
+            <li>600分或以上获得头衔"排长"</li>
+            <li>1000分或以上获得头衔"连长"</li>
+            <li>2000分或以上获得头衔"营长"</li>
+            <li>3000分或以上获得头衔"旅长"</li>
+            <li>5000分或以上获得头衔"师长"</li>
+            <li>8000分或以上获得头衔"军长"</li>
+            <li>10000分或以上获得头衔"司令"</li>-->
+            <li>散兵 | 600分以下</li>
+            <li>排长 | 600分或以上</li>
+            <li>连长 | 1000分或以上</li>
+            <li>营长 | 2000分或以上</li>
+            <li>旅长 | 3000分或以上</li>
+            <li>师长 | 5000分或以上</li>
+            <li>军长 | 8000分或以上</li>
+            <li>司令 | 10000分或以上</li>
+        </ul>
+        <p class="aui-font-size-12 tea-text-gray aui-margin-l-5" style="margin-top: 0.25rem">更多获得积分的方式将在后续的版本推出</p>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- HTML模板渲染引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- HTML模板 -->
+<!--<script type="text/template" id="template"></script>
+/*apiready = function() {
+    api.parseTapmode();
+};*/
+
+</script>-->
+</html>

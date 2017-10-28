@@ -1,0 +1,296 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>分享有礼</title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            height: 100%;
+            overflow: auto;
+            background-color: #FFF;
+        }
+        /*aui样式修改*/
+        .aui-list .aui-list-item-inner{
+            align-items: baseline !important;
+        }
+        @media screen and (-webkit-min-device-pixel-ratio: 1.5){
+            .aui-list .aui-list-item{
+                /*background-size: 90% 1px;*/
+            }
+        }
+        /*本页样式*/
+        .banner{
+            height: 10.5rem;
+            background-image: url(../../image/invite/invite_banner@2x.png);
+            background-size: 100% 100%;
+            margin-bottom: 1.5rem;
+        }
+        .download-btn{
+            width: 12.5rem;
+            height: 2.3rem;
+            border-radius: 30px;
+            line-height: 2.3rem;
+        }
+        .introduce li{
+            padding: 0 !important;
+            margin-bottom: 0.75rem !important;
+            border: none !important;
+            background-size: 100% 0 !important;
+            background-image: none !important;
+        }
+        .introduce li:before{
+            content: "";
+            width: 0.2rem;
+            height: 0.65rem;
+            background: #3399ff;
+            display: inline-block;
+            margin-right: 0.65rem;
+            margin-top: 3px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="banner"></div>
+    </header>
+    <section class="aui-content aui-content-padded">
+        <ul class="aui-list aui-form-list aui-list-noborder">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label-icon">
+                        <i class="aui-iconfont" style="color: black">+86</i>
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input id="phone_val" type="tel" maxlength="11" placeholder="请输入手机号码" tapmode oninput="isNumber(this);" required>
+                        <div class="tea-clear-btn" onclick="tea.clear('phone_val');">
+                            <i class="aui-iconfont aui-icon-close"></i>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-input">
+                        <input id="identify_val" maxlength="6" placeholder="请输入验证码" tapmode oninput="isNumber(this);">
+                    </div>
+                    <div class="aui-list-item-label-icon tea-text-blue">
+                        <i id="identify_btn" class="aui-iconfont aui-font-size-14 aui-padded-r-15" tapmod onclick="getCode();">获取验证码</i>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner aui-list-item-center aui-list-item-btn" tapmod onclick="downLoad();">
+                    <div class="aui-btn aui-btn-info aui-font-size-16 download-btn">马上下载“小马哥”APP</div>
+                </div>
+            </li>
+        </ul>
+    </section>
+    <section class="aui-content aui-content-padded aui-margin-b-10">
+        <h1 class="aui-font-size-14 aui-text-center aui-margin-b-10" style="color: #000;font-weight: bold">什么是小马哥？</h1>
+        <ul class="aui-list aui-list-in aui-list-noborder aui-font-size-14 aui-text-justify introduce">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">“小马哥APP”是深圳小马哥软件科技有限公司的一款移动终端产品，致力于为广大车友提供一个方便省心的服务平台。在小马哥上，您可以网上预约审车，在线购买保险，还能和其他车友进行交流互动。</div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">下载小马哥并且安装后，可使用在线预约审车，在线购买保险，汽车相关业务代办等功能。</div>
+            </li>
+            <!--<li class="aui-list-item">
+                <div class="aui-list-item-inner">下载小马哥并且安装、注册后，小马哥系统会秒推一个随机金额的现金红包至您的小马哥钱包余额，可提现。</div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">推荐您的好友加入小马哥VIP，即可获得200元现金红包奖励。</div>
+            </li>-->
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">每成功邀请1位好友在小马哥APP注册，双方都可获得¥20审车现金券。</div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">本活动和苹果公司无关。</div>
+            </li>
+        </ul>
+    </section>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {},values={};
+var isinterval;
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    dom = {
+        phone: $api.byId('phone_val'),
+        identifying: $api.byId('identify_val'),
+        identifying_btn: $api.byId('identify_btn')
+    };
+    values = {
+        telphone: $api.val(dom.phone),
+        identify: $api.val(dom.identifying),
+    }
+    data = {
+
+    };
+
+    updateHTML();
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+
+
+/**********************************其他函数**********************************/
+function isNumber(tar){
+    tar.value=tar.value.replace(/[^\d]/g,'');
+}
+
+/*获取验证码*/
+function getCode(){
+    if(check()){
+        api.ajax({
+            url: website + 'sendsmscode.php?checknum=3',
+            method: 'post',
+            data: {
+                phonenum: values.telphone
+            }
+        }, function (ret, err) {
+            _alert(ret);
+            Interval("identify_btn",10);
+        });
+    }
+}
+/*测试计时器*/
+function Interval(el,times){
+    var times = times || 120;
+    var verify = document.getElementById(el)
+    function countOn(){
+        this.times = times;
+        verify.removeAttribute("onclick");
+        isinterval = setInterval(countOff,1000);
+    }
+    function countOff() {
+        console.log(times)
+        if (times < 1) {
+            verify.setAttribute("onclick","getCode()");
+            verify.removeAttribute("style");
+            verify.innerText = "重新获取";
+            clearInterval(isinterval);
+            return;
+        }
+        verify.setAttribute("style","color:#999");
+        verify.innerText = times+"s后重发";
+        times--;
+    }
+    return countOn();
+}
+
+/*验证手机号*/
+function check(){
+    values.telphone = $api.val(dom.phone),
+            values.telphone = tea.toNum(values.telphone);
+    if (!tea.checkPhone(values.telphone)) {
+        api.toast({
+            msg: '请输入格式正确的11位手机号码',
+            duration: 2000,
+            location: 'middle'
+        });
+        return false;
+    }
+    return true;
+}
+
+/*下载按钮*/
+function downLoad(){
+    check();
+}
+
+/*var verify = document.getElementById("identify_btn"),isinterval,times;
+function countOn(){
+    times = 120;
+    verify.removeAttribute("onclick");
+    console.log(verify.innerText);
+    isinterval = setInterval("countOff()",1000);
+}
+function countOff() {
+    if (times < 1) {
+        verify.setAttribute("onclick","getCode()");
+        verify.removeAttribute("style");
+        verify.innerText = "重新获取";
+        clearInterval(isinterval);
+        return;
+    }
+    verify.setAttribute("style","color:#999");
+    verify.innerText = times+"s后重发";
+    times--;
+}*/
+</script>
+</html>

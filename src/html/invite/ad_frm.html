@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>分享有礼</title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            height: 100%;
+            overflow: auto;
+            background-color: #FFF;
+        }
+        /*aui样式修改*/
+        .aui-list .aui-list-item-inner{
+            align-items: baseline !important;
+        }
+        @media screen and (-webkit-min-device-pixel-ratio: 1.5){
+            .aui-list .aui-list-item{
+                /*background-size: 90% 1px;*/
+            }
+        }
+        /*本页样式*/
+        .banner{
+            height: 13rem;
+            background-image: url(../../image/invite/ad-banner.png);
+            background-size: 100% 100%;
+        }
+        .download-btn{
+            width: 95%;
+            height: 2.3rem;
+            border-radius: 30px;
+            line-height: 2.3rem;
+        }
+        .introduce li{
+            padding: 0 !important;
+            margin-bottom: 0.75rem !important;
+            border: none !important;
+            background-size: 100% 0 !important;
+            background-image: none !important;
+        }
+        .introduce li:before{
+            content: "";
+            width: 0.2rem;
+            height: 0.65rem;
+            background: #3399ff;
+            display: inline-block;
+            margin-right: 0.65rem;
+            margin-top: 3px;
+        }
+        .min-height{
+            min-height: auto !important;
+            color: #666;
+        }
+        .text{
+            display: inline !important;
+        }
+        .aui-list .aui-list-item{
+            background-image: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="banner"></div>
+    </header>
+    <section class="aui-content aui-content-padded" style="margin: 0.2rem 0.75rem">
+        <ul class="aui-list aui-form-list aui-list-noborder">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner aui-list-item-center aui-list-item-btn" tapmod onclick="downLoad();" style="padding-bottom: 0">
+                    <div class="aui-btn aui-btn-info aui-font-size-16 download-btn">下载APP</div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner aui-list-item-center aui-list-item-btn" tapmod onclick="focusWx();">
+                    <div class="aui-btn aui-btn-info aui-font-size-16 download-btn">关注公众号</div>
+                </div>
+            </li>
+        </ul>
+    </section>
+    <section class="aui-content aui-content-padded aui-margin-b-10" style="margin: 0rem 0.75rem">
+        <ul class="aui-list aui-list-in aui-list-noborder aui-font-size-14 aui-text-justify introduce">
+            <li class="aui-list-item min-height">
+                <div class="aui-list-item-inner min-height text">下载小马哥并且安装后，可使用在线预约审车，在线购买保险，汽车相关业务代办等功能。</div>
+            </li>
+            <li class="aui-list-item min-height">
+                <div class="aui-list-item-inner min-height text">APP成功注册后可获得<span class="tea-text-blue">￥20</span>特权卡现金券。</div>
+            </li>
+            <li class="aui-list-item min-height">
+                <div class="aui-list-item-inner min-height text">“小马哥APP”是深圳小马哥软件科技有限公司的一款移动终端产品，致力于为广大车友提供一个方便省心的服务平台。在小马哥上，您可以网上预约审车，在线购买保险，还能和其他车友进行交流互动。</div>
+            </li>
+            <li class="aui-list-item min-height">
+                <div class="aui-list-item-inner min-height text">本活动和苹果公司无关。</div>
+            </li>
+        </ul>
+    </section>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {},values={};
+
+/*下载按钮*/
+function downLoad(){
+
+}
+/*关注按钮*/
+function focusWx(){
+
+}
+
+</script>
+</html>

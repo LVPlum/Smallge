@@ -1,0 +1,317 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+        }
+
+        .aui-searchbar {
+            background-color:#FFFFFF;
+            /*与其他导航栏的高度保持一致*/
+            height: 2.25rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- <header id="header" class="aui-bar aui-bar-nav aui-bar-light" >
+        <div id="search" class="aui-searchbar">
+            <a class="aui-btn aui-pull-left" tapmode onclick="closeWin()">
+                <span class="aui-iconfont aui-icon-left"></span>
+            </a>
+            <div class="aui-searchbar-input aui-border-radius tea-">
+                <i class="aui-iconfont aui-icon-search"></i>
+                <input type="search" placeholder="请输入搜索内容" id="search-input">
+                <div class="aui-searchbar-clear-btn">
+                    <i class="aui-iconfont aui-icon-close"></i>
+                </div>
+            </div>
+            <div class="aui-searchbar-btn" tapmode>取消</div>
+        </div>
+    </header> -->
+
+    <header id="header" class="aui-bar aui-bar-nav aui-bar-light" >
+        <a class="aui-btn aui-pull-left" tapmode onclick="closeWin()">
+            <span class="aui-iconfont aui-icon-left tea-text-title"></span>
+        </a>
+        <div class="aui-title tea-text-title">选择代办机构</div>
+    </header>
+
+    <section id="main"></section>
+
+    <footer id="footer"></footer>
+
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- HTML模板渲染引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var header, footer;
+
+// 声明全局变量
+var headerH, footerH, data = {}, bMap, flag = 0, area = {};
+
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 处理沉浸式效果，计算header和footer的高度
+    header = $api.byId('header');
+    $api.fixStatusBar(header);
+    headerH = $api.offset(header).h;
+    footer = $api.byId('footer');
+    footerH = $api.offset(footer).h;
+
+    // 初始化DOM对象
+    initDOM();
+
+    // 初始化变量
+    initVar();
+
+    // ajax请求数据
+    getData();
+
+    // 初始化监听
+    initEventListener();
+
+    // 初始化其他
+    //init();
+    initBmap();
+
+};
+
+/**********************************初始化全局变量**********************************/
+// 初始化DOM对象
+function initDOM(){
+
+
+};
+
+// 初始化变量
+function initVar(){
+
+    data = api.pageParam.data;
+
+};
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+    // 更新变量
+    updateVar();
+
+    // 更新HTML
+    updateHTML();
+
+}
+
+/**********************************更新全局变量**********************************/
+// 更新DOM对象
+function updateDOM(){
+
+
+
+}
+
+// 更新变量
+function updateVar(){
+
+
+
+}
+
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************初始化其他模块**********************************/
+function init(){
+
+    var searchBar = document.querySelector(".aui-searchbar");
+    var searchBarInput = document.querySelector(".aui-searchbar input");
+    var searchBarBtn = document.querySelector(".aui-searchbar .aui-searchbar-btn");
+    var searchBarClearBtn = document.querySelector(".aui-searchbar .aui-searchbar-clear-btn");
+    if(searchBar){
+        searchBarInput.onclick = function(){
+            searchBarBtn.style.marginRight = 0;
+        }
+        searchBarInput.oninput = function(){
+            if(this.value.length){
+                searchBarClearBtn.style.display = 'block';
+                searchBarBtn.classList.add("aui-text-info");
+                searchBarBtn.textContent = "搜索";
+            }else{
+                searchBarClearBtn.style.display = 'none';
+                searchBarBtn.classList.remove("aui-text-info");
+                searchBarBtn.textContent = "取消";
+            }
+        }
+    }
+    searchBarClearBtn.onclick = function(){
+        this.style.display = 'none';
+        searchBarInput.value = '';
+        searchBarBtn.classList.remove("aui-text-info");
+        searchBarBtn.textContent = "取消";
+    }
+    searchBarBtn.onclick = function(){
+        var keywords = searchBarInput.value;
+        if(keywords.length){
+            searchBarInput.blur();
+            document.getElementById("search-keywords").textContent = keywords;
+        }else{
+            this.style.marginRight = "-"+this.offsetWidth+"px";
+            searchBarInput.value = '';
+            searchBarInput.blur();
+        }
+    }
+
+}
+
+function initBmap(){
+
+    bMap = api.require('bMap');
+    if (api.systemType == "ios") {
+        bMap.initMapSDK(function(ret) {
+            if (ret.status) {
+                //_alert(ret);
+                getLocation();
+            }
+            else {
+                openFrame();
+            }
+        })
+    }
+    else {
+        getLocation();
+    }
+
+    function getLocation(){
+        bMap.getLocation({
+            accuracy: '100m',
+            autoStop: true,
+            filter: 1
+        }, function(ret, err) {
+            if (ret.status) {
+                area = ret;
+                getDistance(area);
+
+            } else {
+                api.toast({
+                    msg: '定位未成功',
+                    duration: 2000,
+                    location: 'middle'
+                });
+                openFrame();
+            }
+        })
+    }
+
+
+}
+
+function getDistance(ret_){
+
+    bMap.getDistance({
+        start: {
+            lon: ret_.lon,
+            lat: ret_.lat
+        },
+        end: {
+            lon: data[flag].longitude,
+            lat: data[flag].latitude
+        }
+    }, function(ret) {
+        //_alert(ret);
+        if (ret.status) {
+            data[flag].distance = ret.distance;
+        }
+
+        flag ++;
+        if (flag >= data.length) {
+            openFrame();
+        }
+        else{
+            getDistance(area);
+        }
+
+    });
+
+
+}
+/**********************************广播消息**********************************/
+function addEvent(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+// 回退关闭窗口
+function closeWin(){
+    api.closeWin();
+}
+
+
+/**********************************其他函数**********************************/
+function openFrame(){
+
+    // 打开Frame，不需要打开Frame请删除
+    api.openFrame({
+        name: 'agencies_frm',
+        url: './agencies_frm.html',
+        rect: {
+            x: 0,
+            y: headerH,
+            w: 'auto',
+            h: api.winHeight - headerH -footerH
+        },
+        pageParam: api.pageParam,
+        // frame的背景颜色
+        bgColor: '#f2f5f8',
+        // 页面是否弹动
+        bounces: false,
+        allowEdit: true
+    });
+
+}
+/**********************************功能模块1**********************************/
+
+</script>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        .aui-tab .aui-tab-item.aui-active {
+            color: #ffcc66 !important;;
+            border-bottom: 0;
+            background-size: 40% 4px;
+            background-repeat: no-repeat;
+            background-position: center bottom;
+            background-image: linear-gradient(0,#ffcc66,#ffcc66 50%,transparent 50%);
+            background-image: -webkit-linear-gradient(90deg,#ffcc66,#ffcc66 50%,transparent 50%);
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header id="header" class="aui-bar aui-bar-nav aui-bar-light" >
+            <tab :list="list" :index="index" @set-tab-index="setTabIndex"></tab>
+        </header>
+    
+        <section id="main"></section>
+    
+        <footer id="footer"></footer>
+    </div>
+
+
+    <script type="text/javascript" src="../../script/api.js" ></script>
+    <!-- ajax相关 -->
+    <script type="text/javascript" src="../../script/conn.js"></script>
+    <!-- HTML模板渲染引擎 -->
+    <script type="text/javascript" src="../../script/vue.min.js"></script>
+    <!-- 消除300毫秒延迟 -->
+    <script type="text/javascript" src="../../script/fastclick.min.js"></script>
+    <!-- 项目通用函数库 -->
+    <script type="text/javascript" src="../../script/tea.js"></script>
+</body>
+
+
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+
+/**********************************apiready**********************************/
+
+
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+
+/**********************************DOM响应**********************************/
+// 回退关闭窗口
+function closeWin(){
+    api.closeWin();
+}
+
+/**********************************打开Frame**********************************/
+// 打开Frame,不需要打开Frame请删除
+function openFrame(){
+    return;
+    var frameName = api.winName.replace('win', 'frm');
+    api.openFrame({
+        name: frameName,
+        url: './' + frameName + '.html',
+        rect: {
+            x: 0,
+            y: headerH,
+            w: 'auto',
+            h: api.winHeight - headerH - footerH
+        },
+        pageParam: api.pageParam,
+        // 页面是否弹动
+        bounces: false
+    });
+
+}
+
+/**********************************其他函数**********************************/
+
+</script>
+</html>

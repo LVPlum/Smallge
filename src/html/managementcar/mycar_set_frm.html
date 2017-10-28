@@ -1,0 +1,565 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui_old.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+</head>
+<style type="text/css">
+.aui-content .aui-form .aui-input-row .cp {display:inline;width:25%;overflow: auto;border: 1px dashed #CACACA;}
+.aui-content .aui-form .aui-input-row .nu {width:75%;}
+input[type=text]{text-transform : uppercase}
+.rf{color: red}
+</style>
+<body>
+        <p class="aui-padded-10 aui-text-center" id="title">新增一辆我的汽车，带<span class="rf">*</span>号的为必填</p>
+	    <div class="aui-content aui-card">
+	        <div class="aui-form">
+	            <div class="aui-input-row">
+	                <span class="aui-input-addon"><span class="rf">*</span>车牌号码</span>
+	                <input type="text" class="aui-input cp" id="cph" value="京A" readonly="readonly" onclick="cplocal();"/>
+	                <input type="text" class="aui-input nu" id="cpm" maxlength="5" placeholder="填入后5个字母或数字" oninput="value=value.toUpperCase()"/>
+	            </div>
+	            <div class="aui-input-row">
+	                <span class="aui-input-addon"><span class="rf">*</span>车型</span>
+                <div class="aui-pull-right">
+                    <input class="aui-radio" type="radio" id="radio1" name="cartype" value="1"><div class="aui-radio-name">蓝牌</div>
+                    <input class="aui-radio" type="radio" id="radio2" name="cartype" value="2"><div class="aui-radio-name">黄牌</div>
+                </div>
+	            </div>
+	            <div class="aui-input-row">
+	                <span class="aui-input-addon"><span class="rf">*</span>行驶证所有人</span>
+	                <input type="text" class="aui-input" id="xszr"  placeholder="这辆车的车行驶证所有人"/>
+	            </div>
+	            <div class="aui-input-row">
+	                <span class="aui-input-addon"><span class="rf">*</span>手机号码</span>
+	                <input type="tel" class="aui-input" id="tel"  placeholder="和这辆车关联的手机号码"/>
+	            </div>
+	            <div class="aui-input-row">
+	                <span class="aui-input-addon">上传行驶证</span>
+	                <input type="text" class="aui-input" id="xs"  placeholder="上传这台车的行驶证照片"/>
+						<div class="aui-img" id="addpic">
+
+						</div>
+	            </div>
+	            <div class="aui-input-row">
+	                <span class="aui-input-addon">审车到期时间</span>
+	                <input type="text" class="aui-input" id="tipsc" maxlength="18" placeholder="可以设置到期自动提醒" readonly="readonly"/>
+	            </div>
+	            <div class="aui-input-row">
+	                <span class="aui-input-addon">保险到期时间</span>
+	                <input type="text" class="aui-input" id="tipbx" maxlength="18" placeholder="可以设置到期自动提醒" readonly="readonly"/>
+	            </div>
+	            <div class="aui-input-row">
+	                <span class="aui-input-addon"></span>
+                <div class="aui-pull-right">
+                    <input class="aui-checkbox" type="checkbox" id="checkvip" name="cartype" value="1"><div class="aui-radio-name">加入VIP</div>
+                </div>
+	            </div>
+	        </div>
+	    </div>
+	    <div class="aui-btn-row">
+	            <div class="aui-btn aui-btn-block aui-btn-danger" id="po" tapmode onclick="postdate()">确定提交</div>
+	    </div>
+
+
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+	<script type="text/javascript" src="../../script/zepto.min.js"></script>
+	<script type="text/javascript" src="../../script/hammer.min.js"></script>
+<script type="text/javascript">
+var uiMediaScanner = null, imageFilter = null, imageBrowser = null, xsz_img = null, bxextime = null, bxremind = null, scextime = null, scremind = null;
+var isIOS = false;
+	apiready = function() {
+	    api.parseTapmode();
+		api.addEventListener({
+		    name: 'selectzm'
+		}, function(ret, err){
+		    var obj = $api.byId('cph');
+		    var val = ret.value.zm1 + ret.value.zm2;
+		    $api.val(obj, val);
+		});
+		api.addEventListener({
+		    name: 'addntime'
+		}, function(ret, err){
+		    scextime = ret.value.n1;
+		    scremind = ret.value.n2;
+            var str = scremind == 0 ? "" : "  提前" + scremind + "天提醒";
+            $api.val($api.byId('tipsc'), scextime + str);
+		});
+		api.addEventListener({
+		    name: 'addbtime'
+		}, function(ret, err){
+		    bxextime = ret.value.n1
+		    bxremind = ret.value.n2;
+            var str = bxremind == 0 ? "" : "  提前" + bxremind + "天提醒";
+            $api.val($api.byId('tipbx'), bxextime + str);
+		});
+		uiMediaScanner = api.require('UIMediaScanner');
+		imageFilter = api.require("imageFilter");
+		imageBrowser = api.require('imageBrowser');
+		isIOS = api.systemType == "ios" ? true : false;
+		if(api.pageParam.type == 'edit'){
+		  $api.text($api.byId('title'), '修改车辆内容');
+		  $api.html($api.byId('po'), '确定修改');
+		  loaddate();
+		}
+	};
+	function checkcp(){
+	      var cpm = $api.val($api.byId('cph')) + $api.val($api.byId('cpm')).toUpperCase();
+	      var xszr = $api.val($api.byId('xszr'));
+	      var ckr = $api.val($api.byId('ckr'));
+	      var ckrs =$api.val($api.byId('ckrs'));
+	      var tel =$api.val($api.byId('tel'));
+	      var cartype = getcartype();
+
+	      if(cpm == '' || $api.val($api.byId('cpm')) == null){
+	         api.toast({
+	             msg:'车牌号码有误，请检查后再试'
+             });
+             return false;
+	      }
+	      if($api.val($api.byId('cpm')).length <5){
+	         api.toast({
+	             msg:'车牌后面的数字不能少于5位'
+             });
+             return false;
+	      }
+	      if(xszr == ''){
+	         api.toast({
+	             msg:'行驶证所有人不能为空'
+             });
+             return false;
+	      }
+	      if(tel == ''){
+	         api.toast({
+	             msg:'手机号码不能为空'
+             });
+             return false;
+	      }
+	      if(cartype == null || cartype == 'undefined'){
+	         api.toast({
+	             msg:'车型没有选择，请选择车型!'
+             });
+             return false;
+	      }
+	      $api.setStorage('cpm',cpm);
+	      $api.setStorage('xszr',xszr);
+	      $api.setStorage('ckr',ckr);
+	      $api.setStorage('ckrs',ckrs);
+	      $api.setStorage('cartype',cartype);
+		  api.openWin({
+		        name: 'mycarset_setp2',
+		        url: 'mycarset_setp2_win.html',
+		        pageParam:{id: api.pageParam.id, type: api.pageParam.type},
+		        vScrollBarEnabled: false
+		  });
+	}
+	function loaddate(){
+	    id = api.pageParam.id;
+	    showp('读取数据...','稍候...');
+		api.ajax({
+		    url: website + 'getmycar.php?action=carinfo',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {ID: id},
+		    }
+		},function(ret,err){
+		    if (ret) {
+		       if(!ret.errmsg){
+                    $api.val($api.byId('cph'), ret.carnum.substr(0,2));
+                    $api.val($api.byId('cpm'), ret.carnum.substr(2));
+                    $api.val($api.byId('xszr'), ret.xszr);
+                    $api.val($api.byId('tel'), ret.tel);
+                    $api.val($api.byId('xs'), ret._xszimg);
+                    $api.val($api.byId('tipsc'), ret.scextime + '  提前' + ret._scremind + '天提醒');
+                    $api.val($api.byId('tipbx'), ret.bxextime + '  提前' + ret._bxremind + '天提醒');
+                    bxextime = ret.bxextime;
+                    bxremind = ret._bxremind;
+                    scextime = ret.scextime;
+                    scremind = ret._scremind;
+                    xsz_img = ret._xszimg;
+                    if(ret._cartype == '1'){
+                         $api.attr($api.byId('radio1'), 'checked', 'checked');
+                    }else{
+                         $api.attr($api.byId('radio2'), 'checked', 'checked');
+                    }
+                    api.hideProgress();
+		        }
+		    }else {
+		        api.hideProgress();
+		        api.alert({
+		            msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+		        });
+		    }
+		});
+	}
+	function cplocal(){
+			api.openWin({
+		        name: 'cpselect_win',
+		        url: './cpselect_win.html',
+		        vScrollBarEnabled: false
+		   	 });
+	}
+    function getcartype(){
+        var obj = document.getElementsByName("cartype");
+        for ( i = 0; i < obj.length; i++) {
+                if (obj[i].checked) {
+                      return obj[i].value;
+                }
+        }
+    }
+		// 上传图片
+		// url：上传的url地址
+		// data：上传的文件
+		// callback：上传成功返回地址
+		function uploadFile(url, userid, data, callback) {
+			api.ajax({
+				url : url,
+				method : 'post',
+				timeout : 30,
+				dataType : 'json',
+				returnAll : false,
+				data : {
+				    values :{
+				    userid : userid
+				    },
+					files : {
+						"upfile" : data
+					}
+				}
+			}, function(ret, err) {
+				if (ret) {
+					if (ret.statu == 1) {
+						callback(ret.path);
+					} else if (ret.statu == 0) {
+						alert("上传失败");
+					}
+				} else {
+					api.alert({
+						msg : ('错误码：' + err.code + '；错误信息：' + err.msg + '；网络状态码：' + err.statusCode)
+					});
+				}
+			});
+		}
+		function NewGuid() {
+			function S4() {
+				return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+			}
+
+			return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+		}
+
+		// 获取当前的时间，拼接成2015-11-09这样的格式，主要用于对图片进行时间分类
+		function getNowFormatDate() {
+			var date = new Date();
+			var seperator1 = "-";
+			var year = date.getFullYear();
+			var month = date.getMonth() + 1;
+			var strDate = date.getDate();
+			if (month >= 1 && month <= 9) {
+				month = "0" + month;
+			}
+			if (strDate >= 0 && strDate <= 9) {
+				strDate = "0" + strDate;
+			}
+			var currentdate = year + seperator1 + month + seperator1 + strDate
+			return currentdate;
+		}
+
+		// 获取文件拓展名
+		function getExt(fileName) {
+			return fileName.substring(fileName.lastIndexOf('.') + 1);
+		}
+
+		// 图片压缩
+		// imgsrc：源图片的路径
+		// quality：图片压缩质量，一般建议0.5
+		// scale：图片压缩比例，也是建议0.5
+		// ext：源图片拓展名
+		// callback：转换成功之后回调函数
+		function imgCompress(imgsrc, quality, scale, ext, callback) {
+			// 压缩文件的保存目录
+			var savePath = api.cacheDir + "/" + getNowFormatDate() + "/";
+			// 压缩文件生成的随机文件名称
+			var savename = NewGuid() + "." + ext;
+			imageFilter.compress({
+				img : imgsrc,
+				quality : quality,
+				scale : quality,
+				save : {
+					album : false,
+					imgPath : savePath,
+					imgName : savename
+				}
+			}, function(ret, err) {
+				if (ret) {
+					callback(savePath + savename);
+				} else {
+					alert(JSON.stringify(err));
+				}
+			});
+		}
+
+		// 打开图片浏览
+		// imgs：需要预览的图片集合
+		function openImageBrowser(imgs) {
+			imageBrowser.openImages({
+				imageUrls : imgs,
+				showList : false,
+				activeIndex : 0
+			});
+		}
+		function postdate(){
+	        if(api.pageParam.type == 'edit'){
+	           var ctag = 'editcar';
+	           var id = api.pageParam.id;
+	        }else{
+	           var ctag = 'addcar';
+	           var id = $api.getStorage('ID');
+	        }
+		      var cpm = $api.val($api.byId('cph')) + $api.val($api.byId('cpm')).toUpperCase();
+		      var xszr = $api.val($api.byId('xszr'));
+		      var tel = $api.val($api.byId('tel'));
+		      var ntime = scextime;
+		      var btime = bxextime;
+		      var sctips = scremind;
+		      var bxtips = bxremind;
+		      var cartype = getcartype();
+
+
+		      if(cpm == '' || $api.val($api.byId('cpm')) == null){
+		         api.toast({
+		             msg:'车牌号码有误，请检查后再试'
+	             });
+	             return false;
+		      }
+		      if($api.val($api.byId('cpm')).length <5){
+		         api.toast({
+		             msg:'车牌后面的数字不能少于5位'
+	             });
+	             return false;
+		      }
+		      if(xszr == ''){
+		         api.toast({
+		             msg:'行驶证所有人不能为空'
+	             });
+	             return false;
+		      }
+		      if(tel == ''){
+		         api.toast({
+		             msg:'手机号码不能为空'
+	             });
+	             return false;
+		      }
+			   if(!(/^1[3|4|5|7|8][0-9]\d{4,8}$/.test(tel))){
+				       api.toast({
+				           msg:'手机号码格式不对'
+			           });
+				  return false;
+			   }
+		      if(cartype == null || cartype == 'undefined'){
+		         api.toast({
+		             msg:'车型没有选择，请选择车型!'
+	             });
+	             return false;
+		      }
+			api.ajax({
+			    url: website + '?action=' + ctag,
+			    method: 'post',
+			    timeout: 30,
+			    dataType: 'json',
+			    returnAll:false,
+			    data:{
+			        values: {ID: id,ntime: ntime,btime: btime,sctips: sctips,bxtips: bxtips,cpm: cpm,xszr: xszr,cartype: cartype,xszimg: xsz_img,tel:tel},
+			    }
+			},function(ret,err){
+			    if(ret){
+		 		             if(ret.succ == 'ok'){
+							         api.sendEvent({
+									    name: 'saveok',
+									 });
+									 if($api.byId('checkvip').checked){  //如果勾上VIP
+										api.openWin({
+									        name: 'joinvip_scar_win',
+									        url: '../vip/vip_join_win.html',
+									        vScrollBarEnabled: false
+									   	 });
+										     setTimeout(function(){
+										     api.sendEvent({
+											    name: 'addoldcar',
+											    extra: {
+											        car: cpm,
+											        carid: ret.carid,
+											        tel: tel,
+											        cartype: cartype
+											    }
+											 });
+										  },500);
+									 }else{
+			                             //api.closeToWin({
+				                         //    name: 'index_win'
+			                             //});
+			                             api.closeWin();
+		                             }
+		                             api.hideProgress();
+					             }else{
+	                                 api.alert({msg: ret.ermsg});
+		                             api.hideProgress();
+					             }
+
+			    }else {
+			        api.hideProgress();
+			        api.alert({
+			            msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+			        });
+			    }
+			});
+		}
+		Zepto(function($) {
+		    $("#tipsc").on("tap",function(){
+				api.openWin({
+			        name: 'settipsc_win',
+			        url: 'settipsc_win.html',
+			        vScrollBarEnabled: false
+			   	 });
+		    });
+		    $("#tipbx").on("tap",function(){
+				api.openWin({
+			        name: 'settipbx_win',
+			        url: 'settipbx_win.html',
+			        vScrollBarEnabled: false
+			   	 });
+		    });
+		    var userid = $api.getStorage('ID');
+			$("#xs").on("tap", function() {
+				api.actionSheet({
+					title : '选择来源',
+					buttons : ['相机拍摄', '浏览相册']
+				}, function(ret, err) {
+					var index = ret.buttonIndex;
+					switch(index) {
+						// 拍照
+						case 1:
+							// 打开拍照
+							api.getPicture({
+								sourceType : "camera",
+								encodingType : "jpg",
+								destinationType : "url",
+								mediaValue : "pic",
+								quality : 50,
+								saveToPhotoAlbum : true
+							}, function(ret, err) {
+								if (ret && ret.data) {
+									// 拍照返回的本地路径
+									var returnUrl = ret.data;
+									// 图片压缩
+									showp('图片处理中...','请稍候...');
+									imgCompress(returnUrl, 0.5, 0.5, getExt(returnUrl), function(compressImg) {
+										var showImgHtml = '<li class="aui-list-view-cell aui-img aui-col-xs-4"><img class="aui-img-object" src="' + compressImg + '" style="width:400px;height:200px;"></li>';
+										// 追加图片
+										$("#xs").remove();
+										$("#addpic").html(showImgHtml);
+										uploadFile(website + "upxs.php", userid, compressImg, function(serverImg) {
+										    xsz_img = serverImg;
+											api.hideProgress();
+										});
+									});
+								} else {
+									api.toast({
+										msg : '没有选择，或者选择出错'
+									});
+								}
+							});
+							break;
+						// 打开图片选择器
+						case 2:
+							uiMediaScanner.open({
+								type : 'picture',
+								column : 4,
+								classify : true,
+								max : 1,
+								sort : {
+									key : 'time',
+									order : 'desc'
+								},
+								texts : {
+									stateText : '已选*项',
+									cancelText : '取消',
+									finishText : '完成'
+								},
+								styles : {
+									bg : '#fff',
+									mark : {
+										icon : '',
+										position : 'bottom_left',
+										size : 20
+									},
+									nav : {
+										bg : '#b23e4b',
+										stateColor : '#fff',
+										stateSize : 18,
+										cancelBg : 'rgba(0,0,0,0)',
+										cancelColor : '#fff',
+										cancelSize : 18,
+										finishBg : 'rgba(0,0,0,0)',
+										finishColor : '#fff',
+										finishSize : 18
+									}
+								}
+							}, function(ret) {
+								if (ret) {
+									for (var i = 0; i < ret.list.length; i++) {
+									 (function(e){
+										var selectImg = ret.list[i];
+										// 获取图片的路径
+										var selectimgPath = selectImg.path;
+										var selectimgThumbPath = selectImg.thumbPath;
+										// IOS需要将虚拟路径转换为本地路径才可以压缩
+										if (isIOS) {
+											// 转换为真实路径
+											uiMediaScanner.transPath({
+												path : selectimgPath
+											}, function(transObj) {
+												// 图片压缩
+												showp('图片处理中...','请稍候...');
+												imgCompress(transObj.path, 0.5, 0.5, selectImg.suffix, function(compressImg) {
+												    $("#xs").remove();
+													$("#addpic").html('<li class="aui-list-view-cell aui-img"><img class="aui-img-object" src="' + compressImg + '" style="width:200px;height:100px;"></li>');
+													uploadFile(website + "upxs.php", userid, compressImg, function(serverImg) {
+													    xsz_img = serverImg;
+														api.hideProgress();
+													});
+												});
+											});
+										} else {
+											// 图片压缩
+											//alert(e);
+							                showp('图片处理中...','请稍候...');
+											imgCompress(selectimgPath, 0.5, 0.5, selectImg.suffix, function(compressImg) {
+												// 追加图片
+												$("#xs").remove();
+												$("#addpic").html('<li class="aui-list-view-cell aui-img"><img class="aui-img-object" src="' + compressImg + '" style="width:200px;height:100px;"></li>');
+												uploadFile(website + "upxs.php?", userid, compressImg, function(serverImg) {
+                                                    xsz_img = serverImg;
+													api.hideProgress();
+												});
+											});
+										}
+									   })(i);  //闭包结束
+									}
+								}
+							});
+							break;
+					}
+				});
+			});
+		});
+</script>
+</html>

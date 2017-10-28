@@ -1,0 +1,162 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui_old.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+</head>
+<style type="text/css">
+.smallcar {margin-bottom: 15px;background-color:#136ce5; height:90px;padding-top: 10px; text-align:center;}
+.smallcar p{color:#EFEFF4 ;font-size: 50px;}
+.bigcar {margin-bottom: 15px;background-color:#FA9150; height:90px;padding-top: 10px; text-align:center;}
+.bigcar p{color:#EFEFF4 ;font-size: 50px;}
+.vip {color:#FF0000}
+</style>
+<body>
+     <p class="aui-padded-10">轻触车牌可以查看，长按可以设置，vip车辆不可设置及删除，如有必要，请直接联系我们</p>
+        <div class="aui-content">
+            <ul class="aui-list-view" id="listmycar">
+            <ul>
+        </div>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript">
+apiready = function() {
+    api.parseTapmode();
+    loadmycar();
+
+	api.addEventListener({
+	    name: 'saveok'
+	}, function(ret, err){
+      loadmycar();
+		api.toast({
+			msg:'设置成功'
+		});
+	});
+};
+
+function seeinfo(id){
+			api.openWin({
+		        name: 'seecarinfo',
+		        url: 'seecarinfo_win.html',
+		        pageParam:{id: id},
+		        vScrollBarEnabled: false
+		   	 });
+}
+function loadmycar(){
+     var id = $api.getStorage('ID');
+     showp('数据载入中...','梢等...');
+		api.ajax({
+		    url: website + 'getmycar.php?action=getmycar',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {ID: id},
+		    }
+		},function(ret,err){
+		    if(ret){
+
+                     var html = '';
+			            var obj = $api.byId('listmycar');
+			            for (var i = 0, len = ret.length; i < len; i++) {
+			                var thisitem = ret[i];
+			                var cartype = thisitem.cartype == "1" ? "（蓝牌）" : "（黄牌）";
+			                var vip = thisitem.vip == '1' ? '<span class="vip">[VIP]</span>' : '';
+			                //html += '<div class="aui-card '+ carcolor +'" ontouchstart="gtouchstart('+ thisitem.ID +');" ontouchmove="gtouchmove();" ontouchend="gtouchend('+ thisitem.ID +');"><p>'+ thisitem.carnum.substr(0,2) +'·'+ thisitem.carnum.substr(2) +'</p></div>';
+			                html += '<li class="aui-list-view-cell">';
+			                if(thisitem.vip == '0'){
+			                     html += '<div class="aui-arrow-right" ontouchstart="gtouchstart('+ thisitem.ID +');" ontouchmove="gtouchmove();" ontouchend="gtouchend('+ thisitem.ID +');">'+ thisitem.carnum.substr(0,2) +'·'+ thisitem.carnum.substr(2) + cartype +'</div>';
+			                }else{
+			                     html += '<div class="aui-arrow-right" tapmode onclick="seeinfo('+ thisitem.ID +')">'+ thisitem.carnum.substr(0,2) +'·'+ thisitem.carnum.substr(2) + cartype + vip +'</div>';
+			                }
+			                html += '</li>'
+			            }
+			             $api.html(obj, html);
+			             api.hideProgress();
+			  }
+		});
+		api.hideProgress();
+}
+function delcp(id){
+	api.ajax({
+	    url: website + 'getmycar.php?action=delcp',
+	    method: 'post',
+	    timeout: 30,
+	    dataType: 'json',
+	    returnAll:false,
+	    data:{
+	        values: {ID: id},
+	    }
+	},function(ret,err){
+	    if (ret) {
+	       if(!ret.errmsg){
+                if(ret.succ == 'ok'){
+                   loadmycar();
+                   api.toast({
+	                   msg:'删除成功'
+                   });
+                }
+	        }
+	    }else {
+	        api.alert({
+	            msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+	        });
+	    }
+	});
+}
+//长按事件
+var timeOutEvent = 0;
+function gtouchstart(id) {
+    timeOutEvent = setTimeout('longPress('+ id +')', 500);
+    return false;
+};
+function gtouchend(id) {
+    clearTimeout(timeOutEvent);
+    if (timeOutEvent != 0) {
+        //这里是单击事件
+        seeinfo(id);
+    }
+    return false;
+};
+function gtouchmove() {
+    clearTimeout(timeOutEvent);
+    timeOutEvent = 0;
+};
+function longPress(id) {
+    timeOutEvent = 0;
+    //这里是长按事件
+	api.actionSheet({
+	    title: '请选择您要执行的操作',
+	    cancelTitle: '取消',
+	    destructiveTitle: '删除此车牌(慎!!!)',
+	    buttons: ['修改档案设置']
+	},function( ret, err ){
+	    if(ret){
+            if(ret.buttonIndex == 1){
+					api.confirm({
+						title : '温馨提示',
+						msg : '您确定要删除这个车牌么？',
+						buttons : ['确定', '取消']
+					}, function(ret, err) {
+						if (ret.buttonIndex == 1) {
+	                        delcp(id);
+						}
+					});
+            }else if(ret.buttonIndex == 2){
+				api.openWin({
+			        name: 'addnewcar_win',
+			        url: 'mycar_set_win.html',
+			        pageParam: {type: 'edit',id: id},
+			        vScrollBarEnabled: false
+			   	 });
+            }
+	    }
+	});
+}
+</script>
+</html>

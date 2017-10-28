@@ -1,0 +1,473 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>提现</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+		html,body {
+            /*height: 100%;*/
+            overflow: auto;
+		}
+	  html,body{
+        color: #333;
+    }
+
+    #money::-webkit-input-placeholder {  /* WebKit browsers */
+   		 font-size: 0.9rem;
+   		 line-height: 2.2rem;
+	}
+	#money:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+	      font-size: 0.9rem;
+	     line-height: 2.2rem;
+	}
+	#money::-moz-placeholder { /* Mozilla Firefox 19+ */
+	      font-size: 0.9rem;
+	    line-height: 2.2rem;
+	}
+	#money :-ms-input-placeholder { /* Internet Explorer 10+ */
+	    font-size: 0.9rem;
+	    line-height: 2.2rem;
+	}
+
+    .aui-card-list-header, .aui-card-list-footer {
+        position: relative;
+        min-height: 2.2rem;
+        padding: 0.5rem 0.75rem;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-box-pack: justify;
+        -webkit-justify-content: flex-start;
+        justify-content: flex-start;
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        align-items: center;
+    }
+    .show-money{
+        text-align: center;
+        font-size: 2.2rem;
+        color: #333;
+    }
+	#input-data{
+		display: none;
+	}
+    </style>
+</head>
+<body>
+
+<section class="aui-content-padded">
+    <ul class="aui-list aui-form-list aui-padded-t-5 aui-padded-b-15 aui-list-noborder" style="border-radius: 4px;">
+        <li class="aui-card-list-header aui-padded-t-15">
+            <div class="aui-font-size-16" style="color: #333;">提现金额</div>
+            <div id="balance" class="aui-font-size-14" style="color: #999;"></div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner" >
+                <div class="aui-list-item-label" style="font-size: 2.2rem;width: auto;color: #333;">￥</div>
+                <div class="aui-list-item-input"  >
+                    <input id="money" class="aui-padded-l-10" type="tel" maxlength="11" placeholder="提现金额最少10元起" style="font-size: 2.2rem;color: #333;" tapmode >
+                </div>
+            </div>
+        </li>
+    </ul>
+</section>
+<div class="aui-content aui-margin-b-15">
+    <ul class="aui-list aui-form-list">
+        <li class="aui-list-header tea-bg-default" style="color:#999;">
+            <div>请选择提现方式</div>
+            <div style="color: #3399ff;" tapmode onclick="cashType()">常用提现方式&nbsp;></div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label-icon">
+                    <i class=" aui-iconfont tea-icon-alipay" style="color: #22aced;font-size: 0.9rem;"></i>
+                    <div class="aui-padded-l-10">支付宝</div>
+                </div>
+                <label class="aui-list-item-right aui-margin-r-15 aui-margin-l-15" style="width: 100%;text-align: right;" >
+                    <input id="alipay-type" type="radio" class="aui-radio" data-type-name= "zfb" name="cash" onclick="cashal_way(this)">
+                </label>
+            </div>
+        </li>
+        <!--<li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label-icon">
+                    <i class=" aui-iconfont tea-icon-wechat aui-font-size-20"  style="color: #3bbc36;"></i>
+                    <div class="aui-padded-l-10">微信</div>
+                </div>
+                <label class="aui-list-item-right aui-margin-r-15 aui-margin-l-15" style="width: 100%;text-align: right;">
+                    <input id="wechat-type" type="radio" class="aui-radio" data-type-name= "wx" name="cash" onclick="cashal_way(this)">
+                </label>
+            </div>
+        </li>-->
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label-icon">
+                    <i class=" aui-iconfont tea-icon-unionpay" style="font-size: 1.15rem;"></i>
+                    <div class="aui-padded-l-5">银行卡</div>
+                </div>
+                <label class="aui-list-item-right aui-margin-r-15 aui-margin-l-15" style="width: 100%;text-align: right;">
+                    <input id="unionpay-type" type="radio" class="aui-radio" data-type-name= "yh" name="cash" onclick="cashal_way(this)">
+                </label>
+            </div>
+        </li>
+    </ul>
+</div>
+<div id="input-data" class="aui-content">
+    <ul class="aui-list aui-form-list">
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div id="cashal-type-name"class="aui-list-item-label"> 银行名称</div>
+                <div class="aui-list-item-input">
+                    <input id="cashal-type-val" type="text" placeholder="如：（建设银行）">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div id="user-name" class="aui-list-item-label"> 姓名</div>
+                <div class="aui-list-item-input">
+                    <input id="user-name-val" type="text" placeholder="该银行卡开户人的姓名">
+                </div>
+            </div>
+        </li>
+        <li id="bank-number-name-li" class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div id="bank-number-name"class="aui-list-item-label"> 银行账号</div>
+                <div class="aui-list-item-input">
+                    <input id="bank-number" type="tel" placeholder="请输入银行账号">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div>保存这个账号到常用记录</div>
+                <label class="aui-list-item-right aui-margin-r-15 aui-margin-l-15">
+                    <input id="save-user-record" type="checkbox" class="aui-radio" checked="checked">
+                </label>
+            </div>
+        </li>
+    </ul>
+</div>
+<div class="aui-card-list" style="background-color: #f2f5f8;">
+    <div class="aui-padded-10" style="text-align: center;">
+        <div id="show-money" class="show-money">￥0.00</div><!--显示金额-->
+    </div>
+    <div class="aui-card-list-content aui-padded-b-10">
+        <div class="aui-btn aui-btn-info aui-btn-block aui-btn-sm" style="width: 15rem;margin: 0 auto;border-radius: 99px" tapmode onclick="isSaveUserRecord()">确认提现</div>
+    </div>
+    <div class="aui-padded-5" style="text-align: center;color: #999;" >
+       <div class="aui-font-size-12">工作日内提现2小时到账</div>
+       <div class="aui-font-size-12">非工作日提现24小时内到账</div>
+    </div>
+</div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/zepto.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+
+/**********************************apiready**********************************/
+apiready = function(){
+    init();
+
+    tea.moneyInput('money',function(el){
+
+        var text = el.value.replace(/[\.]$/, '');
+        text = Number(text).toFixed(2);
+        $api.text($api.byId('show-money'), '￥' + text);
+    })
+
+    api.addEventListener({     //选中已存地址事件
+        name: 'getadd'
+    }, function(ret, err){
+        var txtype = ret.value.txtype;
+        var txstep1 = ret.value.txstep1;
+        var txstep2 = ret.value.txstep2;
+        var txstep3 = ret.value.txstep3;
+        checkradio(txtype,txstep1,txstep2,txstep3);
+    });
+
+};
+/******************************zepto*******************************************/
+
+// 提现金额的输入框
+// $(function(){
+// 	  // 判断只能输入整数和两位小数
+//     	  $("#money").on('input', function (event) {
+//             var $amountInput = $(this);
+//             //响应鼠标事件，允许左右方向键移动
+//             event = window.event || event;
+//             if (event.keyCode == 37 | event.keyCode == 39) {
+//                 return;
+//             }
+//             //先把非数字的都替换掉，除了数字和.
+//             $amountInput.val($amountInput.val().replace(/[^\d.]/g, "").
+//             //只允许一个小数点
+//             replace(/^\./g, "").replace(/\.{2,}/g, ".").
+//             //只能输入小数点后两位
+//             replace(".", "$#$").replace(/\./g, "").replace("$#$", ".").replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3'));
+
+
+//            //补零
+//             var thisVal = $amountInput.val();
+//             if(thisVal.length === 0){
+//            	  $("#show-money").html("￥0.00");
+//             }else{
+
+//             	if(thisVal.indexOf(".")>0){
+//             		(thisVal.slice(thisVal.indexOf(".")).length === 2)?$("#show-money").html("￥"+thisVal+"0"):$("#show-money").html("￥"+thisVal);
+//             	}else{
+//             		$("#show-money").html("￥"+thisVal+".00");
+//             	}
+//             }
+//         });
+// });
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {};
+
+function init(){
+   showp('数据加载中...','请等候');
+   var token = $api.getStorage('token');
+	api.ajax({
+	    url: website + 'tokengetmoney.php',
+	    method: 'post',
+	    timeout: 30,
+	    dataType: 'json',
+	    returnAll:false,
+	    data:{
+	        values: {token: token},
+	    }
+	},function(ret,err){
+	    if (ret) {
+           var myMoney = ret.mymoney;
+           var html ='<span id="myMoney" data-name = "'+myMoney+'" >（可提现余额'+myMoney+'元）</span>';
+           $api.html($api.byId('balance'), html);
+             api.hideProgress();
+	    }
+	});
+}
+
+// 提现方式
+function cashal_way(){
+	var alipay = $api.byId("alipay-type");
+	var wechat = $api.byId('wechat-type');
+	var unionpay = $api.byId('unionpay-type');
+	$("#input-data").show();
+	if(alipay.checked){
+		$("#cashal-type-name").html("支付宝账号");
+		$("#cashal-type-val").attr("placeholder","请输入您的支付宝账号");
+		$("#user-name").html("验证姓名");
+		$("#user-name-val").attr("placeholder","输入姓名确保验证成功后不会转错钱");
+		$("#bank-number-name-li").hide();
+	/*}else if(wechat.checked){
+		$("#cashal-type-name").html("微信账号");
+		$("#cashal-type-val").attr("placeholder","请输入您的微信账号");
+		$("#user-name").html("验证姓名");
+		$("#user-name-val").attr("placeholder","输入姓名确保验证成功后不会转错钱");
+		$("#bank-number-name-li").hide();*/
+	}else if(unionpay.checked){
+		$("#cashal-type-name").html("银行名称");
+		$("#cashal-type-val").attr("placeholder","如：建设银行");
+		$("#user-name").html("验证姓名");
+		$("#user-name-val").attr("placeholder","该银行卡开户人的姓名");
+		$("#bank-number-name-li").show();
+	}
+    tea.scroll('bottom');
+}
+
+
+// 阻止冒泡事件
+function fnStopPropagation(e){
+    window.event? window.event.cancelBubble = true : e.stopPropagation();
+}
+
+
+// 提交按钮
+function isSaveUserRecord(){
+	var saveUserRecord = $api.byId('save-user-record');
+	var bc = null;
+	var saveUserRecord = saveUserRecord.checked; // 是否保存到常用记录
+		saveUserRecord ? (bc = 1 ):(bc = 0);
+	var cashType = $("input[name='cash']:checked").attr("data-type-name"); // 提现方式
+		cashType = $api.trim(cashType);
+
+	var cashalTypeVal = $("#cashal-type-val").val(); // 要提现的账号
+
+	var userNameVal = $("#user-name-val").val(); // 验证用户姓名
+
+	var bankNumber = $("#bank-number").val(); // 银行卡的卡号
+
+	var money = $("#money").val(); // 提现金额
+
+	var myMoney = $("#myMoney").attr("data-name"); // 可提现余额
+
+
+	if(money.length === 0){
+		api.toast({
+	        msg:'请输入提现金额'
+        });
+	}else if(Number(money)>Number(myMoney)){
+		api.toast({
+	        msg:'提现金额不可大于余额'
+        });
+	}else if(Number(money)<10){
+		api.toast({
+	        msg:'提现金额最少10元起'
+        });
+	}else if(!cashType){
+		api.toast({
+	        msg:'请选择提现方式'
+        });
+	}else{
+		 if(cashType == 'zfb' && (!cashalTypeVal)){
+			api.toast({
+		        msg:'请输入支付宝账号'
+	        });
+		}else if(cashType == 'wx' && (!cashalTypeVal)){
+			api.toast({
+		        msg:'请输入微信账号'
+	        });
+		}else if(cashType == 'yh' && (!cashalTypeVal)){
+			api.toast({
+		        msg:'请输入银行名称'
+	        });
+		}else if(!userNameVal){
+			api.toast({
+		        msg:'请输入验证姓名'
+	        });
+		}else if(cashType == 'yh' && (!bankNumber)){
+			api.toast({
+		        msg:'请输入银行账号'
+	        });
+		}else{
+
+//			alert("提现金额长度："+money.length);
+//			alert("是否保存到常用记录："+saveUserRecord);
+//			alert("提现方式："+cashType);
+//			alert("提现的账号："+cashalTypeVal);
+//			alert("验证用户姓名："+userNameVal);
+//			alert("银行卡号："+bankNumber);
+			var token = $api.getStorage('token');
+            var nickname = $api.getStorage('nickname');
+            var ID = $api.getStorage('ID');
+            showp('数据处理中...','');
+			api.ajax({
+			    url: website + 'mymoney.php?action=tx',
+			    method: 'post',
+			    timeout: 30,
+			    dataType: 'json',
+			    returnAll:false,
+			    data:{
+			        values: {token: token,ID: ID,nickname: nickname,tx: money,txtype: cashType,step1: cashalTypeVal,step2: userNameVal,step3: bankNumber, bc: bc},
+			    }
+			},function(ret,err){
+			    if (ret) {
+			    	if(ret.succ == "ok"){
+			    		api.sendEvent({
+						    name: 'txok'
+						});
+						 api.openWin({
+                                name: 'successCarCheck',
+                                url: '../unit/success_win.html',
+                                pageParam: {
+                                    title: '提现成功',
+                                    result: '提现成功',
+                                    data: {
+                                        '0': ['您的提现申请已经提交','稍后后台工作人员马上为您审核','工作日内一般一小时内通过']
+
+                                    }
+                                }
+                            });
+                            api.closeWin();
+			    	}else{
+			    		api.toast({
+	                        msg:'提现失败，请稍后再试'
+                        });
+			    	}
+				   	api.hideProgress();
+			    }
+			});
+
+		}
+	}
+
+}
+
+
+// 打开常见提现方式
+function cashType(){
+	api.openWin({
+        name: 'cash_type',
+        url: './cash_type_win.html',
+        vScrollBarEnabled: false
+   	 });
+}
+
+function checkradio(val,s1,s2,s3){
+    showp('切换中...');
+    var alipay = $api.byId("alipay-type");
+    var wechat = $api.byId('wechat-type');
+    var unionpay = $api.byId('unionpay-type');
+//    console.log(val);
+//    console.log(s1);
+//    console.log(s2);
+//    console.log(s3);
+    $("#input-data").show();
+    if(val == 'zfb'){
+        alipay.click();
+        $("#cashal-type-name").html("支付宝账号");
+        $api.val($api.byId('cashal-type-val'),s1);
+        $("#user-name").html("验证姓名");
+        $api.val($api.byId('user-name-val'),s2);
+        $("#bank-number-name-li").hide();
+    }else if(val == 'wx'){
+        console.log("text","抱歉，微信提现暂时关闭！");
+        return ;
+        /*wechat.click();
+        $("#cashal-type-name").html("微信账号");
+        $api.val($api.byId('cashal-type-val'),s1);
+        $("#user-name").html("验证姓名");
+        $api.val($api.byId('user-name-val'),s2);
+        $("#bank-number-name-li").hide();*/
+    }else if(val == 'yh'){
+        unionpay.click();
+        $("#cashal-type-name").html("银行名称");
+        $api.val($api.byId('cashal-type-val'),s1);
+        $("#user-name").html("验证姓名");
+        $api.val($api.byId('user-name-val'),s2);
+        $api.val($api.byId('bank-number'),s3);
+    }
+    api.hideProgress();
+}
+
+</script>
+</html>

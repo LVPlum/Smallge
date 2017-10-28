@@ -1,0 +1,199 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui_old.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+</head>
+<style type="text/css">
+.ac{color: #666666;padding-right:15px;}
+.aui-content {margin-top:1px;}
+</style>
+<body>
+		<div class="aui-text-center aui-text-danger" id="viptitle"></div>
+	    <div class="aui-content">
+            <ul class="aui-list-view" id="mycarinfo">
+
+         	</ul>
+	    </div>
+            <div class="aui-btn-row" id="vip">
+                <div class="aui-btn aui-btn-block aui-btn-warning" onclick="addvip()" tapmode>把这辆车加入VIP</div>
+            </div>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript" src="../../script/aui-toast.js" ></script>
+<script type="text/javascript">
+var cp = null, carid = null, tel = null, userid = null;
+apiready = function() {
+	userid = api.pageParam.userid;
+    api.parseTapmode();
+    loadinfo();
+	api.addEventListener({
+	    name: 'reflash'
+	}, function(ret, err){
+		loadinfo();
+	});
+	api.addEventListener({
+	    name: 'delcar'
+	}, function(ret, err){
+		delcar();
+	});
+};
+function loadinfo(){
+    var id = api.pageParam.id;
+    showp('数据载入中...','请稍候...');
+	api.ajax({
+	    url: website + 'getmycar.php?action=carinfo',
+	    method: 'post',
+	    timeout: 30,
+	    dataType: 'json',
+	    returnAll:false,
+	    data:{
+	        values: {ID: id},
+	    }
+	},function(ret,err){
+	    if (ret) {
+                 cp = ret.carnum;
+                 carid = ret.carid;
+                 tel = ret.tel;
+	             var obj = $api.byId('mycarinfo');
+                 var html ='';
+				if (ret.xszr == null) {
+					ret.xszr = '';
+				}
+				if (ret.scextime == null) {
+					ret.scextime = '';
+				}
+				if (ret.bxextime == null) {
+					ret.bxextime = '';
+				}
+                 if(ret.vip == '1'){   //如果是vip
+	                 html += '<li class="aui-list-view-cell" tapmode">车牌号码<span class="ac aui-pull-right" id="carnum">'+ ret.carnum +'</span></li>';
+	                 html += '<li class="aui-list-view-cell" tapmode">行驶证所有人<span class="ac aui-pull-right" id="xszr">'+ ret.xszr +'</span></li>';
+	                 html += '<li class="aui-list-view-cell" tapmode onclick="chval(\'手机号码\',\'telphone\',\''+ ret.tel +'\')">手机号码</span><span class="ac aui-pull-right aui-arrow-right">'+ ret.tel +'</span></li>';
+	                 html += '<li class="aui-list-view-cell" tapmode">车辆类型</span><span class="ac aui-pull-right">'+ ret.cartype +'</span></li>';
+               	 }else{
+	                 html += '<li class="aui-list-view-cell" tapmode onclick="chval(\'车牌号码\',\'carnum\',\''+ ret.carnum +'\')">车牌号码<span class="ac aui-pull-right aui-arrow-right" id="carnum">'+ ret.carnum +'</span></li>';
+	                 html += '<li class="aui-list-view-cell" tapmode onclick="chval(\'行驶证\',\'carlicense\',\''+ ret.xszr +'\')">行驶证所有人<span class="ac aui-pull-right aui-arrow-right" id="xszr">'+ ret.xszr +'</span></li>';
+	                 html += '<li class="aui-list-view-cell" tapmode onclick="chval(\'手机号码\',\'telphone\',\''+ ret.tel +'\')">手机号码</span><span class="ac aui-pull-right aui-arrow-right">'+ ret.tel +'</span></li>';
+	                 html += '<li class="aui-list-view-cell" tapmode onclick="chval(\'车辆类型\',\'cartype\',\''+ ret._cartype +'\')">车辆类型</span><span class="ac aui-pull-right aui-arrow-right">'+ ret.cartype +'</span></li>';
+               	 }
+                 if(ret.xszimg){
+	                 if(ret.xszimg.length > 4){
+	                 	html += '<li class="aui-list-view-cell">车驶证照片</span><img class="aui-img-object" style="width:200px;height:100px;" src="' + website +'xsz_img/'+ ret.xszimg + '"></li>';
+	                 }
+                 }
+                 html += '<li class="aui-list-view-cell" tapmode onclick="chval(\'下一个审车日期\',\'scextime\',\''+ ret.scextime +'\')">下一个审车日期</span><span class="ac aui-pull-right aui-arrow-right">'+ ret.scextime +'</span></li>';
+                 html += '<li class="aui-list-view-cell" tapmode onclick="chval(\'审车到期自动提示\',\'scremind\',\''+ ret._scremind +'\')">审车到期自动提示</span><span class="ac aui-pull-right aui-arrow-right">'+ ret.scremind +'</span></li>';
+                 html += '<li class="aui-list-view-cell" tapmode onclick="chval(\'下一个保险日期\',\'bxextime\',\''+ ret.bxextime +'\')">下一个保险日期</span><span class="ac aui-pull-right aui-arrow-right">'+ ret.bxextime +'</span></li>';
+                 html += '<li class="aui-list-view-cell" tapmode onclick="chval(\'保险到期自动提示\',\'bxremind\',\''+ ret._bxremind +'\')">保险到期自动提示</span><span class="ac aui-pull-right aui-arrow-right"">'+ ret.bxremind +'</span></li>';
+                 $api.html(obj, html);
+                 if(ret.vip == '0'){
+                   $api.css($api.byId('vip'),'display: block');
+                 }else{
+                 	$api.text($api.byId('viptitle'), '[本车为VIP]');
+                 }
+                 api.hideProgress();
+	    }
+	});
+}
+function chval(itname,item,chval){
+		api.openWin({
+	        name: 'chval_win',
+	        url: './chval_win.html',
+	        pageParam: {itname: itname, item: item, chval: chval,carid: carid},
+	        vScrollBarEnabled: false
+	   	 });
+}
+function addvip(){
+
+	checkcarnum(cp,function(result){
+		if(result == '1'){
+			api.openWin({
+				name: 'joinvip_scar_win',
+				url: '../vip/vip_join_win.html',
+				vScrollBarEnabled: false
+			});
+				setTimeout(function(){
+				api.sendEvent({
+					name: 'addoldcar',
+					extra: {
+						car: cp,
+						carid: carid,
+						tel: tel
+					}
+				});
+			},500);
+		}else{
+			api.toast({
+				msg:'这个车牌已经加入过VIP了，无需重复加入'
+			});
+		}
+	});
+}
+function delcar(){
+	api.confirm({
+	    title: '删除提示',
+	    msg: '真的要删除这辆车的信息么？',
+	    buttons: ['是', '否']
+	},function( ret, err ){
+	    if( ret ){
+            if( ret.buttonIndex == 1){
+					api.ajax({
+					    url: website + 'getmycar.php?action=delcp',
+					    method: 'post',
+					    timeout: 30,
+					    dataType: 'json',
+					    returnAll:false,
+					    data:{
+					        values: {ID: carid},
+					    }
+					},function(ret,err){
+					    if (ret) {
+							if(ret.succ == 'ok'){
+ 								showDefault();
+							}
+					    }
+					});
+            }
+	    }
+	});
+}
+
+function showDefault(){
+	api.alert({msg:('删除成功')});
+	api.closeWin({});
+    api.sendEvent({
+	    name: 'reflash'
+	 });
+}
+
+function checkcarnum(carnum,callback){
+	var id = $api.getStorage('ID');
+	var userPhoneVal = tel;
+	api.ajax({
+		url: website + 'api.php?action=checkcarnum',
+		method: 'post',
+		timeout: 30,
+		dataType: 'json',
+		returnAll:false,
+		data:{
+			values: {
+				userid: id,
+				carnum: carnum,
+				telphone: userPhoneVal
+			}
+		}
+	},function(ret,err){
+		if (ret) {
+
+			callback(ret.succ);
+		}
+	});
+}
+</script>
+</html>

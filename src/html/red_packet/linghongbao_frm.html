@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui_old.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+</head>
+<style type="text/css">
+.ac {display:inline;}
+.ac .m { font-size:38px; color:#ED4040;}
+.ac .y{color:#999999;}
+</style>
+<body>
+     <div class="aui-content aui-text-center">
+       <p class="aui-padded-10" id="msg"></p>
+       <img class="aui-img-object aui-img" id="sendlogo" src="../../image/nologo.png" style="width:68px;height:68px;border-radius: 80%;">
+   	   <div class="aui-img-body" style="padding-bottom:10px;">
+		 <span id="sendname"></span>
+	   </div>
+	   <div class="ac"><span class="m" id="m"></span><span class="y">元</span></div>
+	    <div class="aui-btn-row">
+	        <div class="aui-btn aui-btn-block aui-btn-danger" id="bottom" onclick="postdate()">领取这个红包</div>
+	    </div>	   
+     </div>    
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript">
+apiready = function() { 
+    api.parseTapmode();
+    loaddate();     
+};
+function loaddate(){
+    var id = api.pageParam.hongbaoID;
+    showp('数据加载中...','请稍候...');
+	api.ajax({
+	    url: website + 'hongbao.php?action=seehongbaoinfo',
+	    method: 'post',
+	    timeout: 30,
+	    dataType: 'json',
+	    returnAll:false,
+	    data:{
+	        values: {hongbaoID: id},
+	    }
+	},function(ret,err){
+	    if (ret) {
+	       if(!ret.errmsg){
+	            if(ret.isuse == '1'){
+                  $api.html($api.byId('msg'), ret.msg);
+                  $api.html($api.byId('sendname'), ret.sendname + '发的红包');
+                  $api.html($api.byId('m'), '￥' + ret.hongbao);
+                  $api.byId('sendlogo').src = ret.sendlogo;
+				  $api.removeCls(bottom, 'aui-btn-danger');
+				  $api.html(bottom, '这个红包已经领过了');                 
+                  api.hideProgress();
+	            }else if(ret.sendID == $api.getStorage('ID')){
+                  $api.html($api.byId('msg'), ret.msg);
+                  $api.html($api.byId('sendname'), ret.sendname + '发的红包');
+                  $api.html($api.byId('m'), '￥' + ret.hongbao);
+                  $api.byId('sendlogo').src = ret.sendlogo;
+				  $api.removeCls(bottom, 'aui-btn-danger');
+				  $api.html(bottom, '不能领自己发的红包');                 
+                  api.hideProgress();	            
+	            }else{
+                  $api.html($api.byId('msg'), ret.msg);
+                  $api.html($api.byId('sendname'), ret.sendname + '发的红包');
+                  $api.html($api.byId('m'), '￥' + ret.hongbao);
+                  $api.byId('sendlogo').src = ret.sendlogo;
+                  api.hideProgress();
+                }
+	        }
+	    }else {
+	        api.hideProgress();
+	        api.alert({
+	            msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+	        });
+	    }
+	});   
+}
+function postdate(){
+        var id = api.pageParam.hongbaoID;
+		api.ajax({
+		    url: website + 'hongbao.php?action=linghongbao',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {hongbaoID: id},
+		    }
+		},function(ret,err){
+		    if (ret) {
+		           if(ret.succ == 1){		           
+					     var bottom = $api.byId('bottom');
+					     $api.removeCls(bottom, 'aui-btn-danger');
+					     $api.html(bottom, '已经成功领取了这个红包'); 
+						 $api.rmEvt(bottom, 'click', function(){
+						 });
+				         api.sendEvent({    //通知刷新红包显示
+						    name: 'showhongbao'
+						 });					                        
+                     }
+		    }else {
+		        api.alert({
+		            msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+		        });
+		    }
+		});		
+}
+
+</script>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui_old.css" />
+    <style type="text/css">
+		body{
+		background: #fff;
+		padding: 1rem;
+
+		}
+		.aui-content .aui-list-item-label .cp{display:inline;width:30%;overflow: auto;border: 1px dashed #CACACA;text-align:center}
+
+    </style>
+</head>
+<body>
+<div class="aui-content aui-margin-b-15">
+    <ul class="aui-list aui-form-list">
+        <li class="aui-list-item aui-margin-t-15">
+            <div class="aui-list-item-inner" id="setion">
+                <div class="aui-list-item-input" id="in">
+                    <input type="text" placeholder="" id="val" tapmode>
+                </div>
+            </div>
+        </li>
+     </ul>
+</div>
+<div class="aui-content aui-margin-b-15 aui-content-padded">
+	<div class="aui-btn aui-btn-danger aui-btn-block" tapmode onclick="postdate()" id="postdate">提交修改</div>
+</div>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript" src="../../script/aui-toast.js" ></script>
+<script type="text/javascript">
+var itname = null, item = null, chval = null, carid = null, userid = null;
+    apiready = function(){
+        api.parseTapmode();
+		itname = api.pageParam.itname;
+		item = api.pageParam.item;
+		chval = api.pageParam.chval;
+		carid = api.pageParam.carid;
+		userid = $api.getStorage('ID');
+		$api.val($api.byId('val'), chval);
+		$api.attr($api.byId('val'), 'placeholder', '修改' + itname);
+		api.addEventListener({
+		    name: 'selectzm'
+		}, function(ret, err){
+		    var obj = $api.byId('cph');
+		    var val = ret.value.zm1 + ret.value.zm2;
+		    $api.val(obj, val);
+		});
+		api.addEventListener({
+		    name: 'selecttime'
+		}, function(ret, err){
+		    var obj = $api.byId('val');
+		    var val = ret.value.time1 + '-' + ret.value.time2 + '-' + ret.value.time3;
+		    $api.val(obj, val);
+		});
+		var html = '';
+		if(item == 'carnum'){
+			var str1 = chval.substring(0,2);   // 车牌号码
+			var str2 = chval.substring(2);
+			var html = '';
+			html = '<div class="aui-list-item-label">';
+			html += '<input type="text" class="aui-input cp" id="cph" value="'+ str1 +'" readonly="readonly" onclick="cplocal()"/>';
+			html += '</div>';
+			html += '<div class="aui-list-item-input">';
+			html += '<input type="text" placeholder="修改车牌号码" id="val" value="'+ str2 +'" maxlength="5" oninput="value=value.toUpperCase()">';
+			html += '</div>';
+			$api.html($api.byId('setion'), html);
+		}
+		if(item == 'carlicense'){
+			$api.attr($api.byId('val'), 'maxlength', '20');
+		}
+		if(item == 'cartype'){
+			html += '<select id="val" >';
+			if(chval == '1'){
+            	html += '<option value="1" selected>蓝牌</option>';
+            }else{
+            	html += '<option value="1">蓝牌</option>';
+            }
+            if(chval == '2'){
+            	html += '<option value="2" selected>黄牌</option>';
+            }else{
+            	html += '<option value="2">黄牌</option>';
+            }
+			html += '</select>';
+			$api.html($api.byId('in'), html);
+		}
+		if(item == 'scextime' || item == 'bxextime'){
+			$api.attr($api.byId('val'), 'readonly', 'readonly');
+			$api.attr($api.byId('val'), 'onclick', 'selecttime()');
+		}
+		if(item == 'scremind'){
+			if(chval == 0){
+				html = '<div class="aui-list-item-title">审车到期自动提醒</div><div class="aui-list-item-right"><input type="checkbox" class="aui-switch" id="checkbox" checked></div>';
+			}else{
+				html = '<div class="aui-list-item-title">审车到期自动提醒</div><div class="aui-list-item-right"><input type="checkbox" class="aui-switch" id="checkbox"></div>';
+			}
+			$api.html($api.byId('setion'), html);
+		}
+		if(item == 'bxremind'){
+			if(chval == 0){
+				html = '<div class="aui-list-item-title">保险到期自动提醒</div><div class="aui-list-item-right"><input type="checkbox" class="aui-switch" id="checkbox" checked></div>';
+			}else{
+				html = '<div class="aui-list-item-title">保险到期自动提醒</div><div class="aui-list-item-right"><input type="checkbox" class="aui-switch" id="checkbox"></div>';
+			}
+			$api.html($api.byId('setion'), html);
+		}
+    }
+	function cplocal(){
+			api.openWin({
+		        name: 'cpselect_win',
+		        url: './cpselect_win.html',
+		        vScrollBarEnabled: false
+		   	 });
+	}
+	function postdate(){
+		var val = $api.val($api.byId('val'));
+		if(item == 'carnum'){
+			var cph = $api.val($api.byId('cph'));
+			if(cph == '' || val == ''){
+				api.alert({msg:('车牌号码不能为空')});
+				return false;
+			}
+		}
+		if(item == 'scremind' || item == 'bxremind'){
+			var checkbox= $api.byId('checkbox');
+			if(checkbox.checked){
+				val = 0;
+			}else{
+				val = 1;
+			}
+		}
+			api.ajax({
+			    url: website + 'getmycar.php?action=chcarval',
+			    method: 'post',
+			    timeout: 30,
+			    dataType: 'json',
+			    returnAll:false,
+			    data:{
+			        values: {userid: userid, cph: cph, val: val, carid: carid, item: item},
+			    }
+			},function(ret,err){
+			    if (ret) {
+					if(ret.succ == 1){
+				        api.sendEvent({name: 'reflash'});
+						$api.removeCls($api.byId('postdate'), 'aui-btn-danger');
+						showDefault();
+					}else{
+						api.alert({msg:(ret.msg)});
+					}
+			    }
+			});
+	}
+    var toast = new auiToast({
+    })
+    function showDefault(){
+        toast.success({
+            title:"修改成功"
+        })
+        setTimeout(function(){
+            api.closeWin();
+        }, 2000)
+   }
+    function selecttime(val){
+			api.openFrame({
+			    name: 'selecttime',
+			    url: 'selecttime_frm.html',
+			    pageParam: {pagetype: 'ntime'},
+			    rect: {
+			        x: 0,
+			        y: 320,
+			        w: api.frameWidth,
+			        h: api.winHeight -320
+			    },
+			    bounces: false,
+			    bgColor: 'rgba(0,0,0,0)',
+			    vScrollBarEnabled: false,
+			    hScrollBarEnabled: false
+			});
+	}
+</script>
+</html>

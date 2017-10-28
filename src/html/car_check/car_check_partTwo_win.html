@@ -1,0 +1,232 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>网约审车</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!-- <script type="text/javascript" src="../../script/flexible.js"></script> -->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+        }
+
+        header {
+            border-bottom: 1px solid #ededed;
+            box-shadow: 0 0.8rem 1rem -1rem #84b5d6;
+        }
+    </style>
+</head>
+<body>
+
+    <header id="header" class="aui-bar aui-bar-nav aui-bar-light" >
+        <a class="aui-btn aui-pull-left" tapmode onclick="closeWin()">
+            <span class="aui-iconfont aui-icon-left tea-text-title"></span>
+        </a>
+        <div class="aui-title tea-text-title">网约审车</div>
+    </header>
+
+    <section id="main"></section>
+
+    <footer id="footer" class="aui-bar aui-bar-tab ">
+        <div class="aui-bar-tab-item tea-bg-light-blue aui-text-white" tapmode onclick="postCarCheck()" style="width: auto;">提交</div>
+    </footer>
+
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- HTML模板渲染引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var header, footer;
+
+// 声明全局变量
+var headerH, footerH, userId;
+
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 处理沉浸式效果，计算header和footer的高度
+    header = $api.byId('header');
+    $api.fixStatusBar(header);
+    headerH = $api.offset(header).h;
+    footer = $api.byId('footer');
+    footerH = $api.offset(footer).h;
+
+    // 初始化DOM对象
+    initDOM();
+
+    // 初始化变量
+    initVar();
+
+    // ajax请求数据
+    getData();
+
+    // 初始化监听
+    initEventListener();
+
+    // 初始化其他
+    init();
+
+
+};
+
+/**********************************初始化全局变量**********************************/
+// 初始化DOM对象
+function initDOM(){
+
+
+};
+
+// 初始化变量
+function initVar(){
+
+    userId = $api.getStorage('ID');
+
+};
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+    api.ajax({
+        url: website + 'api.php?action=carre_info',
+        method: 'post',
+        data: {
+            values: {
+                userid: userId
+            }
+        }
+    },function(ret, err){
+        if (ret) {
+            //alert( JSON.stringify( ret ) );
+            openFrame(ret);
+        } else {
+            tea.toast('ajax');
+        }
+    });
+
+    // 更新变量
+    updateVar();
+
+    // 更新HTML
+    updateHTML();
+
+}
+
+/**********************************更新全局变量**********************************/
+// 更新DOM对象
+function updateDOM(){
+
+
+
+}
+
+// 更新变量
+function updateVar(){
+
+
+
+}
+
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+    api.addEventListener({
+        name: 'formReady'
+    }, function(ret, err){
+        if( ret ){
+            if(ret.value.ready){
+                $api.addCls(footer, 'tea-active');
+            }
+            else {
+                $api.removeCls(footer, 'tea-active');
+            }
+        }else{
+            //alert( JSON.stringify( err ) );
+        }
+    });
+
+}
+
+/**********************************初始化其他模块**********************************/
+function openFrame(ret_){
+
+    // 打开Frame，不需要打开Frame请删除
+    api.openFrame({
+        name: 'car_check_partTwo_frm',
+        url: './car_check_partTwo_frm.html',
+        rect: {
+            x: 0,
+            y: headerH,
+            w: 'auto',
+            h: api.winHeight - headerH -footerH
+        },
+        pageParam: {
+        	headerH: headerH,
+            carCheckInfo: ret_,
+            order: api.pageParam.order,
+        },
+        // 页面是否弹动
+        bounces: false
+    });
+
+}
+
+function init(){
+
+}
+
+
+/**********************************广播消息**********************************/
+function postCarCheck(){
+//    _alert(api.pageParam.partOneVal);
+    api.sendEvent({
+        name: 'postCarCheck',
+        extra: {
+            partOneVal: api.pageParam.partOneVal,
+        }
+    });
+
+}
+
+/**********************************DOM响应**********************************/
+// 回退关闭窗口
+function closeWin(){
+    api.closeWin();
+}
+
+
+/**********************************其他函数**********************************/
+
+/**********************************功能模块1**********************************/
+
+</script>
+</html>

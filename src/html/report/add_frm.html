@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/common.css" />
+</head>
+<style type="text/css">
+	.aui-input-row {
+		width: 100%;
+	}
+	#content {
+		height: 150px;
+	}	
+</style>
+<body>
+		<div class="aui-form">
+			<div class="aui-input-row">
+				<textarea name="content" class="aui-input" id="content" placeholder="您的意见与建议，是我们前进的动力..."></textarea>
+			</div>
+		</div>
+		<div class="aui-btn-row">
+		   <div class="aui-btn aui-btn-block aui-btn-danger" tapmode onclick="postdate()">提交</div>
+		</div>	
+		
+		<div class="aui-toast" style="display:none" id="default">
+		    <i class="aui-iconfont aui-icon-check"></i>
+		    <div class="aui-toast-content">提交成功</div>
+		</div>			
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript">
+var ID = null, nickname = null, telphone = null;
+apiready = function() { 
+    ID = $api.getStorage('ID');
+    nickname = $api.getStorage('nickname');
+    telphone = $api.getStorage('telphone');
+    api.parseTapmode();     
+};
+function postdate(){
+    var content = $api.val($api.byId('content'));
+    if(content == ''){
+        api.toast({
+	        msg:'不能提交空内容'
+        });
+        return false;
+    }
+	api.ajax({
+	    url: website + 'report.php?action=add',
+	    method: 'post',
+	    timeout: 30,
+	    dataType: 'json',
+	    returnAll:false,
+	    data:{
+	        values: {ID: ID, nickname: nickname, telphone: telphone, content: content},
+	    }
+	},function(ret,err){
+	    if (ret) {    
+            if(ret.succ == '1'){
+		         api.sendEvent({
+				    name: 'addok',
+				 });            
+                showDefault();                
+            }
+	    }
+	});    
+}
+    function showDefault(){
+        $api.css($api.byId("default"),"display:block");
+        setTimeout(function(){
+            $api.css($api.byId("default"),"display:none");            
+            api.closeWin();
+        },2000)
+    }
+</script>
+</html>

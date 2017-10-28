@@ -1,0 +1,216 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+		html,body {
+            height: 100%;
+            overflow: auto;
+		}
+
+    </style>
+</head>
+<body>
+    <section id="nothing" class="tea-nothing aui-hide">
+        <img src="../../image/nothing.png">
+        <p>您还没有任何车辆哦~</p>
+        <p>请返回手动输入车牌</p>
+    </section>
+	<section class="aui-content">
+	    <ul class="aui-list aui-list-noborder" id="plate-num">
+
+	    </ul>
+	</section>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明全局变量
+
+// 声明DOM对象
+
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化DOM对象
+    initDOM();
+
+    // 初始化变量
+    initVar();
+
+    // ajax请求数据
+    getData();
+
+    // 初始化监听
+    initEventListener();
+
+    // 初始化其他
+    init();
+
+};
+
+/**********************************初始化全局变量**********************************/
+// 初始化DOM对象
+function initDOM(){
+
+
+};
+
+// 初始化变量
+function initVar(){
+
+
+
+};
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+	var id = $api.getStorage('ID');
+
+    showp('数据载入中...','梢等...');
+	api.ajax({
+	    url: website + 'getmycar.php?action=getmycar',
+	    method: 'post',
+	    timeout: 30,
+	    dataType: 'json',
+	    returnAll:false,
+	    data:{
+	        values: {ID: id},
+	    }
+	},function(ret,err){
+        api.hideProgress();
+	    if (ret) {
+		    // 更新HTML
+			updateHTML(ret);
+
+        }else{
+            tea.toggle('nothing');
+	        //   var obj = $api.byId('cp');
+	        //   var html = '';
+	        //   html = '<p tapmode onclick="openmycar()" style="color:blue;">您没有任何车辆，请点这里增加您的车辆</p>';
+	        //   $api.append(obj, html);
+	        //   api.hideProgress();
+        }
+	});
+
+
+}
+
+
+/**********************************更新全局变量**********************************/
+// 更新DOM对象
+function updateDOM(){
+
+
+
+}
+
+// 更新变量
+function updateVar(){
+
+
+
+}
+
+/**********************************更新HTML**********************************/
+function updateHTML(ret){
+
+    var html = '';
+    var obj = $api.byId('plate-num');
+    for (var i = 0; i < ret.length - 1; i++) {
+        var item = ret[i];
+        html += '<li class="aui-list-item aui-list-item-arrow" tapmode ';
+        if (api.pageParam.vip == false && item.vip == 1) {
+            html += 'onclick="vip()">';
+        }
+        else {
+            html += 'onclick="sendmycar(\''+ item.carnum +'\','+ item.ID +',\''+ item.tel +'\','+ item.cartype +')">';
+        }
+        html += '<div class="aui-list-item-inner">'
+        html += '<div class="aui-list-item-title">'+ item.carnum +'</div>';
+        if (item.vip == 1 ){
+            html += '<div class="aui-list-item-right tea-text-blue">VIP</div>';
+        }
+        html += '</div></li>';
+    }
+    $api.append(obj, html);
+    api.parseTapmode();
+
+
+}
+
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************初始化其他模块**********************************/
+function init(){
+
+
+
+}
+
+/**********************************广播消息**********************************/
+function sendmycar(val,id,tel,cartype){
+     api.sendEvent({
+	    name: 'addOldCar',
+	    extra: {
+	        car: val,
+	        carid: id,
+	        tel: tel,
+	        cartype: cartype,
+	    }
+	 });
+	 api.closeWin();
+}
+
+/**********************************DOM响应**********************************/
+function openmycar(){
+	api.openWin({
+        name: 'mycar_win',
+        url: '../pre/mycar_win.html',
+        vScrollBarEnabled: false
+   	 });
+}
+
+function vip(){
+    tea.toast('custom','此车牌已加入VIP</br>无需重复加入');
+}
+/**********************************其他函数**********************************/
+
+/**********************************功能模块1**********************************/
+
+
+</script>
+</html>
+
+

@@ -1,0 +1,600 @@
+/**
+ * @file 项目通用样式
+ * @author Winston(iwinston@163.com)
+ *
+ * diy 定义图标字体库
+ * diy 定义通用样式
+ * modify 修改aui样式
+ */
+
+[v-cloak] {
+	display: none
+}
+
+/******************************diy 图标字体库**********************************/
+@font-face {
+	font-family: "tea_iconfont";
+	src: url('iconfont.ttf') format('truetype');
+}
+.aui-iconfont[class*=tea-icon-]{
+	font-family:"tea_iconfont" !important;
+}
+
+/*业务相关*/
+.tea-icon-vip:before { content: "\e631"; color: #ffc50f }
+.tea-icon-join:before { content: "\e62b"; color: #00be9b }
+.tea-icon-check:before { content: "\e629"; color: #41a4ec }
+.tea-icon-insure:before { content: "\e62d"; color: #ff855e }
+.tea-icon-agency:before { content: "\e627"; color: #00be9b }
+.tea-icon-tel:before { content: "\e63d" }
+.tea-icon-oil:before { content: "\e683" }
+.tea-icon-etc:before { content: "\e67f" }
+.tea-icon-star::before { content: "\e70e" }
+
+/*钱包相关*/
+.tea-icon-sum:before { content: "\e637"; color: #3399ff }
+.tea-icon-detail:before { content: "\e63b"; color: #3399ff }
+.tea-icon-cash:before { content: "\e63a"; color: #3399ff }
+.tea-icon-phone:before { content: "\e638"; color: #3399ff }
+.tea-icon-paysafety:before { content: "\e639"; color: #3399ff }
+.tea-icon-transfer:before { content: "\e63c"; color: #3399ff }
+.tea-icon-alipay:before { content: "\e645"; color: #22aced }
+.tea-icon-wechat:before { content: "\e644"; color: #3bbc36 }
+
+/*车友相关*/
+.tea-icon-contacts:before { content: "\e679"; }
+.tea-icon-qrcode:before { content: "\e649"; color: #3399ff }
+.tea-icon-nothing:before { content: "\e605" }
+.tea-icon-voice:before { content: "\e646" }
+.tea-icon-addfriend:before { content: "\e64b"; color: #3399ff }
+.tea-icon-local:before{ content: "\e678"; }
+.tea-icon-newfriend:before { content: "\e648";}
+.tea-icon-recommend:before{ content: "\e651" }
+
+/*首页相关*/
+.tea-icon-home:before { content: "\e653"; color: #c2c7cc }
+.aui-active .tea-icon-home:before { content: "\e655"; color: #3399ff }
+.tea-icon-news:before { content: "\e659"; color: #c2c7cc }
+.aui-active .tea-icon-news:before { content: "\e65a"; color: #3399ff }
+.tea-icon-friends:before { content: "\e654"; color: #c2c7cc }
+.aui-active .tea-icon-friends:before { content: "\e657"; color: #3399ff }
+.tea-icon-me:before { content: "\e656"; color: #c2c7cc }
+.aui-active .tea-icon-me:before { content: "\e658"; color: #3399ff }
+
+/*新鲜事相关*/
+.tea-icon-camera:before { content: "\e668"; }
+.tea-icon-comment:before { content: "\e66a"; color: #999999; margin-top: 0.1rem; }
+.tea-icon-share:before { content: "\e662"; color: #999999 }
+.tea-icon-like:before { content: "\e667"; color: #999999 }
+.aui-active.tea-icon-like:before { content: "\e66b"; color: #3399ff }
+.tea-icon-reward:before { content: "\e660"; color: #999999 }
+.aui-active.tea-icon-reward:before { content: "\e65f"; color: #ff9933 }
+
+/*预约订餐相关*/
+.tea-icon-breakfast:before{ content: "\e675" }
+.tea-icon-lunch:before{ content: "\e676" }
+.tea-icon-addfood:before{ content: "\e677" }
+
+/*同城车友相关*/
+.tea-icon-men:before{ content: "\e666" }
+.tea-icon-women:before { content: "\e665"}
+.tea-icon-more:before{ content: "\e6d1" }
+
+/* 我的相关 */
+.tea-icon-coupon:before { content: "\e66c" ; color: #3399ff }
+.tea-icon-invite:before { content: "\e664"; color: #3399ff }
+.tea-icon-message:before{ content: "\e62c" }
+.tea-icon-wallet:before{ content: "\e643" }
+.tea-icon-order:before{ content: "\e63e" }
+.tea-icon-car:before{ content: "\e63f" }
+.tea-icon-setting:before{ content: "\e641" }
+.tea-icon-feedback:before{ content: "\e640" }
+.tea-icon-question:before{ content: "\e642" }
+.tea-icon-close:before { content: "\e625" }
+
+/* 账号相关 */
+.tea-icon-mobile:before { content: "\e67c"; }
+.tea-icon-lock:before { content: "\e67b"; }
+.tea-icon-display:before { content: "\e67d"; }
+.tea-icon-cross:before { content: "\e6bb"; }
+
+/*新增icon *LVPlum*/
+/* 我的新版相关*/
+.tea-icon-new-setting:before{ content: "\e680"; }
+.tea-icon-message-box:before{ content: "\e681"; }
+.tea-icon-new-vip:before{ content: "\e615"; color: #f2d394}
+.tea-icon-new-invite:before{ content: "\e682"; }
+
+/* 优惠券相关 */
+.tea-icon-del:before { content: "\e626" }
+
+/* 地址相关 */
+.tea-icon-editor:before {content: "\e609";}
+/*END *LVPlum*/
+/*****************************modify aui通用样式*********************************/
+
+/*modify aui mask*/
+.aui-mask {
+    z-index: 11;
+}
+
+/*modify aui 栅格类*/
+/* .aui-row-padded {
+    margin-left: -0.25rem;
+    margin-right: -0.25rem;
+}
+.aui-row-padded [class*=aui-col-xs-] {
+    padding: 0.25rem;
+} */
+
+
+.aui-list.tea-list-in .aui-list-item {
+    border: none;
+    background-size: 92% 1px;
+    background-repeat: no-repeat;
+    background-position: 0.75rem bottom;
+    background-image: linear-gradient(0,#ededed,#ededed 50%,transparent 50%);
+    background-image: -webkit-linear-gradient(90deg,#ededed,#ededed 50%,transparent 50%);
+}
+
+/* 向下箭头切换显示隐藏 */
+.aui-list-item-arrow.tea:before {
+    margin-top: -0.4rem;
+    -webkit-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+}
+
+.aui-list-item-arrow.tea.show:before {
+    margin-top: -0.2rem;
+    -webkit-transform: rotate(135deg);
+            transform: rotate(135deg);
+}
+/********************************************************************************/
+/*****************************diy 小马哥通用样式*********************************/
+/********************************************************************************/
+
+
+/*********************************** body *************************************/
+/*diy 带三角形的body*/
+.tea-body-bg-blue:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    background-color: #3399ff;
+    width: 100%;
+    height: 2.5rem;
+    z-index: 1;
+}
+.tea-body-bg-blue:after {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    top: 2.5rem;
+    color: #3399ff;
+    width: 0;
+    height: 0;
+    /*margin-top: 30%;*/
+    border-top: 2.5rem solid #3399ff;
+    border-left: 50vw solid transparent; /* check border size here! */
+    border-right: 50vw solid transparent; /* and here! */
+}
+
+/* 带蒙版的body */
+.tea-body-mask {
+    overflow: auto;
+    background: none;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content:center;
+            justify-content:center;
+    -webkit-align-items: center;
+            align-items: center;
+    /* -webkit-flex-direction: column;
+            flex-direction: column; */
+}
+
+/*********************************** font *************************************/
+/*diy 字体颜色*/
+.tea-text-title {
+	color: #333333 !important;
+}
+.tea-text-default {
+	color: #666666 !important;
+}
+.tea-text-gray {
+	color: #999999 !important;
+}
+.tea-text-light-gray {
+	color: #CCCCCC !important;
+}
+.tea-text-red {
+	color: #CC3333 !important;
+}
+.tea-text-yellow {
+	color: #ffcc66 !important;
+}
+.tea-text-dark-blue {
+	color: #517da8 !important;
+}
+.tea-text-blue {
+    color: #3399ff !important;
+}
+.tea-text-orange {
+    color: #FF6600 !important;
+}
+/*diy 字体大小*/
+.tea-font-size-11 {
+    font-size: 0.55rem !important;
+}
+.tea-font-size-13 {
+    font-size: 0.65rem !important;
+}
+.tea-font-size-19 {
+    font-size: 0.95rem !important;
+}
+
+.tea-font-weight-bold {
+    font-weight: bold !important;
+}
+
+/*********************************** background *************************************/
+/*diy 背景颜色*/
+.tea-bg-default {
+	background-color: #f2f5f8 !important;
+}
+.tea-bg-red {
+	background-color: #CC3333 !important;
+}
+.tea-bg-white {
+	background-color: #FFF !important;
+}
+.tea-bg-blue {
+    background-color: #3399ff !important;
+}
+.tea-bg-orange {
+    background-color: #FF9933 !important;
+}
+.tea-bg-yellow {
+	background-color: #FFCC33 !important;
+}
+.tea-bg-light-blue {
+    background-color: #80ccff !important;
+}
+.tea-bg-gray {
+    background-color: #e1e2e6 !important;
+}
+.tea-bg-light-gray{
+    background-color: #CCCCCC !important;
+}
+
+/*diy 选中状态*/
+.tea-active ,.tea-active *{
+    color: #FFF !important;
+    background-color: #3399ff !important;
+    border-color: #3399ff !important;
+}
+
+.tea-opacity {
+    opacity: .3;
+}
+
+.tea-icon-unionpay:before{
+    content:'';
+    background: no-repeat;
+    background-image: url('../image/unionpay.png');
+    background-size: cover;
+    width: 1.1rem;
+    height: 0.7rem;
+    margin-left: -0.1rem;
+    display: inline-block;
+}
+
+.tea-img-box {
+    position: relative;
+    width: 100%;
+    height: 0;
+    margin: 0;
+    padding-bottom: 100%;
+    /* border: 1px solid red; */
+    overflow: hidden;
+    background-color: #FFF;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+/*********************************** button *************************************/
+/* 按钮颜色 */
+.tea-btn-blue.aui-btn-outlined {
+    color: #3399ff !important;
+    border: 1px solid #3399ff !important;
+}
+
+.tea-btn-submit {
+    height: 2.5rem;
+    line-height: 2.5rem;
+    color: #3399ff;
+    border: 1px solid #3399ff;
+    border-radius: 2.5rem;
+    background-color: #fff; 
+}
+.tea-btn-submit:active {
+    background-color: #3399ff;
+}
+
+/*********************************** boreder *************************************/
+/*diy 圆角*/
+.tea-border-radius-10 {
+    border-radius: 0.25rem;
+}
+/* diy 容器圆角 */
+.tea-content-radius-10 {
+    border-radius: 0.25rem;
+    overflow: hidden;
+}
+/* 按钮圆角 */
+.tea-btn-radius {
+    border-radius: 2.25rem;
+}
+/* 上方特殊边框 不占空间*/
+.tea-border-t {
+    background-size: 100% 1px;
+    background-repeat: no-repeat;
+    background-position: center 0;
+    background-image: linear-gradient(0,#ededed,#ededed 50%,transparent 50%);
+    background-image: -webkit-linear-gradient(90deg,#ededed,#ededed 50%,transparent 50%);
+}
+
+/* 右侧特殊边框 80% 不占空间*/
+.tea-border-l {
+    background-image: -webkit-linear-gradient(0deg, #ededed, #ededed 50%, transparent 50%);
+    background-image: linear-gradient(270deg, #ededed, #ededed 50%, transparent 50%);
+    background-size: 1px 60%;
+    background-repeat: no-repeat;
+    background-position: 1px 50%;
+}
+/*********************************** icon *************************************/
+/*diy 红色星号*/
+.tea-text-star-red:before {
+    content: '*';
+    color: #CC3333;
+    font-size: 0.7rem;
+    font-weight: bold;
+    z-index: 2;
+}
+.tea-text-star-red-after:after {
+    content: '*';
+    color: #CC3333;
+    font-size: 0.7rem;
+    z-index: 2;
+}
+/* diy 蓝色圆点 */
+.tea-text-blue-point:before {
+    content: '·';
+    color: #3399ff;
+    font-size: 1.2rem;
+    z-index: 2;
+}
+
+/* 跟随文本的三角形朝下 */
+.tea-text-triangle-down {
+    position: relative;
+    display: inline-block;
+    padding-right: 1rem !important;
+}
+.tea-text-triangle-down:after {
+    content: '';
+    width: 0;
+    height: 0;
+    position: absolute;
+    top: 50%;
+    right: 0.2rem;
+    margin-top: -0.15rem;
+    border: 0.25rem solid transparent;
+    border-top: 0.3rem solid #999;
+    z-index: 2;
+}
+
+/* 跟随文本的三角形朝上 */
+.tea-text-triangle-up {
+    position: relative;
+    display: inline-block;
+    padding-right: 1rem !important;
+}
+.tea-text-triangle-up:after {
+    content: '';
+    width: 0;
+    height: 0;
+    position: absolute;
+    top: 50%;
+    right: 0.2rem;
+    margin-top: -0.5rem;
+    border: 0.25rem solid transparent;
+    border-bottom: 0.3rem solid #999;
+    z-index: 2;
+}
+
+/*diy 跟随文本的箭头朝下*/
+.tea-text-arrow-down {
+    position: relative;
+    display: inline-block;
+    padding-right: 1rem !important;
+}
+.tea-text-arrow-down:after {
+    content: '';
+    width: 0.4rem;
+    height: 0.4rem;
+    position: absolute;
+    top: 50%;
+    right: 0.2rem;
+    margin-top: -0.4rem;
+    background: transparent;
+    border: 1px solid #999;
+    border-top: none;
+    border-right: none;
+    z-index: 2;
+    -webkit-border-radius: 0;
+            border-radius: 0;
+    -webkit-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+}
+
+/*diy 选*/
+.aui-list-item-inner.tea-list-item-select {
+    overflow: hidden;
+    padding-right: 1.5rem;
+}
+.tea-list-item-select:after {
+    content: '选';
+    width: 1rem;
+    height: 1rem;
+    line-height: 1rem;
+    text-align: center;
+    font-size: 0.7rem;
+    color: #3399ff;
+    position: absolute;
+    top: 50%;
+    right: 0.75rem;
+    margin-top: -0.5rem;
+    background: transparent;
+    background-color: #FFF!important;
+    border: 1px solid #3399ff;
+    z-index: 2;
+    -webkit-border-radius: 50%;
+            border-radius: 50%;
+}
+
+.tea-text-round {
+    /* content: '选'; */
+    width: 1rem;
+    height: 1rem;
+    line-height: 1rem;
+    text-align: center;
+    font-size: 0.7rem;
+    color: #3399ff;
+    position: absolute !important;
+    top: 50%;
+    right: 0.75rem;
+    margin-top: -0.5rem;
+    background: transparent;
+    background-color: #FFF!important;
+    border: 1px solid #3399ff;
+    z-index: 2;
+    -webkit-border-radius: 50%;
+            border-radius: 50%;    
+}
+
+.tea-clear-btn {
+    /* display: -webkit-box; */
+    -webkit-box-pack: center;
+    -webkit-box-align: center;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-top: -0.55rem;
+    background: #ededed;
+    border-radius: 50%;
+    line-height: 0.6rem;
+    text-align: center;
+    display: none;
+}
+
+input:valid + .tea-clear-btn { display: -webkit-box; }
+
+.tea-clear-btn .aui-icon-close {
+    color: #fff;
+}
+
+/*********************************** special *************************************/
+/**
+ *暂无数据样式
+ *要求父元素高度等于屏幕高度才能居中
+ */
+.tea-nothing {
+	width: 100%;
+	height: 100%;
+	text-align: center;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content:center;
+    		justify-content:center;
+    -webkit-align-items: center;
+    		align-items: center;
+    -webkit-flex-direction: column;
+    		flex-direction: column;
+}
+.tea-nothing img {
+	width: 30%;
+    height: auto;
+    margin-top: -10%;
+	opacity: .7;
+}
+.tea-nothing p {
+	margin-top: 0.8rem;
+	font-size: 0.8rem;
+	color: #999;
+}
+
+
+/* 放大点击区域 */
+.tea-big {
+    position: relative;
+    overflow: visible;
+}
+.tea-big::after {
+    display: block;
+    content: '';
+    position: absolute;
+    top: -0.5rem;
+    right: -0.5rem;
+    bottom: -0.5rem;
+    left: -0.5rem;
+    z-index: 2;
+}
+.tea-big-height::after {
+    right: 0;
+    left: 0;
+}
+.tea-big-width::after {
+    top: 0;
+    bottom: 0;
+}
+
+.aui-list .aui-list-item.tea-noactive:active {
+    background-color: #fff;
+}
+
+.tea-ellipsis-6 {
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: normal !important;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+}
+
+.tea-play-box {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 0;
+    margin: 0;
+    padding-bottom: 100%;
+    /* border: 1px solid red; */
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0);
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: 40% 40%;
+    background-image: url(../image/stop@2x.png);
+}

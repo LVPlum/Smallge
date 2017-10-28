@@ -1,0 +1,202 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>常见提现方式</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+		html,body {
+            height: 100%;
+            overflow: auto;
+		}
+
+    </style>
+</head>
+<body>
+
+<div class="aui-card-list">
+    <div class="aui-card-list-content">
+        <ul id="list-ul" class="aui-list aui-media-list">
+
+        </ul>
+    </div>
+</div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<!--<script type="text/template" id="template">
+	{{ for(var prop in it) { }}
+	<li id="'+{{= it[prop].ID }}+'" class="aui-list-item aui-list-item-middle" onclick="opensel({{= it[prop].txtype}},{{= it[prop].txstep1}},{{= it[prop].txstep2}},{{= it[prop].txstep3}})">
+		<div class="aui-media-list-item-inner aui-list-item-text">
+			<div class="aui-list-item-inner">
+				<div class="aui-list-item-text">
+					<div class="aui-list-item-title aui-font-size-16">{{= it[prop].txstep1}}</div>
+					</div>
+				<div class="aui-list-item-text aui-font-size-12">
+					{{= it[prop].txstep3}}&nbsp;&nbsp;{{= it[prop].txstep2}}
+					</div>
+				</div>
+			<div class="aui-list-item-right aui-font-size-20 aui-margin-r-15" style="width: 50%;text-align: right;color:#ff3333;" tapmode onclick="opendel('+{{= it[prop].ID}}+')">删除</div>
+			</div>
+		</li>
+	{{ } }}
+</script>-->
+
+<script type="text/javascript">
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    api.parseTapmode();
+    loaddate();
+
+};
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {};
+// 加载历史提现记录
+function loaddate(){
+	 showp('数据读取中...','请等候...');
+	 var ID = $api.getStorage('ID');
+	tea.ajax({
+	    url: website + 'mymoney.php?action=txaddlist',
+	    method: 'post',
+	    timeout: 30,
+	    dataType: 'json',
+	    returnAll:false,
+	    data:{
+	        values: {ID: ID},
+	    }
+	},function(ret,err){
+		if (ret == ''){
+			api.hideProgress();
+			return;
+		}
+		if(ret){
+			var lis ='';
+			var data = {
+				list: ret
+			}
+			/*模版写法*/
+//			tea.doT(ret, 'template', 'list-ul');
+			if (ret.length < 1){
+				api.hideProgress();
+				return;
+			}
+			console.log(JSON.stringify(ret, null, 4));
+			for(var i = 0,len = ret.length; i<len; i++){
+				var id = ret[i].ID;// 每一条收支明细的ID
+				var txtype = ret[i].txtype;//提现类型 ：支付宝、微信、银行
+					txtype = $api.trim(txtype);
+				var txstep2 = ret[i].txstep2;
+					if(txtype == 'wx'){
+						var txstep3 = ret[i].txstep1;
+						var txstep1 = "微信";
+					}else if(txtype == 'zfb'){
+						var txstep3 = ret[i].txstep1;
+						var txstep1 = "支付宝";
+					}else{
+						var txstep1 = ret[i].txstep1;
+						var txstep3 = ret[i].txstep3;
+					}
+			     lis += ' <li id="'+id+'" class="aui-list-item aui-list-item-middle">'+
+		                    '<div class="aui-media-list-item-inner aui-list-item-text">'+
+		                        '<div class="aui-list-item-inner" onclick="opensel(\''+ ret[i].txtype +'\',\''+ ret[i].txstep1 +'\',\''+ ret[i].txstep2 +'\',\''+ ret[i].txstep3 +'\')">'+
+		                            '<div class="aui-list-item-text">'+
+		                                 ' <div class="aui-list-item-title aui-font-size-16">'+txstep1+'</div>'+
+		                            '</div>'+
+		                            '<div class="aui-list-item-text aui-font-size-12">'+
+		                                txstep3+'&nbsp;&nbsp;'+txstep2+
+		                            '</div>'+
+		                       '</div>'+
+		                       '<div class="aui-list-item-right aui-font-size-20 aui-margin-r-15" style="width: 50%;text-align: right;color:#ff3333;" tapmode onclick="opendel('+id+')">'+
+		                             '删除'+
+		                       '</div>'+
+		                    '</div>'+
+		                '</li>';
+
+                 api.parseTapmode();
+			}
+			$api.html($api.byId('list-ul'),lis);
+		 	api.hideProgress();// 关闭正在加载。。提示框
+		}
+	});
+
+}
+// 删除提现历史记录
+
+function opendel(delid){
+	api.confirm({
+	    title: '取消提示',
+	    msg: '真的要删除么？',
+	    buttons: ['是', '否']
+	},function( ret, err ){
+	    if( ret ){
+            if( ret.buttonIndex == 1){
+					api.ajax({
+					    url: website + 'mymoney.php?action=deladdtx',
+					    method: 'post',
+					    timeout: 30,
+					    dataType: 'json',
+					    returnAll:false,
+					    data:{
+					        values: {ID:$api.getStorage('ID'), delid: delid},
+					    }
+					},function(ret,err){
+					    if (ret) {
+				            if(ret.succ == '1'){
+				               loaddate();
+				               api.toast({
+					               msg:ret.msg
+				               });
+				            }
+					    }
+					});
+            }
+	    }
+	});
+}
+function opensel(txtype,txstep1,txstep2,txstep3){
+	if(txtype != 'wx'){
+		api.sendEvent({
+			name: 'getadd',
+			extra: {
+				txtype: txtype,
+				txstep1: txstep1,
+				txstep2: txstep2,
+				txstep3: txstep3,
+			}
+		});
+		api.closeWin();
+	}else {
+		api.toast({
+			msg: '抱歉，微信提现已暂时关闭！',
+			location: 'middle'
+		});
+	}
+}
+</script>
+</html>

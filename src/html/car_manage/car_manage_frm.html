@@ -1,0 +1,269 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>car-manage</title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            height: 100%;
+            overflow: auto;
+        }
+
+        .aui-list-item-media {
+            display: block !important;
+            width: auto !important;
+        }
+        /* .aui-list-item {
+            margin-left: 1rem !important;
+        } */
+        .carnum-label {
+            width: 5rem;
+            padding: 0.375rem 0.5rem;
+            background-color: #3399ff;
+            color: #ffffff;
+        }
+        .vip-label {
+            float: right;
+            padding: 0.075rem 0.35rem 0.075rem 0.8rem;
+            background-color: #ffebd6;
+            color: #ff9189;
+            font-size: 0.6rem;
+            border-radius: 0.5rem;
+        }
+        .vip-img {
+            position: relative;
+            z-index: 2;
+            width: 0.95rem !important;
+            float: right;
+            margin-top: -0.1rem;
+            margin-right: -0.7rem;
+        }
+    </style>
+</head>
+<body>
+    <section id="nothing" class="tea-nothing aui-hide">
+        <img src="../../image/nothing.png">
+        <p>您还没有任何车辆哦~</p>
+    </section>
+    <section class="aui-content aui-margin-b-15">
+        <ul id="list" class="aui-list aui-media-list">
+            <!-- <li class="aui-list-item aui-list-item-arrow">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media">
+                        <div class="aui-pull-left">
+                            <div class="aui-label carnum-label aui-font-size-16 aui-ellipsis-2">桂E 12334</div>
+                            <div class="aui-margin-t-5">
+                                <span class="aui-label vip-label"> VIP</span>
+                                <img class="vip-img" src="../../image/diamond.png">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="aui-list-item-inner aui-padded-l-15 tea-border-l">
+                        <div class="aui-list-item-title aui-font-size-14">
+                            <span class="tea-text-light-red">审车到期</span>
+                            <span>2017-05-18</span>
+                        </div>
+                        <div class="aui-list-item-title aui-font-size-14">
+                            <span class="tea-text-orange">审车到期</span>
+                            <span>2017-05-18</span>
+                        </div>
+                    </div>
+                </div>
+            </li> -->
+        </ul>
+    </section>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+    {{~it:value:index}}
+        <li class="aui-list-item aui-list-item-arrow" tapmode onclick="openWinInfo({{=value.ID}})">
+            <div class="aui-media-list-item-inner">
+                <div class="aui-list-item-media">
+                    <div class="aui-pull-left">
+                        <div class="aui-label carnum-label aui-font-size-16 aui-ellipsis-2 {{=(value.cartype == 1 ? '':'tea-bg-orange')}}">{{=value.carnum}}</div>
+                        {{?value.vip == 1}}
+                        <div class="aui-margin-t-5">
+                            <span class="aui-label vip-label">VIP</span>
+                            <img class="vip-img" src="../../image/diamond.png">
+                        </div>
+                        {{?}}
+                    </div>
+                </div>
+                <div class="aui-list-item-inner aui-padded-l-15 tea-border-l">
+                    <div class="aui-list-item-title aui-font-size-14 tea-text-default">
+                        <span class="tea-text-light-red">审车到期</span>
+                        <span class="tea-text-gray aui-margin-l-5">{{=(value.scextime == null || value.scextime == '0000-00-00' ? '未填' : value.scextime)}}</span>
+                    </div>
+                    <div class="aui-list-item-title aui-font-size-14">
+                        <span class="tea-text-orange">保险到期</span>
+                        <span class="tea-text-gray aui-margin-l-5">{{=(value.bxextime == null || value.bxextime == '0000-00-00' ? '未填' : value.bxextime)}}</span>
+                    </div>
+                </div>
+            </div>
+        </li>
+    {{~}}
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {};
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    initVar();
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+    // ajax请求数据
+    getData();
+
+};
+
+/**********************************初始化变量**********************************/
+function initVar(){
+
+    dom = {
+    };
+
+    data = {
+    };
+
+    values = {
+    };
+
+    updateHTML();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+    api.addEventListener({
+        name: 'carManageInfoChange'
+    }, function(ret, err){
+        if( ret ){
+            getData('refresh');
+        }else{
+            alert( JSON.stringify( err ) );
+        }
+    });
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(type){
+    if (type != 'refresh') {
+        api.showProgress({
+            style: 'default',
+            animationType: 'fade',
+            title: '努力加载中...',
+            text: '请稍候...',
+            modal: false
+        });
+    }
+    api.ajax({
+        url: website + 'getmycar.php?action=getmycar',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        returnAll:false,
+        data:{
+            values: {
+                ID: $api.getStorage('ID')
+            }
+        }
+    },function(ret,err){
+        api.hideProgress();
+        if (ret) {
+            var nothing = $api.byId('nothing');
+            // if数据不是数组或长度小于1 则显示空页面提示
+            if (!$api.isArray(ret) || ret.length < 1) {
+                tea.doT(ret, 'template', 'list');
+                $api.removeCls(nothing, 'aui-hide');
+                return;
+            }
+
+            tea.doT(ret, 'template', 'list');
+            $api.addCls(nothing, 'aui-hide');
+        }
+        else {
+            var nothing = $api.byId('nothing');
+            tea.doT(ret, 'template', 'list');
+            $api.removeCls(nothing, 'aui-hide');         
+        }
+
+    });
+
+}
+
+/**********************************更新变量**********************************/
+function updateVar(){
+
+
+}
+
+function updateDom(){
+
+
+
+}
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+function openWinInfo(id_){
+    api.openWin({
+        name: 'car_manage_info_win',
+        url: './car_manage_info_win.html',
+        pageParam: {
+            id: id_
+        }
+    });
+}
+/**********************************其他函数**********************************/
+
+</script>
+</html>

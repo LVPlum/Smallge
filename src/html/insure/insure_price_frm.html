@@ -1,0 +1,474 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!-- <script type="text/javascript" src="../../script/flexible.js"></script> -->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+		html,body {
+            height: 100%;
+            overflow: auto;
+		}
+
+        footer .aui-btn {
+            display: block;
+            width: 90%;
+            margin: 0.75rem auto;
+            height: 2.2rem;
+            line-height: 2.2rem;
+            border-radius: 1.1rem;
+        }
+
+    </style>
+</head>
+<body>
+    <ul id="insure-list" class="aui-list aui-list-in">
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">
+                    车船税<span class="aui-margin-l-10 tea-text-gray tea-font-size-11" >规定</span>
+                </div>
+                <div class="aui-list-item-right">
+                    <input type="checkbox" class="aui-checkbox" checked>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">
+                    交强险<span class="aui-margin-l-10 tea-text-gray tea-font-size-11" >规定</span>
+                </div>
+                <div class="aui-list-item-right">
+                    <input type="checkbox" class="aui-checkbox" checked>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">
+                    座位险<span class="aui-margin-l-10 tea-text-gray tea-font-size-11" >规定,根据该车核载人数</span>
+                </div>
+                <div class="aui-list-item-right">
+                    <span class="aui-font-size-12 aui-margin-r-15 tea-text-title tea-text-arrow-down" tapmode onclick="openFrameUiPicker()">30万/座</span>
+                    <input type="checkbox" class="aui-checkbox">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">
+                    第三者责任险<span class="aui-margin-l-10 tea-text-gray tea-font-size-11" >规定</span>
+                </div>
+                <div class="aui-list-item-right">
+                    <span class="aui-font-size-12 aui-margin-r-15 tea-text-title tea-text-arrow-down" tapmode onclick="openFrameUiPicker()">100万</span>
+                    <input type="checkbox" class="aui-checkbox">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">
+                    车损险
+                </div>
+                <div class="aui-list-item-right">
+                    <input type="checkbox" class="aui-checkbox">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">
+                    全车盗抢险
+                </div>
+                <div class="aui-list-item-right">
+                    <input type="checkbox" class="aui-checkbox">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">
+                    玻璃险
+                </div>
+                <div class="aui-list-item-right">
+                    <input type="checkbox" class="aui-checkbox">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">
+                    划痕险
+                </div>
+                <div class="aui-list-item-right">
+                    <input type="checkbox" class="aui-checkbox">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">
+                    自燃险
+                </div>
+                <div class="aui-list-item-right">
+                    <input type="checkbox" class="aui-checkbox">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">
+                    车损找不到第三方
+                </div>
+                <div class="aui-list-item-right">
+                    <input type="checkbox" class="aui-checkbox">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">
+                    涉水险
+                </div>
+                <div class="aui-list-item-right">
+                    <input type="checkbox" class="aui-checkbox">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">
+                    车辆损失险
+                </div>
+                <div class="aui-list-item-right">
+                    <input type="checkbox" class="aui-checkbox">
+                </div>
+            </div>
+        </li>
+    </ul>
+    <footer>
+        <div class="aui-btn tea-active" tapmode onclick="postInsure()">提交投保报价</div>
+    </footer>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+    {{~it:value:index}}
+    <li class="aui-list-item" tapmode onclick="selectInsure({{=index}})">
+        <div class="aui-list-item-inner">
+            <div class="aui-list-item-title">
+                {{=value.item}}<span class="aui-margin-l-10 tea-text-gray tea-font-size-11" >{{=value.remark}}</span>
+            </div>
+            <div class="aui-list-item-right">
+                {{?value.options}}
+                <span id="option{{=index}}" class="aui-font-size-12 aui-margin-r-10 tea-text-title tea-text-arrow-down" tapmode onclick="openFrameUiPicker(event,'{{=index}}')">
+                    {{=value.options[0]}}
+                </span>
+                {{?}}
+                <label class="aui-checkbox {{=(value.value == 1 || value.set == 1? 'aui-checked' : '')}}"></label>
+            </div>
+        </div>
+    </li>
+    {{~}}
+</script>
+<script type="text/javascript">
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化DOM对象
+    initDOM();
+
+    // 初始化变量
+    initVar();
+
+    // 更新HTML
+    initHTML();
+
+    // 初始化监听
+    initEventListener();
+
+    // 初始化其他模块
+    initModule();
+
+    // ajax请求数据
+    getData();
+
+    // 更新DOM对象
+    updateDOM();
+
+};
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {}, option = {};
+
+var toast = new auiToast();
+
+/**********************************初始化变量**********************************/
+// 初始化DOM对象
+function initDOM(){
+
+    dom.insureList = $api.byId('insure-list');
+
+};
+
+// 初始化变量
+function initVar(){
+
+    values = api.pageParam.values;
+    // 初始化ajax数据
+    data = tea.objToArr(api.pageParam.data);
+    for (var i = data.length - 1; i >= 0; i--) {
+        var id = data[i].id;
+        // 初始化提交变量
+        values[id] = data[i].value;
+
+        if(data[i]['options'] !== undefined){
+           data[i]['options'] = data[i]['options'].split(',');
+           option[id] = data[i]['options'][0];
+        }
+    }
+
+    // 初始化订单信息
+    order = api.pageParam.order;
+    if (typeof order != "undefined") {
+        updateVar();
+    }
+
+};
+
+// 初始化HTML
+function initHTML(){
+
+    tea.doT(data, 'template', 'insure-list');
+
+
+}
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+    api.addEventListener({
+        name: 'pickerSure'
+    }, function(ret, err){
+        if( ret ){
+            var index = ret.value.index;
+            var id = data[index].id;
+            option[id] = ret.value.option;
+            var el = $api.byId( 'option' + index);
+            el.innerHTML = option[id];
+            // 选中复选框
+            var checkbox = dom.insures[index];
+            $api.addCls(checkbox, 'aui-checked');
+        }else{
+            //alert( JSON.stringify( err ) );
+        }
+    });
+
+}
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************更新变量**********************************/
+// 更新DOM对象
+function updateDOM(){
+
+    dom.insures = $api.domAll(dom.insureList, '.aui-checkbox');
+
+}
+
+// 更新变量
+function updateVar(){
+
+    var insureArr = [];
+    for (var key in order.insurance_item) {
+        insureArr.push(order.insurance_item[key].id);
+    }
+
+    for (var i = 0; i < data.length; i++) {
+        if (insureArr.indexOf(data[i].id) > -1) {
+            data[i].set = 1;
+        }
+        else {
+            data[i].set = 0;
+        }
+    }
+    values.id = order.ID;
+    values.able = 1;
+
+}
+
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+
+
+/**********************************广播消息**********************************/
+function sendEvent(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+// 回退关闭窗口
+function closeWin(){
+    api.closeWin();
+}
+
+function openFrameUiPicker(event, index_){
+    options_ = data[index_]['options'];
+    option_ = options_[0];
+    event.stopPropagation();
+
+
+    api.sendEvent({
+        name: 'optionsChange',
+        extra: {
+            index: index_,
+            options: options_
+        }
+    });
+
+    api.openFrame({
+        name: 'ui_picker_frm',
+        url: '../unit/ui_picker_frm.html',
+        rect: {
+            x: 0,
+            y: 0,
+            w: 'auto',
+            h: api.winHeight
+        },
+        pageParam: {
+            index: index_,
+            options: options_,
+            option: option_
+        },
+        bounces: false,
+        bgColor: 'rgba(0,0,0,0.6)',
+        vScrollBarEnabled: true,
+        hScrollBarEnabled: true
+    });
+}
+
+function selectInsure(index_){
+    if (data[index_].value == 1) {
+        api.toast({
+            msg: '该保险为必选项~',
+            duration: 2000,
+            location: 'middle'
+        });
+    }
+    else {
+        var checkbox = dom.insures[index_];
+        tea.toggle(checkbox, 'aui-checked');
+
+    }
+}
+
+function postInsure(){
+
+    // 根据各复选框是否选中赋值给vuales
+    for (var i = dom.insures.length - 1; i >= 0; i--) {
+        var checkbox = dom.insures[i];
+        var id = data[i].id;
+        if ($api.hasCls(checkbox, 'aui-checked')) {
+            // if 没有附加选项则赋值为 1
+            if(data[i]['options'] === undefined) {
+                values[id] = 1;
+            }
+            else {
+                values[id] = option[id];
+            }
+        }
+        else {
+            values[id] = 0;
+        }
+    }
+    values.userid = $api.getStorage('ID');
+    values.cjh = values.licenseNum;
+    values.xm = values.realName;
+    values.sfz = values.idNum;
+    values.cph = values.plate;
+
+    /*api.showProgress({
+        style: 'default',
+        animationType: 'fade',
+        title: '',
+        text: '数据加载中',
+        modal: true
+    });*/
+
+    tea.showp('','数据发送中',true);
+    api.ajax({
+        url: website + 'api_q.php?action=post_insurance',
+        method: 'post',
+        data: {
+            values: values
+        }
+    },function(ret, err){
+        api.hideProgress();
+        if (ret) {
+            api.openWin({
+                name: 'successInsure',
+                url: '../unit/success_win.html',
+                pageParam: {
+                    title: '汽车保险',
+                    result: '提交成功',
+                    data: {
+                        '0': ['您提交的投保报价 我们已经收到','小马哥会有专员','在国家法定上班时间1小时内','通过短信或电话联系您','请保持手机畅通',]
+                    }
+                }
+            });
+        } else {
+            tea.toast('fail');
+        }
+    });
+}
+/**********************************其他函数**********************************/
+
+/**********************************功能模块1**********************************/
+
+</script>
+</html>

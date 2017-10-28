@@ -1,0 +1,620 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        .aui-chat-media img {
+            border-radius: 4px !important;
+        }
+        
+        .duration {
+            font-size: 0.7rem;       
+        }
+        .voice {
+            height: 0.95rem;
+            margin-bottom: -0.2rem; 
+            width: 0.75rem;
+            background-image: -webkit-linear-gradient(right, #999, #999 50%, transparent 50%), -webkit-linear-gradient(right, #999, #999 50%, transparent 50%), -webkit-linear-gradient(right, #999, #999 50%, transparent 50%);
+            background-image: -o-linear-gradient(right, #999, #999 50%, transparent 50%), -o-linear-gradient(right, #999, #999 50%, transparent 50%), -o-linear-gradient(right, #999, #999 50%, transparent 50%);
+            background-image: linear-gradient(to left, #999, #999 50%, transparent 50%), linear-gradient(to left, #999, #999 50%, transparent 50%), linear-gradient(to left, #999, #999 50%, transparent 50%);
+            background-size: 0.3rem 40%, 0.3rem 100%, 0.3rem 80%;
+            background-repeat: no-repeat;
+            background-position: -0.15rem bottom, 0.15rem bottom, 100% bottom;
+        }
+        
+        .voice-play {
+            animation: voice 0.8s linear 0s infinite alternate;
+            /* Firefox: */
+            -moz-animation: voice 0.8s linear 0s infinite alternate;
+            /* Safari and Chrome: */
+            -webkit-animation: voice 0.8s linear 0s infinite alternate;
+            /* Opera: */
+            -o-animation: voice 0.8s linear 0s infinite alternate;
+        }
+        
+        @keyframes voice {
+            0% {
+                background-size: 0.3rem 40%, 0.3rem 100%, 0.3rem 80%;
+            }
+            25% {
+                background-size: 0.3rem 80%, 0.3rem 80%, 0.3rem 100%;
+            }
+            50% {
+                background-size: 0.3rem 100%, 0.3rem 40%, 0.3rem 80%;
+            }
+            75% {
+                background-size: 0.3rem 80%, 0.3rem 80%, 0.3rem 40%;
+            }
+            100% {
+                background-size: 0.3rem 40%, 0.3rem 100%, 0.3rem 80%;
+            }
+        }
+        
+
+        .aui-chat .aui-chat-left .aui-chat-content {
+            clear: both;
+            background-color: #fff;
+            border-radius: 0 0.3rem 0.3rem 0.3rem;
+            color: #333;
+        }
+
+
+        .aui-chat .aui-chat-right .aui-chat-content {
+            background-color: #4091ed;
+            border-radius: 0.35rem 0 0.35rem 0.35rem;
+            color: #fff;
+        }
+        .aui-chat-right .voice {
+            opacity: 0.4;
+            background-image: -webkit-linear-gradient(right, #fff, #fff 50%, transparent 50%), -webkit-linear-gradient(right, #fff, #fff 50%, transparent 50%), -webkit-linear-gradient(right, #fff, #fff 50%, transparent 50%);
+            background-image: -o-linear-gradient(right, #fff, #fff 50%, transparent 50%), -o-linear-gradient(right, #fff, #fff 50%, transparent 50%), -o-linear-gradient(right, #fff, #fff 50%, transparent 50%);
+            background-image: linear-gradient(to left, #fff, #fff 50%, transparent 50%), linear-gradient(to left, #fff, #fff 50%, transparent 50%), linear-gradient(to left, #fff, #fff 50%, transparent 50%);            
+        }
+
+        .aui-chat-media.tea img {
+            border-radius: 4px;
+        }
+        .aui-chat-inner {
+            max-width: 85% !important;
+        }
+        .aui-list-item-media {
+            padding: 0.75rem 0.5rem 0.75rem 0 !important;
+            width: 5.25rem !important;
+        }
+        .aui-list-item-media img {
+            width: 4.75rem;
+            height: 3.25rem
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="app" class="aui-chat">
+        <template v-for="(item, index) in msgList">
+            <div v-if="item.msgContentType != 'RC:ImgTextMsg'"
+            class="aui-chat-item" :class="[item.msgDirection == 'SEND'? 'aui-chat-right' : 'aui-chat-left']">
+                <div class="aui-chat-media" @click="openWinInfo(item.senderId)" tapmode>
+                    <img :src="item.msgAvatar" />
+                </div>
+                <div class="aui-chat-inner" :data-index="index">
+                    <div class="aui-chat-content">
+                        <!-- 文本信息 -->
+                        <div v-if="item.msgContentType == 'RC:TxtMsg'" v-html="_transEmo(item.msgContent.text)">
+                        </div>
+                        <!-- 语音信息 -->
+                        <div v-if="item.msgContentType == 'RC:VcMsg'" @click="playVoice(index, item.msgContent.voicePath)" tapmode>
+                            <template v-if="item.msgDirection == 'SEND'">
+                                <span>{{item.msgContent.duration + '″'}}</span>
+                                <span class="duration" v-html="setVoiceLength(item.msgContent.duration)"></span> 
+                                <span class="voice" :class="{'voice-play' : index == voiceIndex}"></span>
+                            </template>
+                            <template v-if="item.msgDirection == 'RECEIVE'">    
+                                <span class="voice" :class="{'voice-play' : index == voiceIndex}"></span>
+                                <span class="duration" v-html="setVoiceLength(item.msgContent.duration)"></span> 
+                                <span>{{item.msgContent.duration + '″'}}</span>
+                            </template>
+                        </div>
+                        <!-- 图片信息 -->
+                        <img v-if="item.msgContentType == 'RC:ImgMsg'" :src="item.msgContent.thumbPath" style='width:100%;'
+                        tapmode @click="openBigImg(item.msgContent.imageUrl)">                      
+                    </div>
+                    <div class="aui-chat-status">
+                        <i class="aui-iconfont" :class="[{'aui-icon-info' : item.msgStatus}, {'tea-text-red' : item.msgStatus == 'error'}]"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- 图文信息 -->
+            <ul v-else class="aui-list aui-media-list aui-margin-b-10 aui-chat-item">
+                <li class="aui-list-item" tapmode @click="openWinWare(item.msgContent.description, item.msgContent.title)">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-media">
+                            <img :src="item.msgContent.imageUrl" />
+                        </div>
+                        <div class="aui-list-item-inner aui-padded-r-0">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-14">{{item.msgContent.title}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="aui-list-item" style="min-height: 1.85rem">
+                    <div class="aui-list-item-inner aui-text-center tea-text-red" style="min-height: 1.85rem" tapmode @click="sendWareAgain(item.msgContent.description, item.msgContent.title, item.msgContent.imageUrl)">发送商品信息</div>
+                </li>
+            </ul>  
+        </template>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js"></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<script type="text/javascript" src="../../script/emo.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/hammer.min.js"></script>
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+
+<script type="text/javascript">
+    /**********************************声明全局变量**********************************/
+    // 声明DOM对象
+    var dom = {},
+        vm = null,
+        imageBrowser = null;
+
+    /**********************************apiready**********************************/
+    apiready = function() {
+
+        // 初始化变量
+        init();
+
+    };
+
+    /**********************************初始化变量**********************************/
+    function init() {
+
+        dom = {};
+
+        vm = new Vue({
+            el: '#app',
+            data: {
+                msgList: [],
+                userId: $api.getStorage('ID'),
+                voiceIndex: null
+            },
+            methods: {
+                init: function() {
+                    // 获取最近消息列表
+                    api.showProgress({
+                        modal: false
+                    });
+                    api.sendEvent({
+                        name: 'getLastMsgStart',
+                        extra: {
+                            chatType: api.pageParam.chatType,
+                            chatId: api.pageParam.chatId,
+                        }
+                    });
+                },
+                openWinInfo: function(id) {
+                    id = typeof id == "undefined" ? vm.userId : id;
+                    api.openWin({
+                        name: 'user_info_win',
+                        url: '../location/user_info_win.html',
+                        bounces: false,
+                        pageParam: {
+                            friendID: id,
+                            pageType: 'chat'
+                        }
+                    });
+                    /*api.openWin({
+                        name: 'friendinfo_win',
+                        url: './friendinfo_win.html',
+                        bounces: false,
+                        pageParam: {
+                            id: id
+                        }
+                    });*/
+                },
+                openBigImg: function(url) {
+                    var arr = [];
+                    vm.msgList.forEach(function(item) {
+                        if (typeof item.msgContent.imageUrl != 'undefined') {
+                            arr.push(item.msgContent.imageUrl);
+                        }
+                    });
+                    var index = arr.indexOf(url);
+                    photoBrowser.open({
+                        images: arr,
+                        placeholderImg: 'widget://image/holder.png',
+                        activeIndex: index,
+                        bgColor: '#000'
+                    }, function(ret, err) {
+                        if (ret) {
+                            if (ret.eventType === 'click') {
+                                photoBrowser.close();
+                            }
+                        }
+                    });
+                },
+                playVoice: function(index, path){
+                    vm.voiceIndex = index;
+                    // 先停止所有播放
+                    api.stopPlay();
+                    // 开始播放
+                    api.startPlay({
+                        path : path
+                    }, function() {
+                        vm.voiceIndex = null;
+                    });                    
+                },
+                openWinWare: function(id, title){
+                    tea.openWin({
+                        name: 'ware_win',
+                        url: '../ware/ware_win.html',
+                        pageParam: {
+                            wareId: id,
+                            wareTitle: title
+                        }
+                    });                    
+                },
+                sendWareAgain: function(wareId, wareTitle, wareImg){
+                    var extra = {
+                        username: $api.getStorage('nickname'),
+                        userphoto: $api.getStorage('avatar'),
+                        wareId: wareId,
+                        wareTitle: wareTitle
+                    };
+                    // 通知ware_list_frm 发送图文消息
+                    api.sendEvent({
+                        name: 'sendMsgStart',
+                        extra: {
+                            msgType : "richmsg",
+                            // 聊天类型
+                            chatType : 'PRIVATE',
+                            // 聊天对象
+                            chatId : api.pageParam.chatId,
+                            content : wareImg,
+                            // 用户信息
+                            extra : JSON.stringify(extra)
+                        }
+                    });
+                }
+            },
+            watch: {
+                msgList:{
+                    handler:function(){
+                        vm.$nextTick(function(){
+                            //创建一个新的hammer对象并且在初始化时指定要处理的dom元素
+                            var msgs = $api.domAll('.aui-chat-right .aui-chat-inner');
+                            var hammertime = {};
+                            for (var i = 0; i < msgs.length; i++) {
+                                (function(j){
+                                    var element = msgs[j];
+                                    hammertime[j] = new Hammer(element);
+                                        //添加事件
+                                    hammertime[j].on("press", function (e) {
+                                        var index = $api.attr(msgs[j], 'data-index');
+                                        alert(vm.msgList[index].msgId)
+                                        api.confirm({
+                                            title: '',
+                                            msg: '确定撤回这条消息吗？',
+                                            buttons:['确定', '取消']
+                                        },function(ret,err){
+                                            if(ret.buttonIndex == 1){
+                                                api.alert({msg: '点击了确定'});
+                                                api.sendEvent({
+                                                    name: 'delMsg',
+                                                    extra: {msgId: vm.msgList[index].msgId}
+                                                });
+                                                api.sendEvent({
+                                                    name: 'sendMsgStart',
+                                                    extra: {
+                                                        msgType : "text",
+                                                        // 聊天类型
+                                                        chatType : "PRIVATE",
+                                                        // 聊天对象
+                                                        chatId : api.pageParam.chatId,
+                                                        content : ret.msg,
+                                                        // 用户信息
+                                                        extra : JSON.stringify(userJson)
+                                                    }
+                                                });
+                                            }
+                                        });
+
+                                    });
+                                })(i)
+                            }
+                        })
+                    },
+                    deep: true
+                }
+            }
+        })
+
+        vm.init();
+
+
+        // 初始化模块
+        initModule();
+
+        // 初始化监听
+        initEventListener();
+
+    };
+
+    /**********************************初始化模块**********************************/
+    function initModule() {
+
+        photoBrowser = api.require('photoBrowser');
+
+    }
+
+    /**********************************初始化监听**********************************/
+    function initEventListener() {
+        api.setRefreshHeaderInfo({
+            visible: true,
+            loadingImg: 'widget://image/refresh.png',
+            bgColor: '#f4f4f4',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...',
+            showTime: true,
+        }, function(ret, err){
+            if(vm.msgList.length < 1) {
+                api.refreshHeaderLoadDone();
+                return;
+            }
+            var lastMsgId = vm.msgList[0].msgId;
+            api.sendEvent({
+                name: 'getHistoryMessages',
+                extra: {
+                    chatType: api.pageParam.chatType,
+                    chatId: api.pageParam.chatId,
+                    lastMsgId: lastMsgId
+                }
+            });
+        });
+
+        api.addEventListener({
+            name: 'getHistoryMessagesDone'
+        }, function(ret, err){
+            if (ret.value.result.length < 1) {
+                api.refreshHeaderLoadDone();
+                return;
+            }
+            getChatData(ret.value.result, function(arr){
+                vm.msgList = arr.concat(vm.msgList);
+                api.refreshHeaderLoadDone();
+            })
+        });
+
+        // 监听触摸事件，关闭输入框
+        api.addEventListener({
+            name: 'tap'
+        }, function() {
+            api.sendEvent({
+                name: 'closeKeyboard',
+                extra: {
+                    key: ' value'
+                }
+            });
+        });
+
+        // 监听聊天页面滚动
+        api.addEventListener({
+            name: 'scrollButton'
+        }, function(ret, err) {
+            setTimeout(function() {
+                tea.scroll('bottom');
+            }, 30);
+        });
+
+        // 1.0 监听发送准备事件
+        api.addEventListener({
+            name: 'sendMsgPrepare'
+        }, function(ret, err) {
+            if (ret && ret.value) {
+                var msg = ret.value;
+                getChatData(msg, function(arr) {
+                    arr[0].msgStatus = 'prepare';
+                    vm.msgList = vm.msgList.concat(arr);
+                })
+                setTimeout(function() {
+                    tea.scroll('bottom');
+                }, 50);
+            }
+        });
+
+        // 2.0 监听是否发送成功
+        api.addEventListener({
+            name: 'sendMsgSuccess'
+        }, function(ret, err) {
+            if (ret && ret.value) {
+                vm.msgList.forEach(function(item) {
+                    if (item.msgId == ret.value.messageId) {
+                        item.msgStatus = "";
+                    }
+                });
+            }
+        });
+
+        // 3.0 监听是否发送失败
+        api.addEventListener({
+            name: 'sendMsgError'
+        }, function(ret, err) {
+            if (ret && ret.value) {
+                vm.msgList.forEach(function(item) {
+                    if (item.msgId == ret.value.messageId) {
+                        item.msgStatus = "error";
+                    }
+                });
+            }
+        });
+
+        // 4.0 监听是否获取最近消息成功
+        api.addEventListener({
+            name: 'getLastMsgEnd'
+        }, function(ret, err) {
+            if (ret && ret.value) {
+                getChatData(ret.value, function(arr) {
+                    vm.msgList = vm.msgList.concat(arr);
+                })
+
+                // 页面滚动到底部
+                setTimeout(function() {
+                    tea.scroll('bottom');
+                    api.hideProgress();
+                }, 300);
+
+                // 清空未读数
+                api.sendEvent({
+                    name: 'clearUnread',
+                    extra: {
+                        chatType: 'PRIVATE',
+                        chatId: api.pageParam.chatId
+                    }
+                });
+            }
+        });
+
+        // 4.0 监听是否有消息进来
+        api.addEventListener({
+            name: 'receivedMsg'
+        }, function(ret, err) {
+            if (ret && ret.value) {
+                //console.log(JSON.stringify(ret.value, null, 4));
+                getChatData(ret.value, function(arr) {
+                    vm.msgList = vm.msgList.concat(arr);
+                });
+
+                // 页面滚动到底部
+                setTimeout(function() {
+                    tea.scroll('bottom');
+                    api.hideProgress();
+                }, 300);
+
+                // 清空未读数
+                api.sendEvent({
+                    name: 'clearUnread',
+                    extra: {
+                        chatType: 'PRIVATE',
+                        chatId: api.pageParam.chatId
+                    }
+                });
+            }
+        });
+
+    }
+
+    /**********************************DOM响应**********************************/
+
+    /**********************************其他函数**********************************/
+    function getChatData(ret, callback) {
+        //tea.log(JSON.stringify(ret, null, 4))
+        var idArr = [],
+        arr = [];
+        // 保证ret是一个数组
+        ret = typeof ret == 'string' ? JSON.parse(ret) : ret;
+        ret = Array.isArray(ret) ? ret : [ret];
+        for (var i = 0, len = ret.length; i < len; i++) {
+            var item = ret[i];
+            // 获取列表信息时是latestMessage，单条信息是content
+            item.msg = item.latestMessage ? item.latestMessage : item.content;
+            // 命令类型不显示
+            if (item.objectName == 'RC:CmdMsg') {
+                continue;
+            }
+            var extra = $api.strToJson(item.msg.extra);
+            var info = {
+                senderId: item.senderUserId,
+                msgId: item.messageId,
+                msgTime: item.sentTime,
+                msgAvatar: extra.userphoto,
+                msgName: extra.username,
+                msgContent: item.msg,
+                msgContentType: item.objectName,
+                //msgUnread: item.unreadMessageCount,
+                msgType: item.conversationType,
+                msgDirection: item.messageDirection, // 'SEND' or 'RECEIVE'
+                msgStatus: ''
+            };
+            // 将结果保存到数组
+            idArr.push(info.senderId);
+            arr.push(info);
+
+        }
+        //callback(arr.reverse());
+        // 若用户信息已完整则返回
+        if (idArr.length < 1) {
+            callback(arr.reverse());
+            return;
+        };
+        // 获取用户信息
+        getUsersInfo(idArr.toString(), addUsersInfo);
+        // 补充用户信息
+        function addUsersInfo(userArr) {
+            for (var i = 0; i < userArr.length; i++) {
+                var user = userArr[i];
+                for (var j = 0; j < arr.length; j++) {
+                    var item = arr[j];
+                    if (item.senderId == user.userid) {
+                        item.msgAvatar = website + user.userphoto;
+                        item.msgName = user.username;
+                    }
+                }
+            }
+            callback(arr.reverse());
+            // console.log(JSON.stringify(vm.msgList, null, 4))
+        }
+    }
+
+    function getUsersInfo(ids, callback) {
+        tea.ajax({
+            url: website + "rong/index.php?action=getlastuserlist&ids=" + ids,
+            method: 'get',
+            timeout: 30,
+            dataType: 'json',
+            returnAll: false
+        }, function(ret, err) {
+            if (ret) {
+                callback(ret);
+            } else {
+                tea.toast('ajax');
+                return false;
+            };
+        });
+    }
+
+    // 设置语音空格长度
+    Vue.prototype.setVoiceLength = function(duration) {
+        // 超过一定长度后不再增长
+        if (duration > 30) {
+            duration = 30;
+        }
+        var beisu = Math.ceil(parseInt(duration) / 3.0);
+
+        var html = "";
+        for (var i = 0; i < beisu; i++) {
+            html += "&nbsp&nbsp&nbsp";
+        }
+        return html;
+    }
+</script>
+
+</html>

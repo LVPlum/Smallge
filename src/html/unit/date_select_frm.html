@@ -1,0 +1,94 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/aui-calendar.css" />
+    <title></title>
+    </head>
+<body>
+    <div id="calendar" class="aui-content aui-calendar"></div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/conn.js"></script>
+<script type="text/javascript" src="../../script/aui-tap.js"></script>
+<script type="text/javascript" src="../../script/aui-calendar.js"></script>
+<script type="text/javascript" src="../../script/zepto.min.js"></script>
+<script type="text/javascript" src="../../script/linq.min.js"></script>
+<script type="text/javascript">
+var con = null, content = null, flag = null;
+    apiready = function(){
+    	flag = 0;
+        loaddate();  
+		api.addEventListener({
+		    name: 'setflag'
+		}, function(ret, err){
+			flag = 0;
+		});	          
+    }
+    function dateActive(date){
+    if(flag == 0){
+       if(checkd(date,con) != -1){
+       		flag = 1;
+			api.openWin({
+		        name: 'selecttime_win',
+		        url: './selecttime_win.html',
+		        pageParam: {d: date, content: content, winName: api.pageParam.winName},
+		        vScrollBarEnabled: false
+		   	 });  		   	     
+        }else{
+	   	    api.toast({
+                   msg:'这个日期并没有开放审车，请选择别的日期'
+               });       
+        }
+       }
+    }       
+    function loaddate(){
+	    showp('日期载入中','请稍候...');
+			api.ajax({
+			    url: website + 'gettheretime.php?action=getym',
+			    method: 'post',
+			    timeout: 30,
+			    dataType: 'json',
+			    returnAll:false
+			},function(ret,err){
+			    if (ret) {
+			       if(!ret.errmsg){
+			            con = ret.content;
+					    var todayDate = new Date();
+					    var startDate = todayDate.getFullYear()+'-'+(todayDate.getMonth()+1)+'-'+todayDate.getDate();
+					    var endDate = ret.ym;
+					    var calendar = new auiCalendar({
+					        container:document.getElementById("calendar"),
+					        startDate:startDate,
+					        endDate:endDate,
+					        lunarShow:true,
+					        dateActive:dateActive,
+					        beforeStartDateClick:false
+					    });			          
+			            api.hideProgress();
+	               }
+			    }
+			});  
+    }
+    function checkd(curtime,con){
+       var curym = curtime.substr(0,7);
+       var curd = curtime.substr(-2,2);
+       var query = Enumerable.From(con).Where('$.ym == "' + curym +'"').Select('$.d').ToArray();  
+       var query2 = Enumerable.From(con).Where('$.ym == "' + curym +'"').Select('$.content').ToArray();  
+       var result = query[0].indexOf(curd); 
+       var myobj = query2[0];  
+			$.each(myobj, function(i) {
+			    var myobj2 = myobj[i];
+				$.each(myobj2, function(ii) {
+				    if(ii == curd){
+				       content = myobj2[ii];
+				    }
+				}); 
+			});        
+       return result;      
+    }
+</script>
+</html>

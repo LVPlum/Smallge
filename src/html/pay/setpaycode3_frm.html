@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>支付密码</title>
+        <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0, width=device-width" />
+        <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	    <link rel="stylesheet" type="text/css" href="../../css/aui18/aui.css" />
+	    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+        <style type="text/css">
+            a, body, center, cite, code, dd, del, div, dl, dt, em, fieldset, figcaption, figure, footer, form, h1, h2, h3, h4, h5, h6, header, hr, html, img, input, label, legend, li, mark, ol, p, section, span, strong, textarea, time, ul, var input{
+                margin: 0;
+                border: 0;
+                padding: 0;
+                font-style: normal;
+                color: #323232;
+                box-sizing: border-box;
+                -moz-box-sizing:border-box; /* Firefox */
+                -webkit-box-sizing:border-box; /* Safari */
+            }
+            ol, ul {
+                list-style: none;
+            }
+            .content{
+                margin: 60px 0 20px;
+                text-align: center;
+            }
+            .password{
+                height: 40px;
+                line-height: 40px;
+                width: 240px; margin: 0 auto;
+                background-color: #fff;
+            }
+            .password span{
+                float: left;
+                width: 40px;
+                height: 40px;
+                line-height: 40px;
+                border: 1px solid #ccc;
+                text-align: center;
+            }
+            .password span{
+                border-right: none;
+            }
+            .password span:last-child{
+                border-right: 1px solid #ccc;
+            }
+            .keyboard{
+                position: absolute;
+                width: 100%;
+                left: 0;
+                bottom: 0;
+            }
+            .keyboard>li{
+                float: left;
+                line-height: 50px;
+                width: 33.3%;
+                text-align: center;
+                background-color: #fff;
+                -webkit-tap-highlight-color: #CCCCCC;
+            }
+            .bottom_border{
+                border-bottom: 1px solid #ccc;
+            }
+            .top_border{
+                border-top: 1px solid #ccc;
+            }
+            .right_border{
+                border-right: 1px solid #ccc;
+            }
+            .fg{
+               text-align:center;
+               padding-top:15px;
+               color:#FF0000;
+            }
+            .btn{
+            	padding:50px 20px 0 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="content" id="tips">
+             <span style="color: red" id="tips">再输入一次支付密码</span>
+        </div>
+        <div class="password">
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+		<div class="btn" id="btn"></div>
+		<div class="aui-toast" style="display:none" id="default">
+		    <i class="aui-iconfont aui-icon-check"></i>
+		    <div class="aui-toast-content">修改成功</div>
+		</div>
+    </body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript">
+var UIInput = null, spans = null, valueArr = [];
+var password1 = null, ID = null, token = null;
+	apiready = function(){
+		spans = document.querySelector('.password').querySelectorAll('span');
+		//UIInput = api.require('UIInput');
+  		openinput();
+	    password1 = api.pageParam.password1;
+	    ID = $api.getStorage('ID');
+	    token = $api.getStorage('token');
+	};
+	function openinput(){
+        var keyboard = api.require('keyboard');
+        keyboard.openKeyboard({
+            x : 0,
+            y : api.frameHeight - 203,
+            fixedOn : api.frameName,
+            fixed : true
+        }, function(ret, err) {
+            if (ret.enenType == 'click') {
+                valueArr.push(ret.value);
+                updateSpans();
+                //api.toast({msg : JSON.stringify(ret)});
+            }
+            if (ret.enenType == 'delete') {
+                valueArr.pop();
+                updateSpans();
+                //api.toast({msg : JSON.stringify(ret)});
+            }
+        })
+	}
+
+    function updateSpans(){
+        var length = valueArr.length;
+        for (var i = 0; i < spans.length; i++) {
+            var text = i < length? '*' : '';
+            $api.text(spans[i], text);
+        }
+        if (length === spans.length) {
+            checkpassword(valueArr.join(''));
+        }
+    }
+
+    function checkpassword(password2){
+         if(password1 == password2){
+             var html = '<div class="aui-btn aui-btn-block aui-btn-danger" tapmode onclick="postdate('+ password2 +')">确认设置</div>';
+             //$api.addCls($api.byId('btn'), 'aui-btn-row');
+             $api.html($api.byId('btn'), html);
+         }else{
+            $api.text($api.byId('tips'),'两次密码不一致，重新输入');
+            valueArr = [];
+            updateSpans();
+         }
+    }
+    function postdate(password){
+		api.ajax({
+		    url: website + 'chsysset.php?action=chpaycode',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {ID: ID, token: token, password: password},
+		    }
+		},function(ret,err){
+		    if (ret) {
+                 if(ret.succ == 1){
+                    $api.remove($api.byId('btn'));
+                    showDefault(password);
+                 }else{
+                    api.toast({
+	                    msg:ret.msg
+                    });
+                 }
+		    }
+		});
+    }
+    function showDefault(password){
+        $api.css($api.byId("default"),"display:block");
+        setTimeout(function(){
+            $api.css($api.byId("default"),"display:none");
+            // api.closeToWin({
+	           //  name: 'pay_win'
+            // });
+            api.sendEvent({
+                name: 'paycodeok',
+                extra: {paycode: password}
+            });
+        },2000)
+    }
+</script>
+</html>

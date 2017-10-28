@@ -1,0 +1,350 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+	<title></title>
+	<!-- api样式 -->
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<!-- aui样式 -->
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+	<!-- 小马哥通用样式 -->
+	<link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+		/*如页面需要动态滚动到底部请去除height:100%*/
+		html,body {
+			height: 100%;
+			overflow: auto;
+		}
+		.banner{
+			/*width: 8.3rem;*/
+			width: 48%;
+			height: 4.55rem;
+			border: 1px solid;
+			text-align: center;
+			border-radius: 5px;
+		}
+		.indigo{
+			background: #EAF5FF;
+			border-color: #3399FF;
+		}
+		.orange{
+			background: #FFEFE5;
+			border-color: #FF6600;
+		}
+		.uncheck{
+			background: #F5F5F5;
+			border-color: #CCCCCC;
+		}
+		.btn{
+			width: 2.35rem;
+			height: 1.5rem;
+			border-radius: 30px;
+		}
+		.dot{
+			padding-left: 0.6rem;
+		}
+		.dot-red:before,.dot-blue:before{
+			content: "";
+			width: 0.3rem;
+			height: 0.3rem;
+			border-radius: 0.5rem;
+			position: absolute;
+			left: 0;
+			top:0.3rem;
+		}
+		.dot-red:before{
+			background: #ff3333;
+		}
+		.dot-blue:before{
+			background: #3399ff;
+		}
+    </style>
+</head>
+<body>
+
+	<div class="aui-content" id="app" v-cloak>
+		<div class="aui-card-list-header" style="padding: 0.75rem;background: #fff">
+			<div v-if=" checkBreakfast " class=" banner uncheck " tapmode @click="yycan(3)">
+				<i class="aui-iconfont tea-icon-breakfast tea-text-gray" style="font-size: 2rem"></i>
+				<p class="tea-text-title" style="font-weight: bold">您已预约明天早餐</p>
+			</div>
+			<div v-else class=" banner indigo" tapmode @click="yycan(1)">
+				<i class="aui-iconfont tea-icon-breakfast tea-text-blue" style="font-size: 2rem"></i>
+				<p class="indigo tea-text-blue" style="font-weight: bold">预约明天早餐</p>
+			</div>
+			<div v-if=" checkLunch " class="banner uncheck" tapmode @click="yycan(3)">
+				<i class="aui-iconfont tea-icon-lunch tea-text-gray" style="font-size: 2rem"></i>
+				<p class="tea-text-title" style="font-weight: bold">您已预约明天午餐</p>
+			</div>
+			<div v-else class="banner orange" tapmode @click="yycan(2)">
+				<i class="aui-iconfont tea-icon-lunch" style="font-size: 2rem;color: #ff6600"></i>
+				<p class="tea-text-orange" style="font-weight: bold">预约明天午餐</p>
+			</div>
+		</div>
+		<section class="aui-margin-t-10">
+			<ul class="aui-list">
+				<li class="aui-list-item" style="padding: 0;background-size: 92% 1px;" tapmode @click="mulityy()">
+					<div class="aui-list-item-inner" style="padding: 0.65rem 1rem">
+						<div class="aui-list-item-title" style="margin-left: -0.3rem">
+							<p class="aui-margin-b-5 tea-text-title" style="font-weight: bold">预约报餐</p>
+							<p class="tea-text-gray">多天一起预约丨最多预约未来七天内</p>
+						</div>
+						<div class="aui-list-item-right">
+							<i class="aui-iconfont tea-icon-addfood" style="font-size: 1.5rem"></i>
+						</div>
+					</div>
+				</li>
+				<li v-for="list in msg" class="aui-list-item" style="padding: 0">
+					<div class="aui-list-item-inner" style="padding: 0.65rem 1rem">
+						<div class="aui-list-item-title dot" :class='[list.zt==1? "dot-blue" : "dot-red"]'>
+							<p class="aui-margin-b-5 tea-text-title">{{ list.dctime }}</p>
+							<p v-if="list.zt==1 && list.ky==1" class="tea-text-gray">{{ list.dctype }}已预约</p>
+							<p v-else-if="list.zt==0 && list.ky==1" class="tea-text-gray">{{ list.dctype }}</p>
+							<p v-else-if="list.ky==0" class="tea-text-gray">{{ list.ok==1 ? list.dctype+'已使用' : list.dctype}}</p>
+						</div>
+						<div v-if="list.zt==1 && list.ky==1" class="aui-list-item-right aui-btn tea-bg-gray btn" tapmode @click='cancelyy(list.ID)'>取消</div>
+						<div v-else-if="list.zt==0 && list.ky==1" class="aui-list-item-right aui-btn aui-text-white tea-bg-blue btn" tapmode @click='recancelyy(list.ID)'>重订</div>
+						<div v-else-if="list.ky==0"></div>
+					</div>
+				</li>
+			</ul>
+		</section>
+	</div>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+<script type="text/javascript">
+	var telphone = null, userid = null, nickname = null, bumen = null, com = null, vm = null;
+    apiready = function(){
+    	userid = $api.getStorage('ID');
+    	telphone = $api.getStorage('telphone');
+    	nickname = $api.getStorage('nickname');
+        api.parseTapmode();
+        loaddate();
+		api.addEventListener({
+		    name: 'reflash'
+		}, function(ret, err){
+			loaddate();
+		});
+
+		vm = new Vue({
+			el: '#app',
+			data: {
+				msg: "",  //订餐数据列表
+				checkBreakfast: true, //用于判断是否预约明天的早餐
+				checkLunch: true, //用于判断是否预约明天的午餐
+			},
+			methods: {
+				 mulityy: function(){ //打开最近七天订餐页面
+					api.openWin({
+						name: 'mulityy',
+						url: './mulityy_win.html',
+						pageParam: {com: com, bumen: bumen},
+						vScrollBarEnabled: false
+				 	});
+				 },
+				 yycan: function(dctype){  //用于点明天的餐，dctype=1 为早餐 ，dctype=2为午餐
+					 if(dctype == 3){
+						 api.alert({msg:('您已预约过了，无需重复预约')});
+						 return ;
+					 }
+					 api.ajax({
+						url: website + 'fantang/sm/junmafantang.php?action=diancan',
+						method: 'post',
+						timeout: 30,
+						dataType: 'json',
+						returnAll:false,
+						data:{
+							values: {userid: userid,telphone: telphone, nickname: nickname, dctype: dctype, bumen: bumen, com: com},
+						}
+					},function(ret,err){
+//						 _alert(ret);
+						if (ret) {
+							if(ret.succ == 1){
+								showok();
+								if(dctype == 1){
+									vm.checkBreakfast = true;
+									loaddate();
+								}
+								if(dctype == 2){
+									vm.checkLunch = true;
+									loaddate();
+								}
+							}else{
+
+//								api.alert({msg:('您已预约过了，无需重复预约')});
+								loaddate();
+							}
+						}
+					});
+				},
+				cancelyy: function(ID){  //用于取消订餐
+					api.confirm({
+						title: '取消订餐',
+						msg: '请您确定是否要取消预约',
+						buttons: ['取消','确定']
+					}, function(ret, err) {
+						if(ret.buttonIndex!=1){
+							api.ajax({
+								url: website + 'fantang/sm/junmafantang.php?action=cancelyy',
+								method: 'post',
+								timeout: 30,
+								dataType: 'json',
+								returnAll:false,
+								data:{
+									values: {userid: userid,ID: ID},
+								}
+							},function(ret,err){
+								if (ret) {
+									showyylist();
+								}
+							});
+						}
+					});
+				},
+				recancelyy: function(ID){   //对已取消的订单，进行重新订餐操作
+					api.ajax({
+						url: website + 'fantang/sm/junmafantang.php?action=recancelyy',
+						method: 'post',
+						timeout: 30,
+						dataType: 'json',
+						returnAll:false,
+						data:{
+							values: {userid: userid,ID: ID},
+						}
+					},function(ret,err){
+						if (ret) {
+							if(ret.succ == 1){
+								showyylist();
+							}
+						}
+					});
+				},
+			}
+		});
+
+    }
+    function loaddate(){
+    	showp('数据加载中','');
+		api.ajax({
+		    url: website + 'fantang/sm/fantang.php?action=getuserinfo',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {userid: userid},
+		    }
+		},function(ret,err){
+		    if (ret) {
+				bumen = ret.bumen;
+				com = ret.com;
+				checkzc();
+				checkwc();
+				showyylist();
+				api.hideProgress();
+		    }
+		});    
+    }
+    function checkzc(){   //检测是否已经点了明天的早餐
+		api.ajax({
+		    url: website + 'fantang/sm/junmafantang.php?action=checkdc',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {userid: userid, dctype: '1'},
+		    }
+		},function(ret,err){
+		    if (ret) {
+				if(ret.succ == '1'){
+					vm.checkBreakfast = true;
+				}else {
+					vm.checkBreakfast = false;
+				}
+		    }
+		});    
+    }
+    function checkwc(){   //检测是否已经点了明天的午餐
+		api.ajax({
+		    url: website + 'fantang/sm/junmafantang.php?action=checkdc',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {userid: userid, dctype: '2'},
+		    }
+		},function(ret,err){
+		    if (ret) {
+				if(ret.succ == '1'){
+					vm.checkLunch = true;
+				}else {
+					vm.checkLunch = false;
+				}
+		    }
+		});    
+    }
+	function showyylist(){
+		api.ajax({
+		    url: website + 'fantang/sm/junmafantang.php?action=showyylist',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {userid: userid},
+		    }
+		},function(ret,err){
+		    if (ret) {
+//				_alert(ret);
+				/*排序数组*/
+				ret.sort(function(a,b){
+					return a.dctime > b.dctime ? 1 : -1;
+				});
+				/*修改前三天的值*/
+				for(i in ret){
+					var time = new Date(ret[i].dctime) - new Date();
+					var day = time/1000/60/60/24 - (1/3);
+					if(Math.ceil(day)==1){
+						ret[i].dctime = "明天";
+					}
+					else if(Math.ceil(day)==2){
+						ret[i].dctime = "后天";
+					}
+					else if(Math.ceil(day)==0){
+						ret[i].dctime = "今天";
+					}
+				}
+
+				vm.msg = ret;
+				/*检查明天是否订餐*/
+				checkzc();
+				checkwc();
+		    }
+		});	
+	}
+
+    var toast = new auiToast({})
+    function showok(){
+        toast.success({
+            title:"提交成功",
+            duration:2000
+        });     
+    }           	
+</script>
+</html>

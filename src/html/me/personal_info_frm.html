@@ -1,0 +1,308 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            height: 100%;
+            overflow: auto;
+            background-color: #f2f5f8;
+            color: #333;
+        }
+        /*.introduce{*/
+            /*overflow: hidden;*/
+            /*white-space: nowrap;*/
+            /*text-overflow: ellipsis;*/
+        /*}*/
+        .aui-list{
+            background-color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="aui-margin-t-5" v-cloak>
+        <section class="aui-content">
+            <ul class="aui-list aui-media-list">
+                <li v-for="value in item" class="aui-list-item aui-list-item-middle" tapmode @click="goto(value.activeFun)" :style="value.activeFun == 'detail' ? 'margin-bottom: 0.5rem' : '' ">
+                    <div class="aui-media-list-item-inner">
+                        <div v-if="value.activeFun == 'detail' " class="aui-list-item-media" style="width: 3.25rem;height: 3.5rem">
+                            <img id="user-head-img" :src="avatar" class="aui-img-round" style="height: 100%;width: 100%;">
+                        </div>
+                        <div :class="value.noArrow ? '' : 'aui-list-item-arrow' " class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-16">{{ value.itemKey }}</div>
+                                <div class="aui-list-item-right aui-font-size-16 tea-text-light-gray aui-ellipsis-1">{{ value.activeFun == 'sex' ? transform : value.itemVal }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <!--<li v-for="list in item" class="aui-list-item aui-list-item-middle" tapmode @click="goto(list.activeFun)">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-media" style="width: 3.25rem;height: 3.5rem">
+                            <img id="user-head-img" src="../../image/me/default_male.png" class="aui-img-round" style="height: 100%;width: 100%;">
+                        </div>
+                        <div class="aui-list-item-inner aui-list-item-arrow">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-16">个人主页</div>
+                                <div class="aui-list-item-right aui-font-size-14">进入</div>
+                            </div>
+                        </div>
+                    </div>
+                </li>-->
+            </ul>
+        </section>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+    /*vm = new Vue({
+        el: '#app',
+        data: {
+            avatar: '',
+            item: [
+                {itemKey: '个人主页',itemVal: '进入',activeFun: 'detail'},
+                {itemKey:'头像',itemVal:'修改',activeFun: 'avatar'},
+                {itemKey:'昵称',itemVal:'LVPlum',activeFun: 'nickname'},
+                {itemKey:'手机号码',itemVal:'15736883259',activeFun: 'telphone',noArrow: true},
+                {itemKey:'我的二维码',itemVal:'',activeFun:'code',noArrow: true},
+                {itemKey:'个人简介',itemVal:'sdaqweqweqqqqqqqqqqqqqqqqqqqqq',activeFun:'profile'}
+            ]
+        },
+        methods: {
+
+        },
+        computed: {
+
+        }
+    })*/
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {}, vm = null;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    dom = {
+    };
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+            avatar: '../../image/me/default_male.png',
+            sex: $api.getStorage('sex'),
+            item: [
+                {itemKey: '个人主页',itemVal: '进入',activeFun: 'detail'},
+                {itemKey:'头像',itemVal:'修改',activeFun: 'avatar'},
+                {itemKey:'昵称',itemVal:$api.getStorage('nickname'),activeFun: 'nickname'},
+                {itemKey:'性别',itemVal:'',activeFun: 'sex'},
+                {itemKey:'手机号码',itemVal:$api.getStorage('telphone'),activeFun: 'telphone',noArrow: true},
+                {itemKey:'我的二维码',itemVal:'',activeFun:'code',noArrow: true},
+                {itemKey:'个人简介',itemVal:$api.getStorage('profile'),activeFun:'profile'}
+            ]
+        },
+        methods: {
+            goto: function(activeFun){
+                switch (activeFun){
+                    case 'detail':
+                        openWinDetail();
+                        break;
+                    case 'avatar':
+                        openWinAvatar();
+                        break;
+                    case 'nickname':
+                        openWinNickname();
+                        break;
+                    case 'sex':
+                        openWinSex();
+                        break;
+                    case 'code':
+                        openWinCode();
+                        break;
+                    case 'profile':
+                        openWinProfile();
+                        break;
+                    default :
+                        toast();
+                        break;
+                }
+            }
+        },
+        computed: {
+            transform: function(){
+                switch (this.sex){
+                    case 'female':
+                        this.sex = '女';
+                        break;
+                    case 'male':
+                        this.sex = '男';
+                        break;
+                    default:
+                        this.sex = '未设置';
+                        break
+                }
+                return this.sex;
+            }
+        }
+    })
+
+    getData();
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+    api.addEventListener({
+        name: 'save_personal_data'
+    }, function (ret, err) {
+        getData();
+    });
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+    tea.showp('加载中...','',true);
+    api.ajax({
+        url: website + 'api.php?action=get_id_by_my_info',
+        method: 'post',
+        timeout: 30,
+        data: {
+            values: {
+                fid: $api.getStorage('ID'),
+            },
+        }
+    }, function (ret, err) {
+        api.hideProgress();
+        if(!ret){
+            tea.toast('ajax');
+            return false;
+        }
+        if(ret){
+            $api.setStorage('nickname',ret.nickname);
+            $api.setStorage('telphone',ret.telphone);
+            $api.setStorage('img',ret.img);
+//            $api.setStorage('sex',ret.sex);
+            $api.setStorage('profile',ret.profile);
+            vm.avatar = ret.img;
+            vm.sex = $api.getStorage('sex');
+            vm.item[2].itemVal = ret.nickname;
+            vm.item[4].itemVal = ret.telphone;
+            vm.item[6].itemVal = ret.profile;
+        }
+    });
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+/*页面跳转*/
+    //个人主页
+    function openWinDetail(){
+        /*tea.openWin({
+            name: 'friendinfo_win',
+            url: '../friends/friendinfo_win.html',
+            pageParam: {id : $api.getStorage('ID')}
+        });*/
+        tea.openWin({
+            name: 'user_info_win',
+            url: '../location/user_info_win.html',
+            pageParam: {
+                friendID : $api.getStorage('ID'),
+                pageType: 'me'
+            }
+        });
+        /*tea.openWin({
+            name: 'personal_detail_page_win',
+            url: './personal_detail_page_win.html',
+            pageParam: {id : $api.getStorage('ID')}
+        });*/
+    }
+    //修改头像
+    function openWinAvatar(){
+        tea.openWin({
+            name: 'setmylogo_win',
+            url: './setmylogo_win.html'
+        })
+    }
+    //修改昵称
+    function openWinNickname(){
+        tea.openWin({
+            name: 'updata_nickname_win',
+            url: './updata_nickname_win.html'
+        })
+    }
+    //修改性别
+    function openWinSex(){
+        tea.openWin({
+            name: 'updata_sex_win',
+            url: './updata_sex_win.html'
+        })
+    }
+    //查看二维码
+    function openWinCode(){
+        tea.openWin({
+            name: 'updata_mycode_win',
+            url: './updata_mycode_win.html'
+        })
+    }
+    //修改个人简介
+    function openWinProfile(){
+        tea.openWin({
+            name: 'updata_profile_win',
+            url: './updata_profile_win.html'
+        })
+    }
+    //关闭提示
+    function toast(){
+        api.toast({
+            msg: '暂不支持修改~',
+            duration: 2000,
+            location: 'middle'
+        });
+    }
+</script>
+</html>

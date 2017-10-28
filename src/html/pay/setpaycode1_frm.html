@@ -1,0 +1,129 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/common.css" />
+</head>
+<style type="text/css">
+
+</style>
+<body>
+    <p class="aui-text-center">设置支付密码，必需要通过验证手机号码</p>
+    <div class="aui-content aui-card">
+        <div class="aui-form">
+            <div class="aui-input-row">
+                <i class="aui-input-addon aui-iconfont aui-icon-mobile aui-text-info"></i>
+                <input type="tel" class="aui-input" id="mobilenum" readonly="readonly">
+            </div>
+
+            <div class="aui-input-row">
+                <input type="tel" class="aui-input" id="code" placeholder="请输入收到的验证码"/>
+                <span class="aui-input-addon">
+                    <div class="aui-btn" id="sendVerify" tapmode onclick="beverify()">获取验证码</div>
+                </span>
+            </div>
+
+            <div class="aui-btn-row">
+                <div class="aui-btn aui-btn-block aui-btn-warning" tapmode onclick="checkmobile();">下一步</div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript">
+apiready = function() {
+    api.parseTapmode();
+    $api.val($api.byId('mobilenum'), $api.getStorage('telphone'));
+};
+	function checkmobile(){
+       var num = $api.val($api.byId('mobilenum'));
+       var smscode = $api.val($api.byId('code'));
+            showp('正在验证数据中...','请稍候...');
+			api.ajax({
+			    url: website + 'verifysmspaycode.php',
+			    method: 'post',
+			    timeout: 30,
+			    dataType: 'json',
+			    returnAll:false,
+			    data:{
+			        values: {phonenum: num,smscode: smscode},
+			    }
+			},function(ret,err){
+			    if (ret) {
+			       if(!ret.errmsg){
+		                   if(ret.succ == 'no'){
+						        api.alert({
+						            msg:(ret.msg)
+						        });
+		                    }else{
+							api.openWin({
+							    name: 'setpaycode2_win',
+							    url: 'setpaycode2_win.html',
+							});
+		                 }
+		                 api.hideProgress();
+			        }
+			    }
+			});
+	}
+    function beverify() {
+        var num = $api.val($api.byId('mobilenum'));
+        //开始请求云端验证码
+        api.ajax({
+	    url: website + 'sendsmscode.php?checknum=2',
+	    method: 'post',
+	    timeout: 30,
+	    dataType: 'json',
+	    returnAll:false,
+	    data:{
+	        values: {phonenum: num},
+	    }
+	},function(ret,err){
+	    if (ret) {
+	       if(!ret.errmsg){
+               if(ret.succ == 'no'){
+			        api.alert({
+			            msg:(ret.msg)
+			        });
+		        }else{
+		            get_verify();
+		        }
+	        }
+	    }else {
+	        api.alert({
+	            msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+	        });
+	    }
+	});
+
+    }
+
+    function get_verify(){
+        var sendVerify = $api.byId('sendVerify');
+        $api.removeAttr(sendVerify,'onclick');
+        $api.html(sendVerify,'<span id="GetVerify">120</span>S');
+        times = 119;
+        isinerval = setInterval("CountDown()", 1000);
+        setTimeout(function(){
+            $api.val($api.byId("code"),'');
+        },500)
+    }
+
+    function CountDown() {
+        if (times < 1) {
+            var sendVerify = $api.byId('sendVerify');
+            $api.attr(sendVerify,'onclick','get_verify()');
+            $api.html(sendVerify,'重新获取');
+            clearInterval(isinerval);
+            return;
+        }
+        var getVerify = $api.byId('GetVerify');
+        $api.html(getVerify,''+times+'');
+        times--;
+    }
+</script>
+</html>

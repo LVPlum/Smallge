@@ -1,0 +1,202 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="teletel=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            height: 100%;
+            overflow: auto;
+            background: none;
+            overflow: hidden;
+        }
+        .warp{
+            width: 300px;
+            height: 300px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -150px;
+            margin-left: -150px;
+            z-index: 999;
+            background-color: rgba(0,0,0,0);
+            /*border: 1px solid white;*/
+            box-shadow: 1px 1px 1px 999px rgba(0,0,0,0.4);
+            background-color: rgba(0,0,0,0);
+        }
+        .corner{
+            width: 20px;
+            height: 20px;
+            position: absolute;
+        }
+        .left{
+            left: 0;
+            border-top: 3px solid #FFF;
+            border-left: 3px solid #FFF;
+        }
+        .right{
+            right: 0;
+            border-top: 3px solid #FFF;
+            border-right: 3px solid #FFF;
+        }
+        .leftB{
+            left: 0;
+            bottom: 0;
+            border-bottom: 3px solid #FFF;
+            border-left: 3px solid #FFF;
+        }
+        .rightB{
+            right: 0;
+            bottom: 0;
+            border-bottom: 3px solid #FFF;
+            border-right: 3px solid #FFF;
+        }
+        .line{
+            position: absolute;
+            left: 0;
+            width: 100%;
+            border: 1px solid #FFF;
+        }
+        @keyframes fadeOutDown {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+                transform: translateY(300px);
+
+            }
+        }
+        .fadeOutDown {
+            animation: fadeOutDown 3s ease infinite;
+            -moz-animation: fadeOutDown 3s ease infinite;	/* Firefox */
+            -webkit-animation: fadeOutDown 3s ease infinite;	/* Safari 和 Chrome */
+            -o-animation: fadeOutDown 3s ease infinite;	/* Opera */
+            /*animation-timing-function: ease;*/
+        }
+    </style>
+</head>
+<body class="tea-body-mask" >
+    <div class="warp">
+        <span class="line fadeOutDown"></span>
+        <span class="corner left"></span>
+        <span class="corner right"></span>
+        <span class="corner leftB"></span>
+        <span class="corner rightB"></span>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+
+</script>
+<script type="text/javascript" src="../../script/aui-dialog.js" ></script>
+<script type="text/javascript">
+
+    /**********************************声明全局变量**********************************/
+// 声明DOM对象
+    var dom = {};
+
+    // 声明全局变量
+    var data = {}, values = {};
+
+    /**********************************apiready**********************************/
+    apiready = function(){
+
+
+        // 初始化变量
+        initVar();
+
+        // 初始化模块
+        initModule();
+
+        // 初始化监听
+        initEventListener();
+
+        // ajax请求数据
+        getData();
+
+    };
+
+    /**********************************初始化变量**********************************/
+    function initVar(){
+
+        dom = {
+        };
+
+        data = {
+        };
+
+        values = {
+        };
+
+        updateHTML();
+
+    };
+
+    /**********************************初始化模块**********************************/
+    function initModule(){
+
+
+
+    }
+
+    /**********************************初始化监听**********************************/
+    function initEventListener(){
+
+
+
+    }
+
+    /**********************************ajax请求数据**********************************/
+    function getData(){
+
+
+
+    }
+
+    /**********************************更新变量**********************************/
+    function updateVar(){
+
+
+    }
+
+    function updateDom(){
+
+
+
+    }
+    /**********************************更新HTML**********************************/
+    function updateHTML(){
+
+
+
+    }
+
+
+    /**********************************DOM响应**********************************/
+
+    /**********************************其他函数**********************************/
+
+</script>
+</html>

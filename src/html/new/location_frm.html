@@ -1,0 +1,189 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            height: 100%;
+            overflow: auto;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="aui-content aui-margin-b-15">
+        <ul id="list" class="aui-list aui-select-list">
+            <!-- <li class="aui-list-item">
+                <div class="aui-list-item-inner tea-text-blue" tapmode onclick="select(0)">
+                    不显示位置
+                </div>
+                <div class="aui-list-item-label">
+                    <input class="aui-radio" type="radio" name="radio" checked>
+                </div>
+            </li>  -->
+            <!-- <li class="aui-list-item">
+                <div class="aui-list-item-inner aui-ellipsis-1">
+                    这是一个列表项这里是内容区域，新版中的列表布局可以很轻松的帮助开发者完成常见列表样式。
+                    <div class="aui-list-item-title aui-ellipsis-1 tea-text-default aui-font-size-14">
+                        这里是内容区域，新版中的列表布局可以很轻松的帮助开发者完成常见列表样式。
+                    </div>
+                </div>
+                <div class="aui-list-item-label">
+                    <input class="aui-radio" type="radio" name="radio" checked>
+                </div>
+            </li> -->
+        </ul>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+    {{~it:value:index}}
+    <li class="aui-list-item" tapmode onclick="select({{=index}})">
+        <div class="aui-list-item-inner aui-ellipsis-1 {{=(index == 0 ? 'tea-text-blue' : '')}}">
+            {{=value.name}}
+            {{?value.address}}
+            <div class="aui-list-item-title aui-ellipsis-1 tea-text-default aui-font-size-14">
+                {{=value.address}}
+            </div>
+            {{?}}
+        </div>
+        <div class="aui-list-item-label">
+            <label class="aui-radio {{=(index == values.index ? 'aui-checked' : '')}}" ></label>
+        </div>
+    </li>
+    {{~}}
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {};
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    initVar();
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+    // ajax请求数据
+    getData();
+
+};
+
+/**********************************初始化变量**********************************/
+function initVar(){
+
+    dom = {
+    };
+
+    data = {
+    };
+
+    values = {
+        poiList: api.pageParam.poiList,
+        index: api.pageParam.index
+    };
+
+    updateHTML();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************更新变量**********************************/
+function updateVar(){
+
+
+}
+
+function updateDom(){
+
+    dom.radios = $api.domAll('.aui-radio');
+
+}
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+    tea.doT(values.poiList, 'template', 'list', 'append');
+    updateDom();
+}
+
+/**********************************DOM响应**********************************/
+function select(index_){
+    if (index_ == values.index) {
+        send(index_);
+        return;
+    }
+    for (var i = dom.radios.length - 1; i >= 0; i--) {
+        if ( i == index_) {
+            $api.addCls(dom.radios[i], 'aui-checked');
+        }
+        else {
+            $api.removeCls(dom.radios[i], 'aui-checked');
+        }
+    }
+    send(index_);
+}
+/**********************************其他函数**********************************/
+function send(index_){
+    api.sendEvent({
+        name: 'addressSetted',
+        extra: {
+            index: index_
+        }
+    });
+    api.closeWin();
+}
+</script>
+</html>

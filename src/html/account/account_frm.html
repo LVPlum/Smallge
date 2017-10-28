@@ -1,0 +1,146 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        html, body{
+            width: 100%;
+            background-color: #fff;
+        }
+        header {
+            margin: 4.75rem auto 2.25rem;
+        }
+        header img {
+            height: 4.35rem;
+            width: 4.35rem;
+            margin: auto;
+            border-radius: 50%;
+        }
+        section {
+            padding: 0 1.125rem;
+        }
+        section>.aui-btn~.aui-btn {
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <header>
+            <img src="../../image/logo108.png">
+        </header>
+        <section>
+            <div class="aui-btn aui-btn-block tea-btn-submit" @click="toLogin()">登录</div>
+            <div class="aui-btn aui-btn-block tea-btn-submit tea-active" @click="toRegister()">注册</div>
+        </section>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {}, vm = null;
+
+/**********************************apiready**********************************/
+apiready = function(){
+    
+    // 初始化变量
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    dom = {
+    };
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+
+        },
+        methods: {
+            toLogin: function(){
+                api.openWin({
+                    name: 'login_other_win',
+                    url: './login_other_win.html',
+                    pageParam: {
+                        name: 'test'
+                    }
+                });
+            },
+            toRegister: function(){
+                api.openWin({
+                    name: 'register_win',
+                    url: './register_win.html',
+                    pageParam: {
+                        name: 'test'
+                    }
+                });
+            }
+        },
+        computed: {
+
+        }
+    })
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+
+</script>
+</html>

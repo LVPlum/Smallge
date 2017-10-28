@@ -1,0 +1,480 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+        }
+        /*修改value的placeholder的颜色*/
+        input::-webkit-input-placeholder, textarea::-webkit-input-placeholder{
+            color:   #CCCCCC;
+        }
+        input:-moz-placeholder, textarea:-moz-placeholder {
+            color:    #CCCCCC;
+        }
+        input:-ms-input-placeholder, textarea:-ms-input-placeholder {
+            color:    #CCCCCC;
+        }
+        .select-round{
+            width: 1rem;
+            height: 1rem;
+            border: 1px solid #0099ff;
+            border-radius: 50%;
+            font-size: 0.5rem;
+            line-height: 1rem;
+            color: #0099ff;
+            text-align: center;
+            display: table;
+        }
+        .vip:after{
+            content: 'VIP';
+            font-size: 0.6rem;
+            color: #ffcc66;
+            text-align: center;
+            line-height: 0.7rem;
+            position: absolute;
+            left: 50%;
+            top: 30%;
+            width: 1.25rem;
+            height: 0.7rem;
+            background-image: linear-gradient(-45deg, rgba(0, 0, 0, 1) 0%, rgba(51, 51, 51, 1) 100%), linear-gradient(rgba(255, 153, 51, 1), rgba(255, 153, 51, 1));
+            background-blend-mode: normal, normal;
+            border-radius: 8px 8px 8px 8px;
+        }
+    </style>
+</head>
+<body>
+<div id="app" v-cloak>
+    <div class="aui-bar-btn">
+        <ul class="aui-list aui-media-list aui-list-noborder">
+            <li class="aui-list-item aui-padded-0">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-inner aui-padded-l-15">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title tea-text-blue aui-font-size-14" style="z-index: 999">车牌号码</div>
+                        </div>
+                        <div class="aui-info" style="padding:0">
+                            <div class="aui-list-item-label" style="width: 4rem;line-height: normal" tapmode @click="goto('province')">
+                                <span class="tea-text-title aui-font-size-16 tea-text-star-red tea-text-arrow-down">{{ province }}</span>
+                            </div>
+                            <div class="aui-list-item-input aui-font-size-16">
+                                <input type="text" placeholder="请输入车牌后5位数"
+                                       v-model = "number">
+                            </div>
+                            <div class="tea-text-round tea-big" tapmode @click="goto('plate')" style="padding-left: 3px;font-size: 0.55rem">选</div>
+                            <!--<div class="select-round " tapmode @click="openWinPlateNum()">选</div>-->
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item aui-padded-0 aui-list-item-arrow" tapmode @click="goto('date')">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-inner aui-padded-l-15">
+                        <div class="aui-list-item-text aui-margin-b-5">
+                            <div class="aui-list-item-title tea-text-blue aui-font-size-14">预约时间</div>
+                        </div>
+                        <div class="aui-info" style="padding:0">
+                            <div class="aui-font-size-16 tea-text-title">{{ time }}</div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item aui-padded-0 aui-list-item-arrow" tapmode @click="goto('address')">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-inner aui-padded-l-15">
+                        <div class="aui-list-item-text aui-margin-b-5">
+                            <div class="aui-list-item-title tea-text-blue aui-font-size-14">地址<span class="tea-text-light-gray">(上门服务限 北海市区与合浦县城)</span></div>
+                        </div>
+                        <div class="aui-list-item-text">
+                            <div v-if="address" class="aui-font-size-16 tea-text-title">{{ address.name }} {{ address.tel.replace(/^(\d{3})(\d{4})(\d{4})$/, "$1 $2 $3") }}</div>
+                            <div v-else class="aui-font-size-16 tea-text-light-gray">请添加新地址</div>
+                        </div>
+                        <div v-if="address" class="aui-info" style="padding:0">
+                            <div class="aui-font-size-16 tea-text-title aui-ellipsis-2">{{  address.region+' '+address.detail }}</div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <p class="tea-text-orange aui-font-size-14 aui-padded-15">总费用¥60上门收取（特权卡VIP免费）</p>
+    <footer style="margin: 0rem 2rem" tapmode @click="submitOrder">
+        <div id="pay-btn" class="aui-btn aui-btn-block aui-text-white tea-btn-radius" :class="errorMsg ? 'tea-bg-light-blue' : 'tea-bg-blue' ">提交订单</div>
+    </footer>
+</div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+    /**********************************声明全局变量**********************************/
+// 声明DOM对象
+    var dom = {}, vm = null;
+
+    /**********************************apiready**********************************/
+    apiready = function(){
+
+        // 初始化变量
+        init();
+
+    };
+
+    /**********************************初始化变量**********************************/
+    function init(){
+
+        dom = {
+        };
+
+        vm = new Vue({
+            el: '#app',
+            data: {
+                province: '桂E',
+                number: '',
+                time: '2017-01-10 10点',
+                address: '',
+                index: 0,      //地址下标，默认为0
+            },
+            methods: {
+                goto: function(type){
+                    switch (type){
+                        case 'province':
+                            openWinPlateProvince();
+                            break;
+                        case 'plate':
+                            openWinPlateNum();
+                            break;
+                        case 'date':
+                            openWinDateSelect();
+                            break;
+                        case 'address':
+                            openWinAddress(vm.address.addrid);
+                            break;
+                    }
+                },
+                submitOrder: function(){
+                    if(this.errorMsg){
+                        api.toast({
+                            msg: this.errorMsg,
+                            duration: 2000,
+                            location: 'middle'
+                        });
+                    }else {
+                        saveOrder();
+                        /*var json = {
+//                            carid:  values.carid,
+                            carnum: vm.province+vm.number,
+                            address: vm.address,
+                            paymoney: 60.00,
+                            mtype: '8',
+//                            addcar: addcar, //是否加入vip
+//                            coupon_id: values.coupon_id, //现金券id
+//                            coupon_m: values.coupon_m,    //优惠金额
+                        };
+                        api.openWin({
+                            name: 'pay_win',
+                            url: '../pay/pay_win.html',
+                            pageParam: {
+                                title:'支付六年免检',
+                                money: 60.00,
+//                                result_m: parseFloat(values.paymoney) - parseFloat(values.coupon_m),
+                                type: 'addvip',
+                                values: json
+                            },
+                            vScrollBarEnabled: false
+                        });*/
+                    }
+                }
+            },
+            computed: {
+                errorMsg: function(){
+                    var rule = new tea.checkRule();
+                    rule.add(this.number, [{
+                        condition: 'isNoEmpty',
+                        errorMsg: '请输入车牌号码'
+                    }]);
+                    rule.add(this.time, [{
+                        condition: 'isNoEmpty',
+                        errorMsg: '请选择预约时间'
+                    }]);
+                    rule.add(this.tel, [{
+                        condition: 'isNoEmpty',
+                        errorMsg: '请选择联系方式和地址'
+                    }]);
+                    var errorMsg = rule.start();
+                    return errorMsg;
+                }
+            },
+            watch: {
+
+            }
+        })
+        //初始化页面数据
+        getData();
+
+        // 初始化模块
+        initModule();
+
+        // 初始化监听
+        initEventListener();
+
+    };
+
+    /**********************************初始化模块**********************************/
+    function initModule(){
+
+
+
+    }
+
+    /**********************************初始化监听**********************************/
+    function initEventListener(){
+        //监听选择车牌前缀省份
+        api.addEventListener({
+            name: 'selectPlateProvince'
+        }, function (ret, err) {
+            vm.province = ret.value.province + ret.value.city;
+        });
+        //监听选择历史车牌号码
+        api.addEventListener({
+            name: 'addOldCar'
+        }, function (ret, err) {
+            vm.province = ret.value.car.slice(0,2);
+            vm.number = ret.value.car.slice(2);
+            vm.tel = ret.value.tel;
+        });
+        //监听选择预约时间
+        api.addEventListener({
+            name: 'selectretime'
+        }, function(ret, err){
+            vm.time = ret.value.strtime;
+        });
+        //监听地址选择
+        api.addEventListener({
+            name: 'selectAddress'
+        }, function (ret, err) {
+            vm.address = ret.value.address;
+            vm.add = ret.value.index
+        });
+        api.addEventListener({
+            name: 'saveOk'
+         }, function (ret, err) {
+            getData();
+         });
+        api.addEventListener({
+            name: 'editorOk'
+         }, function (ret, err) {
+            getAddressDetail(ret.value.addrid);
+         });
+    }
+
+    /**********************************ajax请求数据**********************************/
+    //获取页面初始化数据
+    function getData(){
+        tea.showp('数据加载中...');
+        api.ajax({
+            url: website + 'exempt_api.php?action=index',
+            method: 'post',
+            timeout: 30,
+            data: {
+                values: {
+                    ID: $api.getStorage('ID'),
+                },
+            }
+        }, function (ret, err) {
+            api.hideProgress();
+            if(!ret){
+                tea.toast('ajax');
+                return false;
+            }
+            if(ret.succ == '1'){
+                vm.time = ret.data.booktime;
+                vm.province = ret.data.carnum.slice(0,2);
+                vm.number = ret.data.carnum.slice(2);
+                vm.address = ret.data.address;
+                return true;
+            }
+        });
+    }
+
+    /**********************************DOM响应**********************************/
+
+    /**********************************其他函数**********************************/
+/*跳转方法*/
+    //车牌省份前缀
+    function openWinPlateProvince(){
+        event.stopPropagation();
+        api.openWin({
+            name: 'plate_province_win',
+            url: '../car_plate/plate_province_win.html',
+        });
+    }
+    //车牌历史列表
+    function openWinPlateNum(){
+        api.openWin({
+            name: 'plate_num_win',
+            url: '../car_plate/plate_num_win.html',
+        });
+    }
+    //预约时间选择器
+    function openWinDateSelect(){
+        api.openWin({
+            name: 'date_select_win',
+            url: '../unit/date_select_win.html',
+            pageParam: {
+                winName: 'newcar_check_partOne_win'
+            }
+        });
+    }
+    //地址列表页面
+    function openWinAddress(addrid){
+        api.openWin({
+            name: 'address_list_win',
+            url: '../address/address_list_win.html',
+            pageParam: {
+                addrid: addrid,
+                origin: api.winName
+            }
+        });
+    }
+    function openWinPay(){
+
+    }
+/*跳转END*/
+
+    function getAddressDetail(addrid){
+        tea.showp('加载中...')
+        api.ajax({
+            url: website + 'exempt_api.php?action=addrinfo',
+            method: 'post',
+            timeout: 30,
+            data: {
+                values: {
+                    ID: $api.getStorage('ID'),
+                    addrid: addrid,
+                },
+            }
+        },function(ret,err){
+            api.hideProgress();
+            if(ret.succ == '1'){
+                vm.address = ret.data
+            }
+        });
+    }
+
+    //检查是否是vip车辆
+    function checkcarnum(carnum){
+        api.ajax({
+            url: website + 'api.php?action=checkcarnum',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                    userid: $api.getStorage('ID'),
+                    carnum: vm.province+vm.number,
+                    car_type: values.carColor,
+                    telphone: vm.address.tel
+                }
+            }
+        },function(ret,err){
+//            _alert(ret);
+        });
+    }
+    //保存订单信息
+    function saveOrder(){
+        tea.showp('提交订单中...','请稍候',true);
+        api.ajax({
+            url: website + 'exempt_api.php?action=save',
+            method: 'post',
+            timeout: 30,
+            data: {
+                values: {
+                    ID: $api.getStorage('ID'),
+                    carnum: vm.province+vm.number,
+                    booktime: vm.time,
+                    addrid: vm.address.addrid,
+                },
+            }
+        }, function (ret, err) {
+            api.hideProgress();
+//            _alert(ret);
+            if(!ret){
+                tea.toast('ajax');
+                return false;
+            };
+            if(ret.succ == '1'){
+                if(ret.data.money == 0){  //如果后台返回金额为0，车辆为vip车辆，直接提示成功
+                    toSuccess();
+                }else{
+                    var value = {
+                        payid: ret.data.payid,
+                        paymoney: ret.data.money,
+                        mtype: ret.data.mtype,
+                    }
+                    toPay(value);
+                }
+            }
+            api.toast({
+                msg: ret.msg,
+                duration: 2000,
+                location: 'middle'
+            });
+        });
+    }
+    function toPay(value){
+        api.openWin({
+            name: 'pay_win',
+            url: '../pay/pay_win.html',
+            pageParam: {
+                title:'支付六年免检',
+                money: value.paymoney,
+                type: 'exempt',
+                values: value
+            },
+            vScrollBarEnabled: false
+        });
+    }
+    function toSuccess(){
+         var datas = {
+             '0': ['由于您需要办理的车辆已经加入VIP','您无需缴纳任何费用'],
+             '1': ['小马哥工作人员将会联系您','请保持手机通畅...']
+         }
+         api.openWin({
+             name: 'success_win',
+             url: '../unit/success_win.html',
+             bounces: false,
+             pageParam: {
+                 title: '提交成功页',
+                 result: '提交成功',
+                 data: datas
+             }
+         });
+     }
+</script>
+</html>

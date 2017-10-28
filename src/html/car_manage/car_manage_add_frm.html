@@ -1,0 +1,577 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>car-manage-add</title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            height: 100%;
+            overflow: auto;
+        }
+
+        .aui-list-item-right {
+            max-width: 60% !important;
+            font-size: 0.8rem !important;
+            color: #333 !important;
+        }
+
+        .aui-list-item-input {
+            padding-right: 0 !important;
+        }
+        .aui-list-item-input input{
+            text-align: right;
+        }
+        .aui-btn {
+            width: 66.6%;
+            height: 2.3rem;
+            line-height: 2.3rem;
+            margin: 2rem auto 1rem;
+            border-radius: 0;
+        }
+        .clear-btn {
+            display: -webkit-box;
+            -webkit-box-pack: center;
+            -webkit-box-align: center;
+            width: 1.1rem;
+            height: 1.1rem;
+            background: #ededed;
+            border-radius: 50%;
+            line-height: 0.6rem;
+            text-align: center;
+            float: left;
+            color: #fff;
+        }
+        .plate-img {
+            margin: 0.75rem 0;
+            width: 3.75rem;
+            height: 2.5rem;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="aui-content">
+        <ul class="aui-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title tea-text-star-red">车牌号码</div>
+                    <div class="aui-list-item-right">
+                        <div class="aui-list-item aui-padded-l-0" style="justify-content: flex-end;">
+                            <div class="aui-list-item-label aui-font-size-16" tapmode onclick="openWinPlateProvince()" style="width: 3rem">
+                                <span v-text="plateProvince" id="plate-province" class="tea-text-title tea-text-arrow-down">桂E</span>
+                            </div>
+                            <div class="aui-list-item-input aui-padded-r-0" style="width: 45%">
+                                <input v-value="plateNum" id="plate-num" type="text" placeholder="输入5位数" tapmode>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title tea-text-star-red">车型</div>
+                    <div class="aui-list-item-right">
+                        <span tapmode onclick="setCarType(1)">
+                            <span id="blue-radio" class="aui-radio aui-margin-r-10" v-class-aui-checked="computedCartype(1)"></span>
+                            <span>蓝牌</span>
+                        </span>
+                        <span tapmode onclick="setCarType(2)">
+                            <span id="yellow-radio" class="aui-radio aui-margin-r-10 aui-margin-l-15" v-class-aui-checked="computedCartype(2)"></span>
+                            <span>黄牌</span>
+                        </span>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title tea-text-star-red">行驶证所有人</div>
+                    <div class="aui-list-item-right">
+                        <div class="aui-list-item-input">
+                            <input id="real-name" type="text" placeholder="请输入姓名" tapmode v-value="realName">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title tea-text-star-red">手机号码</div>
+                    <div class="aui-list-item-right">
+                        <div class="aui-list-item-input">
+                            <input id="tel" class="aui-margin-r-10" type="text" placeholder="请输入车主手机号码" tapmode v-value="tel" required>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item" tapmode onclick="openWinMedia()">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title">上传行驶证</div>
+                    <div class="aui-list-item-text aui-pull-right">
+                        <span id="upload" class="tea-text-blue" v-unless="plateImg">上传</span>
+                        <span id="clear-btn" class="clear-btn aui-margin-r-5 tea-big" tapmode onclick="clearImg(event)" v-if="plateImg">
+                            <i class="aui-iconfont aui-icon-close"></i>
+                        </span>
+                        <img id="plate-img" class="plate-img" v-src="plateImg" v-if="plateImg">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item" tapmode onclick="openWinPicker(0)">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title">审车到期时间</div>
+                    <div class="aui-list-item-right">
+                        <span v-text="checkRemindTime" id="check-remind-time" v-class-tea-text-blue="isRemind(0)">未填写</span>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item aui-hide" v-unless="isRemind(0)" tapmode onclick="setRemind(this)">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title">审车到期提醒</div>
+                    <div class="aui-list-item-right">
+                        <label id="check-remind" class="aui-switch aui-checked"></label>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item" tapmode onclick="openWinPicker(1)">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title">保险到期时间</div>
+                    <div class="aui-list-item-right">
+                        <span v-text="insureRemindTime" id="insure-remind-time" v-class-tea-text-blue="isRemind(1)">未填写</span>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item aui-hide" v-unless="isRemind(1)" tapmode onclick="setRemind(this)">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title">保险到期提醒</div>
+                    <div class="aui-list-item-right">
+                        <label id="insure-remind" class="aui-switch aui-checked"></label>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title"></div>
+                    <div class="aui-list-item-right" tapmode onclick="setVip()">
+                        <div id="vip-radio" class="aui-radio aui-margin-r-10" v-class-aui-checked="vipRadio"></div>
+                        <span class="tea-text-blue">加入VIP</span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <footer>
+        <div id="save-btn" class="aui-btn aui-btn-block tea-bg-light-blue aui-text-white" v-class-tea-active="saveBtn()"
+             tapmode onclick="submit()">确认保存</div>
+    </footer>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {};
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    initVar();
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+    // ajax请求数据
+    getData();
+
+    vm.scan();
+    vm.addEventListener();
+
+};
+
+/**********************************初始化变量**********************************/
+function initVar(){
+
+    // dom = {
+    //     plateNum: $api.byId('plate-num'),
+    //     plateProvince: $api.byId('plate-province'),
+    //     blueRadio: $api.byId('blue-radio'),
+    //     yellowRadio: $api.byId('yellow-radio'),
+    //     realName: $api.byId('real-name'),
+    //     tel: $api.byId('tel'),
+    //     insureRemindTime: $api.byId('insure-remind-time'),
+    //     checkRemindTime: $api.byId('check-remind-time'),
+    //     vipRadio: $api.byId('vip-radio'),
+    //     saveBtn: $api.byId('save-btn'),
+    //     plateImg: $api.byId('plate-img'),
+    //     upload: $api.byId('upload'),
+    //     clearBtn: $api.byId('clear-btn')
+    // };
+    dom = $api.domAll('[v-value],[v-if],[v-text],[v-src],[v-class-aui-checked],[v-class-tea-active],[v-unless]');
+
+
+    data = {
+    };
+
+    values = {
+        ID: $api.getStorage('ID'),
+        plateProvince: '桂E',
+        plateNum: '',
+        cartype: 1,
+        realName: $api.getStorage('nickname'),
+        tel: $api.getStorage('telphone'),
+        plateImg: null,
+        insureRemindTime: '未填写',
+        checkRemindTime: '未填写',
+        insureRemind: false,
+        checkRemind: false,
+        vipRadio: false,
+        saveBtn: function(){
+            return !check();
+        },
+        computedCartype: function(type_){
+            if (this.cartype == type_) {
+                return true;
+            }
+            return false;
+
+        },
+        isRemind: function(type_){
+            if (type_ == 0) {
+                return this.checkRemindTime == '未填写';
+            }
+            if (type_ == 1) {
+                return this.insureRemindTime == '未填写';
+            }
+        }
+    };
+
+    updateHTML();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+    api.addEventListener({
+        name: 'selectPlateProvince'
+    }, function(ret, err){
+        if( ret ){
+            vm.set('plateProvince', ret.value.province + ret.value.city);
+        }else{
+            //alert( JSON.stringify( err ) );
+        }
+    });
+
+    api.addEventListener({
+        name: 'sendImg'
+    }, function(ret, err){
+        if( ret ){
+            if (ret.value.to != 'car_manage_add_frm') {
+                return;
+            }
+            api.closeWin({
+                name: 'media_win'
+            });
+            vm.set('plateImg', ret.value.img[0]);
+        }else{
+            alert( JSON.stringify( err ) );
+        }
+    });
+
+    api.addEventListener({
+        name: 'pickerSure'
+    }, function(ret, err){
+        if( ret ){
+            var time = ret.value.option.join('-');
+            if (ret.value.index == 0) {
+                vm.set('checkRemindTime', time);
+            }
+            if (ret.value.index == 1) {
+                vm.set('insureRemindTime', time);
+            }
+            //alert( JSON.stringify( ret ) );
+        }else{
+            alert( JSON.stringify( err ) );
+        }
+    });
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+
+}
+
+/**********************************更新变量**********************************/
+function updateVar(){
+
+
+}
+
+function updateDom(){
+
+
+
+}
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+// 打开选择车牌地区简称窗口
+function openWinPlateProvince(){
+    event.stopPropagation();
+    api.openWin({
+        name: 'plateProvince',
+        url: '../car_plate/plate_province_win.html',
+        pageParam: {
+            name: 'test'
+        }
+    });
+}
+
+function openWinMedia(){
+    api.openWin({
+        name: 'media_win',
+        url: '../unit/media_win.html',
+        pageParam: {
+            to: 'car_manage_add_frm',
+            type: 'picture',
+            limit: 1
+        }
+    });
+}
+
+function openWinPicker(index){
+    var datatime = new Date();
+    var yearNow = datatime.getFullYear();
+    var yearStart = yearNow + 1;
+    var yearEnd = yearNow + 7;
+    api.openFrame({
+        name: 'picker_frm',
+        url: '../unit/picker_frm.html',
+        pageParam: {
+            index: index,
+            height: 225,
+            rows: 5,
+            option: [yearStart, 1, 1],
+            options: [{
+                tag: '年',
+                scope: yearStart + '-' + yearEnd
+            }, {
+                tag: '月',
+                scope: '1-12'
+            },{
+                tag: '日',
+                scope: '1-31'
+            }]
+        }
+    });
+}
+
+function clearImg(e){
+    e.stopPropagation();
+    vm.set('plateImg', '');
+}
+
+// 选择车辆类型
+function setCarType(index_){
+    vm.set('cartype', index_);
+}
+
+function setVip(){
+    vm.set('vipRadio', !values.vipRadio);
+}
+
+function setRemind(el){
+    var switchEl = $api.dom(el, '.aui-switch');
+    tea.toggle(switchEl, 'aui-checked');
+}
+
+function submit(){
+
+    var errorMsg = check();
+
+    if (errorMsg) {
+        tea.toast('fail', errorMsg);
+        return false;
+    }
+
+
+    api.showProgress({
+        style: 'default',
+        animationType: 'fade',
+        title: '提交数据中...',
+        text: '请稍候...',
+        modal: true
+    });
+    if (values.plateImg) {
+        // 压缩图片
+        tea.imgCompress(values.plateImg, 0.8, 0.8, upload);
+    }
+    else {
+        post();
+    }
+
+}
+/**********************************其他函数**********************************/
+function check(){
+    var rule = new tea.checkRule();
+    rule.add(values.plateNum, [{
+        condition: 'isNoEmpty',
+        errorMsg: '请输入车牌号码'
+    }]);
+    rule.add(values.realName, [{
+        condition: 'isNoEmpty',
+        errorMsg: '请输入车主姓名'
+    }]);
+    rule.add(values.tel, [{
+        condition: 'isPhone',
+        errorMsg: '请输入格式正确</br>的手机号码'
+    }]);
+    // rule.add(values.plateImg, [{
+    //     condition: 'isNoEmpty',
+    //     errorMsg: '请上传行驶证'
+    // }]);
+    var errorMsg = rule.start();
+    return errorMsg;
+}
+
+
+function upload(file){
+    var url = website + 'upxs.php';
+    uploadImg(url, file, post);
+}
+
+// 上传图片
+// url：上传的url地址
+// data：上传的文件
+// callback：上传成功返回地址
+function uploadImg(url, file, callback){
+
+    var json = {
+        userid : values.userid
+    };
+    api.ajax({
+        url : url,
+        method : 'post',
+        timeout : 30,
+        dataType : 'json',
+        returnAll : false,
+        data : {
+            values : json,
+            files : {
+                "upfile" : file
+            }
+        }
+    }, function(ret, err) {
+        if (ret) {
+            if (ret.statu == 1) {
+                callback(ret.path);
+            } else if (ret.statu == 0) {
+                alert("上传失败");
+            }
+        } else {
+            // api.alert({
+            //     msg : ('错误码：' + err.code + '；错误信息：' + err.msg + '；网络状态码：' + err.statusCode)
+            // });
+        }
+    });
+}
+
+
+function post(url){
+    var checkRemindEl = $api.byId('check-remind');
+    var insureRemindEl = $api.byId('insure-remind');
+    var checkRemind = $api.hasCls(checkRemindEl, 'aui-checked')? 0 : 30;
+    var insureRemind = $api.hasCls(insureRemindEl, 'aui-checked')? 0 : 30;
+    var json = {
+        ID: $api.getStorage('ID'),
+        ntime: values.checkRemindTime,
+        btime: values.insureRemindTime,
+        sctips: checkRemind,
+        bxtips: insureRemind,
+        cpm: values.plateProvince + values.plateNum,
+        xszr: values.realName,
+        cartype: values.cartype,
+        xszimg: url,
+        tel: values.tel
+    }
+
+    api.ajax({
+        url: website + '?action=addcar',
+        method: 'post',
+        data: {
+            values: json
+        }
+    },function(ret, err){
+        api.hideProgress();
+        if (ret) {
+            api.sendEvent({
+                name: 'carManageInfoChange'
+            });
+            tea.toast('success', '提交成功');
+            if (values.vipRadio) {
+                api.openWin({
+                    name: 'vip_join_win',
+                    url: '../vip/vip_join_win.html',
+                    pageParam: {
+                        carid:  ret.carid
+                    }
+                });
+            }
+            else {
+                api.closeWin();
+            }
+            //alert( JSON.stringify( ret ) );
+        } else {
+            alert( JSON.stringify( err ) );
+        }
+    });
+}
+
+
+</script>
+</html>

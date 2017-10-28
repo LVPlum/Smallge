@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui_old.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+</head>
+<style type="text/css">
+body {background-color: #256dce}
+</style>
+<body>
+            <div class="aui-content">
+                <div class="aui-btn aui-btn-warning aui-pull-left" tapmode onclick="selectok();">取消</div>
+                <div class="aui-btn aui-btn-success aui-pull-right" tapmode onclick="selectok();">确定</div>
+            </div>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript">
+apiready = function() {
+    api.parseTapmode();
+		var UICustomPicker = api.require('UICustomPicker');
+		var datatime = new Date();
+		var years = datatime.getFullYear() + 1;
+		var years2 = datatime.getFullYear() + 7;
+		UICustomPicker.open({
+		    rect: {
+		        x: 0,
+		        y: 60,
+		        w: api.frameWidth,
+		        h: api.frameHeight
+		    },
+		    styles: {
+		        bg: '#ffffff',
+		        normalColor: '#959595',
+		        selectedColor: '#000000',
+		        selectedSize: 36,
+		        tagColor: '#3685dd',
+		        tagSize: 10
+		    },
+		    data: [{
+		        tag: '年',
+		        scope: years + '-' + years2
+		    }, {
+		        tag: '月',
+		        scope: '1-12'
+		    },{
+		        tag: '日',
+		        scope: '1-31'
+		    }],
+		    rows: 5,
+		    fixedOn: api.frameName,
+		    fixed: true,
+		    autoHide: false
+		}, function( ret, err ){
+		    if( ret ){
+				if (typeof ret.data == 'undefined') {
+					return;
+				}
+		         api.sendEvent({
+				    name: 'selecttime',
+				    extra: {
+				        pagetype: api.pageParam.pagetype,
+				        time1: ret.data[0],
+				        time2: ret.data[1],
+				        time3: ret.data[2]
+				    }
+				 });
+		    }else{
+		         alert( JSON.stringify( err ) );
+		    }
+		});
+};
+function selectok(){
+     api.closeFrame();
+}
+
+</script>
+</html>

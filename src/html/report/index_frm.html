@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/common.css" />
+</head>
+<style type="text/css">
+.re {color:#4F59DD}
+.ans{color:#ED4040}
+</style>
+<body> 
+<div class="aui-content">
+<ul class="aui-list-view" id="list">
+        <li class="aui-list-view-cell">
+
+        </li>
+</ul>        
+</div>     
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript">
+var ID = null;
+apiready = function() {
+    ID = $api.getStorage('ID'); 
+    api.parseTapmode();   
+    loaddate(); 
+	api.addEventListener({
+	    name: 'addok'
+	}, function(ret, err){
+       loaddate(); 
+	}); 
+	api.addEventListener({
+	    name: 'rereportcount'
+	}, function(ret, err){
+       loaddate();
+	});	    
+};
+function loaddate(){
+showp('数据加载中...','请稍候');
+	api.ajax({
+	    url: website + 'report.php?action=list',
+	    method: 'post',
+	    timeout: 30,
+	    dataType: 'json',
+	    returnAll:false,
+	    data:{
+	        values: {ID: ID},
+	    }	    
+	},function(ret,err){
+	    if (ret) {
+	    var html = '';
+        for (var i = 0, len = ret.length; i < len; i++) {
+            var r = ret[i];
+            html += '<li class="aui-list-view-cell re" onclick="openinfo('+ r.ID +')"><div class="aui-arrow-right aui-ellipsis-1">' + r.report;
+            if(r.answer_count > 0){
+               html +='<p class="ans">[管理员答复了'+ r.answer_count +'次]</p>';
+            }
+            html += '<div class="aui-badge aui-badge-info">'+ r.noread +'</div></div></li>';
+            }
+        $api.html($api.byId('list'),html);            
+	    }
+	    api.hideProgress(); 
+	});   
+}
+function openinfo(answerid){
+		api.openWin({
+	        name: 'report_info_win',
+	        url: './report_info_win.html',
+	        pageParam: {id: answerid},
+	        vScrollBarEnabled: false
+	   	 });
+}
+</script>
+</html>

@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <link rel="stylesheet" type="text/css" href="../../css/aui20/aui.2.0.css" />
+</head>
+<body>
+    <header class="aui-bar aui-bar-nav" id="aui-header">
+        <a class="aui-btn aui-pull-left" tapmode onclick="closeWin()">
+            <span class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <div class="aui-title">新窗口</div>
+    </header>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript">
+var telphone = null; token = null;
+    apiready = function(){
+    	telphone = $api.getStorage('telphone');
+    	token = $api.getStorage('token');
+        api.parseTapmode();
+        var header = $api.byId('aui-header');
+        $api.fixIos7Bar(header);
+        $api.fixStatusBar(header);// 马秋强，添加 2017-4-24
+        var headerPos = $api.offset(header);
+        var body_h = $api.offset($api.dom('body')).h;
+        var url = api.pageParam.url + '&telphone=' + telphone + '&token=' + token;
+        api.openFrame({
+            name: 'wd_content_frm',
+            url: url,
+            bounces: false,
+ 	    	vScrollBarEnabled: false,
+	   		hScrollBarEnabled: false,
+            rect: {
+                x: 0,
+                y: headerPos.h,
+                w: 'auto',
+                h: 'auto'
+            }
+        })
+
+
+    };
+    function closeWin(){
+        api.closeToWin({
+            name: 'main_win'
+        });
+    }
+</script>
+</html>

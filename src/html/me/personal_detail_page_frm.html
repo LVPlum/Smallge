@@ -1,0 +1,652 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>个人详情页</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+		html,body {
+            height: 100%;
+            overflow: auto;
+            background-color: #f2f5f8;
+		}
+        .header{
+            width: 100%;
+            /*height: 15rem;*/
+            background-color: #fff;
+            overflow: hidden;
+        }
+        .header-bg-img{
+            width: 100%;
+            height: 8.15rem;
+            position: relative;
+            webkit-filter: blur(13px) brightness(1) grayscale(0.2);
+            filter: blur(13px) brightness(1) grayscale(0.2);
+            overflow: hidden;
+        }
+        .header-footer-top{
+            width: 100%;
+            height: 3rem;
+            line-height: 3.7rem;
+            text-align: center;
+            display: block;
+        }
+        .user-head{
+            width: 4rem;
+            height: 4rem;
+            position: absolute;
+            top: -2.5rem;
+            left: 50%;
+            margin: 0 -2rem;
+            border: 2px solid #fff;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        .user-head>img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .header-user-name{
+            width: 100%;
+            /*font-size: 0.7rem;*/
+            text-align: center;
+            color: #333;
+        }
+
+        .user-rank{
+            padding: 0 0.4rem;
+            line-height: 1.4;
+            font-size: 0.6rem;
+            color: #fff;
+            background-color: #3399ff;
+            border-radius: 10px;
+        }
+        .header-footer-bottom{
+            width: 100%;
+            height: auto;
+        }
+        .aui-list .aui-list-item-right, .aui-list-item-title-row em {
+            max-width: 80%;
+            position: relative;
+            padding: 0;
+            padding-left: 0.75rem;
+            font-size: 0.6rem;
+            color: #757575;
+            margin: 0;
+
+        }
+        .aui-list .aui-list-item-inner {
+            position: relative;
+            min-height: 1.2rem;
+            padding-right: 0.75rem;
+            width: 100%;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-flex: 1;
+            -webkit-box-pack: start;
+            -webkit-justify-content:flex-start ;
+            justify-content: flex-start;
+            -webkit-box-align: start;
+            -webkit-align-items: flex-start;
+            align-items: start;
+        }
+        .introduce{
+            overflow : hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        .upload-img{
+            height: 0;
+            padding-bottom: 100%;
+            background: no-repeat 50%;
+            background-size: cover;
+        }
+
+        .aui-card-list-header, .aui-card-list-footer {
+            position: relative;
+            min-height: 2.2rem;
+            padding: 0.5rem 0.75rem;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-pack: justify;
+            -webkit-justify-content: space-around;
+            justify-content:space-around;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
+            align-items: center;
+
+        }
+        footer{
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+        #back{
+        	width:1.4rem;
+        	height:1.4rem;
+        	position:absolute;
+        	top:1.4rem;
+        	left:0.75rem;
+        	line-height:1.4rem;
+        	text-align:center;
+        	color:#fff;
+        	background-color: rgba(0,0,0,0.5);
+        	border-radius:999px;
+        	z-index: 9999;
+        }
+        .icon-close{
+            width: 1rem;
+            height: 1rem;
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            text-align: center;
+            line-height: 1rem;
+            color: #fff;
+            background-color: rgba(255,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+	 <div class="aui-card-list header aui-margin-b-10"style="position: relative;">
+	 	<div id="back" class="aui-iconfont aui-icon-left" tapmode onclick="closeWin()"></div>
+        <div class="aui-card-list-content header-bg-img">
+            <img id="user-head-bg" src="../../image/3.jpg" style="width: 100%;height: 100%; object-fit: cover;">
+        </div>
+        <div class="list-footer" style="padding: 0.5rem 0.75rem;position: relative;">
+           <div class="header-footer-top">
+               <div class="user-head"><img id="user-head-img" src="../../image/3.jpg" alt="头像"></div>
+               <div class="header-user-name">
+                   <span id="user-name" class="user-name"></span>
+                   <span id="user-rank" class="user-rank"></span>
+               </div>
+           </div>
+           <div class="header-footer-bottom">
+               <ul class="aui-list aui-list-in aui-list-noborder">
+                   <li>
+                       <div class="aui-list-item-inner">
+                           <div class="aui-list-item-title aui-font-size-14" style="color: #999;">手机号码</div>
+                           <div class="aui-list-item-right aui-font-size-14" style="color: #333;">
+                               <div id="user-phone"></div>
+                           </div>
+                       </div>
+                   </li>
+                   <li>
+                       <div class="aui-list-item-inner" style="margin: 0; padding: 0">
+                           <div class="aui-list-item-title aui-font-size-14"  style="color: #999;">个人简介</div>
+                           <div class="aui-list-item-right aui-font-size-14"  style="color: #333;">
+                               <div id="introduce" class="introduce">未填写</div>
+                           </div>
+                       </div>
+                   </li>
+               </ul>
+           </div>
+        </div>
+    </div>
+    <div class="aui-list-item-inner aui-padded-10" style="background-color: #fff; margin-bottom: 2.5rem;">
+        <p>个人风采</p>
+        <div class="aui-row aui-row-padded">
+            <!--<div class="aui-col-xs-4">-->
+                <!--<div class="upload-img" style="background-image: url('骏马app/img/3.jpg')"></div>-->
+                <!--<div  class="icon-close">&times;</div>-->
+            <!--</div>-->
+            <!--<div class="aui-col-xs-4">-->
+                <!--<div class="upload-img" style="background-image: url('骏马app/img/4.jpg')"></div>-->
+            <!--</div>-->
+            <!--<div class="aui-col-xs-4">-->
+                <!--<div class="upload-img" style="background-image: url('骏马app/img/1.jpg')"></div>-->
+            <!--</div>-->
+            <!--<div class="aui-col-xs-4">-->
+                <!--<div class="upload-img" style="background-image: url('骏马app/img/2.jpg')"></div>-->
+            <!--</div>-->
+            <div id="add-img-btn" class="aui-col-xs-4"  tapmode onclick="addImg()">
+                <div class="upload-img" style="background-image: url('../../image/xinxian_jia@2x.png')"></div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div class="aui-card-list aui-margin-0">
+            <div class="aui-card-list-header" style="color: #3399ff;">
+               <div id="msgsnd-btn" tapmode  onclick="tea.toast('disable')">发消息</div>
+               <div id="look-news-btn" tapmode  onclick="tea.toast('disable')">查看新鲜事</div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/zepto.min.js"></script>
+
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+var uiMediaScanner = null, imageFilter = null, imageBrowser = null;
+var isIOS = false;
+var id = null; // 自己的ID
+var imgs = [];
+/**********************************apiready**********************************/
+apiready = function(){
+		api.parseTapmode();
+		uiMediaScanner = api.require('UIMediaScanner');
+		// 引入过滤压缩模块
+		imageFilter = api.require("imageFilter");
+		// 引入图片浏览模块
+		imageBrowser = api.require('imageBrowser');
+		// 判断是否是IOS系统
+		isIOS = api.systemType == "ios" ? true : false;
+		var url = website+'api.php?action=get_id_by_friends_info';
+	        id = api.pageParam.id; // 自己的ID
+		var data = {fid:id};
+		api.showProgress({
+		    title: '正加载中...',
+		    text: '先喝杯茶...',
+		    modal: false
+		});
+		// 如果传过来的ID等于自己的ID就隐藏  发消息的按钮
+		if(id == $api.getStorage('ID')){
+			$api.byId('msgsnd-btn').style.display = 'none';
+			$api.byId('add-img-btn').style.display = 'block';
+			$(".icon-close").show();
+		}else{
+			$api.byId('msgsnd-btn').style.display = 'block';
+			$api.byId('add-img-btn').style.display = 'none';
+			$(".icon-close").hide();
+		}
+	_ajax(url,data,{},function(data){
+		var nickname = data.nickname;//昵称
+		var telphone = data.telphone;// 手机号码
+		var token = data.token;//token
+		var id = data.ID;// 用户ID
+		var img = data.img;//头像缩略图
+		var bimg = data.bimg;//头像大图
+		var profile = data.profile || '未填写';//签名
+		var tx = data.tx;//头衔
+		var imglist = data.imglist;//个人风采6张图
+		$api.attr($api.byId('user-head-bg'), 'src', img);
+		$api.attr($api.byId('user-head-img'), 'src', img);
+		$api.html($api.byId('user-phone'), telphone);
+		$api.html($api.byId('introduce'), profile);
+		$api.html($api.byId('user-name'), nickname);
+		$api.html($api.byId('user-rank'), tx);
+		if(imglist){
+//				alert($api.jsonToStr(imglist));
+			for(var i = 0; i< imglist.length; i++){
+				var src = website+'userfc_img/'+imglist[i].pic;
+
+				imgs.push(src);
+				//alert(imgs);
+				var odiv = '<div class="aui-col-xs-4" >'+
+				                '<div  tapmode onclick="openImageBrowser('+i+')"  data-src="'+website+'userfc_img/'+imglist[i].pic+'" class="upload-img upload-imgs" style="background-image:url('+website+'userfc_img/'+imglist[i].pic+')"></div>'+
+				                '<div  class="icon-close" data-img="'+website+'userfc_img/'+imglist[i].pic+'" data-src="'+imglist[i].pic+'" tapmode onclick="closeImg(this);">&times;</div>'+
+				            '</div>';
+				$api.before($api.byId('add-img-btn'),odiv);
+
+				api.parseTapmode();
+			}
+			if(imglist.length > 5){
+				$("#add-img-btn").hide();
+			}else{
+				$("#add-img-btn").show();
+			}
+			// 如果传过来的ID等于自己的ID就隐藏  发消息的按钮
+			if(id == $api.getStorage('ID')){
+				$api.byId('msgsnd-btn').style.display = 'none';
+				$(".icon-close").show();
+			}else{
+				$api.byId('msgsnd-btn').style.display = 'block';
+				$(".icon-close").hide();
+			}
+
+		}
+		api.hideProgress();
+
+	});
+
+};
+
+/**********************************声明全局变量**********************************/
+// 声明全局变量
+var dom = {};
+var addimgLen = 0;//上传图片的默认张数
+// 声明DOM对象
+var data = {}, values = {};
+
+// 回退关闭窗口
+function closeWin(){
+    api.closeWin();
+}
+
+
+/**********************************其他函数**********************************/
+// 生成guid,主要用于生成随机文件名
+function NewGuid() {
+	function S4() {
+		return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+	}
+
+	return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+}
+// 获取当前的时间，拼接成2015-11-09这样的格式，主要用于对图片进行时间分类
+function getNowFormatDate() {
+	var date = new Date();
+	var seperator1 = "-";
+	var year = date.getFullYear();
+	var month = date.getMonth() + 1;
+	var strDate = date.getDate();
+	if (month >= 1 && month <= 9) {
+		month = "0" + month;
+	}
+	if (strDate >= 0 && strDate <= 9) {
+		strDate = "0" + strDate;
+	}
+	var currentdate = year + seperator1 + month + seperator1 + strDate
+	return currentdate;
+}
+// 获取文件拓展名
+function getExt(fileName) {
+	return fileName.substring(fileName.lastIndexOf('.') + 1);
+}
+// 图片压缩
+// imgsrc：源图片的路径
+// quality：图片压缩质量，一般建议0.5
+// scale：图片压缩比例，也是建议0.5
+// ext：源图片拓展名
+// callback：转换成功之后回调函数
+function imgCompress(imgsrc, quality, scale, ext, callback) {
+	// 压缩文件的保存目录
+	var savePath = api.cacheDir + "/" + getNowFormatDate() + "/";
+	// 压缩文件生成的随机文件名称
+	var savename = NewGuid() + "." + ext;
+	imageFilter.compress({
+		img : imgsrc,
+		quality : quality,
+		scale : quality,
+		save : {
+			album : false,
+			imgPath : savePath,
+			imgName : savename
+		}
+	}, function(ret, err) {
+		if (ret) {
+			callback(savePath + savename);
+		} else {
+			alert(JSON.stringify(err));
+		}
+	});
+}
+
+// 打开图片浏览
+// imgs：需要预览的图片集合
+function openImageBrowser(index){
+	index = index || 0;
+	imageBrowser.openImages({
+		imageUrls : imgs,
+		showList : false,
+		activeIndex : index
+	});
+}
+
+
+ function checkadd(){  //检查+加该不该出现
+	var pc = $('.upload-imgs').length;
+	if(pc < 6){
+//	   if($('.upload-imgs').length === 0){
+	        $("#add-img-btn").show();
+//	      }
+	}else{
+	  		 $("#add-img-btn").hide();
+		}
+}
+// 上传图片
+// url：上传的url地址
+// data：上传的文件
+// callback：上传成功返回地址
+function uploadFile(url, data, callback) {
+	api.ajax({
+		url : url,
+		method : 'post',
+		timeout : 30,
+		dataType : 'json',
+		returnAll : false,
+		data : {
+			files : {
+				"upfile" : data
+			},
+			values: {ID: id}
+		}
+	}, function(ret, err) {
+		if (ret) {
+			if (ret.statu == 1) {
+				callback(ret.path);
+			} else if (ret.statu == 0) {
+				alert("上传失败");
+			}
+		} else {
+			api.alert({
+				msg : ('错误码：' + err.code + '；错误信息：' + err.msg + '；网络状态码：' + err.statusCode)
+			});
+		}
+	});
+}
+
+// 添加图片
+function addImg(){
+
+	api.actionSheet({
+					title : '选择来源',
+		buttons : ['相机拍摄', '浏览相册']
+	}, function(ret, err) {
+		var index = ret.buttonIndex;
+		switch(index) {
+				// 拍照
+				case 1:
+					// 打开拍照
+					api.getPicture({
+						sourceType : "camera",
+						destinationType : "url",
+						mediaValue : "pic",
+						quality : 50,
+						saveToPhotoAlbum : true
+					}, function(ret, err) {
+						if (ret && ret.data) {
+							// 拍照返回的本地路径
+							var returnUrl = ret.data;
+							// 图片压缩
+							showp('图片处理中','请稍候...');
+							imgCompress(returnUrl, 0.5, 0.5, getExt(returnUrl), function(compressImg) {
+							uploadFile(website + "upfc.php", compressImg, function(serverImg) {
+							imgs.push(website+'userfc_img/'+serverImg);
+								  var odiv = '<div class="aui-col-xs-4">'+
+								               '<div  tapmode onclick="openImageBrowser()" data-src="'+website+'userfc_img/'+serverImg+'" class="upload-img upload-imgs" style="background-image:url('+website+'userfc_img/'+serverImg+')"></div>'+
+											   '<div  class="icon-close" data-img="'+website+'userfc_img/'+serverImg+'" data-src="'+serverImg+'" tapmode onclick="closeImg(this)">&times;</div>'+
+								             '</div>';
+								   $api.before($api.byId('add-img-btn'),odiv);
+								   checkadd();
+								   api.parseTapmode();
+								   api.hideProgress();
+								});
+							});
+						} else {
+							api.toast({
+								msg : '没有选择，或者选择出错'
+							});
+						}
+					});
+					break;
+				// 相册
+				case 2:
+					uiMediaScanner.open({
+						type : 'picture',
+						column : 4,
+						classify : true,
+						max : 1,
+						sort : {
+							key : 'time',
+							order : 'desc'
+						},
+						texts : {
+							stateText : '已选*项',
+							cancelText : '取消',
+							finishText : '完成'
+						},
+						styles : {
+							bg : '#fff',
+							mark : {
+								icon : '',
+								position : 'bottom_left',
+								size : 20
+							},
+							nav : {
+								bg : '#b23e4b',
+								stateColor : '#fff',
+								stateSize : 18,
+								cancelBg : 'rgba(0,0,0,0)',
+								cancelColor : '#fff',
+								cancelSize : 18,
+								finishBg : 'rgba(0,0,0,0)',
+								finishColor : '#fff',
+								finishSize : 18
+							}
+						}
+					}, function(ret) {
+						if (ret) {
+						var len = ret.list.length;
+							for(var i = 0; i < len; i++){
+								(function(i){
+								var selectImg = ret.list[i];
+								// 获取图片的路径
+								var selectimgPath = selectImg.path;
+								var selectimgThumbPath = selectImg.thumbPath;
+								// IOS需要将虚拟路径转换为本地路径才可以压缩
+									if (isIOS) {
+										// 转换为真实路径
+										uiMediaScanner.transPath({
+											path : selectimgPath
+										}, function(transObj) {
+											// 图片压缩
+											showp('图片处理中','请稍候...');
+											imgCompress(transObj.path, 0.5, 0.5, selectImg.suffix, function(compressImg) {
+												uploadFile(website + "upfc.php", compressImg, function(serverImg) {
+												imgs.push(website+'userfc_img/'+serverImg);
+												  var odiv = '<div class="aui-col-xs-4" >'+
+												                '<div  tapmode onclick="openImageBrowser()" data-src="'+website+'userfc_img/'+serverImg+'" class="upload-img upload-imgs" style="background-image:url('+website+'userfc_img/'+serverImg+')"></div>'+
+												            	 '<div  class="icon-close"  data-img="'+website+'userfc_img/'+serverImg+'" data-src="'+serverImg+'" tapmode onclick="closeImg(this)">&times;</div>'+
+												             '</div>';
+												   $api.before($api.byId('add-img-btn'),odiv);
+		                                          	checkadd();
+		                                          	api.parseTapmode();
+													api.hideProgress();
+												});
+											});
+										});
+									} else {
+										// 图片压缩
+						                showp('图片处理中','请稍候...');
+										imgCompress(selectimgPath, 0.5, 0.5, selectImg.suffix, function(compressImg) {
+											    uploadFile(website + "upfc.php", compressImg, function(serverImg) {
+											    imgs.push(website+'userfc_img/'+serverImg);
+								 				 var odiv = '<div class="aui-col-xs-4" >'+
+												                 '<div  tapmode onclick="openImageBrowser()" data-src="'+website+'userfc_img/'+serverImg+'" class="upload-img upload-imgs" style="background-image:url('+website+'userfc_img/'+serverImg+')"></div>'+
+												            	 '<div  class="icon-close"  data-img="'+website+'userfc_img/'+serverImg+'" data-src="'+serverImg+'" tapmode onclick="closeImg(this)">&times;</div>'+
+												             '</div>';
+												   $api.before($api.byId('add-img-btn'),odiv);
+		                                           checkadd()
+		                                           api.parseTapmode();
+		                                            api.hideProgress();
+											});
+										});
+									}
+
+								})(i);
+							}
+						}
+					});
+					break;
+
+				}
+			});
+}
+/**********************************功能模块1**********************************/
+// 关闭图片
+function closeImg(me){
+
+	api.confirm({
+			title : '温馨提示',
+			msg : '您确定要删除该图片吗？',
+			buttons : ['确定', '取消']
+		}, function(ret, err) {
+			if (ret.buttonIndex == 1) {
+				api.ajax({
+				    url: website + 'chsysset.php?action=delfc',
+				    method: 'post',
+				    timeout: 30,
+				    dataType: 'json',
+				    returnAll:false,
+				    data:{
+				        values: {pic: $(me).attr("data-src")},
+				    }
+				},function(ret,err){
+				    if (ret.succ == 'ok') {
+						$(me).parent().remove();
+						api.toast({
+							msg : '删除成功！'
+						});
+						imgs.remove_arr($(me).attr("data-img"));
+                        checkadd();
+                        return false;
+				    }
+				});
+			}
+		});
+		  return false;
+
+}
+Array.prototype.indexOf = function(val) {
+            for (var i = 0; i < this.length; i++) {
+                if (this[i] == val) return i;
+            }
+            return -1;
+        };
+Array.prototype.remove_arr = function(val) {
+    var index = this.indexOf(val);
+    if (index > -1) {
+        this.splice(index, 1);
+    }
+};
+
+
+// 阻止冒泡事件
+function fnStopPropagation(e){
+    window.event? window.event.cancelBubble = true : e.stopPropagation();
+}
+</script>
+</html>

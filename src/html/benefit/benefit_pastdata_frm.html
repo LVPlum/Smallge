@@ -1,0 +1,343 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="teletel=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            height: 100%;
+            overflow: auto;
+        }
+        /*针对此页面的框架重写*/
+        .aui-list .aui-list-item{
+            padding: 0rem;
+            margin: 0.75rem;
+        }
+        .aui-list .aui-list-item-media{
+            width: 5rem;
+            height: 5rem;
+            padding: 0;
+        }
+
+        
+        .tea-flex-center{
+            display: flex;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+        .tea-font-size-max {
+            font-size: 2.2rem !important;
+        }    
+        /*div边框的半圆形状，通用*/
+        .tea-content-semicircle:before,.tea-content-semicircle:after{
+            content: "";
+            width: 0.375rem;
+            height: 0.75rem;
+            position: absolute;
+            margin-top: -0.375rem;
+            background: #f2f5f8;
+            z-index: 1;
+        }
+        /*右半圆*/
+        .tea-content-semicircle:before{
+            left: -1px;
+            top: 50%;
+            border-radius: 0 100% 100% 0/50%;
+        }
+        /*左半圆*/
+        .tea-content-semicircle:after{
+            right: -1px;
+            top: 50%;
+            border-radius: 100% 0 0 100%/50%;
+        }
+        /*div边框虚线*/
+        .tea-content-border-dotted:before{
+            content: "";
+            width: 2px;
+            height: 5rem;
+            background-position: left;
+            background-image: linear-gradient(0,#ededed 50%,#fff 50%,transparent 50%);
+            background-size: 1px 8px;
+            position: absolute;
+            left: 0;
+        }
+        /*div边框锯齿状波纹线*/
+        .tea-content-border-sawtooth:after{
+            content: "";
+            width: 3px;
+            height: 5rem;
+            background-size: 3px 5px;
+            background-repeat: repeat-y;
+            background-position: 0 100%;
+            position: absolute;
+            right: 0;
+        }
+        .tea-content-border-sawtooth-bule:after{
+            background-image: -webkit-gradient(radial,0 40%,1,0 50% ,5,from(#3399ff),color-stop(50%, #3399ff),color-stop(50%, #FFF),to(#FFF));
+        }
+        .tea-content-border-sawtooth-yellow:after{
+            background-image: -webkit-gradient(radial,0 40%,1,0 50% ,5,from(#ffcc33),color-stop(50%, #ffcc33),color-stop(50%, #FFF),to(#FFF));
+        }
+        .tea-content-border-sawtooth-light-gray:after{
+            background-image: -webkit-gradient(radial,0 40%,1,0 50% ,5,from(#CCCCCC),color-stop(50%, #CCCCCC),color-stop(50%, #FFF),to(#FFF));
+        }
+        /*￥符号前缀*/
+        .tea-text-white-money{
+            margin-left: 1.2rem;
+        }
+        .tea-text-white-money:before {
+            content: '￥';
+            color: white;
+            font-size: 0.8rem;
+            margin-left: -1.8rem;
+            font-weight: normal;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="app" class="aui-content aui-margin-b-15" v-cloak>
+        <ul class="aui-list aui-media-list tea-bg-default aui-list-noborder" id="benefit_list">
+            <li v-for="(value,index) in list" class="aui-list-item tea-bg-white">
+                <div class="aui-media-list-item-inner tea-content-semicircle">
+                    <div class="aui-list-item-media tea-bg-light-gray tea-flex-center tea-content-border-sawtooth tea-content-border-sawtooth-light-gray">
+                        <div class="aui-text-white tea-text-white-money tea-font-size-max" style="width:2rem; font-weight:bold; text-align: center;">{{ parseFloat(value.coupon_m) }}</div>
+                    </div>
+                    <div class="aui-list-item-inner" style="padding: 0.75rem 0.75rem 0rem 0.75rem;">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title aui-font-size-14 tea-text-title">{{ value.readme }}</div>
+                        </div>
+                        <div class="aui-list-item-text tea-column">
+                            <p v-for="(val,i) in value.content" class="aui-ellipsis aui-font-size-12 tea-text-gray">{{ val }}</p>
+                        </div>
+                        <div class="aui-list-item-text">
+                            <p class="aui-ellipsis aui-font-size-12 tea-text-gray">有效期至：{{ value.end_time.split(" ")[0] }}</p>
+                        </div>
+                    </div>
+                    <div class="aui-list-item-media tea-content-border-dotted tea-flex-center" style="width:2.2rem;">
+                        <div class="tea-text-gray aui-font-size-12" style="width:0.6rem;">已失效</div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <section v-if="list.length == 0" id="nothing" class="tea-nothing" style="margin-top: 6rem">
+            <img src="../../image/nothing.png">
+            <p>您还没有已过期的现金券哦~</p>
+        </section>
+        <!--<ul class="aui-list aui-media-list tea-bg-default aui-list-noborder">
+            <li v-for="list in lists" class="aui-list-item tea-bg-white">
+                <div class="aui-media-list-item-inner tea-content-semicircle">
+                    <div class="aui-list-item-media tea-bg-light-gray tea-flex-center tea-content-border-sawtooth tea-content-border-sawtooth-light-gray">
+                        <div v-if="list.test_id==0" class="aui-text-white aui-font-size-18" style="width:2rem;font-weight:bold;">{{ list.test_value }}</div>
+                        <div v-else class="aui-text-white tea-text-white-money tea-font-size-max" style="width:2rem; font-weight:bold; text-align: center;">{{ list.test_value }}</div>
+                    </div>
+                    <div class="aui-list-item-inner" style="padding:1rem;">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title aui-font-size-14 tea-text-title">{{ list.test_title }}</div>
+                        </div>
+                        <div class="aui-list-item-text">
+                            <p class="aui-ellipsis aui-font-size-12 tea-text-gray">{{ list.test_text }}</p>
+                            <p class="aui-ellipsis aui-font-size-12 tea-text-gray">{{ list.test_text }}</p>
+                        </div>
+                        <div class="aui-list-item-text">
+                            <p class="aui-ellipsis aui-font-size-12 tea-text-gray">有效期至：{{ list.test_time }}</p>
+                        </div>
+                    </div>
+                    <div class="aui-list-item-media tea-content-border-dotted tea-flex-center" style="width:2.2rem;">
+                        <div class="tea-text-gray aui-font-size-12" style="width:0.6rem;">已失效</div>
+                    </div>
+                </div>
+            </li>
+            &lt;!&ndash;<li class="aui-list-item tea-bg-white">
+                <div class="aui-media-list-item-inner tea-content-semicircle">
+                    <div class="aui-list-item-media tea-bg-light-gray tea-flex-center tea-content-border-sawtooth tea-content-border-sawtooth-light-yellow">
+                        <div class="aui-text-white tea-text-white-money tea-font-size-max" style="width:2rem; font-weight:bold;">50</div>
+                    </div>
+                    <div class="aui-list-item-inner" style="padding:1rem;">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title aui-font-size-14 tea-text-title">免费审车券</div>
+                            &lt;!&ndash;<div class="aui-list-item-right">08:00</div>&ndash;&gt;
+                        </div>
+                        <div class="aui-list-item-text">
+                            <p class="aui-ellipsis aui-font-size-12 tea-text-gray">仅限小马哥网约审车使用</p>
+                        </div>
+                        <div class="aui-list-item-text">
+                            <p class="aui-ellipsis aui-font-size-12 tea-text-gray">有效期至：2017.08.08</p>
+                        </div>
+                    </div>
+                    <div class="aui-list-item-media tea-content-border-dotted tea-flex-center" style="width:2.2rem;">
+                        <div class="tea-text-gray aui-font-size-12" style="width:0.6rem;">已失效</div>
+                    </div>
+                </div>
+            </li>&ndash;&gt;
+        </ul>-->
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {};
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    initVar();
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+    // ajax请求数据
+    getData();
+
+};
+
+/**********************************初始化变量**********************************/
+function initVar(){
+
+    dom = {
+    };
+
+    data = {
+    };
+
+    values = {
+    };
+
+    vm = new Vue({
+        el: "#app",
+        data: {
+            list: [],
+        }
+    });
+
+    updateHTML();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+    showp('数据加载中···')
+    api.ajax({
+        url:  website + 'api_cj.php?action=my_coupon',
+        method: 'post',
+        data: {
+            values: {
+                userid: $api.getStorage('ID'),
+                state: '3', //
+            }
+        }
+    }, function (ret, err) {
+        api.hideProgress();
+//        _alert(ret);
+        if(!ret){
+//            tea.toast('ajax');
+            return false;
+        }
+        if(ret){
+            vm.list = ret;
+        }
+    });
+
+}
+
+/**********************************更新变量**********************************/
+function updateVar(){
+
+
+}
+
+function updateDom(){
+
+
+
+}
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************打开Frame**********************************/
+
+/**********************************其他函数**********************************/
+/*function test(){
+    var ret = {
+        list:[{
+            test_value: 50,
+            test_title: "审车现金券",
+            test_text: "仅限小马哥网约审车使用",
+            test_time: "2017.08.08",
+        },{
+            test_value: 88,
+            test_title: "审车现金券",
+            test_text: "仅限小马哥网约审车使用",
+            test_time: "2017.08.08",
+        },{
+            test_id: 0,
+            test_value: "免费审车",
+            test_title: "审车现金券",
+            test_text: "仅限小马哥网约审车使用",
+            test_time: "2017.08.08",
+        }]
+    };
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            lists: ret.list,
+        }
+    });
+};*/
+
+</script>
+</html>

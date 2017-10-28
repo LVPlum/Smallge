@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<!-- aui样式 -->
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+	<!-- 项目通用样式 -->
+	<link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+</head>
+<style type="text/css">
+	html, body {
+		width: 100%;
+		height: 100%;
+		overflow: auto;
+	}
+</style>
+<body>
+    <header class="aui-bar aui-bar-nav aui-bar-light" id="aui-header">
+        <a class="aui-btn  aui-pull-left" id="back">
+			<span class="aui-iconfont aui-icon-left tea-text-title"></span>
+        </a>
+        <div class="aui-title tea-text-title">个人头像</div>
+        <a class="aui-btn aui-pull-right" id="rightbtn" onclick="openset()">
+			<span class="aui-iconfont aui-icon-more tea-text-title"></span>
+        </a>        
+    </header>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/conn.js"></script>
+<script type="text/javascript" src="../../script/zepto.min.js"></script>
+<script type="text/javascript">
+var uiMediaScanner = null, imageFilter = null, imageBrowser = null, showwz = null, ID = null;
+var isIOS = false;
+    apiready = function(){
+        ID = $api.getStorage('ID');
+        		
+		//下面全是用不到的    
+           
+		/*uiMediaScanner = api.require('UIMediaScanner');
+		// 引入过滤压缩模块
+		imageFilter = api.require("imageFilter");
+		// 引入图片浏览模块
+		imageBrowser = api.require('imageBrowser');
+		// 判断是否是IOS系统
+		isIOS = api.systemType == "ios" ? true : false;  */  
+        var header = $api.byId('aui-header');
+        $api.fixIos7Bar(header);
+         $api.fixStatusBar(header);// 马秋强，添加 2017-4-24
+        var headerPos = $api.offset(header);
+        var body_h = $api.offset($api.dom('body')).h;
+        api.openFrame({
+            name: 'setmylogo_frm',
+            url: 'setmylogo_frm.html',
+            bounces: false,
+            vScrollBarEnabled: false,
+            rect: {
+                x: 0,
+                y: headerPos.h,
+                w: headerPos.w,
+                h: 'auto'
+            }
+        });
+        $api.addEvt($api.byId('back'), 'click', function(){
+            api.closeWin();
+        });
+    };
+    function openset(){
+		api.actionSheet({
+			cancelTitle: '取消',
+			buttons: ['拍照','从手机相册选择','保存到相册']
+		},function( ret, err ){
+			if(ret){
+				var type;
+				if(ret.buttonIndex == 1){
+					choose('camera');
+				}
+				else if(ret.buttonIndex == 2){
+					choose('library');
+				}else if(ret.buttonIndex == 3){
+					var url = $api.getStorage('img');
+					downSave(url);
+				}
+			}
+		});
+    }
+function choose(type){
+	api.getPicture({
+		sourceType: type,
+		encodingType: 'jpg',
+		mediaValue: 'pic',
+		destinationType: 'url',
+		allowEdit: true,
+		quality: 100,
+		saveToPhotoAlbum: false
+	}, function(ret, err) {
+		if (ret.data != '') {
+			api.openWin({
+				name: 'cut_pic_win',
+				url: './cut_pic_win.html',
+				pageParam: {
+					data: ret
+				}
+			});
+		} else {
+//							alert(JSON.stringify(err));
+		}
+	});
+}
+
+/*下载并保存,需修改为保存到相册*/
+function downSave(url){
+	api.download({
+		url: url,
+		report: true,
+		cache: true,
+		allowResume: true
+	}, function(ret, err) {
+		if (ret.state == 1) {
+			api.saveMediaToAlbum({
+				path: ret.savePath
+			},function(ret, err){
+				console.log(ret);
+				if (ret && ret.status) {
+					alert('保存成功');
+				} else {
+					alert('保存失败');
+				}
+			});
+		}
+	});
+}
+</script>
+</html>

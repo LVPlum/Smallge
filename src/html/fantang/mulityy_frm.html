@@ -1,0 +1,385 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+	<title></title>
+	<!-- api样式 -->
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<!-- aui样式 -->
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+	<!-- 项目通用样式 -->
+	<link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+		.aui-checkbox{
+			border-radius: .3rem;
+		}
+
+		li:last-child{
+			margin-bottom: 2.2rem;
+		}
+    </style>
+</head>
+<body>
+	<div class="aui-content aui-content-padded" id="app" v-cloak>
+		<ul class="aui-list aui-list-noborder aui-bg-default">
+			<li v-for="(list , i) in msg" class="aui-list-item aui-padded-0 tea-border-radius-10 aui-margin-b-10">
+				<div class="aui-row" style="width: 100%">
+					<div class="aui-col-xs-12 aui-border-b" style="padding: 0.75rem 0">
+						<span class="aui-font-size-14" style="margin-left: 30px">{{ list[0].week }}</span>
+						<span class="aui-font-size-14">{{ list[0].dctime }}</span>
+					</div>
+					<div class="aui-col-xs-6 aui-text-center" style="padding: 0.9rem 0">
+						<span class="aui-font-size-16">{{ list[0].dctype }}</span>
+						<span v-if="list[0].ok==1" class="aui-margin-l-5 aui-checkbox aui-checked"  tapmode @click="toggleCheck(i,0);"></span>
+						<span v-else class="aui-margin-l-5 aui-checkbox"  tapmode @click="toggleCheck(i,0);"></span>
+					</div>
+					<div class="aui-col-xs-6 aui-text-center aui-border-l" style="padding: 0.9rem 0">
+						<span class="aui-font-size-16">{{ list[1].dctype }}</span>
+						<span v-if="list[1].ok==1" class="aui-margin-l-5 aui-checkbox aui-checked" tapmode @click="toggleCheck(i,1);"></span>
+						<span v-else class="aui-margin-l-5 aui-checkbox" tapmode @click="toggleCheck(i,1);"></span>
+					</div>
+				</div>
+			</li>
+			 <!--<li class="aui-list-item aui-padded-0 tea-border-radius-10">
+				 <div class="aui-row" style="width: 100%">
+					 <div class="aui-col-xs-12 aui-border-b" style="padding: 0.75rem 0">
+						 <span class="aui-font-size-14" style="margin-left: 30px">星期日</span>
+						 <span class="aui-font-size-14">2017-07-30</span>
+					 </div>
+					 <div class="aui-col-xs-6 aui-text-center" style="padding: 0.9rem 0">
+						 <span class="aui-font-size-16">早餐</span>
+						 &lt;!&ndash;<input type="checkbox" class="aui-checkbox aui-margin-l-5" value="早餐" tapmode>&ndash;&gt;
+						 <span class="aui-margin-l-5 aui-checkbox aui-checked"></span>
+					 </div>
+					 <div class="aui-col-xs-6 aui-text-center aui-border-l" style="padding: 0.9rem 0">
+						 <span class="aui-font-size-16">午餐</span>
+						 <input type="checkbox" class="aui-checkbox aui-margin-l-5" value="午餐" tapmode>
+					 </div>
+				 </div>
+			 </li>-->
+		</ul>
+	</div>
+<!--<div class="aui-content aui-margin-b-15">
+    <ul class="aui-list aui-list-in">
+        <li class="aui-list-header">
+                                      最长只可以预约未来7天内 &lt;!&ndash;<span class="aui-pull-right aui-text-primary" tapmode onclick="onlysee()">只看中餐</span>&ndash;&gt;
+        </li>
+        <div id="list">
+
+        </div>      
+    </ul>
+</div>  
+<div class="aui-content-padded">
+   <p><div class="aui-btn aui-btn-primary aui-btn-block" tapmode onclick="postdate()">提交预约</div></p>
+</div>  -->
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+<script type="text/javascript">
+
+	/**********************************声明全局变量**********************************/
+// 声明DOM对象
+	var dom = {}, vm = null, data = {};
+
+	/**********************************apiready**********************************/
+	apiready = function(){
+
+		// 初始化变量
+		init();
+
+	};
+
+	/**********************************初始化变量**********************************/
+	function init(){
+
+		dom = {
+			item: '',
+		};
+
+		data = {
+			userid: $api.getStorage('ID'),
+			com: api.pageParam.com,
+			bumen: api.pageParam.bumen,
+			nickname: $api.getStorage('nickname'),
+			telphone: $api.getStorage('telphone'),
+			dc: '',
+			undc: '',
+			value: "",
+			data: false,
+		};
+
+		vm = new Vue({
+			el: '#app',
+			data: {
+				msg:"",
+			},
+			methods: {
+
+			},
+			methods: {
+				toggleCheck: function(index,num){
+					if(vm.msg[index][num].ok == 1){
+						vm.msg[index][num].ok = 0;
+					}else {
+						vm.msg[index][num].ok = 1
+					}
+				},
+				checkedAll: function(){
+					for(i in vm.msg){
+						vm.msg[i][0].ok = 1;
+						vm.msg[i][1].ok = 1;
+					}
+				},
+				unChecked: function(){
+					for(i in vm.msg){
+						vm.msg[i][0].ok = 0;
+						vm.msg[i][1].ok = 0;
+					}
+				}
+			}
+		});
+
+		api.parseTapmode();
+
+		// 初始化模块
+		initModule();
+
+		// 初始化监听
+		initEventListener();
+
+		getData();
+	};
+
+	/**********************************初始化模块**********************************/
+	function initModule(){
+
+
+
+	}
+
+	/**********************************初始化监听**********************************/
+	function initEventListener(){
+		api.addEventListener({
+			name: "postFood",
+		},function(ret,err){
+			for(i in vm.msg){
+				for(k in vm.msg[i]){
+					if(vm.msg[i][k].ok == 1){
+						if(!data.dc){
+							data.dc = vm.msg[i][k].dctime+";"+vm.msg[i][k].dctype;
+						}else{
+							data.dc += ',' + vm.msg[i][k].dctime+";"+vm.msg[i][k].dctype;
+						}
+					}else {
+						if(!data.undc){
+							data.undc = vm.msg[i][k].dctime+";"+vm.msg[i][k].dctype;
+						}else{
+							data.undc += ',' + vm.msg[i][k].dctime+";"+vm.msg[i][k].dctype;
+						}
+					}
+				}
+			}
+			/*if(!data.dc || data.dc == ''){
+				api.alert({msg:('没有点中任何餐')});
+				return false;
+			}*/
+			postData(data.dc,data.undc);
+		})
+	}
+
+	/**********************************ajax请求数据**********************************/
+	function getData(){
+		showp('数据加载中...','');
+		api.ajax({
+			url: website + 'fantang/sm/junmafantang.php?action=mulityy',
+			method: 'post',
+			timeout: 30,
+			dataType: 'json',
+			returnAll:false,
+			data:{
+				values: {userid: data.userid},
+			}
+		},function(ret,err){
+			if (ret) {
+				vm.msg = arrSplit(ret,2);
+            	vm.msg[0][0].week = "明天";
+				vm.msg[1][0].week = "后天";
+				api.hideProgress();
+			}
+		});
+	}
+
+	/**********************************DOM响应**********************************/
+
+	/**********************************其他函数**********************************/
+	function postData(Oncheck,unCheck){
+		showp('数据处理中...','');
+		api.ajax({
+			url: website + 'fantang/sm/junmafantang.php?action=savedc',
+			method: 'post',
+			timeout: 30,
+			dataType: 'json',
+			returnAll:false,
+			data:{
+				values: {userid: data.userid, dc: Oncheck, undc:unCheck , com: data.com, bumen: data.bumen, nickname: data.nickname, telphone: data.telphone},
+			}
+		},function(ret,err){
+			if (ret) {
+				if(ret.succ == 1){
+					api.hideProgress();
+					showok();
+					setTimeout(function(){
+						api.sendEvent({name: 'reflash'});
+						api.closeWin({});
+					}, 2000)
+				}
+			}
+		});
+	}
+	var toast = new auiToast({});
+	function showok(){
+		toast.success({
+			title:"提交成功",
+			duration:2000
+		});
+	}
+	//分组方法
+	function arrSplit(arr,n){
+		var begin = 0;
+		var end = begin + n;
+		var result = [];
+		var  arrLength = arr.length;
+		if (end >= arrLength) {
+			result.push(arr);
+			return result;
+		}
+		while (end < arrLength) {
+			result.push(arr.slice(begin, end));
+			begin = begin + n;
+			end = begin + n;
+			if (end >= arrLength) {
+				end = arrLength;
+				result.push(arr.slice(begin, end));
+				break;
+			}
+		}
+		return result;
+	}
+//	function checkedAll(){
+//		var item = $api.domAll(".aui-checkbox");
+//		for(i in item){
+//			$api.attr(item[i],"checked","checked");
+//		}
+//	}
+//	function unChecked(){
+//		var item = $api.domAll(".aui-checkbox");
+//		for(i in item){
+//			$api.removeAttr(item[i],"checked");
+//		}
+//	}
+</script>
+<!--<script type="text/javascript">
+var userid = null, com = null, bumen = null, nickname = null, telphone = null;
+    apiready = function(){
+    	userid = $api.getStorage('ID');
+    	com = api.pageParam.com;
+    	bumen = api.pageParam.bumen;
+    	nickname = $api.getStorage('nickname');
+    	telphone = $api.getStorage('telphone');
+        api.parseTapmode();
+		loaddate();
+    }
+    function loaddate(){
+    showp('数据加载中...','');
+		api.ajax({
+		    url: website + 'fantang/sm/junmafantang.php?action=mulityy',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {userid: userid},
+		    }
+		},function(ret,err){
+		    if (ret) {
+				alert(JSON.stringify(ret,null,4));
+				var html = '';
+				var obj = $api.byId('list');
+	            for (var i = 0, len = ret.length; i < len; i++) {
+	                var r = ret[i];
+			        html += '<li class="aui-list-item">';
+			        html += '    <div class="aui-list-item-inner">';
+			        html += '        <div class="aui-list-item-title">'+ r.dctime +' '+ r.week +'【'+ r.dctype +'】</div>';
+			        html += '        <div class="aui-list-item-right">';
+			        if(r.ok == 0){
+			        	html += '            <input type="checkbox" class="aui-checkbox" value="'+ r.dctime + ';' + r.dctype +'" data-type="'+ r.dctype +'" name="ok" tapmode>';
+			        }else{
+			        	html += '            已预约';
+			        }
+			        html += '        </div>';
+			        html += '    </div>';
+			        html += '</li>';
+		        }
+			    $api.html(obj, html);
+			    api.hideProgress();
+		    }
+		});
+    }
+    function postdate(){
+		var obj = document.getElementsByName("ok");
+		var dc = null;
+		    for(k in obj){
+		        if(obj[k].checked)
+		        	if(!dc){
+		            	dc = obj[k].value;
+		            }else{
+		            	dc += ',' + obj[k].value;
+		            }
+		    }
+		if(!dc || dc == ''){
+			api.alert({msg:('没有点中任何餐')});
+			return false;
+		}
+		api.ajax({
+		    url: website + 'fantang/sm/junmafantang.php?action=savedc',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {userid: userid, dc: dc, com: com, bumen: bumen, nickname: nickname, telphone: telphone},
+		    }
+		},function(ret,err){
+		    if (ret) {
+				if(ret.succ == 1){
+					showok();
+                    setTimeout(function(){
+			        api.sendEvent({name: 'reflash'});
+                        api.closeWin({});
+                    }, 2000)
+				}
+		    }
+		});
+    }
+    var toast = new auiToast({})
+    function showok(){
+        toast.success({
+            title:"提交成功",
+            duration:2000
+        });
+    }
+</script>-->
+</html>

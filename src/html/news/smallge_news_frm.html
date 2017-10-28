@@ -1,0 +1,370 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/common.css" />
+</head>
+<style type="text/css">
+body{background-color: #FFFFFF}
+.title{font-size:20px; color:#136CE5}
+p{font-size:15px; color: #8F8F94}
+.kb{height: 80px;}
+.otherinfo p { font-size: 15px; margin: 0 15px 3px 5px; display:inline}
+.otherinfo .tx{font-size:18px;}
+.x{
+ height:1px;
+ background: #E7E7E7;
+ overflow:hidden;
+ margin: 0 15px 0 15px;
+ }
+</style>
+<body>
+<div class="aui-text-center title aui-hr" id="title"></div>
+<div class="x">sdsafdsaf</div>
+<div class="aui-content aui-padded-10" id="content"></div>
+	<div class="aui-col-xs-12 otherinfo aui-text-center">
+		<p id="zanj" data-num="3" tapmode onclick="zan()"><span class="aui-iconfont aui-icon-appreciate tx"></span> 赞(<span id="zancount"></span>)</p>
+	    <p tapmode id="share"><span class="aui-iconfont aui-icon-recharge tx"></span>分享</p>
+	</div>
+    <div class="aui-content">
+        <ul class="aui-user-view" id="liuyanlist">
+           <p id="ly">暂无留言</p>
+        </ul>
+    </div>
+    <p class="aui-text-center" id="loadding"></p>
+<div class="kb"></div>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript" src="../../script/emo.js" ></script>
+<script type="text/javascript" src="../../script/share.js" ></script>
+<script type="text/javascript" src="../../script/hammer.min.js" ></script>
+<script type="text/javascript">
+var newsid = null, ID = null, telphone = null, nickname = null, imageBrowser = null, picarr = new Array;
+var title = null, description = null;
+	apiready = function() {
+	    UIChatBox = api.require('UIChatBox');
+	    imageBrowser = api.require('imageBrowser');
+	    newsid = api.pageParam.id;
+	    ID = $api.getStorage('ID');
+	    telphone = $api.getStorage('telphone');
+	    nickname = $api.getStorage('nickname');
+	    api.parseTapmode();
+	    loaddate();
+	    showinput();
+	    getajaxlist(1,0);
+	    var mypage = 1;
+		api.addEventListener({        //上拉翻页
+		    name: 'scrolltobottom'
+		}, function(ret, err){
+			    mypage++;
+			    getajaxlist(mypage,1);
+		});
+		
+	};
+	function loaddate(){
+	    showp('数据加载中...','请稍候');
+		api.ajax({
+		    url: website + 'getnewslist.php?action=smallgenews',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {ID: newsid},
+		    }
+		},function(ret,err){
+		    if (ret) {
+                 var titleobj = $api.byId('title');
+                 var contentobj = $api.byId('content');
+                 var zancount = $api.byId('zancount');
+                 var share = $api.byId('share');
+                 $api.html(titleobj, decodeURI(ret.title));
+                 $api.html(contentobj, ret.body);
+                 $api.html(zancount, ret.zan);
+                 title = ret.title;
+                 description = ret.description;
+                 $api.attr(share, 'onclick', 'share()');
+                 chimg();
+				 api.hideProgress();
+				 imgPress();
+		    }
+		});
+	}
+	function showinput(){
+            UIChatBox.open({
+                placeholder: '说点什么吧',
+                maxRows: 4,
+                //autoFocus: true,
+                emotionPath: 'widget://image/chatBox/emotion',
+                styles: {
+                    inputBar: {
+                        borderColor: '#ededed',
+                        bgColor: '#ffffff'
+                    },
+                    inputBox: {
+                        borderColor: '#B3B3B3',
+                        bgColor: '#FFFFFF'
+                    },
+                    emotionBtn: {
+                        normalImg: 'widget://image/chatBox/chatBox_face1.png'
+                    },
+                    indicator: {
+                        target: 'both',
+                        color: '#c4c4c4',
+                        activeColor: '#9e9e9e'
+                    },
+                    sendBtn: {
+                        titleColor: '#fff',
+                        bg: '#3399ff',
+                        activeBg: '#46a91e',
+                        titleSize: 14
+                    }
+                }
+            }, function(ret){
+				    if(ret.eventType == 'send'){
+				            var msg = ret.msg;
+				            if(msg){
+							    api.ajax({
+								    url: website + 'savenews.php?action=smallgeliuyan',
+								    method: 'post',
+								    timeout: 30,
+								    dataType: 'json',
+								    returnAll:false,
+								    data:{
+								        values: {msg: msg,nickname: nickname,telphone: telphone, ID: ID, newsid: newsid},
+								    }
+								},function(ret,err){
+								    if (ret) {
+								        api.toast({
+				                            msg:'发表成功'
+			                            });
+			                            //UIChatBox.closeKeyboard();
+										UIChatBox.close();
+										showinput();
+			                            getajaxlist(1,0);
+								    }
+								});
+						    }
+				    }
+				});
+	}
+	function getajaxlist(page,action){
+	$api.text($api.byId('loadding'),'留言加载中...');
+	    var html = '';
+	    api.ajax({
+		    url: website + 'getnewslist.php?action=getsmallgely&page=' + page,
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {ID: newsid},
+		    }
+	    },function(ret,err){
+	        if (ret) {
+	            //var urlJson = JSON.stringify(ret);
+	            //api.alert({msg: urlJson});
+	            //return false;
+	            var obj = $api.byId('liuyanlist');
+	            for (var i = 0, len = ret.length; i < len; i++) {
+	               var thisitem = ret[i];
+	               html += '<li class="aui-user-view-cell aui-img">';
+	               html += '<img class="aui-img-object aui-pull-left" src="'+ thisitem.img +'" tapmode onclick="openfrinfo('+ thisitem.frid +')">';
+	               html += '<div class="aui-img-body"><span>' +thisitem.nickname+ '<em>' +thisitem.addtime+ '</em></span><p>' + _transEmo(thisitem.msg) + '</p></div>';
+	               html += '</li>';
+	            }
+	            if(action == 1){
+				   $api.append(obj, html);
+				}else if(action == 0){
+				   $api.html(obj, html);
+				}
+	        }
+	        $api.text($api.byId('loadding'),'');
+	    });
+	}
+	function openfrinfo(id){
+		api.openWin({
+	        name: 'friendinfo',
+	        url: '../friends/friendinfo_win.html',
+	        pageParam: {friid: id},
+	        vScrollBarEnabled: false
+	   	 });
+	}
+	function chimg(){
+		var pic = document.getElementsByTagName('img');
+		for(i = 0; i < pic.length; i++){
+		   pic[i].setAttribute('onclick','openbig('+ i +')');
+		   pic[i].setAttribute('tapmode','');
+		   picarr.push(pic[i].src);
+		}
+	}
+	function openbig(index){
+			imageBrowser.openImages({
+			    imageUrls: picarr,
+			    showList: false,
+			    activeIndex : index
+			});
+	}
+	function share(){
+		var dialogBox = api.require('dialogBox');
+		dialogBox.actionMenu ({
+		    rect:{
+		        h: 100
+		    },
+		    tapClose: true,
+		    items:[
+		    {
+		        text: '微信好友',
+		        icon: 'widget://image/wxhy.png'
+		    },
+		    {
+		        text: '朋友圈',
+		        icon: 'widget://image/wxpyq.png'
+		    }
+		    ],
+		    styles:{
+		        bg:'#FFF',
+		        column: 3,
+		        itemText: {
+		            color: '#000',
+		            size: 12,
+		            marginT:8
+		        },
+		        itemIcon:{
+		            size:40
+		        }
+		    }
+		}, function(ret){
+		   if(ret.index ==0 || ret.index ==1){
+		   			if(ret.index ==0){
+		   				key = 'session';
+		   			}
+		   			if(ret.index ==1){
+		   				key = 'timeline';
+		   			}
+				    var wx = api.require('wx');
+					wx.shareWebpage({
+					    apiKey: '',
+					    scene: key,
+					    title: title,
+					    description: description,
+					    thumb: 'widget://image/logo108.png',
+					    contentUrl: website + 'm/smallgenews.php?ID=' + newsid
+					}, function(ret, err){
+					    if(ret.status){
+					        api.alert({msg: '分享成功'})
+					    }
+					});
+		   }
+		});
+	}
+	function zan(){
+		api.ajax({
+		    url: website + 'savenews.php?action=zan',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {ID: newsid},
+		    }
+		},function(ret,err){
+		    if (ret) {
+	          var zu = $api.html($api.byId('zancount'));
+	          zu = parseInt(zu) + 1;
+	          $api.html($api.byId('zancount'), zu);
+	          //api.alert({msg:('谢谢亲的支持，小马哥会更加努力')});
+		    }else {
+		        api.alert({
+		            msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+		        });
+		    }
+		});
+	}
+	function imgPress(){
+		//创建一个新的hammer对象并且在初始化时指定要处理的dom元素
+		var doms = $api.domAll('img');
+		var hammertime = {};
+		for (var i = 0; i < doms.length; i++) {
+			(function(j){
+				var element = doms[j];
+				hammertime[j] = new Hammer(element);
+					//添加事件
+				hammertime[j].on("press", function (e) {
+					var src = $api.attr(doms[j], 'src');
+					api.actionSheet({
+						//title: '底部弹出框测试',
+						cancelTitle: '取消',
+						//destructiveTitle: '红色警告按钮',
+						buttons: ['保存图片到本地', '分享给微信好友', '分享到微信朋友圈', '在微信收藏此图片']
+					}, function(ret, err) {
+						var index = ret.buttonIndex;
+						api.download({
+							url: src,
+							//savePath: 'fs://test.rar',
+							report: true,
+							cache: true,
+							allowResume: true
+						}, function(ret, err) {
+							if (ret.state == 1) {
+								var path = ret.savePath;
+								if (index == 1) {
+									saveImg(path);
+								}
+								if (index == 2) {
+									shareImg({
+										url: path,
+										scene: 'session'
+									})
+								}
+								if (index == 3) {
+									shareImg({
+										url: path,
+										scene: 'timeline'
+									})
+								}
+								if (index == 4) {
+									shareImg({
+										url: path,
+										scene: 'favorite'
+									})
+								}
+							}
+							if(err){
+								api.toast({
+									msg: '网络原因，图片保存未成功',
+									duration: 2000,
+									location: 'middle'
+								});
+							}
+						});
+					});					
+				});
+			})(i)
+		}
+        function saveImg(path){
+				api.saveMediaToAlbum({
+					path: path
+				}, function(ret, err) {
+					if (ret && ret.status) {
+						api.toast({
+							msg: '已保存到相册，请在微信中打开',
+							duration: 2000,
+							location: 'middle'
+						});
+					} else {
+						api.toast({
+							msg: '图片保存失败，请检测内存是否已满',
+							duration: 2000,
+							location: 'middle'
+						});
+					}
+				});
+			}
+	}
+</script>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui20/aui.2.0.css" />
+    <style type="text/css">
+		body{background: #fff}
+    </style>
+</head>
+<body>
+<div class="aui-content aui-margin-b-15">
+    <ul class="aui-list aui-list-in" id="list">
+
+    </ul>
+</div>    
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript">
+var wd_type = null;
+    apiready = function(){
+    	wd_type = api.pageParam.id;
+        api.parseTapmode();
+        loaddate();
+    }
+    function loaddate(){
+    	showp('数据加载中...','');
+		api.ajax({
+		    url: website + 'chsysset.php?action=wdlist',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {wd_type: wd_type},
+		    }
+		},function(ret,err){
+		    if (ret) {
+		    	var obj = $api.byId('list');
+		    	var html = '';
+	            for (var i = 0, len = ret.length; i < len; i++) {
+	                var r = ret[i];
+			        html += '<li class="aui-list-item" tapmode onclick="opencontent('+ r.ID +')">';
+			        html += '<div class="aui-list-item-inner">';
+			        html += '<div class="aui-list-item-title"><i class="aui-iconfont aui-icon-question">  '+ r.title +'</i></div>';
+			        html += '</div>';
+			        html += '</li>';	                
+	            }
+	            $api.html(obj, html);  	            
+		    }	
+		    api.hideProgress(); 	    
+		});    
+    }
+	function opencontent(id){
+			api.openWin({
+		        name: 'wd_content_win',
+		        url: './wd_content_win.html',
+		        pageParam: {id: id},
+		        vScrollBarEnabled: false
+		   	 });	
+	}
+</script>
+</html>

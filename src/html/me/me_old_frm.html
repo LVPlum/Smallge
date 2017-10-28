@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>我</title>
+    <script src="../../script/Flexible-fontSize.js"></script><!--不用aui.css 有微小的冲突-->
+    <link rel="stylesheet" href="../../css/aui-slide.css" /><!--aui 轮播组件-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <!--<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    &lt;!&ndash; 小马哥通用样式 &ndash;&gt;
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />-->
+
+    <style>
+     *{
+        margin: 0;
+        padding: 0;
+        /* 防止点击闪烁 */
+        -webkit-tap-highlight-color:rgba(0,0,0,0);
+        /* 缩放网页，文字大小不变 */
+        -webkit-text-size-adjust:none;
+    }
+
+        ul{
+            list-style: none;
+        }
+        html,body{
+
+            background-color: #f2f5f8;
+        }
+        header{
+            width: 100%;
+            height: 23.8rem;
+            position: relative;
+            background-color: #3399ff;
+            overflow: hidden;
+        }
+        .userTitle{
+            width: 6rem;
+            height: 3rem;
+            position: absolute;
+            top: 3.9rem;
+            right: 1.5rem;
+            font-size: 1.2rem;
+            line-height: 3rem;
+            text-align: center;
+            color: #fff;
+            border:1px solid rgba(255,255,255,0.6);
+            border-radius: 99px;
+
+        }
+        .userTitle>span{
+            padding-right: 1rem;
+            display: inline-block;
+            position: relative;
+        }
+        #userTitle_text:after, #userTitle_text:before {
+            content: ' ';
+            width: 0;
+            height: 0;
+            position: absolute;
+            left: 100%;
+            border: solid transparent;
+        }
+
+        #userTitle_text:after {
+            top: 50%;
+            margin: -0.6rem -0.8rem;
+            border-width: 0.6rem;
+            border-left-color: #3399ff;
+        }
+
+        #userTitle_text:before {
+            top: 50%;
+            margin: -0.6rem;
+            border-width: 0.6rem;
+            border-left-color: #fff;
+        }
+        .userHead{
+            width: 7.1rem;
+            height: 7.1rem;
+            object-fit:cover;
+            margin: 6.2rem auto 1.5rem auto;
+            border: 0.25rem solid rgba(255, 255, 255, 0.3);
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        .userHead>img{
+            width: 100%;
+            height: 100%;
+        }
+        .userContent{
+            width: 100%;
+            height: auto;
+            text-align: center;
+            color: #fff;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        .userName{
+            margin-bottom: 1rem;
+            font-size: 1.6rem;
+        }
+        .userPhone{
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+            opacity: 0.7;
+        }
+        nav{
+            width: 34.5rem;
+
+            height: 6.8rem;
+            margin: 0 auto -2.2rem auto;
+            position: relative;
+            bottom: 3.4rem;
+            background-color: #fff;
+            border-radius: 0.4rem;
+            -moz-box-shadow:0 0.25rem 2rem #c6e2f1;
+            -webkit-box-shadow:0 0.25rem 2rem #c6e2f1;
+            box-shadow:0 0.25rem 2rem #c6e2f1;
+            overflow: hidden;
+        }
+        nav>ul{
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        nav>ul li{
+            width: 50%;
+            height: 100%;
+            float: left;
+            margin: 0 auto;
+            text-align: center;
+
+        }
+
+        .nav-icon{
+            height: 2.7rem;
+            margin: 1.2rem 0 0.8rem 0;
+            display: inline-block;
+        }
+        .nav-left-icon{
+            width: 2.6rem;
+        }
+        .nav-line{
+            width: 0;
+            height: 3.85rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin: -1.92rem 0;
+            border-left: 1px solid #e5e5e5;
+            display: inline-block;
+        }
+        .nav-right-icon{
+            width: 2.7rem;
+        }
+        .nav-icon>img{
+            width: 100%;
+            height: 100%;
+        }
+        .nav-text{
+            font-size: 1.2rem;
+            color: #999;
+        }
+        section{
+            width: 100%;
+            height: 27.3rem;
+            max-height:27.3rem;
+            background-color: #fff;
+            overflow: hidden;
+        }
+        section>ul{
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        section>ul li{
+            width: 100%;
+            height: 4.5rem;
+
+        }
+        .section-item{
+            width: 100%;
+            height: 100%;
+            position: relative;
+            margin-left: 1.5rem;
+            font-size: 1.6rem;
+            color: #333;
+            border-bottom: 1px solid #ededed;
+        }
+        .icon-left{
+            float: left;
+            margin-top: 1.5rem;
+        }
+        .icon-left>img{
+            width: 100%;
+            height: 100%;
+        }
+        .section-item-text{
+           width: 100%;
+            height: 100%;
+            line-height: 4.5rem;
+            margin-left:3.1rem;
+        }
+        .icon-arrows:after, .icon-arrows:before {
+            content: ' ';
+            width: 0;
+            height: 0;
+            position: absolute;
+            right: 2.5rem;
+            border: solid transparent;
+
+        }
+        .icon-arrows:after {
+            top: 50%;
+            margin: -1.1rem 0;
+            border-width: 1.1rem;
+            border-left-color: #fff;
+        }
+
+        .icon-arrows:before {
+            top: 50%;
+            margin: -1rem 0;
+            border-width: 1rem;
+            border-left-color: #ededed;
+        }
+        .icon-qianbao{
+            width: 1.9rem;
+            height: 1.7rem;
+        }
+        .icon-dingdan{
+            width: 1.6rem;
+            height: 2rem;
+        }
+        .icon-cheliang{
+            width: 2.1rem;
+            height: 1.7rem;
+        }
+        .icon-shezhi{
+            width: 2rem;
+            height: 1.8rem;
+        }
+        .icon-yijian{
+            width: 1.7rem;
+            height: 1.9rem;
+        }
+        .icon-wenti{
+            width: 2rem;
+            height: 2rem;
+        }
+        .noborder{
+            border: none;
+        }
+        .active-qianDao-text{
+        	color: #3399ff;
+        }
+
+        @font-face {
+            font-family: "tea_iconfont";
+            src: url('../../css/iconfont.ttf') format('truetype');
+        }
+        .aui-iconfont[class*=tea-icon-]{
+            font-family:"tea_iconfont" !important;
+        }
+        .tea-icon-coupon:before { content: '\e66c'; color: #3399ff }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="userTitle" id="userTitle">
+            <span id="userTitle_text" tapmode onclick="openWinReadme()">散兵</span>
+        </div>
+        <div class="userHead" id="userHead" tapmode onclick="openPersonalData_win(event)">
+            <img id="userHead_src" src="../../image/my_icon/moren.png" alt="用户头像">
+        </div>
+        <div class="userContent">
+            <p class="userName" id="userName">小马哥</p>
+            <p class="userPhone" id="userPhone">1346782266</p>
+        </div>
+    </header>
+    <nav>
+        <ul>
+            <!--<li id="qianDao" tapmode onclick="event.stopPropagation();openQiandao()">-->
+            <li id="qianDao" tapmode onclick="event.stopPropagation();openWinBenefit()">
+                <div class="nav-left-icon nav-icon"><span class="aui-iconfont tea-icon-coupon" style="font-size: 2.8rem"></span></div>
+                <p class="nav-text" id="qianDao_text">我的好处</p>
+                <!--<p class="nav-text">每日签到</p>-->
+                <span class="nav-line"></span>
+            </li>
+            <!--<li id="yaoQing" tapmode onclick="tea.toast('disable')">-->
+            <li id="yaoQing" tapmode onclick="openWinInvite();">
+                <div class="nav-right-icon nav-icon"><img id="yaoQing_src" src="../../image/my_icon/yaoqing@2x.png" alt="每日签到"></div>
+                <p class="nav-text" id="yaoQing_text">邀请有奖</p>
+            </li>
+        </ul>
+    </nav>
+    <section>
+        <ul>
+            <li id="myPurse" tapmode onclick="event.stopPropagation();openMyWallet_win()">
+                <div class="section-item">
+                    <p class="icon-left icon-qianbao"><img src="../../image/my_icon/qianbao@2x.png" alt="我的钱包"></p>
+                    <p class="section-item-text icon-arrows">我的钱包</p>
+                </div>
+            </li>
+            <li id="myOrder">
+                <div class="section-item" tapmode onclick="openWinMyOrder();event.stopPropagation();">
+                    <p class="icon-left icon-dingdan"><img src="../../image/my_icon/dingdan@2x.png" alt="我的订单"></p>
+                    <p class="section-item-text icon-arrows">我的订单</p>
+                </div>
+            </li>
+            <li id="carManage" tapmode onclick="openWinCarManage()">
+                <div class="section-item">
+                    <p class="icon-left icon-cheliang"><img src="../../image/my_icon/cheliang@2x.png" alt="车辆管理"></p>
+                    <p class="section-item-text icon-arrows">车辆管理</p>
+                </div>
+            </li>
+            <li id="Settings" tapmode onclick="openWinSetting()">
+                <div class="section-item">
+                    <p class="icon-left icon-shezhi"><img src="../../image/my_icon/shezhi@2x.png" alt="系统设置"></p>
+                    <p class="section-item-text icon-arrows">系统设置</p>
+                </div>
+            </li>
+            <li id="feedback">
+                <div class="section-item" tapmode onclick="openWinReport()">
+                    <p class="icon-left icon-yijian"><img src="../../image/my_icon/yijian@2x.png" alt="意见反馈"></p>
+                    <p class="section-item-text icon-arrows">意见反馈</p>
+                </div>
+            </li>
+            <li id="wenTiJieDa" tapmode onclick="openWinWd()">
+                <div class="section-item noborder">
+                    <p class="icon-left icon-wenti"><img src="../../image/my_icon/wenti@2x.png" alt="问题解答"></p>
+                    <p class="section-item-text icon-arrows">问题解答</p>
+                </div>
+            </li>
+        </ul>
+    </section>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/base.js"></script>
+<script type="text/javascript" src="../../script/tea.js"></script>
+<script type="text/javascript" src="../../script/conn.js"></script>
+<script type="text/javascript">
+	apiready = function(){
+//		alert( '我是wo的：'+api.pageParam.img);
+		var userTitle = $api.byId('userTitle');// 散兵按钮
+		var userTitle_text = $api.byId('userTitle_text');// 散兵的文字内容
+		var userHead = $api.byId('userHead');// 用户头像
+		var userName = $api.byId('userName');//用户名称
+		var userPhone = $api.byId('userPhone');// 用户注册的手机号
+		var qianDao = $api.byId('qianDao'); // 每日签到
+		var qianDao_src = $api.byId('qianDao_src');// 每日签到 icon src
+		var qianDao_text = $api.byId('qianDao_text');// 每日签到 的文字内容
+		var yaoQing = $api.byId('yaoQing');// 邀请有奖
+		var yaoQing_src = $api.byId('yaoQing_src'); // 邀请有奖 icon src
+		var yaoQing_text = $api.byId('yaoQing_text'); // 邀请有奖的文字内容
+
+		var myPurse = $api.byId('myPurse'); // 我的钱包
+		var myOrder = $api.byId('myOrder'); // 我的订单
+		var carManage = $api.byId('carManage'); //车辆管理
+		var Settings = $api.byId('Settings'); //系统设置
+		var feedback = $api.byId('feedback'); // 意见反馈
+		var wenTiJieDa = $api.byId('wenTiJieDa'); // 问题解答
+
+		var userHead_src = $api.byId('userHead_src');// 头像src
+		var userName = $api.byId('userName');// 用户昵称
+		var userPhone = $api.byId('userPhone'); // 用户手机号码
+
+		/*******创建保存win传过来的值***start******/
+		api.ajax({
+			    url: website + 'getmyinfo.php',
+			    method: 'post',
+			    timeout: 30,
+			    dataType: 'json',
+			    returnAll:false,
+			    data:{
+			        values: {token: $api.getStorage('token')},
+			    }
+			},function(ret,err){
+//                _alert(ret)
+				var vipcount = ret.vipcount;//自己名下所拥有VIP车辆的数量
+				var mymoney = ret.mymoney;//我的余额
+				var img = ret.img;//我的头像
+				var ac = ret.ac;//是否vip，1是，0否
+				var tx = ret.tx;//头衔
+				var lastcheck = ret.lastcheck ;//今天是否签过到，0否，1是
+				var userName = $api.byId('userName');//用户名称
+				var userPhone = $api.byId('userPhone');// 用户注册的手机号
+				var userPhoneNum = $api.getStorage('telphone');
+
+					userPhoneNum?userPhoneNum = userPhoneNum.replace(/(\d{3})\d{5}(\d{3})/, '$1*****$2'):userPhoneNum='';
+				$api.setStorage('vipcount',vipcount);
+				$api.setStorage('mymoney',mymoney);
+				$api.setStorage('img',img);
+				$api.setStorage('ac',ac);
+				$api.setStorage('tx',tx);
+				$api.setStorage('lastcheck',lastcheck);
+                //_alert(img)
+				$api.attr($api.byId('userHead_src'),'src',img);
+				$api.html($api.byId('userTitle_text'), tx);
+				$api.html(userPhone, $api.getStorage('nickname'));
+				$api.html(userName, userPhoneNum);
+				/*if(lastcheck == 1){
+
+					$api.html($api.byId('qianDao_text'), '今日已签');
+					$api.addCls($api.byId('qianDao_text'),'active-qianDao-text');
+				}else{
+					$api.html($api.byId('qianDao_text'), '每日签到');
+					$api.removeCls($api.byId('qianDao_text'),'active-qianDao-text');
+				}*/
+			});
+
+			// 监听个人资料是否更新
+			api.addEventListener({
+			    name: 'save_personal_data'
+			}, function(ret, err) {
+					tea.ajax({
+					    url: website + 'getmyinfo.php',
+					    method: 'post',
+					    timeout: 30,
+					    dataType: 'json',
+					    returnAll:false,
+					    data:{
+					        values: {token: $api.getStorage('token')},
+					    }
+					},function(ret,err){
+//                        _alert(ret)
+						var vipcount = ret.vipcount;//自己名下所拥有VIP车辆的数量
+						var mymoney = ret.mymoney;//我的余额
+						var img = ret.img;//我的头像
+						var ac = ret.ac;//是否vip，1是，0否
+						var tx = ret.tx;//头衔
+						var lastcheck = ret.lastcheck ;//今天是否签过到，0否，1是
+						var userName = $api.byId('userName');//用户名称
+						var userPhone = $api.byId('userPhone');// 用户注册的手机号
+						var userPhoneNum = $api.getStorage('telphone');
+							userPhoneNum?userPhoneNum = userPhoneNum.replace(/(\d{3})\d{5}(\d{3})/, '$1*****$2'):userPhoneNum='';
+						$api.setStorage('vipcount',vipcount);
+						$api.setStorage('mymoney',mymoney);
+						$api.setStorage('img',img);
+						$api.setStorage('ac',ac);
+						$api.setStorage('tx',tx);
+						$api.setStorage('lastcheck',lastcheck);
+						$api.attr($api.byId('userHead_src'),'src',img);
+						$api.html($api.byId('userTitle_text'), tx);
+						$api.html(userPhone, $api.getStorage('nickname'));
+						$api.html(userName, userPhoneNum);
+						/*if(lastcheck == 1){
+							$api.html($api.byId('qianDao_text'), '今日已签');
+							$api.addCls($api.byId('qianDao_text'),'active-qianDao-text');
+						}else{
+							$api.html($api.byId('qianDao_text'), '每日签到');
+							$api.removeCls($api.byId('qianDao_text'),'active-qianDao-text');
+						}*/
+					});
+			});
+
+	};
+
+	function openPersonalData_win(e){
+		fnStopPropagation(e);
+//		_openWin('个人信息','./personal_data_win.html');// 打开个人信息页面
+		_openWin('个人主页','./personal_homepage_win.html');// 打开个人zhu页面
+	}
+
+// 阻止冒泡事件
+function fnStopPropagation(e){
+    window.event? window.event.cancelBubble = true : e.stopPropagation();
+}
+
+function openQiandao(){
+
+	var deviceId = api.deviceId; // 设备ID
+	var nickname = $api.getStorage('nickname');
+	var userid = $api.getStorage("ID");
+
+	tea.ajax({
+			    url: website + 'inteinfo.php?action=checkin',
+			    method: 'post',
+			    timeout: 30,
+			    dataType: 'json',
+			    returnAll:false,
+			    data:{
+			        values: {nickname: nickname,userid: userid,deviceId: deviceId},
+			    }
+			},function(ret,err){
+				if(ret.succ == 1){
+
+				$api.html($api.byId('qianDao_text'), '今日已签');
+				$api.addCls($api.byId('qianDao_text'),'active-qianDao-text');
+					api.openFrame({
+			            name: 'sign_in_frm',
+			            url: './sign_in_frm.html',
+			            bounces: false,
+			            bgColor: 'rgba(0,0,0,0.6)',
+			            vScrollBarEnabled: true,
+			            hScrollBarEnabled: true
+			        });
+
+				}else{
+					_openWin('积分明细','./integral_win.html',{ID:$api.getStorage("ID")});// 打开个人zhu页面
+				}
+			});
+
+}
+
+function openWinMyOrder(){
+
+    tea.openWin({
+        name: 'my_order_win',
+        url: '../order/my_order_win.html',
+        pageParam: {
+        }
+    });
+
+}
+
+function openWinSetting(){
+    tea.openWin({
+        name: 'setting_win',
+        url: '../setting/setting_win.html',
+        bounces: false,
+        pageParam: {key : 'value'}
+    });
+}
+
+// 我的钱包
+function openMyWallet_win(){
+    if (tea.appleCheck()) {
+        api.toast({
+            msg: '级别尚未达到要求',
+            duration: 2000,
+            location: 'middle'
+        });
+        return;
+    }
+	_openWin('我的钱包','../wallet/my_wallet_win.html');// 打开个人zhu页面
+}
+
+function openWinCarManage(){
+    tea.openWin({
+        name: 'car_manage_win',
+        url: '../car_manage/car_manage_win.html',
+        bounces: false,
+        pageParam: {key : 'value'}
+    });
+}
+
+/*function openWinWd(){
+    api.openWin({
+        name: 'wd_index_win',
+        url: '../wd/wd_index_win.html',
+        bounces: false,
+        pageParam: {key : 'value'}
+    });
+}*/
+/*新版问答*/
+function openWinWd(){
+    api.openWin({
+        name: 'wd_index_new_win',
+        url: '../wd/wd_index_new_win.html',
+        bounces: false,
+        pageParam: {key : 'value'}
+    });
+}
+
+function openWinReport(){
+    api.openWin({
+        name: 'report_index_win',
+        url: '../report/index_win.html',
+        bounces: false,
+        pageParam: {key : 'value'}
+    });
+}
+
+/*积分等级关系说明页*/
+function openWinReadme(){
+    tea.openWin({
+        name: 'integral_win',
+        url: './integral_win.html',
+        bounces: false,
+        pageParam: {key : 'value'}
+    });
+}
+
+/*跳转我的好处（现金券）*/
+function openWinBenefit(){
+    tea.openWin({
+		name:'benefit_win',
+		url:'../benefit/benefit_win.html',
+		bounces: false,
+		pageParam: {key : 'value'}
+	});
+}
+/*跳转邀请页面*/
+function openWinInvite(){
+    tea.openWin({
+        name: 'invite_win',
+        url: '../invite/invite_win.html',
+        bounces: false,
+        pageParam: {
+            key: 'value'
+        }
+    });
+}
+</script>
+</html>

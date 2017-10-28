@@ -1,0 +1,434 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            height: 100%;
+            overflow: auto;
+        }
+        .aui-list.aui-form-list .aui-list-item-arrow:before {
+            right: 0.75rem;
+        }
+        .aui-checkbox {
+            position: absolute !important;
+            top: 0.1rem;
+            right: 0.1rem;
+            text-align: center;
+            z-index: 3;
+            background-color: rgba(0, 0, 0, .5) !important;
+        }
+
+        .tea-img-box{
+            border: 1px solid #ededed;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="aui-list aui-form-list aui-list-noborder tea-bg-white">
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-input">
+                    <textarea id="textarea" placeholder="说点什么吧..."></textarea>
+                </div>
+            </div>
+        </li>
+    </div>
+    <section id="list" class="tea-bg-white"></section>
+    <!-- <div class="aui-list-item-label-icon tea-border-l aui-padded-l-10">
+        <i class="aui-iconfont aui-icon-close"></i>
+    </div> -->
+
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-media-list aui-list-noborder">
+            <li class="aui-list-item tea-noactive">
+                <div class="aui-list-item-inner">
+                    <div class="aui-row aui-row-padded aui-padded-r-15" style="width: 100%">
+                    {{?values.type == 'picture'}}
+                        {{?$api.isArray(it)}}
+                        {{~it:value:index}}
+                        <div class="aui-col-xs-3" tapmode onclick="openBigImg({{=index}})">
+                            <img class="tea-img-box" style="background-image: url({{=value}})">
+                            <div class="aui-checkbox tea-big" tapmode onclick="event.stopPropagation();del({{=index}})">
+                                <i class="aui-iconfont aui-text-white aui-icon-close"></i>
+                            </div>
+                        </div>
+                        {{~}}
+                        {{?}}
+                        {{?it.length < 9}}
+                        <div class="aui-col-xs-3" tapmode onclick="openWinMedia()">
+                            <img class="tea-img-box" style="background-image: url(../../image/add.jpg)"/>
+                        </div>
+                        {{?}}
+                    {{??true}}
+                        {{?$api.isArray(it)}}
+                        {{~it:value:index}}
+                        <div class="aui-col-xs-3" tapmode onclick="openVideo(0)">
+                            <img class="tea-img-box" style="background-image: url({{=values.thumbnail[0]}})" src="../../image/stop@2x.png">
+                            <img class="tea-play-box">
+                        </div>
+                        {{~}}
+                        {{?}}
+                        {{?it.length < 1}}
+                        <div class="aui-col-xs-3" tapmode onclick="openWinMedia()">
+                            <img class="tea-img-box" style="background-image: url(../../image/add.jpg)"/>
+                        </div>
+                        {{?}}
+                    {{?}}
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item aui-list-item-arrow" tapmode onclick="openWinLocation()">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label-icon">
+                        <i class="aui-iconfont aui-icon-location" id="icon"></i>
+                    </div>
+                    <div class="aui-list-item-input aui-ellipsis-2" id="address">
+                        所在位置
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {}, imageBrowser;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    initVar();
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+    // ajax请求数据
+    getData();
+
+};
+
+/**********************************初始化变量**********************************/
+function initVar(){
+
+    dom = {
+        textarea: $api.byId('textarea'),
+    };
+
+    data = {
+    };
+
+    values = {
+        type: api.pageParam.type,
+        thumbnail: api.pageParam.thumbnail,
+        imgArr: api.pageParam.imgArr.slice(0,9),
+        index: 0, //位置序号
+        content: '', //新鲜事文字内容
+        token: $api.getStorage('token'), //用户token
+        dm: api.deviceModel, //设备类型
+        picval: '', //图片，多图以逗号隔开
+        showwz: 0, //是否显示位置,0不显，1显
+        wz: '', //位置的文本
+        videoPath: false, //视频的对象
+    };
+
+    updateHTML();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+    imageBrowser = api.require('imageBrowser');
+
+    var bMap = api.require('bMap');
+
+    if (api.systemType == "ios") {
+        bMap.initMapSDK(function(ret) {
+            if (ret.status) {
+                getLocation();
+            }
+        })
+    }
+    else {
+        getLocation();
+    }
+
+    function getLocation(){
+        bMap.getLocation({
+            accuracy: '100m',
+            autoStop: true,
+            filter: 1
+        }, function(ret, err) {
+            if (ret.status) {
+                //alert(JSON.stringify(ret));
+                bMap.getNameFromCoords({
+                    lon: ret.lon,
+                    lat: ret.lat
+                }, function(ret, err) {
+                    if (ret.status) {
+                        data = ret;
+                        data.poiList.unshift({name: data.city});
+                        data.poiList.unshift({name: '不显示位置'});
+                        values.wz = data.address;
+                        dom.address.innerHTML = values.wz;
+                        //alert(JSON.stringify(ret));
+                    }
+                });
+            } else {
+                //alert(err.code);
+            }
+        });
+    }
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+    api.addEventListener({
+        name: 'addressSetted'
+    }, function(ret, err){
+        if( ret ){
+            api.closeWin({
+                name: 'media_win'
+            });
+            var index = ret.value.index;
+            values.index = index;
+            if (index == 0) {
+                values.showwz = 0;
+                values.wz = '';
+                dom.address.innerHTML = '所在位置';
+                $api.removeCls(dom.icon, 'tea-text-blue');
+                return;
+            }
+            values.showwz = 1;
+            values.wz = data.poiList[index].name;
+            dom.address.innerHTML = values.wz;
+            $api.addCls(dom.icon, 'tea-text-blue');
+        }else{
+            alert( JSON.stringify( err ) );
+        }
+    });
+
+    api.addEventListener({
+        name: 'sendImg'
+    }, function(ret, err){
+        if( ret ){
+            if (ret.value.to != 'news_add') {
+                return;
+            }
+            api.closeWin({
+                name: 'media_win'
+            });
+            values.thumbnail = ret.value.thumbnail;
+            values.imgArr = values.imgArr.concat(ret.value.img).slice(0,9);
+            updateHTML();
+        }else{
+             alert( JSON.stringify( err ) );
+        }
+    });
+
+    api.addEventListener({
+        name: 'delVideo'
+    }, function(ret, err){
+        if( ret ){
+            del(0);
+        }else{
+            alert( JSON.stringify( err ) );
+        }
+    });
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************更新变量**********************************/
+function updateVar(){
+
+
+}
+
+function updateDom(){
+
+
+
+}
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+    tea.doT(values.imgArr, 'template', 'list');
+    dom.address = $api.byId('address');
+    dom.icon = $api.byId('icon');
+
+}
+
+/**********************************DOM响应**********************************/
+function openWinLocation(){
+    if ($api.isEmptyObject(data)) {
+        tea.toast('custom', '定位中,请稍候');
+        return;
+    }
+    api.openWin({
+        name: 'location_win',
+        url: './location_win.html',
+        pageParam: {
+            poiList: data.poiList,
+            index: values.index
+        }
+    });
+}
+
+function openWinMedia(){
+
+
+    api.openWin({
+        name: 'media_win',
+        url: '../unit/media_win.html',
+        reload: true,
+        pageParam: {
+            to: 'news_add',
+            type: values.type
+        }
+    });
+    api.sendEvent({
+        name: 'reload',
+        extra: {
+            to: 'news_add',
+            type: values.type
+        }
+    });
+}
+
+function openBigImg(index_){
+    imageBrowser.openImages({
+        imageUrls: values.imgArr,
+        showList: false,
+        activeIndex: index_
+    });
+}
+
+function del(index_){
+    values.imgArr.splice(index_, 1);
+    updateHTML();
+}
+
+function openVideo(index_){
+    var url_ = values.imgArr[index_];
+    // api.openWin({
+    //     name: 'video_win',
+    //     url: '../unit/video_win.html',
+    //     pageParam: {
+    //         url: url_ ,
+    //         type: 'delete'
+    //     }
+    // });
+    api.openFrame({
+        name: 'video_frm',
+        url: '../unit/video_frm.html',
+        rect: {
+            x: 0,
+            y: 0,
+            w: api.winWidth,
+            h: api.winHeight
+        },
+        pageParam: {
+            url: url_ ,
+            type: 'delete'
+        },
+        bounces: false,
+        bgColor: 'rgba(0,0,0,0)',
+        vScrollBarEnabled: true,
+        hScrollBarEnabled: true
+    });
+}
+/**********************************其他函数**********************************/
+function ajax(){
+    values.textarea = $api.val(dom.textarea);
+    if (values.type == 'video'){
+        values.videoPath = values.imgArr[0];
+    }
+    var json = {
+        type: values.type,
+        content: values.textarea, //新鲜事文字内容
+        token: values.token, //用户token
+        dm: values.dm, //设备类型
+        imgArr: values.imgArr,
+        picval: values.imgArr.join(','), //图片，多图以逗号隔开
+        showwz: values.showwz, //是否显示位置,0不显，1显
+        wz: values.wz, //位置的文本
+        videoPath: values.videoPath, //视频的对象,
+        thumbnail: values.thumbnail
+    };
+    // 检查表单
+    var result = check();
+    //_alert(json)
+    if ( result !== true ){
+        tea.toast('fail',result);
+        return;
+    }
+    api.sendEvent({
+        name: 'addNew',
+        extra: {
+            json: json,
+            upfile: null
+        }
+    });
+    api.closeToWin({
+        name: 'main_win'
+    });
+}
+
+function check(){
+
+    if (values.textarea.length < 1 && values.imgArr.length < 1) {
+        return '请添加点内容';
+    }
+    return true;
+}
+</script>
+</html>

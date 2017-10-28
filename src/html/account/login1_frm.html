@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>登录注册</title>
+    <script src="../../script/Flexible-fontSize.js"></script><!--不用aui.css 有微小的冲突-->
+    <link rel="stylesheet" href="../../css/aui-slide.css" /><!--aui 轮播组件-->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        html,body{
+        	width:100%;
+        	height:100%;
+            background-color: #fff;
+            overflow: hidden;
+        }
+
+        input{
+            outline:none;
+            -webkit-appearance: none;
+        }
+        ul{
+            list-style: none;
+        }
+        header{
+            width: 100%;
+            height: 20.6rem;
+            position: relative;
+        }
+        .login-bg{
+            width: 100%;
+            height: 100%;
+            /* background: url("../../image/002.jpg") no-repeat; */
+            background: url("../../image/denglu.png") no-repeat;
+            background-size: cover;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+        }
+        .login-Content{
+            width: 100%;
+            height: 4.6rem;
+            background-color: #000;
+            opacity: 0.6;
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+        }
+        .login{
+            width: 50%;
+            height: 100%;
+            position: relative;
+            line-height: 4.6rem;
+            font-size: 1.6rem;
+            float: left;
+            text-align: center;
+            color: #fff;
+        }
+        .login-active{
+            color: #3399ff !important;
+        }
+        .login-active:before{
+            content: ' ';
+            width: 0;
+            height: 0;
+            position: absolute;
+            left: 8.8rem;
+            bottom: 0.6rem;
+            margin: -0.6rem  -0.3rem;
+            border: solid transparent;
+            border-width: 0.6rem;
+            border-bottom-color: #fff;
+            z-index: 99;
+        }
+        nav{
+            width: 100%;
+            height: 6.4rem;
+            font-size: 1.6rem;
+            text-align: center;
+            margin:0 auto;
+            color: #333;
+            display: none;
+            border: 1px solid #ededed;
+            overflow: hidden;
+
+        }
+        nav>div{
+            width: 100%;
+            height: 100%;
+            position:relative;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .nav-title{
+            line-height: 1;
+            font-size: 1.6rem;
+            margin: 3.8rem auto 1rem auto;
+            display: inline-block;
+        }
+        section{
+            width: 100%;
+            height: auto;
+            color: #333;
+        }
+        .section-frm-item-inner{
+            width: 29.6rem;
+            height: auto;
+            margin: 0 auto;
+            text-align: center;
+
+        }
+        .login-margin-t-58{
+            margin-top: 2.9rem !important;
+        }
+        .section-li{
+            /* display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-align-items: center;
+                    align-items: center; */
+            width: 100%;
+            height: 5.5rem;
+            line-height:5.5rem;
+            position: relative;
+            border-bottom: 1px solid #ccc;
+        }
+        .section-li>input{
+            width: 100%;
+            height: 2rem;
+            line-height:2rem;
+            margin-top: 1.75rem;
+            font-size: 1.6rem;
+            color: #333;
+            border: none;
+        }
+        .section-right-text{
+            width: 100%;
+            color: #3399ff;
+            font-size: 1.4rem;
+            text-align: right;
+            margin-top: 1rem;
+        }
+        #yanZhengMa,#newPwd,#confirmPwd,#confirmUserName{
+            display: none;
+        }
+        #confirmUserName{
+        	margin-bottom:8.5rem;
+        }
+        .yanZhengMa_btn{
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: auto 0;
+            font-size: 1.4rem;
+            color: #3399ff;
+        }
+        .login-btn{
+            width: 100%;
+            height: 4rem;
+            text-align: center;
+            line-height: 4rem;
+            font-size: 1.6rem;
+            color: #fff;
+            background-color: #3399ff;
+            border: none;
+            border-radius: 99px;
+            overflow: hidden;
+        }
+        .login-btn>p{
+            text-align: center;
+            font-size: 1.6rem;
+            margin: -2px;/*去掉appearance 默认 border 的黑线*/
+            padding: 2px;/*配合margin 留白*/
+            color: #fff;
+            border: none;
+            border-radius: 99px;
+            /* appearance:button;
+            -moz-appearance:button; Firefox
+            -webkit-appearance:button; /* Safari 和 Chrome */ */
+            background-color: #3399ff;
+        }
+        .section-li-active:before{
+
+            content: '+86';
+            font-size: 1.6rem;
+            color: #333;
+            margin-left: -4rem;
+            margin-right: 1rem;
+        }
+        .section-li-active>input{
+            width: auto;
+        }
+        .icon-arrows-r:after, .icon-arrows-r:before {
+            content: ' ';
+            width: 0;
+            height: 0;
+            position: absolute;
+            left: 1.5rem;
+            border: solid transparent;
+
+        }
+        .icon-arrows-r:after {
+            bottom: 2rem;
+            margin: -1.1rem 0;
+            border-width: 1.1rem;
+            border-right-color: #fff;
+        }
+
+        .icon-arrows-r:before {
+            bottom: 2rem;
+            margin: -1rem 0;
+            border-width: 1rem;
+            border-right-color: #333;
+        }
+        .clear{
+        	width: 3rem;
+            height: 100%;
+            line-height: 5.5rem;
+            font-size: 2.2rem;
+            font-weight:100;
+            text-align: center;
+            color: #333;
+            position: absolute;
+            top:0;
+            right: 2.5rem;
+            bottom:0;
+            opacity: 0.3;
+            display: none;
+        }
+        .clear-r{
+        	 right: 9rem;
+        }
+         footer{
+            width: 100%;
+            height: 4rem;
+            line-height: 4rem;
+            margin: 0 auto;
+            text-align: center;
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 4rem;
+            overflow: hidden;
+        }
+        footer>p{
+            font-size: 1.4rem;
+            color: #ccc;
+            display: inline-block;
+        }
+        .disabled{
+        	pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <header id="header">
+        <div class="login-bg" id="login-bg"></div>
+        <ul class="login-Content">
+            <li id='denglu' class="login login-active">
+                <p>登录</p>
+            </li>
+            <li id='zhuce' class="login">
+                <p>注册</p>
+            </li>
+        </ul>
+    </header>
+    <nav id="nav">
+        <div>
+        	<span id='nav_arrows' class="icon-arrows-r"></span>
+            <span class="nav-title" id="navTitle_text">忘记密码</span>
+        </div>
+    </nav>
+    <section>
+        <ul class="section-frm-item-inner login-margin-t-58">
+            <li id="phone" class="section-li ">
+           		<span id="clear_phone_val" class="clear">&times;</span>
+                <input id="phone_val" type="tel" placeholder="请输入手机号码" maxlength="11"  tapmode oninput="isNumber(this);clear_inptValBtn(this);" >
+            </li>
+            <li id="yanZhengMa" class="section-li">
+            	<span id="clear_yanZhengMa_val" class="clear clear-r">&times;</span>
+                <input id="yanZhengMa_val" type="tel" placeholder="请输入验证码" maxlength="6"  tapmode oninput="isNumber(this);clear_inptValBtn(this);">
+                <p class="yanZhengMa_btn" id="yanZhengMa_btn">获取验证码</p>
+            </li>
+            <li id="pwd" class="section-li">
+                <input id="pwd_val" type="password" placeholder="请输入密码(不少于6位)" tapmode  onkeyup= "isInputPwdNull(this, event);">
+            </li>
+            <li id="newPwd" class="section-li">
+                <span class="clear">&times;</span>
+                <input id="newPwd_val" type="password" placeholder="请设置您的新密码(不少于6位)" tapmode  oninput = "isInputPwdNull(this, event);">
+            </li>
+            <li id="confirmPwd" class="section-li">
+                <span class="clear">&times;</span>
+                <input id="confirmPwd_val" type="password" placeholder="请再次确认您的新密码(不少于6位)" tapmode  oninput = "isInputPwdNull(this, event);">
+            </li>
+            <li id="confirmUserName" class="section-li">
+                <span id="clear_confirmUserName_val" class="clear">&times;</span>
+                <input id="confirmUserName_val" type="text" placeholder="请设置您的昵称" maxlength="15" tapmode oninput="clear_inptValBtn(this);">
+            </li>
+            <li id="wanJiMiMa" class="section-right-text">
+                <span id="wanJiMiMa_text" >忘记密码？</span>
+            </li>
+            <li id="submit" class="login-margin-t-58 login-btn">
+                <p id="submit_text">登录</p>
+            </li>
+        </ul>
+    </section>
+    <script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/base.js"></script>
+	<script type="text/javascript" src="../../script/conn.js"></script>
+    <script>
+
+	apiready = function(){
+		var header = $api.byId('header'); // header
+		var nav = $api.byId('nav');// nav
+		var nav_arrows = $api.byId('nav_arrows'); // nav 的返回箭头
+		var navTitle_text = $api.byId('navTitle_text'); // nav 的标题文字
+		var denglu = $api.byId('denglu'); // 登录按钮
+		var zhuce = $api.byId('zhuce'); // 注册按钮
+		var phone = $api.byId('phone');// li-放手机号码的框
+		var phone_val = $api.byId('phone_val');// 手机号码的值input
+		var yanZhengMa = $api.byId('yanZhengMa');// li-放验证码的框
+		var yanZhengMa_val = $api.byId('yanZhengMa_val');// 验证码的值input
+		var yanZhengMa_btn = $api.byId('yanZhengMa_btn');// 获取验证码的按钮
+
+		var wanJiMiMa = $api.byId('wanJiMiMa');//li - 放忘记密码的框
+		var wanJiMiMa_text = $api.byId('wanJiMiMa_text');// 忘记密码的按钮
+
+		var submit = $api.byId('submit');// 提交按钮
+		var submit_text = $api.byId('submit_text');// 提交按钮的文本
+
+		var clear_phone_val = $api.byId('clear_phone_val');// 清除手机号码的叉叉按钮
+		var clear_yanZhengMa_val = $api.byId('clear_yanZhengMa_val');// 清除验证码的叉叉按钮
+		var clear_confirmUserName_val = $api.byId('clear_confirmUserName_val');// 清除设置昵称的叉叉按钮
+
+		var pwd = $api.byId('pwd');// li-放密码的框
+		var pwd_val = $api.byId('pwd_val');// 密码的值input
+		var newPwd = $api.byId('newPwd');// li-放新密码的框
+		var newPwd_val = $api.byId('newPwd_val');// 新密码的值input
+		var confirmPwd = $api.byId('confirmPwd');// li-放确认密码的框
+		var confirmPwd_val = $api.byId('confirmPwd_val');// 确认密码的值input
+		var confirmUserName = $api.byId('confirmUserName');// li-放设置昵称的框
+		var confirmUserName_val = $api.byId('confirmUserName_val');// 设置昵称的值input
+
+		// header顶部的 登录 按钮点击 事件
+		$api.addEvt(denglu, 'click', function(e){
+			fnStopPropagation(e);// 阻止冒泡事件
+			clear_inptVal();//清空input的值
+			clear_inptValBtn(this);// 显示/隐藏 叉叉按钮
+			gotoDengLuYe();//返回登录页面
+		});
+
+		// header顶部的 注册 按钮点击 事件
+		$api.addEvt(zhuce, 'click', function(e){
+			fnStopPropagation(e);// 阻止冒泡事件
+			clear_inptVal();//清空input的值
+			clear_inptValBtn(this);// 显示/隐藏 叉叉按钮
+			gotoZhuCeYe();//返回注册页面
+		});
+
+		// 忘记密码 点击 事件
+		$api.addEvt(wanJiMiMa_text, 'click', function(e){
+			fnStopPropagation(e);// 阻止冒泡事件
+			clear_inptVal();//清空input的值
+			hide(header);
+			show(nav);
+			$api.html(submit_text, '下一步,重置密码'); // 设置提交按钮的文字
+			$api.addCls(phone, 'section-li-active');
+			show(yanZhengMa);
+			hide(pwd);
+			hide(wanJiMiMa);
+		});
+
+		// 点击叉叉 按钮 清空手机号码的值
+		$api.addEvt(clear_phone_val, 'click', function(e){
+			fnStopPropagation(e);// 阻止冒泡事件
+			$api.val(phone_val, '');
+			hide(clear_phone_val);
+		});
+
+		// 点击叉叉按钮 清空验证码的值
+		$api.addEvt(clear_yanZhengMa_val, 'click', function(e){
+			fnStopPropagation(e);// 阻止冒泡事件
+			$api.val(yanZhengMa_val, '');
+			hide(clear_yanZhengMa_val);
+		});
+
+		// 点击叉叉按钮 清空设置昵称的值
+		$api.addEvt(clear_confirmUserName_val, 'click', function(e){
+			fnStopPropagation(e);// 阻止冒泡事件
+			$api.val(confirmUserName_val, '');
+			hide(clear_confirmUserName_val);
+		});
+
+		// nav返回箭头点击 事件
+		$api.addEvt(nav_arrows, 'click', function(e){
+			fnStopPropagation(e);// 阻止冒泡事件
+			// 获取nav标题title的文字内容
+			clear_inptVal();//清空input的值
+			var _navTitle_text = $api.trim($api.text(navTitle_text));// nav标题的文字
+			clear_inptVal();//清空input的值
+			if(_navTitle_text == '忘记密码' ){
+				// 如果nav的标题title等于：忘记密码，点击nav标题title箭头，就返回登录界面
+				gotoDengLuYe();// 返回登录界面
+			}else if(_navTitle_text == '重置密码'){
+				// 如果nav的标题title等于：重置密码，点击nav标题title箭头，就返回登录界面
+				gotoDengLuYe();// 返回登录界面
+			}else if(_navTitle_text == '设置密码'){
+				// 如果  nav的标题title等于 ： 设置密码, 点击title箭头就返回注册页面
+				gotoZhuCeYe();//返回注册页
+			}else if(_navTitle_text == '设置昵称'){
+				// 如果  nav的标题title等于 ： 设置昵称, 点击title箭头就返回注册页面
+				gotoZhuCeYe();//返回注册页
+			}
+		});
+
+		// 获取验证码按钮点击 事件
+		$api.addEvt(yanZhengMa_btn, 'click', function(e){
+			fnStopPropagation(e);// 阻止冒泡事件
+			getCode();//点击获取验证码
+		});
+
+		// 提交按钮 点击事件
+		$api.addEvt(submit, 'click', function(e){
+			fnStopPropagation(e);// 阻止冒泡事件
+			clear_inptValBtn(this);// 显示/隐藏 叉叉按钮
+			var _submit_text = $api.trim($api.text(submit_text));
+
+			if( _submit_text == '登录'){
+				//调用 登录  提交按钮函数
+				clickSubmit_denglu(function(PhoneNum,PwdNum){
+					//声明url 接口连接
+					var url = website + '?action=login';
+					//将回调函数返回的参数传入data
+					var data = {username: PhoneNum,password: PwdNum};
+					api.showProgress({
+					    title: '登录中..',
+					    text: '请稍后',
+					    modal: false
+					});
+					// ajax请求，将用户输入的手机号和密码发送给后台请求
+					 _ajax(url,data,function(data){
+					 	 api.hideProgress();// 关闭正在加载。。提示框
+//					 	alert($api.jsonToStr(data));
+					 	 if(data.loginstr == 'no'){
+						        api.toast({
+								    msg: data.errmsg
+								});
+					        }else{
+//					       		 alert($api.jsonToStr(data));
+				                $api.setStorage('ID',data.ID);
+				                $api.setStorage('nickname',data.nickname);
+				                $api.setStorage('telphone',data.telphone);
+				                $api.setStorage('token',data.token);
+				                $api.setStorage('img',data.img);
+			                    $api.setStorage('active',data.active);
+								// 声明 融云URL请求接口
+								var rongUrl = website + 'rong/index2.php?action=getrongtoken';
+								var rongData = {ID: data.ID,nickname: data.nickname,img: data.img};
+								// 获取融云token
+								_ajax(rongUrl,rongData,function(data){
+									if(!data.errmsg){
+						               $api.setStorage('rongtoken',data.token);
+						               api.hideProgress();	 // 关闭正在加载。。提示框
+						               clear_inptVal()//清空input输入框的值
+                                       api.sendEvent({
+                                           name: 'save_personal_data',
+                                           extra: {}
+                                       });
+										api.sendEvent({
+											name: 'loginSuccess',
+											extra: {key:' value'}
+										});
+                                        setTimeout(closeToWin,1000);
+                                        function closeToWin(){
+                                            api.closeToWin({
+                                                name: 'main_win',
+                                                animation: {
+                                                    type: 'none'
+                                                }
+                                            });                                            
+                                        }
+
+							        }
+								});
+					        }
+					 });
+				});
+
+			}else if(_submit_text == '下一步'){
+				// 如果当前提交按钮的文字内容等于：下一步
+				if($api.trim($api.text(navTitle_text)) == '设置密码'){
+					// 如果nva 标题title的文字内容等于：设置密码，点击下一步就跳转到设置昵称页面
+					//调用设置密码的函数
+					 setPwd(pwd_val,function(){
+					 	//这里面是回调函数，里面的内容应该为ajax的回调----请求ajax把密码发送给后台
+					 	 //alert("mqq:设置密码应该在这里428");
+						 $api.html(navTitle_text, '设置昵称');//设置nva 标题title内容为：设置昵称
+						 show(confirmUserName);//显示设置昵称的框
+						 hide(pwd);//隐藏密码输入框
+						 hide(confirmPwd);//隐藏确认密码
+						 $api.html(submit_text, '完成');// 将提交按钮的文字设置为完成
+					 })
+
+				}else{
+					//否则，点击下一步就跳转到设置密码页面
+					clickSub_VerifyPhoneAndYanZhengMa(function(PhoneNum,yanZhengMaNum){// 跳转到设置密码
+						// 这里是ajax 请求，下面应该写在回调函数里面
+						api.showProgress({
+						    title: '请求中..',
+						    text: '请稍后',
+						    modal: false
+						});
+						// 声明注册账号 ajax URL接口
+						var setZhuceUrl = website + 'verifysms.php';
+						var setZhuceData = {phonenum: PhoneNum,smscode: yanZhengMaNum};
+						_ajax(setZhuceUrl, setZhuceData,function(data){
+								if(data.succ == 'no'){
+						        	 api.toast({
+										 msg: data.msg
+									});
+			                    }else{
+				                    hide(header);//隐藏header头部块
+									show(nav);//显示nav 标题title
+									$api.html(navTitle_text, '设置密码');//设置nav 标题title文字内容为：设置密码
+									hide(phone);//隐藏手机号码输入框
+									hide(yanZhengMa);//隐藏验证码
+									show(pwd);//显示密码输入框
+									show(confirmPwd);//显示确认密码输入框
+			              	   }
+			              	    api.hideProgress(); //隐藏正在请求。。提示框
+						});
+
+					});
+
+				}
+			}else if(_submit_text == '下一步,重置密码'){
+				// 如果当前的提交按钮文字内容等于：下一步，重置密码，点击就跳转到重置密码页面
+					clickSub_VerifyPhoneAndYanZhengMa(function(){  // 跳转到重置密码页面
+						//  ajax 请求后台，匹配验证码是否正确，下面内容应该放在ajax的回调函数
+
+						var setPwdUrl = website + 'verifysms2.php';// 声明 忘记密码 URL请求接口
+						var setPwdPhoneNum = $api.val(phone_val); // 获取用户手机号码输入框的值
+						var setPwdYanZhengMaNum = $api.val(yanZhengMa_val); // 获取验证码输入框的值
+						var setPwdData = {phonenum: setPwdPhoneNum,smscode: setPwdYanZhengMaNum};//声明忘记密码 ajax 请求参数
+						api.showProgress({
+						    title: '请求中..',
+						    text: '请稍后',
+						    modal: false
+						});
+						_ajax(setPwdUrl,setPwdData,function(data){
+							if(!data.errmsg){
+				                   if(data.succ == 'no'){
+								        api.toast({
+										    msg: data.msg
+										});
+				                    }else{
+										hide(header);//隐藏header
+										show(nav);//显示nav
+										$api.html(navTitle_text, '重置密码');//设置nav标题title文字内容为：重置密码
+										hide(phone);//隐藏手机号码输入框
+										hide(yanZhengMa);//隐藏验证码
+										hide(pwd);//隐藏密码输入框
+										show(newPwd);//显示新密码输入框
+										show(confirmPwd);//显示确认密码输入框
+										$api.html(submit_text, '完成');// 将提交按钮的文字设置为完成
+				                 }
+				                 api.hideProgress(); //隐藏正在请求。。提示框
+					        }
+						});
+					});
+
+			}else if(_submit_text == '完成'){
+				// 如果当前的提交按钮文字内容等于：完成
+				if($api.trim($api.text(navTitle_text)) == '重置密码'){
+					//如果nav标题title的文字内容等于：重置密码，点击完成就进入首页，表示重置密码成功
+					setPwd(newPwd_val,function(newPwdNum,confirmPwdNum){
+						var setPwdUrl = website + 'chsysset.php?action=repassword'; // 声明重置密码 URL请求接口
+						var setPwdPhoneNum = $api.val(phone_val); // 获取用户手机号码输入框的值
+						var setPwdData = {pass1: newPwdNum, pass2: confirmPwdNum,telphone: setPwdPhoneNum};
+						api.showProgress({
+						    title: '请求中..',
+						    text: '请稍后',
+						    modal: false
+						});
+						_ajax(setPwdUrl,setPwdData,function(data){
+							if(data.succ == 1){
+								 api.toast({
+								    msg: '修改成功'
+								});
+								//两秒后返回登录页
+								setTimeout(function(){
+						           gotoDengLuYe(); //两秒后返回登录页
+						        },1500)
+							}else{
+		                        api.toast({
+								    msg: data.msg
+								});
+							}
+							api.hideProgress();  //隐藏正在请求。。提示框
+						});
+					});
+
+				}else{
+					// 否则，如果nav标题title的文字内容等于：设置昵称，点击完成就进入首页，表示注册账号成功
+					var confirmUserNameVal = $api.trim($api.val(confirmUserName_val));
+					if(confirmUserNameVal.length === 0){
+						api.toast({
+						    msg: '设置昵称不能为空'
+						});
+					}else{
+						var suerPhoneNum = $api.val(phone_val);//用户手机号码输入框的值
+						var suerPwdNum = $api.val(pwd_val);// 用户密码输入框的值
+						var suerConfirmPwdNum = $api.val(confirmPwd_val);// 用户确认密码输入框的值
+						var deviceId = api.deviceId; // 获取用户系统资料
+						var deviceModel = api.deviceModel;  // 获取用户系统资料
+						var deviceName = api.deviceName;  // 获取用户系统资料
+						var token = gettoken(suerPhoneNum); //生成用户唯一加密ID，防止用户post攻击性代码，相当于MD5加密
+						var setZhuceOkUrl = website + '?action=skipreg';// 声明 设置注册完成请求ajax URL接口
+						var setZhuceOkData = { // 声明设置注册完成请求ajax data数据
+												nickname: confirmUserNameVal,
+											 	telphone: suerPhoneNum,
+											 	password: suerConfirmPwdNum,
+											    token: token,
+											    deviceId: deviceId,
+											    deviceModel: deviceModel,
+											    deviceName: deviceName
+											   };
+						api.showProgress({
+						    title: '数据提交中..',
+						    text: '请稍后',
+						    modal: false
+						});
+						_ajax(setZhuceOkUrl,setZhuceOkData,function(data){
+							if(!data.errmsg){
+				                $api.setStorage('nickname',data.nickname);
+				                $api.setStorage('telphone',data.telphone);
+				                $api.setStorage('token',data.token);
+				                $api.setStorage('ID',data.ID);
+				                $api.setStorage('img',data.img);
+				                // 声明 融云URL请求接口
+								var rongUrl = website + 'rong/index2.php?action=getrongtoken';
+								var rongData = {ID: data.ID,nickname: data.nickname,img: data.img};
+								// 获取融云token
+								_ajax(rongUrl,rongData,function(data){
+									if(!data.errmsg){
+						               $api.setStorage('rongtoken',data.token);
+						               api.hideProgress();	 // 关闭正在加载。。提示框
+						               clear_inptVal()//清空input输入框的值
+						            //    api.openWin({
+									//         name: 'main_win',
+									//         url: '../main_win.html',
+									//         vScrollBarEnabled: false,
+									//         reload: true
+									//    	});
+									// 	api.closeWin({
+									// 		name: 'main_win'
+									// 	});
+										api.sendEvent({
+											name: 'loginSuccess',
+											extra: {key:' value'}
+										});
+										api.closeToWin({
+											name: 'main_win',
+											animation: {
+												type: 'flip',
+												subType: 'from_bottom',
+												duration: 500
+											}
+										});
+							        }
+								});
+
+					        }else{
+					         api.hideProgress();//隐藏  数据提交中。。提示框
+					         api.toast({
+							    msg: '请求超时,请联系管理员'
+							});
+					        }
+						});
+					}
+				}
+			}
+		});
+
+	}
+
+
+
+	// 显示当前元素
+	function show(id){	id.style.display="block";}
+
+	//隐藏当前元素
+	function hide(id){	id.style.display="none"; }
+
+	// 只允许输入数字
+	function isNumber(me){ me.value=me.value.replace(/[^\d]/g,''); }
+
+	// 清空 手机号码输入框、密码输入框、验证码输入框的值
+	function clear_inptVal(){
+		$api.val(yanZhengMa_val, '');//清空验证码输入框的值
+		$api.val(pwd_val, '');// 清空密码输入框的值
+		$api.val(newPwd_val,'');// 清空新密码输入框的值
+		$api.val(confirmPwd_val,'');// 清空确认密码输入框的值
+		$api.val(confirmUserName_val, '');//清空设置昵称输入框的值
+	}
+
+	// 显示/隐藏 文本框的叉叉按钮
+	function clear_inptValBtn(me){
+		if(me.id == 'phone_val'){
+			if(me.value.length !== 0){
+				show(clear_phone_val);// 显示手机号码输入框的叉叉按钮
+			}else{
+				hide(clear_phone_val);// 隐藏手机号码输入框的叉叉按钮
+			}
+		}else if(me.id == 'yanZhengMa_val'){
+			if( me.value.length !== 0){
+				show(clear_yanZhengMa_val);// 显示验证码输入框的叉叉按钮
+			}else{
+				hide(clear_yanZhengMa_val);// 隐藏验证码输入框的叉叉按钮
+			}
+		}else if(me.id == 'confirmUserName_val'){
+			if( me.value.length !== 0){
+				show(clear_confirmUserName_val);// 显示设置昵称输入框的叉叉按钮
+			}else{
+				hide(clear_confirmUserName_val);// 隐藏设置昵称输入框的叉叉按钮
+			}
+		}else{
+			//否则,默认隐藏输入框的叉叉按钮
+			hide(clear_phone_val);// 隐藏手机号码输入框的叉叉按钮
+			hide(clear_yanZhengMa_val);// 隐藏验证码输入框的叉叉按钮
+			hide(clear_confirmUserName_val);// 隐藏设置昵称输入框的叉叉按钮
+		}
+	}
+
+	// 获取验证码按钮 点击 函数
+	function getCode(){
+		var PhoneNum = $api.val(phone_val);// 获取手机号码输入框的值
+		if(isVerifyPhoneNum(PhoneNum)){
+			//验证用户输入的手机号码是否合法
+			var getCodeUrl = website + 'sendsmscode.php?checknum=3';
+			var getCodeData = {phonenum: PhoneNum};
+			api.showProgress({
+						    title: '正在获取..',
+						    text: '请稍后',
+						    modal: false
+						});
+			//这里是ajax请求后台发送验证码
+			_ajax(getCodeUrl,getCodeData,function(data){
+				if(!data.errmsg){
+	               if(data.succ == 'no'){
+				        api.toast({
+						    msg: data.msg
+						});
+			        }else{
+			            //实例化 获取验证码60s倒计时的函数
+						var oGetCode = new setCountdown(phone_val,yanZhengMa_btn,clear_phone_val);
+						oGetCode.init();
+			        }
+			        api.hideProgress();  //隐藏正在请求。。提示框
+		        }
+			});
+
+		}else{
+			api.toast({
+			    msg: '请输入正确的手机号码'
+			});
+		}
+	}
+
+	// 设置120秒倒计时
+	function setCountdown(PhoneNumElem,codeBtnElem,closeNumBtn){
+		window.timeOut = null;	// 保存 定时器
+		var self = this;// 保存当前this对象
+		this._timer = 120;		//声明倒计时时间
+		this.PhoneNumElem = PhoneNumElem;	// 手机号码元素
+		this.codeBtnElem = codeBtnElem;//验证码按钮元素
+		this.init = function(){
+			if(self._timer>1){
+				self._timer--;
+				self.PhoneNumElem.disabled = true;//禁止用户点击手机号码输入框
+
+				$api.addCls(self.codeBtnElem, 'disabled');//禁止用户点击验证码按钮
+				$api.addCls(closeNumBtn, 'disabled');//禁止用户点击清空按钮
+
+				codeBtnElem.style.color = '#999'; // 将验证码按钮的文字颜色设置为灰色
+				window.clearTimeout(timeOut);
+				timeOut = setTimeout(function(){
+					self.init();
+				},1000);
+			}else{
+				self.codeBtnElem.innerHTML = '获取验证码';
+				codeBtnElem.style.color = '#3399ff'; // 将验证码按钮的文字颜色设置为 默认蓝色#3399ff;
+				self.PhoneNumElem.disabled = false;//允许用户点击手机号码输入框
+
+				$api.removeCls(self.codeBtnElem, 'disabled');//允许用户点击验证码按钮
+				$api.removeCls(closeNumBtn, 'disabled');//允许用户点击清空按钮
+				return ;
+			}
+			self.codeBtnElem.innerHTML = self._timer+'s后重发';
+		}
+	}
+
+ 		// 返回登录页面函数
+	function gotoDengLuYe(){
+		// 返回登录界面
+		show(header);// 显示header头部背景图
+		show(phone);// 显示手机号码输入框
+		show(wanJiMiMa);// 显示忘记密码
+		show(pwd);	// 显示密码输入框
+		hide(nav);// 隐藏nav 导航title
+		hide(newPwd)// 隐藏新密码输入框
+		hide(confirmPwd);//隐藏确认密码输入框
+		hide(confirmUserName);//隐藏设置昵称的输入框
+		hide(yanZhengMa);//隐藏验证码
+		$api.html(submit_text, '登录'); // 设置提交按钮的文字
+		$api.removeCls(phone, 'section-li-active');//删除手机号码输入框  before:'+86'
+		$api.addCls(denglu, 'login-active');//给登录页面添加顶部三角箭头
+		$api.removeCls(zhuce, 'login-active');//删除注册页顶部三角箭头
+	}
+
+		// 返回注册页面 函数
+	function gotoZhuCeYe(){
+		// 返回注册页面
+		$api.html(navTitle_text, '忘记密码'); // 设置nav标题的文字为默认：忘记密码
+		show(header);// 显示header头部背景图
+		show(phone);// 显示手机号码输入框
+		show(yanZhengMa);//显示验证码
+		hide(nav);//隐藏nav 导航title
+		hide(wanJiMiMa);// 隐藏忘记密码
+		hide(pwd);// 隐藏密码输入框
+		hide(newPwd)// 隐藏新密码输入框
+		hide(confirmPwd);//隐藏确认密码输入框
+		hide(confirmUserName);//隐藏设置昵称的输入框
+		$api.html(submit_text, '下一步'); // 设置提交按钮的文字
+		$api.addCls(phone, 'section-li-active');// 给手机号码输入框添加 before: '+86'
+		$api.addCls(zhuce, 'login-active');//给注册页设置顶部三角箭头
+		$api.removeCls(denglu, 'login-active');//删除登录页顶部的三角箭头
+	}
+
+		// 当提交按钮为：登录时，点击调用此函数
+	function clickSubmit_denglu(ajax_fn){
+		// PhoneNum： 全局变量，手机号码输入框的值;  PwdNum： 全局变量，密码输入框的值
+		var PhoneNum = $api.trim($api.val(phone_val));// 获取手机号码输入框的值
+		var PwdNum = $api.trim($api.val(pwd_val));//获取密码输入框的值
+		if(isVerifyPhoneNum(PhoneNum)){
+			//验证输入的手机号是否合法
+			if(PwdNum.length === 0){
+				// 如果登录密码为空
+				api.toast({
+			  	  msg: '请输入您的登录密码'
+				});
+			}else{
+				ajax_fn(PhoneNum,PwdNum);
+			}
+
+		}else{
+			api.toast({
+			    msg: '请输入正确的手机号码'
+			});
+		}
+	}
+
+		// 当提交按钮为：下一步，或者为：下一步，重置密码时，调用此函数，验证手机号和验证码是否合法(此函数用于设置密码或修改密码)
+	function clickSub_VerifyPhoneAndYanZhengMa(ajax_fn){
+		// PhoneNum： 全局变量，手机号码输入框的值;
+		var PhoneNum = $api.trim($api.val(phone_val));// 获取手机号码输入框的值
+		var yanZhengMaNum = $api.trim($api.val(yanZhengMa_val));// 获取验证码输入框的值
+		if(isVerifyPhoneNum(PhoneNum)){
+			//验证输入的手机号是否合法
+			if(yanZhengMaNum.length === 0){
+				// 如果验证码的值为空
+				api.toast({
+			  	  msg: '请输入您获取的验证码'
+				});
+			}else{
+				//  如果验证码正确，跳转下一步重置密码或设置注册密码
+				ajax_fn(PhoneNum,yanZhengMaNum);
+			}
+
+		}else{
+			api.toast({
+			    msg: '请输入正确的手机号码'
+			});
+		}
+	}
+
+	// 验证设置的密码是否合法
+	function setPwd(getPwd,ajax_fn){
+
+		var newPwdNum = $api.val(getPwd);// 获取新密码输入框的值
+		var confirmPwdNum = $api.val(confirmPwd_val);// 获取确认密码输入框的值
+		if(newPwdNum.length === 0){
+			api.toast({
+			    msg: '请输入您的密码'
+			});
+		}else if(newPwdNum.length < 6){
+			api.toast({
+			    msg: '密码不能少于6位'
+			});
+		}else if(confirmPwdNum.length === 0){
+			api.toast({
+			    msg: '请再次输入您的确认密码'
+			});
+		}else if(confirmPwdNum !== newPwdNum){
+			api.toast({
+				    msg: '您两次输入的密码不一致'
+				});
+		}else{
+			// 否则，如果密码一致，发送ajax请求后，跳转到相应的页面
+			ajax_fn(newPwdNum,confirmPwdNum);// ajax 回调函数
+		}
+
+	}
+
+	// 基于$api封装ajax
+	function _ajax(url,data,ajax_fn){
+		api.ajax({
+		    url: url,//website + '?action=login',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    cache: false,
+		    returnAll:false,
+		    data:{
+		        values: data
+		    }
+		},function(ret,err){
+		    if (ret) {
+				ajax_fn(ret);
+		     }
+		});
+
+	}
+
+	// 禁止input pwd 密码输入框输入空格
+	function isInputPwdNull(me, e){
+        if (e.keyCode == 13) {
+            submit.click();
+        }
+		return me.value = me.value.replace(/^ +| +$/g,'');
+	}
+
+    </script>
+</body>
+</html>

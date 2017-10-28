@@ -1,0 +1,161 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        .iconSize-22{
+            font-size: 1.5rem !important;
+        }
+        .tea-icon-join:before{
+            color: #5481db !important;
+        }
+        .aui-active.tea-icon-reward:before {
+            color: #ff5252 !important;
+        }
+        .tea-border-b {
+            border-bottom: 1px solid #ededed;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="aui-content">
+            <section class="aui-grid aui-margin-b-15">
+                <div class="aui-row">
+                    <div class="aui-col-xs-4 tea-border-b" tapmode onclick="openlist(1)">
+                        <i class="aui-iconfont tea-icon-check iconSize-22"></i>
+                        <div class="aui-grid-label aui-font-size-16">审车</div>
+                    </div>
+                    <div class="aui-col-xs-4 tea-border-b aui-border-l" tapmode onclick="openlist(2)">
+                        <i class="aui-iconfont tea-icon-insure iconSize-22"></i>
+                        <div class="aui-grid-label aui-font-size-16">保险</div>
+                    </div>
+                    <div class="aui-col-xs-4 tea-border-b aui-border-l" tapmode onclick="openlist(3)">
+                        <i class="aui-iconfont tea-icon-agency iconSize-22"></i>
+                        <div class="aui-grid-label aui-font-size-16">代办</div>
+                    </div>
+                    <div class="aui-col-xs-4" tapmode onclick="openlist(4)">
+                        <i class="aui-iconfont tea-icon-vip iconSize-22"></i>
+                        <div class="aui-grid-label aui-font-size-16">VIP</div>
+                    </div>
+                    <div class="aui-col-xs-4 aui-border-l" tapmode onclick="openlist(5)">
+                        <i class="aui-iconfont tea-icon-join iconSize-22"></i>
+                        <div class="aui-grid-label aui-font-size-16">代理加盟</div>
+                    </div>
+                    <div class="aui-col-xs-4 aui-border-l" tapmode onclick="openlist(6)">
+                        <i class="aui-iconfont aui-active tea-icon-reward iconSize-22"></i>
+                        <div class="aui-grid-label aui-font-size-16">提现</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {}, vm = null;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    dom = {
+    };
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+
+        },
+        methods: {
+
+        },
+        methods: {
+
+        }
+    })
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+function openlist(id){
+    api.openWin({
+        name: 'wd_list_win',
+        url: './wd_list_win.html',
+        vScrollBarEnabled: false,
+        pageParam: {id: id}
+    });
+}
+function opencontent(id){
+    api.openWin({
+        name: 'wd_content_win',
+        url: './wd_content_win.html',
+        pageParam: {id: id},
+        vScrollBarEnabled: false
+    });
+}
+</script>
+</html>

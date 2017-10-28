@@ -1,0 +1,278 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui_old.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+</head>
+<style type="text/css">
+
+</style>
+<body>
+	    <p class="aui-padded-10 aui-text-center">设置审车到期提醒</p>
+	    <div class="aui-content aui-card">
+	        <div class="aui-form">
+	            <div class="aui-input-row">
+	                <span class="aui-input-addon">年审到期时间</span>
+	                <input type="text" class="aui-input" placeholder="点击选择年审到期时间" id="ntime" onclick="selecttime('ntime');" readonly="readonly"/>
+	            </div>
+
+	            <div class="aui-input-row">
+	                <span class="aui-input-addon">年审差不多到期时自动通知</span>
+		                <input type="checkbox" class="aui-switch aui-pull-right" id="ck1" onclick="getck(1);" checked>
+	            </div>
+	    <div class="aui-content" id="rd1">
+
+	    </div>
+	    </div>
+	    </div>
+	    <p class="aui-padded-10 aui-text-center">设置保险到期提醒</p>
+	    <div class="aui-content aui-card">
+	        <div class="aui-form">
+	            <div class="aui-input-row">
+	                <span class="aui-input-addon">保险到期时间</span>
+	                <input type="text" class="aui-input" placeholder="点击选择保险到期时间" id="btime" onclick="selecttime('btime');" readonly="readonly"/>
+	            </div>
+
+	            <div class="aui-input-row">
+	                <span class="aui-input-addon">保险差不多到期时自动通知</span>
+		                <input type="checkbox" class="aui-switch aui-pull-right" id="ck2" onclick="getck(2);" checked>
+	            </div>
+	    <div class="aui-content" id="rd2">
+
+	    </div>
+	    </div>
+	    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript">
+	apiready = function() {
+	    api.parseTapmode();
+		api.addEventListener({
+		    name: 'postdate'
+		}, function(ret, err){
+              postdate();
+		});
+		api.addEventListener({
+		    name: 'selecttime'
+		}, function(ret, err){
+		    var obj = $api.byId(ret.value.pagetype);
+		    var val = ret.value.time1 + '-' + ret.value.time2 + '-' + ret.value.time3;
+		    $api.val(obj, val);
+		});
+		if(api.pageParam.type == 'edit'){
+		    loaddate();
+		}else{
+	        $api.html($api.byId('rd1'), sethtml(1));
+	        $api.html($api.byId('rd2'), sethtml(2));
+		}
+	};
+    function getck(index){
+	    var ckobj = $api.byId("ck" + index);
+	    if(ckobj.checked){
+           $api.html($api.byId('rd' + index), sethtml(index));
+	    }else{
+	       var obj = $api.byId("rdo" + index);
+	       $api.remove(obj);
+	    }
+    }
+    function sethtml(index){
+    var html = '';
+	        html += '<div class="aui-form" id="rdo'+ index +'">';
+	        html += '<div class="aui-input-row">';
+	        html += '<label class="aui-input-addon">提前三天每天通知</label>';
+	        html += '<input class="aui-pull-right aui-radio" type="radio" name="rad'+ index +'" value="3" checked>';
+	        html += '</div>';
+	        html += '<div class="aui-input-row">';
+	        html += '<label class="aui-input-addon">提前一周每天通知</label>';
+	        html += '<input class="aui-pull-right aui-radio" type="radio" name="rad'+ index +'" value="7">';
+	        html += '</div>';
+	        html += '<div class="aui-input-row">';
+	        html += '<label class="aui-input-addon">提前一个月每天通知</label>';
+	        html += '<input class="aui-pull-right aui-radio" type="radio" name="rad'+ index +'" value="30">';
+	        html += '</div>';
+	        html += '</div>';
+	 return html;
+    }
+    function edithtml(index){
+    var html = '';
+	        html += '<div class="aui-form" id="rdo'+ index +'">';
+	        html += '<div class="aui-input-row">';
+	        html += '<label class="aui-input-addon">提前三天每天通知</label>';
+	        html += '<input class="aui-pull-right aui-radio" type="radio" id="r'+ index +'3" name="rad'+ index +'" value="3">';
+	        html += '</div>';
+	        html += '<div class="aui-input-row">';
+	        html += '<label class="aui-input-addon">提前一周每天通知</label>';
+	        html += '<input class="aui-pull-right aui-radio" type="radio" id="r'+ index +'7" name="rad'+ index +'" value="7">';
+	        html += '</div>';
+	        html += '<div class="aui-input-row">';
+	        html += '<label class="aui-input-addon">提前一个月每天通知</label>';
+	        html += '<input class="aui-pull-right aui-radio" type="radio" id="r'+ index +'30" name="rad'+ index +'" value="30">';
+	        html += '</div>';
+	        html += '</div>';
+	 return html;
+    }
+    function loaddate(){
+		    showp('数据加载中...','请稍候...');
+			api.ajax({
+			    url: website + 'getmycar.php?action=carinfo',
+			    method: 'post',
+			    timeout: 30,
+			    dataType: 'json',
+			    returnAll:false,
+			    data:{
+			        values: {ID: api.pageParam.id},
+			    }
+			},function(ret,err){
+			    if (ret) {
+			       if(!ret.errmsg){
+                              $api.val($api.byId('ntime'), ret.scextime);
+                              $api.val($api.byId('btime'), ret.bxextime);
+                              if(ret._scremind == '0'){
+                                  $api.removeAttr($api.byId('ck1'), 'checked');
+                              }else{
+									 $api.html($api.byId('rd1'), edithtml(1));
+									 $api.attr($api.byId('r1'+ret._scremind), 'checked', 'checked');
+                              }
+                              if(ret._bxremind == '0'){
+                                  $api.removeAttr($api.byId('ck2'), 'checked');
+                              }else{
+									 $api.html($api.byId('rd2'), edithtml(2));
+									 $api.attr($api.byId('r2'+ret._bxremind), 'checked', 'checked');
+                              }
+
+                         api.hideProgress();
+			        }
+			    }else {
+			        api.hideProgress();
+			        api.alert({
+			            msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+			        });
+			    }
+			});
+    }
+    function getradselect(index){
+        var obj = document.getElementsByName("rad"+index);
+        for ( i = 0; i < obj.length; i++) {
+                if (obj[i].checked) {
+                      return obj[i].value;
+                }
+        }
+    }
+    function selecttime(val){
+    if(val == 'ntime'){
+			api.openFrame({
+			    name: 'selecttime',
+			    url: 'selecttime_frm.html',
+			    pageParam: {pagetype:val},
+			    rect: {
+			        x: 0,
+			        y: 320,
+			        w: api.frameWidth,
+			        h: api.winHeight -320
+			    },
+			    bounces: false,
+			    bgColor: 'rgba(0,0,0,0)',
+			    vScrollBarEnabled: false,
+			    hScrollBarEnabled: false
+			});
+		}else{
+			api.openFrame({
+			    name: 'selecttime',
+			    url: 'selecttime_frm.html',
+			    pageParam: {pagetype:val},
+			    rect: {
+			        x: 0,
+			        y: 0,
+			        w: api.frameWidth,
+			        h: api.winHeight -300
+			    },
+			    bounces: false,
+			    bgColor: 'rgba(0,0,0,0)',
+			    vScrollBarEnabled: false,
+			    hScrollBarEnabled: false
+			});
+		}
+    }
+    function postdate(){
+        if(api.pageParam.type == 'edit'){
+           var ctag = 'editcar';
+           var id = api.pageParam.id;
+        }else{
+           var ctag = 'addcar';
+           var id = $api.getStorage('ID');
+        }
+
+        var sctips = $api.val($api.byId('ck1')) == '' ? '0' : getradselect(1);   //审车到期提醒设置时间
+        var bxtips = $api.val($api.byId('ck2')) == '' ? '0' : getradselect(2);   //保险到期提醒设置时间
+        var ntime = $api.val($api.byId('ntime'));
+        var btime = $api.val($api.byId('btime'));
+        var cpm = $api.getStorage('cpm');  //车牌号码
+        var xszr = $api.getStorage('xszr');
+        var ckr = $api.getStorage('ckr');
+        var ckrs = $api.getStorage('ckrs');
+        var cartype = $api.getStorage('cartype');
+        var xsz_img = $api.getStorage('xsz_img');
+
+        if(ntime == '' || btime == ''){
+           api.toast({
+	           msg:'时间没有选择，请选择时间'
+           });
+           return false;
+        }
+        showp('数据提交中...','请稍候...');
+		api.ajax({
+		    url: website + '?action=' + ctag,
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {ID: id,ntime: ntime,btime: btime,sctips: sctips,bxtips: bxtips,cpm: cpm,xszr: xszr,ckr: ckr,ckrs: ckrs,cartype: cartype,xszimg: xsz_img},
+		    }
+		},function(ret,err){
+		    if(ret){
+		         var urlJson = JSON.stringify(ret);
+		         //alert(urlJson);
+                 console.log(urlJson);
+	 		             if(ret.succ == 'ok'){
+					             $api.rmStorage('cpm');
+					             $api.rmStorage('xszr');
+					             $api.rmStorage('ckr');
+					             $api.rmStorage('ckrs');
+					             $api.rmStorage('cartype');
+					             $api.rmStorage('xsz_img');
+						         api.sendEvent({
+								    name: 'saveok',
+								 });
+	                             api.closeToWin({
+		                             name: 'mycar_win'
+	                             });
+	                             api.hideProgress();
+				             }else{
+                                 api.alert({msg: ret.ermsg});
+	                             api.hideProgress();
+				             }
+
+		    }else {
+		        api.hideProgress();
+		        api.alert({
+		            msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+		        });
+		    }
+		});
+    }
+		function showjd(){
+			api.showProgress({
+			    style: 'default',
+			    animationType: 'fade',
+			    title: '图片处理中...',
+			    text: '请稍候...',
+			    modal: false
+			});
+		}
+</script>
+</html>

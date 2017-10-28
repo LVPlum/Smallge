@@ -1,0 +1,144 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            height: 100%;
+            overflow: auto;
+            background-color: #FFF;
+        }
+        /*aui框架样式重写*/
+        .aui-grid [class*=aui-col-]{
+            padding: 0;
+        }
+        .aui-grid .aui-grid-label{
+            margin: 0 auto;
+        }
+
+
+        .money-bg{
+            width: 3.45rem;
+            height: 2rem;
+            background-image: url(../../image/invite/money_bg@2x.png);
+            background-size: 100% 100%;
+            line-height: 2rem;
+        }
+        .frieds-bg{
+            width: 2.5rem;
+            height: 2.75rem;
+            margin: 0;
+            background-image: url(../../image/invite/frieds_bg@2x.png);
+            background-size: 100% 100%;
+            line-height: 2.8rem;
+        }
+        .aui-col-xs-3{
+            width: 20%;
+        }
+        .banner{
+            margin-bottom: 1.5rem;
+        }
+        .banner img{
+            width: 100%;
+        }
+        .tea-text-blue{
+            color: #3399ff !important;
+        }
+        .tea-text-orange{
+            color: #FF6600 !important;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="banner"><img src="../../image/invite/invite_banner@2x.png"></div>
+    <div class="aui-text-center" style="margin-bottom: 1.5rem">
+        <p class="tea-text-blue" style="font-weight: bold;margin-bottom: 0.75rem">邀请好友，得手机充值券</p>
+        <p class="tea-text-blue">每成功邀请1位好友注册小马哥APP</p>
+        <p class="tea-text-blue">双方都可获得<span class="tea-text-orange">￥5</span> 以上话费券</p>
+    </div>
+</header>
+<section class="aui-grid" style="width: 75%; margin: 0 auto">
+    <div class="aui-row">
+        <div class="aui-col-xs-4">
+            <div class="aui-grid-label money-bg">5元</div>
+        </div>
+        <div class="aui-col-xs-4">
+            <div class="aui-grid-label money-bg">2×5元</div>
+        </div>
+        <div class="aui-col-xs-4">
+            <div class="aui-grid-label money-bg">3×5元</div>
+        </div>
+    </div>
+    <div class="aui-row" style="margin-top: 0.75rem">
+        <div class="aui-col-xs-4">
+            <div class="aui-grid-label frieds-bg "><span style="line-height: normal;margin-top: 0.65rem">1位</span></div>
+        </div>
+        <div class="aui-col-xs-4">
+            <div class="aui-grid-label frieds-bg">2位</div>
+        </div>
+        <div class="aui-col-xs-4">
+            <div class="aui-grid-label frieds-bg">3位</div>
+        </div>
+    </div>
+</section>
+<p class="aui-content aui-content-padded aui-text-center" style="padding-bottom: 2rem">已经成功邀请
+    <span id="inviteNum" class="tea-text-orange">0</span> 位好友 <br/> 已成功获得
+    <span id="inviteReward" class="tea-text-orange">0</span> 张￥20审车现金券
+</p>
+<!--<footer class="aui-bar aui-bar-tab" id="footer" tapmode onclick="share()">
+    <div class="aui-bar-tab-item aui-active tea-bg-blue">
+        <div class="aui-bar-tab-label aui-text-white aui-font-size-16">立即分享</div>
+    </div>
+</footer>-->
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+
+<script type="text/javascript">
+    /**********************************声明全局变量**********************************/
+// 声明DOM对象
+    var dom = {};
+
+    init();
+    function init(){
+
+        dom = {
+            inviteNum: $api.byId('inviteNum'),
+            inviteReward: $api.byId('inviteReward')
+        };
+
+        getData();
+    };
+
+    function getData(){
+        /*获取邀请人数*/
+
+        var friid = getUrlParam('friid');
+
+        //url: website + 'share_api.php?action=num'
+        $.post("url", { ID: friid },
+            function(){
+                if(ret.succ == 1){
+                    $api.text(dom.inviteNum, ret.num);
+                    $api.text(dom.inviteReward, ret.num);
+                    return true;
+                }
+        })
+
+    }
+
+</script>
+</html>

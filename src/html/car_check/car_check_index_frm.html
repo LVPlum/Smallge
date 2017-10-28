@@ -1,0 +1,161 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+
+    </style>
+</head>
+<body>
+    <div id="app">
+        <ul class="aui-list aui-media-list aui-list-noborder">
+            <li tapmode onclick="openWinCarCheck('six')" class="aui-list-item aui-list-item-middle aui-padded-0 aui-margin-l-15">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media" style="width: 1.9rem;padding: 0">
+                        <img src="../../image/car_check/six@2x.png" class="aui-img-round aui-list-img-sm">
+                    </div>
+                    <div class="aui-list-item-inner aui-list-item-arrow aui-padded-l-10">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title aui-font-size-16">六年免检车</div>
+                        </div>
+                        <div class="aui-list-item-text aui-font-size-14 tea-text-gray">
+                            特权VIP免费上门服务
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li tapmode onclick="openWinCarCheck('unSix')" class="aui-list-item aui-list-item-middle aui-padded-0 aui-margin-l-15">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media" style="width: 1.9rem;padding: 0">
+                        <img src="../../image/car_check/unsix@2x.png" class="aui-img-round aui-list-img-sm">
+                    </div>
+                    <div class="aui-list-item-inner aui-list-item-arrow aui-padded-l-10">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title aui-font-size-16">非六年免检车</div>
+                        </div>
+                        <div class="aui-list-item-text aui-font-size-14 tea-text-gray">
+                            审车、环检、二级维护、等级评定
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <section class="aui-content-padded">
+            <p class="aui-font-size-14 aui-text-default">为什么购买特权卡VIP?</p>
+            <div class="aui-margin-t-10" tapmode onclick="openWinVip()">
+                <img src="../../image/car_check/banner@2x.png" alt="VIP">
+            </div>
+        </section>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {}, vm = null;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    dom = {
+    };
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+
+        },
+        methods: {
+
+        },
+        computed: {
+
+        }
+    })
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+function openWinCarCheck(type){
+    if(type == 'six'){
+        api.openWin({
+            name: 'newcar_check_partOne_win',
+            url: './newcar_check_partOne_win.html',
+        });
+    }else {
+        api.openWin({
+            name: 'car_check_partOne_win',
+            url: './car_check_partOne_win.html',
+        });
+    }
+}
+function openWinVip(){
+    api.openWin({
+        name: 'vip_win',
+        url: '../vip/vip_win.html',
+    });
+}
+</script>
+</html>

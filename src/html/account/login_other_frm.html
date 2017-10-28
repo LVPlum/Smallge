@@ -1,0 +1,206 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/account.css" />
+    <style type="text/css">
+
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <header>{{type == 'code'? '短信验证码登录' : '小马哥密码登录'}}</header>
+        <label for="tel">
+            <i class="aui-iconfont tea-icon-mobile icon-left"></i>
+            <!--<input id="tel" type="tel" placeholder="请输入手机号" maxlength="13" :class="{ 'center': tel }" :value="tel | formatTel" @input="tel = $api.trimAll($event.target.value)">-->
+            <!--修改手机号长度改成11，去除空格-->
+            <input id="tel" type="tel" placeholder="请输入手机号" maxlength="11" :class="{ 'center': tel }" :value="tel" @input="tel = $api.trimAll($event.target.value)">
+            <i class="aui-iconfont tea-icon-close  icon-right" :class="{ 'aui-hide' : !tel}" @click="clear('tel')"></i>
+        </label>
+        <label for="password" v-show="type == 'password'">
+            <i class="aui-iconfont tea-icon-lock icon-left"></i>
+            <input id="password" :type="display? 'text' : 'password'" placeholder="请输入您的密码" maxlength="15" :class="{ 'center': password }" v-model="password" @keyup.enter="submit">
+            <i class="aui-iconfont tea-icon-display  icon-right" :class="{ 'aui-hide' : !password}" @click="toggleDisplay()"></i>
+        </label>
+        <p class="tea-text-blue aui-font-size-16 aui-text-left aui-margin-l-10 aui-margin-t-15">
+            <span @click="toggleType()">{{type == 'code'? '用密码登录' : '用验证码登录'}}</span>
+            <span @click="forgetPassword()" v-show="type == 'password'" class="aui-pull-right">忘记密码?</span>
+        </p>
+        <footer>
+            <div class="aui-btn aui-btn-block tea-btn-submit" :class="{'tea-active' : !errorMsg}" @click="submit()">{{type == 'code'? '下一步' : '登录'}}</div>
+        </footer>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 账号通用 -->
+<script type="text/javascript" src="../../script/account.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {}, vm = null;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    dom = {
+    };
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+            display: false,
+            type: 'password',
+            password: '',
+            tel: api.pageParam.tel? api.pageParam.tel : ''
+        },
+        methods: {
+            clear: function(key){
+                this[key] = '';
+            },
+            toggleType: function(){
+                if (this.type == 'code') {
+                    this.type = 'password';
+                }
+                else {
+                    this.type = 'code';
+                }
+            },
+            toggleDisplay: function(){
+                this.display = !this.display;
+            },
+            forgetPassword: function(){
+                api.openWin({
+                    name: 'password_find_win',
+                    url: './password_find_win.html',
+                    pageParam: {
+                        tel: vm.tel
+                    },
+                    reload: true
+                });
+            },
+            submit: function(){
+                // 验证表单
+                if (vm.errorMsg) {
+                    api.toast({
+                        msg: vm.errorMsg,
+                        duration: 2000,
+                        location: 'middle'
+                    });
+                    return false;
+                }
+                if (this.type == "code") {
+                    api.openWin({
+                        name: 'message_win',
+                        url: '../unit/message_win.html',
+                        pageParam: {
+                            type: 'login',
+                            tel: vm.tel
+                        },
+                        reload: true
+                    });                    
+                }
+                else {
+                    account.loginByPassword();
+                }
+
+            }
+        },
+        computed: {
+            errorMsg: function(type){
+                var rule = new tea.checkRule();
+                rule.add(this.tel, [{
+                    condition: 'isPhone',
+                    errorMsg: '请输入正确的手机号码'
+                }]);
+                if (this.type == 'password') {
+                    rule.add(this.password, [{
+                        condition: 'minLength:6',
+                        errorMsg: '密码至少6位'
+                    }]);                    
+                }
+                var errorMsg = rule.start();
+                return errorMsg;
+            },
+        },
+        filters: {
+            formatTel: function(val){
+                return val; //暂时注释
+                var len = val.length;
+                if (len <= 3) {
+                    return val;
+                }
+                if (len > 3 && len < 8) {
+                    return val.substr(0, 3) + " " + val.substr(3);
+                }
+                return val.substr(0, 3) + " " + val.substr(3, 4) + " " + val.substr(7);
+            } 
+        }
+    })
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+
+</script>
+</html>

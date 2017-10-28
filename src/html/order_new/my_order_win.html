@@ -1,0 +1,205 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+    </style>
+</head>
+
+<body>
+    
+    <div id="app">
+        <header id="header">
+            <section id="title" class="aui-bar aui-bar-nav aui-bar-light tea-text-title" @click="toggleFrame()">
+                <a class="aui-btn aui-pull-left" tapmode onclick="closeWin()">
+                    <span class="aui-iconfont aui-icon-left tea-text-title"></span>
+                </a>
+                <span :class="[mask ? 'tea-text-triangle-up' : 'tea-text-triangle-down']">{{title[orderType]}}</span>
+            </section>
+            <section class="aui-tab aui-border-b" style="border-bottom: 1px solid #ededed">
+                <div v-for="(item, index) in statusList" class="aui-tab-item" :class="{ 'aui-active' : index == statusIndex }" @click="setStatusIndex(index)">{{item}}</div>
+            </section>
+        </header>
+
+
+        <section id="main"></section>
+
+        <footer id="footer"></footer>
+    </div>
+
+
+</body>
+
+<script type="text/javascript" src="../../script/api.js"></script>
+<!-- 快速点击 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- HTML模板渲染引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var header, footer, title, vm = null;
+
+// 声明全局变量
+var headerH, footerH;
+
+/**********************************apiready**********************************/
+apiready = function() {
+
+    // 处理沉浸式效果，计算header和footer的高度
+    header = $api.byId('header');
+    $api.fixStatusBar(header);
+    headerH = $api.offset(header).h;
+    footer = $api.byId('footer');
+    footerH = $api.offset(footer).h;
+    title = $api.byId('title');
+    titleH = $api.offset(title).h + $api.offset(title).t;
+
+    // 初始化
+    init();
+
+    // 打开Frame
+    openFrame();
+
+};
+
+/**********************************初始化变量**********************************/
+function init() {
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+            mask: false,
+            orderType: 0,
+            title: ['我的订单', '找代办', '汽车保险', '网约审车', 'VIP订单', '手机充值'],
+            statusIndex: 0,
+            statusList: ['全部', '已完成', '未完成']
+        },
+        methods: {
+            toggleFrame: function(){
+                if (vm.mask) {
+                    api.setFrameAttr({
+                        name: 'order_type_frm',
+                        hidden: true
+                    });
+                    vm.mask = false;
+                }
+                else {
+                    vm.mask = true;
+                    api.openFrame({
+                        name: 'order_type_frm',
+                        url: './order_type_frm.html',
+                        rect: {
+                            x: 0,
+                            y: titleH,
+                            w: 'auto',
+                            h: api.winHeight - titleH
+                        },
+                        pageParam: {
+                            name: 'test'
+                        },
+                        bounces: false,
+                        bgColor: 'rgba(0,0,0,0.6)',
+                        vScrollBarEnabled: true,
+                        hScrollBarEnabled: true
+                    });                    
+                }
+            },
+            setStatusIndex: function(index){
+                vm.statusIndex = index;
+                api.sendEvent({
+                    name: 'setStatusIndex',
+                    extra: {
+                        index: index, 
+                    }
+                });
+            }  
+        },
+        watch: {
+
+        }
+    })
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule() {
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener() {
+
+    api.addEventListener({
+        name: 'setOrderType'
+    }, function(ret, err){
+        vm.orderType = ret.value.index;
+        vm.statusIndex = 0;
+    });
+
+    api.addEventListener({
+        name: 'setOrderMaskOut'
+    }, function(ret, err){
+        vm.mask = false;
+    });
+}
+
+
+/**********************************DOM响应**********************************/
+// 回退关闭窗口
+function closeWin() {
+    api.closeWin();
+}
+
+/**********************************打开Frame**********************************/
+// 打开Frame,不需要打开Frame请删除
+function openFrame() {
+
+    var frameName = api.winName.replace('win', 'frm');
+    api.openFrame({
+        name: frameName,
+        url: './' + frameName + '.html',
+        rect: {
+            x: 0,
+            y: headerH,
+            w: 'auto',
+            h: api.winHeight - headerH - footerH
+        },
+        pageParam: api.pageParam,
+        // 页面是否弹动
+        bounces: false
+    });
+
+}
+
+/**********************************其他函数**********************************/
+</script>
+
+</html>

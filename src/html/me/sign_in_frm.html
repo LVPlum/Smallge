@@ -1,0 +1,150 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>签到</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+               /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            overflow: auto;
+            background: none;
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content:center;
+                    justify-content:center;
+            -webkit-align-items: center;
+                    align-items: center;
+            -webkit-flex-direction: column;
+                    flex-direction: column;
+        }
+
+        section {
+            /* position: absolute; margin: auto;
+            left: 0; right: 0; top: 0; bottom: 0; */
+            width: 15.0rem;
+            height: auto;
+            background-color: #FFF;
+            position:relative;
+        }
+        #qiaodao-title{
+        	width:100%;
+        	position:absolute;
+        	top:3.65rem;
+        	left:50%;
+        	text-align:center;
+        	margin:0 -50%;
+        	font-size: 0.8rem;
+        	color: #fff;
+        }
+		#qiandao-content{
+			width:100%;
+			position:absolute;
+			top:5.7rem;
+			left:50%;
+			font-size:0.8rem;
+			text-align:center;
+			margin:0 -50%;
+			color:#fff;
+		}
+		#look-integral{
+			width:100%;
+			position:relative;
+			bottom:1.7rem;
+			font-size: 0.7rem;
+			color:#3399ff;
+		}
+		#colse-frm{
+			width:1.5rem;
+			height: 1.5rem;
+			font-size:0.8rem;
+			line-height:1.5rem;
+			position:absolute;
+			bottom:-1rem;
+			left:50%;
+			text-align:center;
+			margin:0 -0.75rem;
+			color:#fff;
+			border:1px solid #fff;
+			border-radius:999px;
+			z-index: 99;
+		}
+    </style>
+</head>
+<body tapmode ontouchend="tea.closeFrame(event,'section')">
+    <section id="section" class="tea-border-radius-10 aui-padded-l-15 aui-padded-r-15" style="background-color: rgba(0,0,0,0)" >
+    	<div id="qiaodao-title">签到成功</div>
+    	<div>
+    		<img src="../../image/my_icon/qiandao_ba.png" alt="" />
+    	</div>
+    	<div id="qiandao-content">恭喜您获得<span style="font-size: 1.5rem;">10</span>积分</div>
+    	<div id="look-integral"  tapmode onclick="open_integral()">查看积分明细</div>
+    	<div id="colse-frm"  tapmode onclick= "closeFrm()" >&times;</div>
+   </section>
+
+
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+  api.sendEvent({
+	  name:'save_personal_data'
+  });
+
+};
+
+/**********************************声明全局变量**********************************/
+// 声明全局变量
+var dom = {};
+
+// 声明DOM对象
+var data = {}, values = {};
+
+/**********************************初始化变量**********************************/
+
+// 回退关闭窗口
+function closeWin(){
+    api.closeWin();
+}
+
+function open_integral(){
+	_openWin('积分明细','./integral_win.html',{ID:$api.getStorage("ID")});// 打开个人zhu页面
+}
+function closeFrm(){
+	api.closeFrame({});
+}
+/**********************************其他函数**********************************/
+
+/**********************************功能模块1**********************************/
+
+</script>
+</html>

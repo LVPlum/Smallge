@@ -1,0 +1,160 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+
+    </style>
+</head>
+<body>
+    <div id="app">
+
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {}, vm = null;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+// 处理沉浸式效果，计算header和footer的高度
+    header = $api.byId('header');
+    $api.fixStatusBar(header);
+    headerH = $api.offset(header).h;
+    footer = $api.byId('footer');
+    footerH = $api.offset(footer).h;
+    // 初始化变量
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    dom = {
+    };
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+
+        },
+        methods: {
+
+        },
+        methods: {
+
+        }
+    });
+
+    var FNScanner = api.require('FNScanner');
+    var frameWidth = api.frameWidth;
+    var frameHeight = api.frameHeight;
+    FNScanner.openView({
+        rect:{
+            x: 0,
+            y: headerH,
+            w: frameWidth,
+            h: api.winHeight - headerH - footerH
+        },
+        autorotation: false,
+    },function( ret, err ){
+        if( ret ){
+//            api.openFrame({
+//                name: 'code_new_frm',
+//                url: './code_new_frm.html',
+//                rect: {
+//                    x:0,
+//                    y:0,
+//                    w: frameWidth,
+//                    h: frameHeight
+//                },
+//                pageParam: {
+//                    name: 'code_new_frm'
+//                },
+//                vScrollBarEnabled: false,
+//                hScrollBarEnabled: false
+//            });
+            if(ret.eventType=="show"){
+
+            }
+            if(ret.eventType=="success"){
+
+            }
+        }else{
+            alert( JSON.stringify( err ) );
+        }
+    });
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+    api.addEventListener({
+        name: 'closeCode'
+    }, function (ret, err) {
+        console.log(JSON.stringify(ret,null,4))
+        if(ret.value.key1){
+            FNScanner.closeView();
+        }
+        api.removeEventListener({
+            name: 'closeCode'
+        });
+    });
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+
+</script>
+</html>

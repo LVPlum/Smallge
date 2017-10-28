@@ -1,0 +1,188 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+    </style>
+</head>
+<body>
+    <div id="app" style="margin-top: 1rem" v-cloak>
+        <div class="aui-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-input">
+                        <input type="text" v-model="nickname" @keyup.enter="postData">
+                    </div>
+                    <div class="aui-list-item-label-icon" :class="{'aui-hide' : !nickname}" tapmode @click="clear('nickname')">
+                        <i class="aui-iconfont tea-icon-close tea-text-light-gray"></i>
+                    </div>
+                </div>
+            </li>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {}, data = {} , vm = null;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    data = {
+        nickname : $api.getStorage("nickname"),
+        ID : $api.getStorage("ID"),
+        token : $api.getStorage("token"),
+    };
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+            nickname : data.nickname,
+            ID : data.ID,
+            token : data.token,
+            hide: true,
+        },
+        methods: {
+            /*清除表单值*/
+            clear: function(key){
+                vm[key] = '';
+            },
+            postData: function(){
+                postNickname();
+            }
+        },
+        watch: {
+
+        }
+    })
+
+    // 初始化
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    dom = {
+
+    };
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+    /*进行保存昵称操作*/
+    api.addEventListener({
+        name: 'saveNickname'
+    }, function (ret, err) {
+        postNickname();
+    });
+
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+function postNickname(){
+    var result = $api.trimAll(vm.nickname);
+    if(result != ""){
+        showp('数据处理中...','');
+        api.ajax({
+            url: website + 'chsysset.php?action=chnickname',
+            method: 'post',
+            timeout: 30,
+            data: {
+                values: {
+                    ID: vm.ID,
+                    token: vm.token,
+                    newname: result,
+                }
+            }
+        }, function (ret, err) {
+            api.hideProgress();
+            if (!ret) {
+                tea.toast('ajax');
+                return false;
+            };
+            if (ret.succ == 'ok') {
+                api.sendEvent({   // 发送更新成功事件，发送到me_frm和profile_frm页面
+                    name: 'save_personal_data',
+                });
+                api.closeWin();
+                return true;
+            }
+            api.toast({
+                msg: ret.msg,
+                duration: 2000,
+                location: 'middle',
+            });
+        });
+    } else{
+        alert("请输入昵称");
+    }
+}
+
+/*
+ //修改融云token,暂时不添加
+function updataRongyun(){
+    api.ajax({
+        url: website + 'rong/index2.php?action=getrongtoken',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        returnAll:false,
+        data:{
+            values: {ID: ID,nickname: nickname,img: img},
+        }
+    },function(ret,err) {
+        if (ret) {
+            if (!ret.errmsg) {
+                $api.setStorage('rongtoken', ret.token);
+            }
+        }
+    });
+}
+*/
+</script>
+</html>

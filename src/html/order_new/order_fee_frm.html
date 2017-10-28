@@ -1,0 +1,144 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            height: 100%;
+            overflow: auto;
+            background: none;
+        }
+        .warp {
+            width: 100%;
+            height: auto;
+            background-color: #f7f7f7;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            padding: 0.5rem;
+        }
+
+    </style>
+</head>
+<body class="tea-body-mask" tapmode ontouchend="tea.closeFrame(event,'app')">
+    <div id="app" class="warp" v-cloak>
+        <div class="aui-list aui-card-list aui-list-noborder" style="background: #f7f7f7;margin-bottom: 0">
+            <div class="aui-card-list-content-padded">
+                <div class="aui-list-item-text">
+                    <div class="aui-list-item-text aui-font-size-16 tea-text-title">发票价格</div>
+                    <div class="aui-list-item-right aui-font-size-16 tea-text-title">¥{{tea.formatMoney(orderFee)}}</div>
+                </div>
+                <div class="aui-list-item-text">
+                    <div class="aui-list-item-text aui-font-size-16 tea-text-title">车船使用税</div>
+                    <div class="aui-list-item-right aui-font-size-16 tea-text-title">+ ¥{{tea.formatMoney(travelFee)}}</div>
+                </div>
+                <div class="aui-list-item-text">
+                    <div class="aui-list-item-text aui-font-size-16 tea-text-title">小马哥送礼</div>
+                    <div class="aui-list-item-right aui-font-size-16 tea-text-title">- ¥{{tea.formatMoney(billBenefit)}}</div>
+                </div>
+                <div class="aui-list-item-text" v-if="sendBill == 1">
+                    <div class="aui-list-item-text aui-font-size-16 tea-text-title">邮费</div>
+                    <div class="aui-list-item-right aui-font-size-16 tea-text-title">{{postFee == 0? '免费' : '+ ¥' + tea.formatMoney(postFee)}}</div>
+                </div>
+                <div class="aui-list-item-text">
+                    <div class="aui-list-item-text aui-font-size-16 tea-text-title">现金券</div>
+                    <div class="aui-list-item-right aui-font-size-16 tea-text-title">- ¥{{tea.formatMoney(couponFee)}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {}, vm = null;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    var param = api.pageParam;
+    vm = new Vue({
+        el: '#app',
+        data: {
+            orderFee: param.orderFee,
+            postFee: param.postFee,
+            travelFee: param.travelFee,// 车船税
+            billBenefit: param.billBenefit,// 发票优惠
+            couponFee: param.couponFee,
+            sendBill: param.sendBill         
+        },
+        methods: {
+
+        },
+        watch: {
+
+        }
+    })
+
+    // 初始化
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    dom = {
+    };
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+
+</script>
+</html>

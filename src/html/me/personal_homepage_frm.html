@@ -1,0 +1,276 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>个人主页</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+		html,body {
+            height: 100%;
+            overflow: auto;
+            background-color: #f2f5f8;
+            color: #333;
+		}
+        .introduce{
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="aui-card-list aui-margin-b-10" style="line-height: 3.55;">
+    <div class="aui-card-list-content">
+        <ul class="aui-list aui-media-list">
+            <li class="aui-list-item aui-list-item-middle" tapmode onclick="openWinInfo()" >
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media" style="width: 3.25rem;height: 3.5rem">
+                        <img id="user-head-img" src="" class="aui-img-round" style="height: 100%;width: 100%;">
+                    </div>
+                    <div class="aui-list-item-inner aui-list-item-arrow">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title aui-font-size-16">个人主页</div>
+                            <div class="aui-list-item-right aui-font-size-14">进入</div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="aui-content aui-margin-b-15">
+    <ul class="aui-list aui-list-in">
+        <li class="aui-list-item" tapmode onclick="openWinLogo()" >
+            <div class="aui-list-item-inner aui-list-item-arrow">
+                <div class="aui-list-item-title">头像</div>
+                <div class="aui-list-item-right aui-font-size-14">
+                    <div>修改</div>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item" tapmode onclick="openWin(2,pageParam)" >
+            <div class="aui-list-item-inner aui-list-item-arrow">
+                <div class="aui-list-item-title">昵称 </div>
+                <div class="aui-list-item-right aui-font-size-14">
+                    <div id="nickname"></div>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">手机号码</div>
+                <div class="aui-list-item-right aui-font-size-14">
+                    <div id="telphone"></div>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item" tapmode onclick="openWin(3,pageParam)" >
+            <div class="aui-list-item-inner aui-list-item-arrow">
+                <div class="aui-list-item-title">我的二维码</div>
+                <div class="aui-list-item-right aui-font-size-14">
+
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item" tapmode onclick="openWin(4,pageParam)" >
+            <div class="aui-list-item-inner aui-list-item-arrow">
+                <div class="aui-list-item-title">个人简介</div>
+                <div class="aui-list-item-right aui-font-size-14">
+                    <div id="introduce" class="introduce"></div>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+
+/**********************************apiready**********************************/
+apiready = function(){
+	api.parseTapmode();
+	var url = website+'api.php?action=get_id_by_my_info';
+	var id = $api.getStorage('ID'); // 自己的ID
+	var data = {fid:id};
+	_ajax(url,data,{},function(data){
+		window.pageParam.id = data.ID;
+		window.pageParam.nickname = data.nickname;
+		window.pageParam.token = data.token;
+		window.pageParam.telphone = data.telphone;
+		window.pageParam.img = data.img;
+		window.pageParam.profile = data.profile;
+
+		var nickname = data.nickname;//昵称
+		var telphone = data.telphone;// 手机号码
+		var token = data.token;//token
+		var id = data.ID;// 用户ID
+		var img = data.img;//头像缩略图
+		var bimg = data.bimg;//头像大图
+		var profile = data.profile || '未填写';//签名
+		var tx = data.tx;//头衔
+		var imglist = data.imglist;//个人风采6张图
+		$api.setStorage('nickname',nickname);
+		$api.setStorage('telphone',telphone);
+		$api.setStorage('token',token);
+		$api.setStorage('id',id);
+		$api.setStorage('img',img);
+
+
+		$api.attr($api.byId("user-head-img"), "src", img);// 头像
+		$api.html($api.byId('nickname'), nickname); // 昵称
+		$api.html($api.byId('telphone'), telphone);
+		$api.html($api.byId('introduce'), profile);
+	});
+
+	// 监听个人资料是否更新
+	api.addEventListener({
+	    name: 'save_personal_data'
+	}, function(ret, err) {
+		if(ret){
+//			 alert("我的账号事件监听"+$api.jsonToStr(ret));
+	    	 _ajax(url,data,{},function(data){
+				window.pageParam.id = data.ID;
+				window.pageParam.nickname = data.nickname;
+				window.pageParam.token = data.token;
+				window.pageParam.telphone = data.telphone;
+				window.pageParam.img = data.img;
+				window.pageParam.profile = data.profile;
+
+				var nickname = data.nickname;//昵称
+				var telphone = data.telphone;// 手机号码
+				var token = data.token;//token
+				var id = data.ID;// 用户ID
+				var img = data.img;//头像缩略图
+				var bimg = data.bimg;//头像大图
+				var profile = data.profile || '未填写';//签名
+				var tx = data.tx;//头衔
+				var imglist = data.imglist;//个人风采6张图
+				$api.setStorage('nickname',nickname);
+				$api.setStorage('telphone',telphone);
+				$api.setStorage('token',token);
+				$api.setStorage('id',id);
+				$api.setStorage('img',img);
+
+				$api.attr($api.byId("user-head-img"), "src", img);// 头像
+				$api.html($api.byId('nickname'), nickname); // 昵称
+				$api.html($api.byId('telphone'), telphone);
+				$api.html($api.byId('introduce'), profile);
+			});
+		}
+	});
+
+};
+
+/**********************************声明全局变量**********************************/
+// 声明全局变量
+var dom = {};
+
+// 声明DOM对象
+var data = {}, values = {};
+var pageParam = {};
+
+// 回退关闭窗口
+function closeWin(){
+    api.closeWin();
+}
+
+function _ajax(url,data,files,callback){
+	files = files ||{};
+    var token_ = $api.getStorage('token');
+    // if 判断是否登陆
+	if(token_ !== undefined){
+		api.ajax({
+		    url: url,
+		    method: 'post',
+		    data: {
+		        values: data,
+		        files: files
+		    }
+		}, function(ret, err) {
+		    if (ret) {
+		        callback(ret);
+		    } else {
+		        api.toast({
+		            msg:'请求超时,请联系管理员~'
+	            });
+		    }
+		});
+
+	}else{
+	 api.openWin({
+            name: 'login',
+            url: '../account/login_win.html',
+        });
+        api.toast({
+            msg: '请先登陆~',
+            duration: 2000,
+            location: 'middle'
+        });
+	}
+}
+function openWin(type,data){
+	data = data || {};
+	if(type === 1){
+		var name = '修改头像';
+		var url = './personal_data_win.html';
+		data.type = type;
+	}else if(type ===2){
+		var name = '修改昵称';
+		var url = './personal_data_win.html';
+		data.type = type;
+	}else if(type ===3){
+		var name = '我的二维码';
+		var url = './personal_data_win.html';
+		data.type = type;
+	}else if(type ===4){
+		var name = '个人简介';
+		var url = './personal_data_win.html';
+		data.type = type;
+	}else{
+		var name = '个人详情页';
+		var url = './personal_detail_page_win.html';
+	}
+	_openWin(name,url,data);// 打开个人信息页面
+}
+
+function openWinLogo(){
+	tea.openWin({
+	    name: 'logo',
+	    url: './setmylogo_win.html'
+    });
+}
+
+function openWinInfo(){
+	api.openWin({
+		name: 'friendinfo_win',
+		url: '../friends/friendinfo_win.html',
+		bounces: false,
+		pageParam: {id : $api.getStorage('ID')}
+	});
+}
+</script>
+</html>

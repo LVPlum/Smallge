@@ -1,0 +1,125 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui20/aui.2.0.css" />
+    <style type="text/css">
+		body{background: #fff}
+		.titlel{
+			text-align:center;
+			padding:2px 5px;
+			background:#12B7F5;
+			border-radius:5px;
+			color: #FFFFFF !important;
+		}
+		.titleh{
+			text-align:center;
+			padding:2px 5px;
+			background:#F49D1A;
+			border-radius:5px;
+			color: #FFFFFF !important;
+		}
+		.vip{color:#FF0000}
+		.bgvip{background-image: url('../../image/vip.png');background-repeat: no-repeat;background-size:100%;}
+    </style>
+</head>
+<body>
+<div class="aui-content">
+    <ul class="aui-list aui-media-list">
+        <li class="aui-list-header">
+        	 增加车辆信息可以享受小马哥最贴心的服务，小马哥将在您审车、保险到期前通过推送信息及发送短信通知提醒您。
+        </li>
+        <div id="listmycar"></div>
+     </ul>
+</div>
+<div class="aui-content aui-content-padded">
+    <div class="aui-btn aui-btn-block aui-btn-danger" tapmode onclick="addmycar()">新增我的车辆 </div>
+</div>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript" src="../../script/tea.js" ></script>
+<script type="text/javascript" src="../../script/aui-toast.js" ></script>
+<script type="text/javascript">
+    apiready = function(){
+        api.parseTapmode();
+        loadmycar();
+		api.addEventListener({
+		    name: 'reflash'
+		}, function(ret, err){
+			loadmycar();
+		});
+		api.addEventListener({
+		    name: 'saveok'
+		}, function(ret, err){
+			loadmycar();
+		});
+    }
+	function addmycar(){
+			api.openWin({
+		        name: 'mycar_set_win',
+		        url: './mycar_set_win.html',
+		        vScrollBarEnabled: false
+		   	 });
+	}
+	function opencar(ID){
+			api.openWin({
+		        name: 'seecarinfo',
+		        url: './seecarinfo_win.html',
+		        pageParam: {id: ID},
+		        vScrollBarEnabled: false
+		   	 });
+	}
+	function loadmycar(){
+	     var id = $api.getStorage('ID');
+	     showp('数据载入中...','梢等...');
+			api.ajax({
+			    url: website + 'getmycar.php?action=getmycar',
+			    method: 'post',
+			    timeout: 30,
+			    dataType: 'json',
+			    returnAll:false,
+			    data:{
+			        values: {ID: id},
+			    }
+			},function(ret,err){
+				api.hideProgress();
+			    if(ret){
+	                     var html = '';
+				            var obj = $api.byId('listmycar');
+				            for (var i = 0, len = ret.length; i < len; i++) {
+				                var r = ret[i];
+				                var cartype = r.cartype == "1" ? "titlel" : "titleh";
+				                var vip = r.vip == '1' ? '<span class="vip">[VIP]</span>' : '';
+				                if(r.vip == '1'){
+									html += '<li class="aui-list-item aui-list-item-arrow bgvip" tapmode onclick="opencar('+ r.ID +')">';
+								}else{
+									html += '<li class="aui-list-item aui-list-item-arrow" tapmode onclick="opencar('+ r.ID +')">';
+								}
+								if (r.scextime== null) {
+									r.scextime = '';
+								}
+								if (r.bxextime == null) {
+									r.bxextime = '';
+								}
+								html += '<div class="aui-media-list-item-inner">';
+								html += '<div class="aui-list-item-inner">';
+								html += '<div class="aui-list-item-text">';
+								html += '<div class="aui-list-item-title '+ cartype +'">'+ r.carnum +'</div>';
+								html += '</div>';
+								html += '<div class="aui-list-item-text aui-ellipsis-2">';
+								html += '<p>审车到期时间：'+ r.scextime +'</p>';
+								html += '<p>保险到期时间：'+ r.bxextime +'</p>';
+								html += '</div></div></div></li>';
+				            }
+				             $api.html(obj, html);
+							 return;
+				  }
+				tea.toast('custom','您还没增加车辆');
+			});
+	}
+</script>
+</html>

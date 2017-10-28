@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<title>user</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+				border-width: 0;
+			}
+			body {
+				text-align: center;
+				background-color: black;
+			}
+			canvas {
+				background-color: black;
+				position: absolute;
+			}
+			.contain {
+				margin: 0 auto;
+				width: auto;
+				height: auto;
+				position: absolute;
+				background-color: black;
+			}
+			.scaleSlider {
+				position: absolute;
+				/*旋转元素*/
+				transform: rotate(-90deg);
+				bottom: 20px;
+				left: 50%;
+				z-index: 99999;
+			}
+			.range {
+				z-index: 99998;
+				border: 2px solid #fff;
+				background: RGBA(0,0,0,0);
+				width: 160px;
+				height: 160px;
+				padding: 0px;
+				left: 50%;
+				top: 50%;
+				margin-top: -80px;
+				margin-left: -80px;
+				/*border-radius: 80px;*/
+				position: absolute;
+				display: none;
+			}
+			.cut {
+				z-index: 99999;
+				width: 160px;
+				height: 160px;
+				padding: 0px;
+				left: 0;
+				top: 0;
+				/*border-radius: 80px;*/
+				position: absolute;
+			}
+			.homeFooter {
+				position: fixed;
+				bottom: 0;
+				height: 45px;
+				width: 100%;
+				box-sizing: border-box;
+				display: block;
+				background-color: #fff;
+			}
+			.homeFooter > nav, .homeFooter > nav > ul {
+				height: 100%;
+			}
+			.homeFooter > nav > ul {
+				-webkit-box-orient: horizontal;
+				padding: 5px;
+				border-top: 1px solid #ddd;
+				white-space: nowrap;
+				text-align: center;
+				list-style-type: none;
+			}
+			.homeFooter > nav > ul > li {
+				display: block;
+				float: left;
+				width: 32%;
+				padding: 2px;
+			}
+			.homeFooter > nav > ul > li > span:active {
+				color: rgba(0,135,233,1);
+				height: 30px;
+				line-height: 30px;
+				font-size: 1.0em;
+				font-weight: 600;
+			}
+			.homeFooter > nav > ul > li > span {
+				color: rgba(99,194,233,1);
+				height: 30px;
+				line-height: 30px;
+				font-size: 1.0em;
+				font-weight: 600;
+			}
+			.homeFooter > nav > ul > li > h2 {
+				font-size: 1.0em;
+				font-weight: 600;
+				color: rgba(99,194,233,1);
+			}
+		</style>
+	</head>
+	<body id="wrap">
+		<div class="contain" id="contain">
+			<canvas  id="canvas" width="480" height="640"></canvas>
+		</div>
+		<!--<input id="scaleSlider" class="scaleSlider" type="range" min="0.25" max="4" step="0.01" value="1" />
+		-->
+		<footer class="homeFooter">
+			<nav>
+				<ul>
+					<li id="activeId" tapmode=""  onclick="api.closeWin()">
+						<span class="am-icon-sm6  am-icon-back">返回</span>
+					</li>
+					<li tapmode onclick="cut()" >
+						<span class="am-icon-sm6  am-icon-cut">裁剪</span>
+					</li>
+					<li tapmode="" onclick="openPicture(0)">
+						<span class="am-icon-sm6  am-icon-picture-o" >图库</span>
+					</li>
+				</ul>
+			</nav>
+		</footer>
+		<div id="range" class="range"></div>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/cut/touch.js"></script>
+	<script type="text/javascript" src="../../script/cut/picture.js"></script>
+	<script type = "text/javascript">
+		var contain = document.getElementById("contain");
+		contain.style.webkitTransition = 'all ease 0.05s';
+		touch.on('#contain', 'touchstart', function(ev) {
+			ev.preventDefault();
+		});
+		var initialScale = 0.8;
+		var currentScale;
+		touch.on('#contain', 'pinchend', function(ev) {
+			currentScale = ev.scale - 1;
+			currentScale = initialScale + currentScale;
+			currentScale = currentScale > 4 ? 4 : currentScale;
+			currentScale = currentScale < 0.8 ? 0.8 : currentScale;
+			context.clearRect(0, 0, canvas.width, canvas.height);
+			imageUtil.scaleImgInCenter(context, image, currentScale, false);
+			console.log("当前缩放比例为:" + currentScale + ".");
+		});
+		touch.on('#contain', 'pinchend', function(ev) {
+			initialScale = currentScale;
+			console.log("缩放比例为:" + currentScale + ".");
+		});
+		touch.on('#range', 'touchstart', function(ev) {
+			ev.preventDefault();
+		});
+		var range = document.getElementById("range");
+		var dx, dy;
+		var offx, offy;
+		touch.on('#range', 'drag', function(ev) {
+			dx = dx || 0;
+			dy = dy || 0;
+			console.log("当前x值为:" + dx + ", 当前y值为:" + dy + ".");
+			offx = dx + ev.x + "px";
+			offy = dy + ev.y + "px";
+			console.log("当前offx值为:" + offx + ", 当前offy值为:" + offy + ".");
+			this.style.webkitTransform = "translate3d(" + offx + "," + offy + ",0)";
+		});
+		touch.on('#range', 'dragend', function(ev) {
+			dx += ev.x;
+			dy += ev.y;
+		});
+		var image = new Image();
+		var canvas = document.getElementById("canvas");
+		var context = canvas.getContext("2d");
+		var scaleSlider = document.getElementById("scaleSlider");
+		var imageUtil = new MikuCanvasImageUtil();
+		var SourceType = ['library', 'camera', 'album'];
+		var scale = 1;
+		function openPicture(kind) {
+			var sourceType = SourceType[kind];
+			api.getPicture({
+				sourceType : sourceType,
+				encodingType : 'jpg',
+				mediaValue : 'pic',
+				destinationType : 'url',
+				allowEdit : true,
+				quality : 50,
+				saveToPhotoAlbum : false
+			}, function(ret, err) {
+				if (ret) {
+					var range = document.getElementById("range");
+					range.style.display = 'block';
+					canvas.width = api.winWidth;
+					canvas.height = api.winHeight;
+					image.src = ret.data;
+					image.onload = function() {
+						imageUtil.drawScaleImageInCenter(context, image);
+						scale = canvas.width / image.width;
+						$api.setStorage('bimg',ret.data);
+					}
+				}
+			});
+		}
+
+		function cut() {
+			var oImg = $api.offset($api.dom('.range'));
+			var width = parseInt(oImg.w);
+			var height = parseInt(oImg.h);
+			var winWidth = parseInt(api.winWidth);
+			var winHeight = parseInt(api.winHeight);
+			dx = dx || 0;
+			dy = dy || 0;
+			var x = winWidth / 2 + dx - width / 2;
+			var y = winHeight / 2 + dy - height / 2;
+			console.log('屏幕:' + winWidth + ',' + winHeight);
+			console.log('对象:' + width + ',' + height);
+			console.log('dx:' + dx + ',' + dy);
+			console.log('位置坐标:' + x + ',' + y);
+			if(x < 0 || y < 0){
+			    api.toast({msg:'圈圈不能跑到图片外'});
+			}else{
+				var canvas1 = document.createElement('canvas');
+				canvas1.width = width;
+				canvas1.height = height;
+				var ctx = canvas1.getContext('2d');
+				ctx.drawImage(canvas, x, y, width, height, 0, 0, width, height);
+				var testStr = canvas1.toDataURL("image/png");
+				console.log(testStr);
+				$api.setStorage('mylogo', testStr);
+				api.sendEvent({'name':'photo'});
+				api.closeWin();
+			}
+		}
+
+		var footHeight = 45;
+		apiready = function() {
+			var footer = $api.offset($api.dom('.homeFooter'));
+			footHeight = parseInt(footer.h);
+			range.style.display = 'block';
+			openPicture(1);
+			//alert(api.pageParam.type);
+		}
+	</script>
+</html>

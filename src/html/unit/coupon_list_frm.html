@@ -1,0 +1,267 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            height: 100%;
+            overflow: auto;
+        }
+        /*针对此页面的框架重写*/
+        .aui-list .aui-list-item{
+            padding: 0rem;
+            margin: 0.75rem;
+        }
+        .aui-list .aui-list-item-media{
+            width: 5rem;
+            height: 5rem;
+            padding: 0;
+        }
+
+
+        .tea-flex-center{
+            display: flex;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+        .tea-font-size-max {
+            font-size: 2.2rem !important;
+        }
+        .tea-bg-deep-orange{
+            background-color: #FF6633;
+        }
+        .tea-bg-purple{
+            background-color: #5c78cd;
+        }
+        /*div边框的半圆形状，通用*/
+        .tea-content-semicircle:before,.tea-content-semicircle:after{
+            content: "";
+            width: 0.375rem;
+            height: 0.75rem;
+            position: absolute;
+            margin-top: -0.375rem;
+            background: #f2f5f8;
+            z-index: 1;
+        }
+        /*右半圆*/
+        .tea-content-semicircle:before{
+            left: -1px;
+            top: 50%;
+            border-radius: 0 100% 100% 0/50%;
+        }
+        /*左半圆*/
+        .tea-content-semicircle:after{
+            right: -1px;
+            top: 50%;
+            border-radius: 100% 0 0 100%/50%;
+        }
+        /*div边框虚线*/
+        .tea-content-border-dotted:before{
+            content: "";
+            width: 2px;
+            height: 5rem;
+            background-position: left;
+            background-image: linear-gradient(0,#ededed 50%,#fff 50%,transparent 50%);
+            background-size: 1px 8px;
+            position: absolute;
+            left: 0;
+        }
+        /*div边框锯齿状波纹线*/
+        .tea-content-border-sawtooth:after{
+            content: "";
+            width: 3px;
+            height: 5rem;
+            background-size: 3px 5px;
+            background-repeat: repeat-y;
+            background-position: 0 100%;
+            position: absolute;
+            right: 0;
+        }
+        .tea-content-border-sawtooth-blue:after{
+            background-image: -webkit-gradient(radial,0 40%,1,0 50% ,5,from(#3399ff),color-stop(50%, #3399ff),color-stop(50%, #FFF),to(#FFF));
+        }
+        .tea-content-border-sawtooth-yellow:after{
+            background-image: -webkit-gradient(radial,0 40%,1,0 50% ,5,from(#ffcc33),color-stop(50%, #ffcc33),color-stop(50%, #FFF),to(#FFF));
+        }
+        .tea-content-border-sawtooth-deep-orange:after{
+            background-image: -webkit-gradient(radial,0 40%,1,0 50% ,5,from(#FF6633),color-stop(50%, #FF6633),color-stop(50%, #FFF),to(#FFF));
+        }
+        .tea-content-border-sawtooth-light-gray:after{
+            background-image: -webkit-gradient(radial,0 40%,1,0 50% ,5,from(#CCCCCC),color-stop(50%, #CCCCCC),color-stop(50%, #FFF),to(#FFF));
+        }
+        .tea-content-border-sawtooth-purple:after{
+            background-image: -webkit-gradient(radial,0 40%,1,0 50% ,5,from(#5c78cd),color-stop(50%, #5c78cd),color-stop(50%, #FFF),to(#FFF));
+        }
+        /*￥符号前缀*/
+        .tea-text-white-money{
+            margin-left: 1.2rem;
+        }
+        .tea-text-white-money:before {
+            content: '￥';
+            color: white;
+            font-size: 0.8rem;
+            margin-left: -1.8rem;
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <ul class="aui-list aui-media-list tea-bg-default aui-list-noborder" id="benefit_list">
+            <li v-for="(value,index) in list" class="aui-list-item tea-bg-white" tapmode @click="checkOn(index,value)">
+                <div class="aui-media-list-item-inner tea-content-semicircle">
+                    <div v-if="value.coupon_type == couponType " :class=" ['tea-bg-'+color , 'tea-content-border-sawtooth-'+color] " class="aui-list-item-media tea-flex-center tea-content-border-sawtooth">
+                        <div class="aui-text-white tea-text-white-money tea-font-size-max" style="width:2rem; font-weight:bold; text-align: center;">{{ parseFloat(value.coupon_m) }}</div>
+                    </div>
+                    <!--<div v-else-if="couponType == 'bx'" class="aui-list-item-media tea-bg-deep-orange tea-flex-center tea-content-border-sawtooth tea-content-border-sawtooth-deep-orange">
+                        <div class="aui-text-white tea-text-white-money tea-font-size-max" style="width:2rem; font-weight:bold; text-align: center;">{{ parseFloat(value.coupon_m) }}</div>
+                    </div>
+                    <div v-else-if="couponType == 'sc'" class="aui-list-item-media tea-bg-blue tea-flex-center tea-content-border-sawtooth tea-content-border-sawtooth-blue">
+                        <div class="aui-text-white tea-text-white-money tea-font-size-max" style="width:2rem; font-weight:bold; text-align: center;">{{ parseFloat(value.coupon_m) }}</div>
+                        &lt;!&ndash;<div class="aui-text-white aui-font-size-18" style="width:2rem;font-weight:bold;">{{ list.test_value }}</div> //免费审车的值样式&ndash;&gt;
+                    </div>-->
+                    <div v-else class="aui-list-item-media tea-bg-light-gray tea-flex-center tea-content-border-sawtooth tea-content-border-sawtooth-light-gray">
+                        <div class="aui-text-white tea-text-white-money tea-font-size-max" style="width:2rem; font-weight:bold; text-align: center;">{{ parseFloat(value.coupon_m) }}</div>
+                    </div>
+                    <div class="aui-list-item-inner" style="padding: 1rem 0.75rem;">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title aui-font-size-14 tea-text-title">{{ value.readme }}</div>
+                        </div>
+                        <div class="aui-list-item-text">
+                            <p class="aui-ellipsis aui-font-size-12 tea-text-gray">{{ value.end_time }}</p>
+                        </div>
+                        <div class="aui-list-item-text">
+                            <p class="aui-ellipsis aui-font-size-12 tea-text-gray">有效期至：{{ value.end_time.split(" ")[0] }}</p>
+                        </div>
+                    </div>
+                    <div v-if="value.coupon_type == couponType" class="aui-list-item-media tea-flex-center" style="width:2.2rem;">
+                        <label><span :class=" checked == index ? 'aui-checked' : '' " class="aui-radio aui-margin-r-10"></span></label>
+                    </div>
+                    <!--<div class="aui-list-item-media tea-content-border-dotted tea-flex-center" style="width:2.2rem;" tapmode @click="goApply(value.coupon_type)">
+                        <div class="tea-text-blue aui-font-size-12" style="width:0.6rem;">立即使用</div>
+                    </div>-->
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {}, vm = null;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    dom = {
+    };
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+            list: api.pageParam.coupons,
+            couponType: api.pageParam.couponType,
+            checked: api.pageParam.couponsIndex,
+        },
+        methods: {
+            checkOn: function(index,value){
+                if(value.coupon_type == vm.couponType){
+                    vm.checked = index;
+                    api.sendEvent({
+                        name: 'selectCoupon',
+                        extra: {
+                            coupon: value,
+                            couponsIndex: index,
+                        }
+                    });
+                    api.closeWin();
+                }
+            }
+        },
+        computed:{
+            color: function(){
+                switch (this.couponType){
+                    case 'vip':
+                        return 'yellow';
+                    case 'check':
+                        return 'blue';
+                    case 'insure':
+                        return 'deep-orange';
+                    case 'tel':
+                        return 'purple';
+                    default:
+                        return 'light-gray'
+                }
+
+            }
+        }
+    });
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+
+</script>
+</html>

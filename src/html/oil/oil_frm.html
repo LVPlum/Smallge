@@ -1,0 +1,245 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        .aui-list .aui-list-item.card{
+            margin: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 5px;
+            background-color: transparent;
+            background-size: 100% 100% !important;
+            background-repeat: no-repeat;
+        }
+        .aui-list .aui-list-item-media.logo{
+            width: 2.5rem;
+            height: 2.5rem;
+            padding: 0;
+        }
+        .aui-info{
+            color: white !important;
+        }
+        .card-number{
+            color: white;
+            font-size: 1rem;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 0.75rem;
+            margin-top: 0.75rem;
+        }
+        .recharge{
+            border: 1px solid white;
+            border-radius: 8px;
+            padding: 0.25rem 0.45rem;
+        }
+        .cnpc{
+            background-image: url("../../image/oil/bg_cnpc.png") !important;
+        }
+        .sg{
+            background-image: url("../../image/oil/bg_sg.png") !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <div class="aui-card-list-content">
+            <ul v-if="list.length" class="aui-list aui-media-list aui-list-noborder" style="background: transparent">
+                <li v-for="(value,i) in list" class="aui-list-item aui-list-item-middle card" :class="value.card_brand">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-media logo aui-margin-r-10">
+                            <img :src="value.card_brand == 'cnpc' ? '../../image/oil/icon_cnpc.png' : '../../image/oil/icon_sg.png' " class="aui-img-round">
+                        </div>
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-16 aui-text-white tea-font-weight-bold">{{ value.type == 'cnpc' ? '中国石油' : '中国石化' }}</div>
+                                <div class="aui-list-item-right aui-font-size-16 aui-text-white">{{ value.carnum }}</div>
+                            </div>
+                            <div class="aui-list-item-text aui-font-size-14 aui-text-white">
+                                {{ value.card_type == 'diesel' ? '柴油卡' : '汽油卡' }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-number">{{value.cardno}}</div>
+                    <div class="aui-info aui-padded-0">
+                        <div class="aui-info-item">
+                            <div class="aui-font-size-14" style="align-items: baseline;">
+                                <span>余额￥</span>
+                                <span class="aui-font-size-16 tea-font-weight-bold">{{value.card_money}}</span>
+                            </div>
+                        </div>
+                        <div class="aui-info-item recharge" @click="openWinRecharge(value)">充值</div>
+                    </div>
+                </li>
+                <!--<li class="aui-list-item aui-list-item-middle card sg">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-media logo aui-margin-r-10">
+                            <img src="../../image/oil/icon_sg.png" class="aui-img-round">
+                        </div>
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-16 aui-text-white tea-font-weight-bold">中国石油</div>
+                                <div class="aui-list-item-right aui-font-size-16 aui-text-white">桂E 12344</div>
+                            </div>
+                            <div class="aui-list-item-text aui-font-size-14 aui-text-white">
+                                柴油卡
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-number">9030 090 0000 0000 1</div>
+                    <div class="aui-info aui-padded-0">
+                        <div class="aui-info-item">
+                            <div class="aui-font-size-14" style="align-items: inherit">
+                                <span>余额￥</span>
+                                <span class="aui-font-size-16 tea-font-weight-bold">260</span>
+                            </div>
+                        </div>
+                        <div class="aui-info-item recharge">充值</div>
+                    </div>
+                </li>-->
+            </ul>
+            <section v-else id="nothing" class="tea-nothing" style="margin-top: 6rem">
+                <img src="../../image/nothing.png">
+                <p>您还没有成功办理的油卡哦~</p>
+            </section>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var vm = null;
+/*vm = new Vue({
+    el: '#app',
+    data: {
+        list: [
+            {card_brand:'cnpc',card_type:'diesel', cardno: '9030 090 0000 0000 1', card_money:'260.00', carnum:'桂E 12344'},
+            {card_brand:'sg',card_type:'diesel',cardno: '9030 090 0000 0000 1', card_money:'260.00', carnum:'桂E 12344'},
+        ]
+    },
+    methods: {
+        openWinRecharge: function(){
+            api.openWin({
+                name: 'oil_recharge_win',
+                url: './oil_recharge_win.html',
+                pageParam: {name: 'pageparamname'}
+            });
+        }
+    },
+    computed: {
+
+    }
+})*/
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+            list: [
+//                {card_brand:'cnpc',card_type:'diesel', cardno: '9030 090 0000 0000 1', card_money:'260.00', carnum:'桂E 12344'},
+//                {card_brand:'sg',card_type:'diesel',cardno: '9030 090 0000 0000 1', card_money:'260.00', carnum:'桂E 12344'},
+            ]
+        },
+        methods: {
+            openWinRecharge: function(value){
+                api.openWin({
+                    name: 'oil_recharge_win',
+                    url: './oil_recharge_win.html',
+                    pageParam: {
+                        cardno: value.cardno
+                    }
+                });
+            }
+        },
+        computed: {
+
+        }
+    })
+    
+    //油卡列表
+    getData();
+    
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+    api.ajax({
+        url: website + 'oil_api.php?action=card',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        returnAll: false,
+        data: {
+            values: {
+                ID: $api.getStorage('ID'),
+            },
+        }
+    }, function (ret, err) {
+//        _alert(ret);
+        if(ret.succ == '1'){
+            vm.list = ret.data;
+        }
+
+    });
+
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+
+</script>
+</html>

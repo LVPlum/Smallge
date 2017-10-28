@@ -1,0 +1,697 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>修改个人资料</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+         html,body{
+            background-color: #f2f5f8;
+            overflow-x: hidden;
+        }
+
+        .head-img{
+            height: 0;
+            padding-bottom: 100%;
+            background: no-repeat 50%;
+            background-size: cover;
+
+        }
+
+        .get-img-btn>p{
+            width: 12.5rem;
+            height: 2.3rem;
+            margin: 0.75rem auto;
+            font-size: 0.8rem;
+            line-height: 2.3rem;
+            text-align: center;
+            background-color: #fff;
+            color: #333;
+            border-radius: 99px;
+            border: 1px solid #ccc;
+        }
+        .aui-card-list-content-padded{
+            width: 14rem;
+            height: 14rem;
+            margin: 0 auto;
+        }
+        .aui-card-list-content-padded>img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .aui-list-item-input{
+            width: 100%;
+            height: 7.5rem;
+            position: relative;
+            margin: 0 auto;
+            color: #333;
+            background-color: #fff;
+            border-radius: 4px;
+        }
+        .aui-list-item-input>textarea{
+            width: 100%;
+            height: 100%;
+        }
+
+        #textarea-index{
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            margin: 0 0.5rem;
+            color: #999;
+        }
+        #header-img,#er-wei-ma,#textarea-content,#nickname-content{
+        	display: none;
+        }
+       .icon-close{
+       	width:1rem;
+       	height:1rem;
+       	line-height:1rem;
+       	margin:-0.5rem 0.75rem;
+       	text-align: center;
+       	position:absolute;
+       	top:50%;
+       	right: 0;
+       	color:#fff;
+       	background-color:#ddd;
+       	border-radius: 999px;
+       	display:none;
+       }
+    </style>
+</head>
+<body>
+<header id="header-img">
+    <div class="aui-card-list">
+        <div class="aui-card-list-content">
+            <!--<img id="user-head-img" src="骏马app/img/1.jpg">-->
+            <div id="head-img" class="head-img" style="background-image: url('../../image/3.jpg')"></div>
+        </div>
+    </div>
+    <div class="get-img-btn" style="margin-top: 1.5rem;">
+        <p id="photograph-btn" tapmode  onclick="openCamera()">拍照</p>
+    </div>
+    <div class="get-img-btn">
+        <p id="get-photo-btn"  tapmode onclick="getPhoto_img()">从手机相册选择</p>
+    </div>
+</header>
+<section>
+    <div id="er-wei-ma">
+        <div class="aui-card-list">
+            <ul class="aui-list aui-media-list">
+                <li class="aui-list-item aui-list-item-middle">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-media" style="width: 3.25rem;height: 3.5rem">
+                            <img id="er-wei-ma-userHead-img" src="../../image/3.jpg" class="aui-img-round" style="height: 100%;width: 100%;">
+                        </div>
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div id="er-wei-ma-user-name" class="aui-list-item-title aui-font-size-16"></div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div class="aui-card-list-content-padded"style="padding-bottom: 2rem">
+                <img id="er-wei-ma-img" src="">
+            </div>
+        </div>
+        <div class="get-img-btn">
+            <p id="save-photo-btn" tapmode  onclick="savalbum()">保存到相册</p>
+        </div>
+    </div>
+    <div id="textarea-content"class="aui-content-padded">
+        <div class="aui-list-item-input aui-margin-b-15" >
+            <textarea id="textarea-val" class="aui-padded-15" placeholder="个人简介" maxlength="30" tapmode oninput="isLength(this)"></textarea>
+            <span id="textarea-index">30</span>
+        </div>
+    </div>
+    <div id="nickname-content" class="aui-content-padded">
+        <div class="aui-list-item-input aui-margin-b-15" style="height: 2.3rem;position: relative;">
+             <input id="set-nickname" class="aui-padded-15" type="text" maxlength="35" placeholder="设置昵称" tapmode oninput="isShow_colse_icon(this)" >
+             <span id="icon-close" class="icon-close aui-font-size-20" tapmode onclick="colseIput(this)">&times;</span>
+        </div>
+    </div>
+
+</section>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/zepto.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+var uiMediaScanner = null, imageFilter = null, imageBrowser = null;
+var isIOS = false;var id = null; // 自己的ID
+/**********************************apiready**********************************/
+apiready = function(){
+	uiMediaScanner = api.require('UIMediaScanner');
+	// 引入过滤压缩模块
+	imageFilter = api.require("imageFilter");
+	// 引入图片浏览模块
+	imageBrowser = api.require('imageBrowser');
+	// 判断是否是IOS系统
+	isIOS = api.systemType == "ios" ? true : false;
+
+	api.parseTapmode();
+    var type = api.pageParam.type;
+    var data = api.pageParam;
+	var nickname = data.nickname;//昵称
+	var telphone = data.telphone;// 手机号码
+	var token = data.token;//token
+	id = data.id;// 用户ID
+	var img = data.img;//头像缩略图
+	var profile = data.profile || '';//签名
+    if(type === 1){
+//		 type =1: '修改头像';
+		 $("#header-img").show();
+		 $("#er-wei-ma").hide();
+		 $("#textarea-content").hide();
+		 $("#nickname-content").hide();
+		 $("#head-img").css("background-image",'url('+img+')');
+
+	}else if(type ===2){
+//		type = 2:'修改昵称';
+		 $("#header-img").hide();
+		 $("#er-wei-ma").hide();
+		 $("#textarea-content").hide();
+		 $("#nickname-content").show();
+		 $("#set-nickname").val(nickname);
+		 if( $("#set-nickname").val()){
+		 	$("#icon-close").show();
+		 }
+	}else if(type ===3){
+//		type = 3:'我的二维码';
+		 $("#header-img").hide();
+		 $("#er-wei-ma").show();
+		 $("#textarea-content").hide();
+		 $("#nickname-content").hide();
+		 $("#er-wei-ma-userHead-img").attr("src",img);
+		 $("#er-wei-ma-user-name").html(nickname );
+	}else if(type ===4){
+//		type = 4: '个人简介';
+		 $("#header-img").hide();
+		 $("#er-wei-ma").hide();
+		 $("#textarea-content").show();
+		 $("#nickname-content").hide();
+		 $("#textarea-val").val(profile);
+	}
+	$("#textarea-index").html(30-($("#textarea-val").val().length));
+
+    api.parseTapmode();
+    var FNScanner = api.require('FNScanner');
+	FNScanner.encodeImg({
+	    content: 'adf:' + telphone,
+	    saveImg: {
+        path: 'fs://myqrcode.png',
+        w: 300,
+        h: 300
+     }
+	},function( ret, err ){
+	    if(ret.status){
+	       $api.attr($api.byId('er-wei-ma-img'), 'src', ret.imgPath);
+	    }else{
+	        alert( JSON.stringify( err ) );
+	    }
+	});
+
+
+	// 监听个人资料是否更新
+	api.addEventListener({
+	    name: '_personal_data'
+	}, function(ret, err) {
+		if(ret){
+			if(type ===2){
+		//		type = 2:'修改昵称';
+				postdate_newname();
+
+			}else if(type ===4){
+		//		type = 4: '个人简介';
+				postdate_profile();
+
+			}
+
+		}
+
+	});
+};
+
+/**********************************声明全局变量**********************************/
+// 声明全局变量
+var dom = {};
+var telphone = $api.getStorage('telphone');
+
+// 声明DOM对象
+var data = {}, values = {};
+
+
+// 回退关闭窗口
+function closeWin(){
+    api.closeWin();
+}
+
+
+/**********************************其他函数**********************************/
+// 显示文本框 长度
+function isLength(me) {
+    var textarea_index = document.getElementById("textarea-index");
+    textarea_index.innerHTML = 30-(me.value.length);
+}
+// 显示input ×按钮
+function isShow_colse_icon(me){
+	if(me.value.length !==0){
+		document.getElementById("icon-close").style.display="block";
+	}else{
+		document.getElementById("icon-close").style.display="none";
+	}
+}
+// 点击清空input 的值
+function colseIput(me){
+	$api.val($api.byId("set-nickname"), '');
+	me.style.display="none";
+}
+
+// 保存二维码
+function savalbum(){
+        var FNScanner = api.require('FNScanner');
+		FNScanner.encodeImg({
+		    content: 'adf:' + telphone,
+	        saveToAlbum: true,
+		    saveImg: {
+		        w: 400,
+		        h: 400
+		    }
+		},function( ret, err ){
+		    if(ret.status){
+		       api.toast({
+		           msg:'保存成功'
+	           });
+		    }else{
+		        alert( JSON.stringify(err) );
+		    }
+		});
+   }
+/**********************************功能模块1**********************************/
+// 打开拍照功能
+function openCamera(){
+		// 打开拍照
+		api.getPicture({
+			sourceType : "camera",
+			destinationType : "url",
+			mediaValue : "pic",
+			quality : 50,
+			saveToPhotoAlbum : true
+		}, function(ret, err) {
+			if (ret && ret.data) {
+				// 拍照返回的本地路径
+				var returnUrl = ret.data;
+				// 图片压缩
+				showp('图片处理中','请稍候...');
+				imgCompress(returnUrl, 0.5, 0.5, getExt(returnUrl), function(compressImg) {
+					uplogo(compressImg,compressImg,api.pageParam.id,api.pageParam.nickname);
+					   api.hideProgress();
+				});
+			} else {
+				api.toast({
+					msg : '没有选择，或者选择出错'
+				});
+			}
+		});
+}
+
+// 获取相册图片
+function getPhoto_img(){
+
+	uiMediaScanner.open({
+			type : 'picture',
+			column : 4,
+			classify : true,
+			max : 1,
+			sort : {
+				key : 'time',
+				order : 'desc'
+			},
+			texts : {
+				stateText : '已选*项',
+				cancelText : '取消',
+				finishText : '完成'
+			},
+			styles : {
+				bg : '#fff',
+				mark : {
+					icon : '',
+					position : 'bottom_left',
+					size : 20
+				},
+				nav : {
+					bg : '#b23e4b',
+					stateColor : '#fff',
+					stateSize : 18,
+					cancelBg : 'rgba(0,0,0,0)',
+					cancelColor : '#fff',
+					cancelSize : 18,
+					finishBg : 'rgba(0,0,0,0)',
+					finishColor : '#fff',
+					finishSize : 18
+				}
+			}
+		}, function(ret) {
+			if (ret) {
+
+				var len = ret.list.length;
+				for(var i = 0; i < len; i++){
+					(function(i){
+					var selectImg = ret.list[i];
+
+					// 获取图片的路径
+					var selectimgPath = selectImg.path;
+					var selectimgThumbPath = selectImg.thumbPath;
+					// IOS需要将虚拟路径转换为本地路径才可以压缩
+						if (isIOS) {
+							// 转换为真实路径
+							uiMediaScanner.transPath({
+								path : selectimgPath
+							}, function(transObj) {
+								// 图片压缩
+								showp('图片处理中','请稍候...');
+								imgCompress(transObj.path, 0.5, 0.5, selectImg.suffix, function(compressImg) {
+										uplogo(compressImg,compressImg,api.pageParam.id,api.pageParam.nickname);
+                                      	api.parseTapmode();
+										api.hideProgress();
+//									uploadFile(website + "upfc.php", compressImg, function(serverImg) {
+//
+//									});
+								});
+							});
+						} else {
+							// 图片压缩
+			                showp('图片处理中','请稍候...');
+							imgCompress(selectimgPath, 0.5, 0.5, selectImg.suffix, function(compressImg) {
+										uplogo(compressImg,compressImg,api.pageParam.id,api.pageParam.nickname);
+                                        api.parseTapmode();
+                                        api.hideProgress();
+//								    uploadFile(website + "upfc.php", compressImg, function(serverImg) {
+//
+//								});
+							});
+						}
+//							alert(selectimgPath);
+//							$("#head-img").css("background-image",'url('+selectimgPath+')');// 将图片显示
+					})(i);
+				}
+			}
+		});
+
+}
+// 生成guid,主要用于生成随机文件名
+function NewGuid() {
+	function S4() {
+		return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+	}
+
+	return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+}
+
+// 获取当前的时间，拼接成2015-11-09这样的格式，主要用于对图片进行时间分类
+function getNowFormatDate() {
+	var date = new Date();
+	var seperator1 = "-";
+	var year = date.getFullYear();
+	var month = date.getMonth() + 1;
+	var strDate = date.getDate();
+	if (month >= 1 && month <= 9) {
+		month = "0" + month;
+	}
+	if (strDate >= 0 && strDate <= 9) {
+		strDate = "0" + strDate;
+	}
+	var currentdate = year + seperator1 + month + seperator1 + strDate
+	return currentdate;
+}
+
+// 获取文件拓展名
+function getExt(fileName) {
+	return fileName.substring(fileName.lastIndexOf('.') + 1);
+}
+
+// 图片压缩
+// imgsrc：源图片的路径
+// quality：图片压缩质量，一般建议0.5
+// scale：图片压缩比例，也是建议0.5
+// ext：源图片拓展名
+// callback：转换成功之后回调函数
+function imgCompress(imgsrc, quality, scale, ext, callback) {
+	// 压缩文件的保存目录
+	var savePath = api.cacheDir + "/" + getNowFormatDate() + "/";
+	// 压缩文件生成的随机文件名称
+	var savename = NewGuid() + "." + ext;
+	imageFilter.compress({
+		img : imgsrc,
+		quality : quality,
+		scale : quality,
+		save : {
+			album : false,
+			imgPath : savePath,
+			imgName : savename
+		}
+	}, function(ret, err) {
+		if (ret) {
+			callback(savePath + savename);
+		} else {
+			alert(JSON.stringify(err));
+		}
+	});
+}
+
+//上传图片
+// url：上传的url地址
+// data：上传的文件
+// callback：上传成功返回地址
+function uploadFile(url, data, callback) {
+	api.ajax({
+		url : url,
+		method : 'post',
+		timeout : 30,
+		dataType : 'json',
+		returnAll : false,
+		data : {
+			files : {
+				"upfile" : data
+			},
+			values: {ID: id}
+		}
+	}, function(ret, err) {
+		if (ret) {
+			if (ret.statu == 1) {
+				callback(ret.path);
+			} else if (ret.statu == 0) {
+				alert("上传失败");
+			}
+		} else {
+			api.alert({
+				msg : ('错误码：' + err.code + '；错误信息：' + err.msg + '；网络状态码：' + err.statusCode)
+			});
+		}
+	});
+}
+
+// 修改头像ajax接口
+ function uplogo(photo,bimg,id,nickname){
+	 //_alert(photo)
+     showp('图像处理中...','请稍候...')
+		api.ajax({
+		    url: website + 'index.php?action=chlogo',
+		    method: 'post',
+		    timeout: 100,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {img: photo,ID: id},
+					files : {
+						"upfile" : bimg
+					}
+		        }
+		},function(ret,err){
+		    if (ret) {
+		       if(!ret.errmsg){
+	                 //	先取图片路径
+	                 //_alert(ret)
+	                    var imgurl = ret.imgurl;
+						api.ajax({
+						    url: website + 'rong/index2.php?action=getrongtoken',
+						    method: 'post',
+						    timeout: 30,
+						    dataType: 'json',
+						    returnAll:false,
+						    data:{
+						        values: {ID: id,nickname: nickname,img: ret.imgurl},
+						    }
+						},function(ret,err){
+						    if (ret) {
+
+						       if(ret.code == 200){
+										api.toast({
+                                            msg: '头像更改成功'
+                                        });
+						                $api.setStorage('rongtoken',ret.token);
+                                        $api.setStorage('img',imgurl);
+                                        $api.rmStorage('bimg');
+                                        $api.rmStorage('mylogo');
+                                        api.sendEvent({
+	                                        'name': 'save_personal_data',
+	                                         extra: {
+										        img: imgurl
+										    }
+									    });
+									  	$("#head-img").css("background-image",'url('+imgurl+')');// 将图片显示
+
+                                        api.hideProgress();
+						        }
+						    }else {
+						        api.hideProgress();
+						        api.alert({
+						            msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+						        });
+						    }
+						});
+
+		        }
+		    }else {
+		        api.alert({
+		            msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+		        });
+		    }
+		});
+     }
+// 修改昵称ajax接口
+function postdate_newname(){
+      var newname = $api.val($api.byId('set-nickname'));
+      var ID =  api.pageParam.id;
+      var token = api.pageParam.token;
+      var img = api.pageParam.img;
+
+      if(newname == ''){
+         api.toast({
+	         msg:'昵称不能为空'
+         });
+         return false;
+      }else if(newname.length < 2){
+        api.toast({
+	        msg:'昵称必需在两个字以上'
+        });
+        return false;
+
+      }else{
+			api.ajax({
+			    url: website + 'chsysset.php?action=chnickname',
+			    method: 'post',
+			    timeout: 30,
+			    dataType: 'json',
+			    returnAll:false,
+			    data:{
+			        values: {ID: ID,token: token,newname: newname},
+			    }
+			},function(ret,err){
+//				alert($api.jsonToStr(ret));
+			    if (ret) {
+	                  if(ret.succ == 'ok'){
+	                     $api.setStorage('nickname',newname);
+					       	api.sendEvent({
+		                        'name': 'save_personal_data',
+		                         extra: {
+							        nickname: newname
+							    }
+						    });
+						 getrongtoken(ID, newname,img);
+						 api.closeWin();
+	                  }else{
+	                  	api.toast({
+		                      msg:ret.msg
+	                      });
+	                  }
+			        }
+			});
+	   }
+   }
+   // 设置昵称的融云
+    function getrongtoken(ID,nickname,img){
+		api.ajax({
+		    url: website + 'rong/index2.php?action=getrongtoken',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {ID: ID,nickname: nickname,img: img},
+		    }
+		},function(ret,err){
+		    if (ret) {
+		       if(!ret.errmsg){
+	               $api.setStorage('rongtoken',ret.token);
+		        }
+		    }
+		});
+    }
+
+    // 设置个人简介
+
+   function postdate_profile(){
+      var info = $api.val($api.byId('textarea-val'));
+      var ID =  api.pageParam.id;
+      var token = api.pageParam.token;
+
+		api.ajax({
+		    url: website + 'chsysset.php?action=chinfo',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {ID: ID,token: token,profile: info},
+		    }
+		},function(ret,err){
+
+		    if (ret) {
+		       if(!ret.errmsg){
+                  if(ret.succ == 'ok'){
+			         api.sendEvent({
+                        'name': 'save_personal_data',
+                         extra: {
+					        profile: info
+					    }
+				    });
+					 api.closeWin();
+                  }else{
+                  	api.toast({
+	                      msg:ret.msg
+                      });
+                  }
+		        }
+		    }else {
+		        api.alert({
+		            msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+		        });
+		    }
+		});
+   }
+
+
+</script>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>百度地图</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+		html,body {
+            /*height: 100%;*/
+            overflow: auto;
+		}
+
+    </style>
+</head>
+<body>
+
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明全局变量
+
+// 声明DOM对象
+var map, lon, lat;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+	lon = api.pageParam.lon;
+	lat = api.pageParam.lat;
+	map = api.require('bMap');
+    if (api.systemType == "ios") {
+        map.initMapSDK(function(ret) {
+            if (ret.status) {
+                //_alert(ret);
+                getLocation();
+            }
+        })
+    }
+    else {
+        getLocation();
+    }
+
+
+    // 初始化DOM对象
+    initDOM();
+
+    // 初始化变量
+    initVar();
+
+    // ajax请求数据
+    getData();
+
+    // 初始化监听
+    initEventListener();
+
+    // 初始化其他
+    init();
+
+};
+
+/**********************************初始化全局变量**********************************/
+// 初始化DOM对象
+function initDOM(){
+
+
+};
+
+// 初始化变量
+function initVar(){
+
+
+
+};
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+    // 更新变量
+    updateVar();
+
+    // 更新HTML
+    updateHTML();
+
+}
+
+
+/**********************************更新全局变量**********************************/
+// 更新DOM对象
+function updateDOM(){
+
+
+
+}
+
+// 更新变量
+function updateVar(){
+
+
+
+}
+
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************初始化其他模块**********************************/
+function init(){
+
+
+
+}
+
+/**********************************广播消息**********************************/
+function addEvent(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+
+
+
+/**********************************其他函数**********************************/
+function getLocation(){
+	map.open({
+	    rect: {
+	        x: 0,
+	        y: 0,
+            w: api.winWidth,
+            h: api.winHeight - api.pageParam.headerH
+	    },
+	    center: {
+	        lon: lon,
+	        lat: lat
+	    },
+	    zoomLevel: 10,
+	    showUserLocation: true,
+	    fixedOn: api.frameName,
+	    fixed: true
+	}, function(ret) {
+	    if (ret.status) {
+            map.getLocation({     //获得本地坐标
+                accuracy: '100m',
+                autoStop: true,
+                filter: 1
+            }, function(ret, err){
+                if(ret.status){
+                    // map.addAnnotations({       //加标注
+                    //     annotations: [{
+                    //         id: 1, lon: 109.206094, lat: 21.639977
+                    //     }],
+                    //     icon: '',
+                    //     draggable: true
+                    // }, function(ret){
+                    //     if(ret){
+                    //         //alert(ret.id);
+                    //     }
+                    // });
+                    map.searchRoute({
+                        id: 1,
+                        type: 'drive',
+                        policy: 'ecar_fee_first',
+                        start: {
+                            lon: ret.lon,
+                            lat: ret.lat
+                        },
+                        end: {
+                            lon: lon,
+                            lat: lat
+                        }
+                    }, function(ret, err){
+                        //_alert(ret);
+                        if(ret.status){
+                            map.drawRoute({
+                                id: 1,
+                                autoresizing:true,
+                                index: 0,
+                                styles: {
+                                    start: {
+                                        icon: ''
+                                    },
+                                    end: {
+                                        icon: ''
+                                    }
+                                }
+                            }, function(ret){
+
+                            });
+                        } else {
+                           //api.alert({msg:JSON.stringify(err)});
+                        }
+                    });
+                } else {
+                    //alert(err.code);
+                }
+            });
+        }
+    });
+
+}
+/**********************************功能模块1**********************************/
+
+
+</script>
+</html>

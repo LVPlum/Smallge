@@ -1,0 +1,129 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui20/aui.2.0.css" />
+    <style type="text/css">
+		body{background: #fff}
+		.t{background-color: #ADE7EF}
+		.b{background-color: #EEF3F7}
+		.r{color:#ED4040}
+    </style>
+</head>
+<body>
+<section class="aui-content-padded">
+    <div class="aui-card-list">
+        <div class="aui-card-list-header t" id="title">
+
+        </div>
+        <div class="aui-card-list-content-padded" id="content">
+
+        </div>
+        <section class="aui-grid b">
+		    <div class="aui-row">
+		        <div class="aui-col-xs-6" id="yy">
+		            <img src="../../image/yy.png">
+		            <div class="aui-grid-label" id="yyy">有用(<span id="yc">0</span>)</div>
+		        </div>
+		        <div class="aui-col-xs-6" id="wy">
+		            <img src="../../image/wy.png">
+		            <div class="aui-grid-label" id="www">无用(<span id="wc">0</span>)</div>
+		        </div>
+		    </div> 	    
+        </section>     
+    </div>           
+</section>
+
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript" src="../../script/zepto.min.js" ></script>
+<script type="text/javascript" src="../../script/zan1.js" ></script>
+<script type="text/javascript">
+var id = null;
+    apiready = function(){
+    	id = api.pageParam.id;
+        api.parseTapmode();
+        loaddate();
+    }
+	function loaddate(){
+		showp('数据加载中...','');
+		api.ajax({
+		    url: website + 'chsysset.php?action=wdcontent',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {ID: id},
+		    }
+		},function(ret,err){
+		    if (ret) {
+				var title = $api.byId('title');
+				$api.html(title, '<i class="aui-iconfont aui-icon-question">  ' + ret.title +'</i>');
+				var content = $api.byId('content');
+				$api.html(content, ret.content);
+				$api.text($api.byId('yc'), ret.yy);
+				$api.text($api.byId('wc'), ret.wy);
+				api.hideProgress();
+		    }
+		});	
+	}
+Zepto(function($) {
+			$("#yy").one("click", function(e) {
+                  show(e,'yy');
+                  var $that = $(this);
+			});	
+			$("#wy").one("click", function(e) {
+                  show(e,'wy');
+                  var $that = $(this);
+			});					
+});	
+function show(e,a) {
+	api.ajax({
+	    url: website + 'chsysset.php?action=wdzan',
+	    method: 'post',
+	    timeout: 30,
+	    dataType: 'json',
+	    returnAll:false,
+	    data:{
+	        values: {ID: id, a: a},
+	    }
+	},function(ret,err){
+	    if (ret) {
+	    	if(a == 'yy'){
+	    		var count = parseInt($api.text($api.byId('yc'))) + 1;
+	    		$api.text($api.byId('yc'),count);
+	    		$api.addCls($api.byId('yyy'), 'r');
+	    	}
+	    	if(a == 'wy'){
+	    		var count = parseInt($api.text($api.byId('wc'))) + 1;
+	    		$api.text($api.byId('wc'),count);
+	    		$api.addCls($api.byId('www'), 'r');
+	    	}	    
+		    var n = 1;
+		    var $temp = $("<b>").text("+" + n);		
+		    var x = e.pageX, y = e.pageY;	
+		    $temp.css({
+		        "top": y - 30,
+		        "left": x,
+		        //"right": "40px",
+		        "position": "absolute",
+		        "color": "#E94F06",
+		        "font-size": "1.0em",
+		        "z-index": 10
+		    });
+		    $("body").append($temp);
+		    $temp.animate({top: y - 200, left: x - 150, opacity: 0, "font-size": "1.8em"}, 3000, 'linear', function () {
+		            $temp.remove();
+		        });
+		        e.stopPropagation();
+	    }
+	});	
+
+    }	
+</script>
+</html>

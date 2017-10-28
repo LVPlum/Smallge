@@ -1,0 +1,156 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+
+    </style>
+</head>
+<body>
+    <section class="aui-content-padded" id="app" v-cloak>
+        <div class="aui-card-list" style="width: 100%;height: 7.5rem;box-shadow:#d6e0ea 0px 0px 10px;">
+            <textarea class="aui-padded-15" style="width: 100%;height: 80%;" maxlength="30"  v-model = "desc"
+            @input="descInput" @keyup.enter="postProfile"></textarea>
+            <span class="aui-font-size-14 aui-pull-right aui-margin-r-15">{{desc.length}}/30</span>
+        </div>
+    </section>
+    <!--<section class="aui-content-padded">
+        <div class="aui-card-list" style="width: 100%;height: 7.5rem;box-shadow:#d6e0ea 0px 0px 10px;">
+            <textarea onblur="keypress()" onkeyup="keypress()" class="aui-padded-15" style="width: 100%;height: 80%;" maxlength="15"  placeholder="请输入您要说的话"></textarea>
+            <span class="aui-font-size-14 aui-pull-right aui-margin-r-15"><i>0</i>/15</span>
+        </div>
+    </section>-->
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {}, vm = null;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    dom = {
+    };
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+            desc: $api.getStorage('profile')　? $api.getStorage('profile') : '请简单介绍下自己',
+            friendInfo: {},
+        },
+        methods: {
+            descInput: function() {
+                console.log(this.desc);
+            },
+            postProfile: function(){
+                if(this.desc != ''){
+                    sendSave();
+                }else {
+                    alert('请输入内容');
+                }
+            }
+        }
+    });
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+
+/* 发送保存 */
+function sendSave(){
+    tea.showp('保存中...','请稍候');
+    api.ajax({
+        url:  website + 'chsysset.php?action=chinfo',
+        method: 'post',
+        timeout: 30,
+        data: {
+            values: {
+                ID: $api.getStorage('ID'),
+                token: $api.getStorage('token'),
+                profile: vm.desc,
+            },
+        }
+    }, function (ret, err) {
+        api.hideProgress();
+        if (!ret) {
+            tea.toast('ajax');
+            return false;
+        };
+        if (ret.succ == 'ok') {
+            api.sendEvent({   // 发送更新成功事件，发送到personal_info_frm和me_frm页面
+                name: 'save_personal_data',
+            });
+            api.closeWin();
+            return true;
+        }
+        api.toast({
+            msg: ret.msg,
+            duration: 2000,
+            location: 'middle',
+        });
+    });
+}
+</script>
+</html>

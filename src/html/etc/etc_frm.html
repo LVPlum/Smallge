@@ -1,0 +1,417 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: #FFFFFF;
+        }
+        .banner img{
+            width: 100%;
+            height: auto;
+        }
+        .bar{
+            width: 92%;
+            position: relative;
+            margin-top: -6.5rem;
+        }
+        .warp{
+            border-radius: 0.3rem;
+            overflow: hidden;
+            line-height: normal;
+            -moz-box-shadow:0 0 0.9rem 0 rgba(107, 65, 65, 0.15);
+            -webkit-box-shadow:0 0 0.9rem 0 rgba(107, 65, 65, 0.15);
+            box-shadow:0 0 0.9rem 0 rgba(107, 65, 65, 0.15);
+        }
+        .border{
+            background-position: 0 bottom !important;
+        }
+        /*修改value的placeholder的颜色*/
+        input::-webkit-input-placeholder, textarea::-webkit-input-placeholder{
+            color:   #CCCCCC;
+        }
+        input:-moz-placeholder, textarea:-moz-placeholder {
+            color:    #CCCCCC;
+        }
+        input:-ms-input-placeholder, textarea:-ms-input-placeholder {
+            color:    #CCCCCC;
+        }
+        .aui-radio:checked, .aui-radio.aui-checked.no{
+            background-color: #ccc;
+            border: solid 1px #ccc;
+        }
+        /*修改下边框的位置*/
+        /*@media screen and (-webkit-min-device-pixel-ratio: 1.5){
+            .aui-list, .aui-list .aui-list-item {
+                background-image: none !important;
+            }
+            .aui-list .aui-list-item.border-b{
+                padding-left: 0;
+                margin-left: 0.75rem;
+                background-size: 100% 1px;
+                background-repeat: no-repeat;
+                background-position: left top,right bottom;
+                background-image: linear-gradient(0,#dddddd,#dddddd 50%,transparent 50%),linear-gradient(0,#dddddd,#dddddd 50%,transparent 50%) !important;
+            }
+        }*/
+        @media screen and (-webkit-min-device-pixel-ratio: 1.5){
+            .aui-list,.aui-list .aui-list-item {
+                background-image: none;
+            }
+            .aui-list.border-b,.aui-list .aui-list-item.border-b{
+                background-image: -webkit-linear-gradient(90deg,#dddddd,#dddddd 50%,transparent 50%);
+            }
+        }
+        .aui-list .aui-list-item.border-b-t{
+            padding-left: 0;
+            margin-left: 0.75rem;
+            background-size: 100% 1px;
+            background-repeat: no-repeat;
+            background-position: left top,right bottom;
+            background-image: linear-gradient(0,#dddddd,#dddddd 50%,transparent 50%),linear-gradient(0,#dddddd,#dddddd 50%,transparent 50%) !important;
+        }
+        .aui-list .aui-list-item.border-t{
+            padding-left: 0;
+            margin-left: 0.75rem;
+            background-position: left top;
+            background-image: linear-gradient(0,#dddddd,#dddddd 50%,transparent 50%) !important;
+        }
+        .vip{
+            width: 1.25rem;
+            font-size: 0.6rem;
+            color: #fff;
+            font-weight: bolder;
+            text-align: center;
+            background-color: #CCCCCC;
+            border-radius: 4px;
+        }
+        .vip.black{
+            background-color: #333333;
+            color: #f2d394;
+        }
+        .vip-icon:before{
+            content: '';
+            display: inline-block;
+            width: 0.5rem;
+            height: 0.45rem;
+            background-image: url('../../image/etc/VIP-icon.png');
+            background-size: 100%;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="tea-bg-white">
+        <header class="banner"><img src="../../image/etc/banner@2x.png" alt="banner"></header>
+        <div class="aui-bar-btn bar">
+            <div class="warp aui-margin-b-10">
+                <input-plate :province="province" v-model="number" @updata="updataMsg">
+                    <div slot="car_type" class="aui-font-size-16 tea-text-title aui-margin-t-10 aui-padded-b-10 aui-border-b">
+                        <span style="width: 40%">小车<label class="aui-radio btn aui-checked"></label></span>
+                        <span>货车<span class="tea-text-gray">(即将开通)</span><label class="aui-radio btn aui-checked no"></label></span>
+                    </div>
+                    <div slot="vip" class="aui-margin-r-5">
+                        <div v-if="is_vip" class="vip">VIP</div>
+                        <div v-else class="vip black"><i class="vip-icon"></i>3</div>
+                    </div>
+                </input-plate>
+                <input-option :config="optionConfig" :checked="checkedOn" @checked="checked"></input-option>
+                <div v-show="checkedOn == '1' " class="aui-list">
+                    <div class="aui-list-item border-b-t">
+                        <div class="aui-info aui-padded-0">
+                            <div class="aui-info-item aui-font-size-16 tea-text-title">
+                                <span>店铺地址</span>
+                                <span class="aui-margin-l-10">{{store}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="aui-list-item">
+                        <div class="aui-info aui-padded-0">
+                            <div class="aui-info-item aui-font-size-16 tea-text-title">
+                                <span>手机号码</span>
+                        <span class="aui-margin-l-10">
+                            <input type="tel" placeholder="请输入您的手机号码" maxlength="11"
+                                   v-model = "tel">
+                        </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <site v-show="checkedOn == '2' " :address="address" @updata="updataMsg"></site>
+            </div>
+            <coupon :type='coupon_type' @updata="updataMsg" ></coupon>
+            <!--<section class="aui-list aui-media-list aui-margin-t-15">
+                <div class="aui-list-item aui-list-item-arrow">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div class="aui-font-size-16 tea-text-title">现金券</div>
+                                <div class="aui-font-size-16 aui-pull-right tea-text-orange">-￥150</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>-->
+        </div>
+        <div class="aui-content-padded aui-font-size-14 tea-text-default">
+            <p>办理须知</p>
+            <p>1.八桂行卡高速收费优惠5%</p>
+            <p>2.免费上门安装服务，仅限北海市区和合浦县城</p>
+            <p>3.办理ETC，收费350元，含电子签证、八桂行卡</p>
+            <p>4.仅限小轿车 (货车期待开通...)</p>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {}, vm = null;
+
+/**********************************apiready**********************************/
+/*apiready = function(){
+
+    // 初始化变量
+    init();
+
+};*/
+
+/**********************************初始化变量**********************************/
+function init(){
+    dom = {
+    };
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+            province: '桂E',
+            number: '',
+            tel: '',
+        },
+        methods: {
+            clear: function(key){
+                vm[key] = '';
+            },
+            openWinPlateProvince: function(){
+                event.stopPropagation();
+                api.openWin({
+                    name: 'plateProvince',
+                    url: '../car_plate/plate_province_win.html',
+                });
+            },
+            openWinPlateNum: function(){
+                api.openWin({
+                    name: 'plateNum',
+                    url: '../car_plate/plate_num_win.html',
+                });
+            },
+        },
+        computed: {
+            errorMsg: function(){
+                var rule = new tea.checkRule();
+                rule.add(this.number, [{
+                    condition: 'isNoEmpty',
+                    errorMsg: '请输入车牌号码'
+                }]);
+                rule.add(this.tel, [{
+                    condition: 'isPhone',
+                    errorMsg: '请输入格式正确的手机号码'
+                }]);
+                var errorMsg = rule.start();
+                return errorMsg;
+            }
+        },
+        watch: {
+            errorMsg: {
+                handler: function(){
+                    api.sendEvent({
+                        name: 'formReady',
+                        extra: {
+                            ready: this.errorMsg,
+                        }
+                    });
+                },
+                immediate: true //立即调用
+            }
+        }
+    })
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+    /*api.addEventListener({
+        name: 'selectPlateProvince'
+    }, function (ret, err) {
+        vm.province = ret.value.province + ret.value.city;
+    });
+
+    api.addEventListener({
+        name: 'addOldCar'
+    }, function (ret, err) {
+        vm.province = ret.value.car.slice(0,2);
+        vm.number = ret.value.car.slice(2);
+        vm.tel = ret.value.tel;
+    });*/
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+    api.ajax({
+        url: website + '',
+        method: 'post',
+        timeout: 30,
+        data: {
+            values: {
+                name: 'values'
+            },
+        }
+    }, function (ret, err) {
+
+    });
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+function postData(){
+    _alert(vm.couponFee);
+    return false;
+    if(!vm.errorMsg){
+//        _alert($api.getStorage('ID'));
+//        _alert(vm.province+vm.number);
+//        _alert(vm.tel);
+        api.ajax({
+            url: website + 'etc.php?action=save',
+            method: 'post',
+            timeout: 30,
+            data: {
+                values: {
+                    ID: $api.getStorage('ID'),
+                    carnum: vm.province+vm.number,
+                    tel: vm.tel
+                },
+            }
+        }, function (ret, err) {
+//            _alert(ret);
+            if(!ret){
+                tea.toast('ajax');
+                return false;
+            }
+            if(ret.succ == '1'){
+                /*ret.data.money = 0;
+                if(ret.data.money == 0){  //如果后台返回金额为0，车辆为vip车辆，直接提示成功
+                    api.toast({
+                        msg: '您的车辆已经加入VIP，无需缴纳任何费用',
+                        duration: 2000,
+                        location: 'middle'
+                    });
+                    toSuccess();
+                }else{
+                    var value = {
+                        paymoney: ret.data.money,
+                        payid: ret.data.payid,
+                        mtype: ret.data.mtype,
+                        carnum: vm.province+vm.number,
+                    }
+                    toPay(value);
+                }*/
+                var value = {
+                    paymoney: ret.data.money,
+                    payid: ret.data.payid,
+                    mtype: ret.data.mtype,
+                    carnum: vm.province+vm.number,
+                }
+                toPay(value);
+            }
+            api.toast({
+                msg: ret.msg,
+                duration: 2000,
+                location: 'middle'
+            });
+        });
+    }else {
+        api.toast({
+            msg: vm.errorMsg,
+            duration: 2000,
+            location: 'middle'
+        });
+    }
+
+}
+function checkVip(plate){
+
+}
+
+function toPay(value){
+    api.openWin({
+        name: 'pay_win',
+        url: '../pay/pay_win.html',
+        pageParam: {
+            title:'支付ETC费用',
+            money: value.paymoney,
+            type: 'etc',
+            values: value
+        },
+        vScrollBarEnabled: false
+    });
+}
+/*function toSuccess(){
+    var datas = {
+        '0': ['小马哥工作人员将会联系您','请保持手机通畅并提供以下手续'],
+        '1': ['个人车辆','身份证、行驶证'],
+        '2': ['单位车辆','营业执照副本、委托书','经办人身份证、行驶证'],
+    }
+    api.openWin({
+        name: 'success_win',
+        url: '../unit/success_win.html',
+        bounces: false,
+        pageParam: {
+            title: '支付成功页',
+            result: '支付成功',
+            data: datas
+        }
+    });
+}*/
+</script>
+</html>

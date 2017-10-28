@@ -1,0 +1,630 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        .aui-list{
+            background: transparent;
+        }
+        .aui-list .aui-list-item-media.avatar{
+            width: 3.2rem;
+            /*height: 3.2rem;*/
+            margin: 0 0.75rem;
+        }
+        .aui-list .aui-list-item-media.avatar>img{
+            border-radius: 10px;
+        }
+        .aui-media-list .aui-list-item.warp-padding{
+            padding: 0.75rem 0;
+        }
+        .justify-content-star{
+            justify-content: flex-start !important;
+            -webkit-justify-content: flex-start !important;
+        }
+        .level{
+            width: 1.5rem;
+            height: 0.8rem;
+            line-height: 0.8rem;
+            margin-left: -1px;
+            /*margin-top: -1px;
+            margin-left: -1px;
+            border-left: none;*/
+            border-top-right-radius: 30px;
+            border-bottom-right-radius: 30px;
+            text-align: center;
+            font-size: 0.5rem !important;
+        }
+        .red{
+            border: 1px solid #FF6666;
+            color: #FF6666;
+        }
+        .blue{
+            border: 1px solid #5CADFF;
+            color: #5CADFF;
+        }
+        .tea-text-light-red{
+            color: #FF6666 !important;
+        }
+        .pic-item{
+            height: 0;
+            padding-bottom: 100%;
+            background: no-repeat 50%;
+            background-size: cover;
+        }
+        .icon-close{
+            width: 1.1rem;
+            height: 1.1rem;
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            text-align: center;
+            line-height: 1rem;
+            color: #fff;
+            background-color: rgba(51, 51, 51, 0.5);
+        }
+        .aui-grid [class*=aui-col-]{
+            padding: 0.125rem;
+        }
+        .aui-btn-block{
+            height: 2.2rem;
+            line-height: 2.2rem;
+            font-size: 0.8rem;
+            font-weight: 100;
+        }
+        .news{
+            background-color: #EAF5FF;
+            border: 1px solid #3399ff;
+            color: #3399ff;
+        }
+        .aui-list .aui-list-item-inner.min-height{
+            min-height: auto;
+        }
+        /*.aui-col-xs-4 {
+            position: relative;
+            float: left;
+            width: 33.33333333%;
+        }*/
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <ul class="aui-list aui-media-list" style="margin-bottom: 1.5rem">
+            <li class="aui-list-item warp-padding">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media aui-padded-0 avatar" @click="openPicList('')">
+                        <img :src=" userInfo.img ? userInfo.img : '../../image/me/default_male' ">
+                    </div>
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text justify-content-star">
+                            <div class="aui-list-item-title tea-font-weight-bold">{{userInfo.nickname}}</div>
+                            <i :class="userInfo.sex == 'male' ? 'tea-icon-men tea-text-blue' : 'tea-icon-women tea-text-light-red' " class="aui-iconfont aui-margin-l-5 aui-font-size-16"></i>
+                            <span :class="userInfo.sex == 'male' ? 'blue' : 'red' " class="tea-font-size-11 level">{{ userInfo.tx }}</span>
+                        </div>
+                        <div class="aui-list-item-text tea-text-gray" v-if="userInfo.tel">
+                            手机号： {{ userInfo.relation == '1' ? userInfo.tel : userInfo.tel.replace(/(\d{3})\d{5}(\d{3})/,'$1*****$2')}}
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item warp-padding aui-margin-t-5">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media aui-padded-0 avatar">
+                        <p class="aui-font-size-16 aui-text-default">个性签名</p>
+                    </div>
+                    <div class="aui-list-item-inner aui-padded-0 aui-margin-r-15 min-height">
+                        <div class="aui-list-item-text">
+                            <p class="aui-font-size-16 tea-text-title">{{ userInfo.profile ? userInfo.profile : '暂无' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item warp-padding aui-margin-t-5">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media aui-padded-0 avatar">
+                        <p class="aui-font-size-16 aui-text-default">个人风采</p>
+                    </div>
+                    <div class="aui-list-item-inner aui-padded-0 aui-margin-r-15">
+                        <div v-if="isMe" class="aui-list-item-text">
+                            <section class="aui-grid">
+                                <div class="aui-row">
+                                    <div v-if="PicList.length" v-for="(value,index) in PicList" class="aui-col-xs-4" @click="openPicList(index)">
+                                        <!--<div class="pic-item" :style="{ backgroundImage: 'url('+value+')' }"></div>-->
+                                        <div class="pic-item" :style="{ backgroundImage: 'url('+website+'userfc_img/'+value.pic+')' }"></div>
+                                        <div v-if="isMe" class="icon-close" @click.stop="dele(value.pic)">&times;</div>
+                                    </div>
+                                    <div v-if="isMe" :class="PicList.length >= 6 ? 'aui-hide' : '' " class="aui-col-xs-4"  @click="add()">
+                                        <div class="pic-item" style="background-image: url('../../image/xinxian_jia@2x.png')"></div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        <div v-else class="aui-list-item-text">
+                            <section v-if="PicList.length" class="aui-grid">
+                                <div class="aui-row">
+                                    <div v-for="(value,index) in PicList" class="aui-col-xs-4" @click="openPicList(index)">
+                                        <!--<div class="pic-item" :style="{ backgroundImage: 'url('+value+')' }"></div>-->
+                                        <div class="pic-item" :style="{ backgroundImage: 'url('+website+'userfc_img/'+value.pic+')' }"></div>
+                                    </div>
+                                    <!--<div class="aui-col-xs-3 ">
+                                        <div class="pic-item" style="background-image: url('../../image/car_check/banner@2x.png')"></div>
+                                    </div>
+                                    <div class="aui-col-xs-3 ">
+                                        <div class="pic-item" style="background-image: url('../../image/car_check/banner@2x.png')"></div>
+                                    </div>
+                                    <div class="aui-col-xs-3 ">
+                                        <div class="pic-item" style="background-image: url('../../image/car_check/banner@2x.png')"></div>
+                                    </div>
+                                    <div class="aui-col-xs-3 ">
+                                        <div class="pic-item" style="background-image: url('../../image/car_check/banner@2x.png')"></div>
+                                    </div>
+                                    <div class="aui-col-xs-3 ">
+                                        <div class="pic-item" style="background-image: url('../../image/car_check/banner@2x.png')"></div>
+                                    </div>-->
+                                </div>
+                            </section>
+                            <p v-else class="aui-font-size-16 tea-text-title">这个人很懒，什么都没有留下</p>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <footer v-show="!isMe" style="margin: 0rem 2rem 0.75rem" @click="goTo(func)">
+            <div class="aui-btn aui-btn-block aui-text-white tea-btn-radius" :class="userInfo.relation == '2' ? 'tea-bg-light-gray' : 'tea-bg-blue' ">{{ statusText }}</div>
+        </footer>
+        <footer style="margin: 0rem 2rem" @click="openWinNews">
+            <div class="aui-btn aui-btn-block tea-btn-radius news">查看新鲜事</div>
+        </footer>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var vm = null;
+/*vm = new Vue({
+    el: '#app',
+    data: {
+        website: website,
+        userInfo: {
+            avatar: '', tx: '散兵', sex: 'male', nickname: 'LVPlum' ,tel: '15736883259', profile: '',ID: ''
+        },
+        status: '1',
+        statusText: '123',
+        isMe: false, //判断是否是自己
+        PicList: ['../../image/xinxian_jia@2x.png','../../image/bg1.png','../../image/invite/invite_banner@2x.png'],
+        imageBrowser:[],
+    },
+    methods: {
+
+    },
+    computed: {
+        btnText: function(){
+            return this.statusText;
+        }
+    }
+})*/
+/**********************************apiready**********************************/
+apiready = function(){
+    // 初始化变量
+    init();
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+    vm = new Vue({
+        el: '#app',
+        data: {
+            website: website,
+            userInfo: {
+                img: '../../image/avatar.png', tx: '散兵', sex: api.pageParam.sex, nickname: '小马哥' ,tel: '15788888888', profile: '',ID: '',relation: '4'
+            },
+            statusText: '添加好友',
+            func: 'add',
+            isMe: api.pageParam.friendID == $api.getStorage('ID') ? true : false, //判断是否是自己
+            PicList: [],
+            imageBrowser:[],
+        },
+        methods: {
+            goTo: function(type){
+                switch (type){
+                    case 'add':
+                        addFriend();
+                        break;
+                    case 'msg':
+                        sendmsg();
+                        break;
+                    case 'sayhi':
+                        openWinSayhi();
+                        break;
+                    case 'accept':
+                        accept();
+                        break;
+                    default:
+                        break;
+                }
+            },
+            openPicList: function(index){
+                //在图片浏览器中查看图片，参数为''为查看头像，参数index等于查看个人风采图片列表下标
+                openImageList(index)
+            },
+            dele: function(pic){
+                delImg(pic);
+            },
+            add: function(){
+                addImgType();
+            },
+            btnText: function(){
+                this.userInfo;
+                this.$nextTick(function(){
+                    switch (this.userInfo.relation){
+                        case 3:
+                            vm.statusText = '通过验证';
+                            vm.func = 'accept';
+                            break;
+                        case 2:
+                            vm.statusText = '等待验证';
+                            vm.func = 'default';
+                            break;
+                        case 1:
+                            vm.statusText = '发消息';
+                            vm.func = 'msg';
+                            break;
+                        default:
+                            break;
+                    }
+                });
+            }
+        },
+        computed: {
+
+        },
+        watch: {
+
+        }
+    });
+    //获取用户信息和个人风采
+    getDataType();
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************ajax请求数据**********************************/
+//先判断是否是来自通讯录页面的数据
+function getDataType(){
+    var postData = {
+        visit_id: api.pageParam.friendID,
+        ID: $api.getStorage('ID')
+    }; //默认值
+    switch (api.pageParam.pageType){  //对来自不同页面的跳转进行不同的处理
+        case 'contacts':
+            postData = {
+                key: api.pageParam.key,
+                index: api.pageParam.index,
+                ID: $api.getStorage('ID')
+            };
+            break;
+        case 'location':
+            vm.func = 'sayhi';
+            vm.statusText = '打招呼';
+            break;
+        default:
+            break;
+    }
+    getUser(postData);
+}
+//获取基本用户信息
+function getUser(postData){
+    //获取用户基本信息
+    tea.showp('加载中...');
+    api.ajax({
+        url: website + 'user_api.php?action=visit',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        returnAll: false,
+        data: {
+            values: postData
+        }
+    }, function(ret, err) {
+//        _alert(ret)
+        api.hideProgress();
+        if(ret.succ == '1'){
+            api.pageParam.friendID = ret.data.userid;//从通讯录过来没有api.pageParam.friendID，获取到详情后增加上，用于个人风采获取
+            vm.userInfo = ret.data;
+            vm.btnText();     //获取成功后根据状态去修改好友按钮
+            getPicList();    //获取个人风采
+        }
+    })
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+/*个人风采相关*/
+//获取个人风采
+function getPicList(){
+    tea.showp('加载中');
+    api.ajax({
+        url: website + 'chsysset.php?action=loadfc',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        returnAll: false,
+        data: {
+            values: {
+                ID: api.pageParam.friendID
+            },
+        }
+    }, function(ret, err){
+        api.hideProgress();
+        if(ret){
+            vm.PicList = ret;
+            vm.imageBrowser = []; //重置一次再进行更新
+            for(i in ret){
+                vm.imageBrowser.push(website+'userfc_img/'+ret[i].pic); //可查看的图片列表
+            }
+        }
+    })
+}
+//个人风采和头像大图查看
+function openImageList(index){
+    var imageBrowser = api.require('imageBrowser');
+    if(index !== ''){
+        imageBrowser.openImages({
+            imageUrls : vm.imageBrowser,
+            showList : false,
+            activeIndex : index
+        });
+    }else{
+        imageBrowser.openImages({
+            imageUrls: [vm.userInfo.bimg ? vm.userInfo.bimg : vm.userInfo.img ],
+            showList: false
+        });
+    }
+}
+//删除
+function delImg(pic){
+    api.confirm({
+        title : '温馨提示',
+        msg : '您确定要删除该图片吗？',
+        buttons : ['确定', '取消']
+    }, function(ret, err) {
+        if (ret.buttonIndex == 1) {
+            api.ajax({
+                url: website + 'chsysset.php?action=delfc',
+                method: 'post',
+                timeout: 30,
+                data:{
+                    values: {
+                        pic: pic,
+                    },
+                }
+            },function(ret,err){
+                if (ret.succ == 'ok') {
+                    getPicList();
+                    return false;
+                }
+            });
+        }
+    });
+    return false;
+}
+function addImgType(){
+    api.actionSheet({
+        cancelTitle: '取消',
+        buttons: ['拍照','从手机相册选择']
+    },function( ret, err ){
+        if(ret){
+            if(ret.buttonIndex == 1){
+                choose('camera');
+            }
+            if(ret.buttonIndex == 2){
+                choose('library');
+            }
+        }
+    });
+}
+function choose(type){
+    api.getPicture({
+        sourceType: type,
+        encodingType: 'jpg',
+        mediaValue: 'pic',
+        destinationType: 'url',
+        allowEdit: true,
+        quality: 30,
+    }, function(ret, err) {
+        if(ret.data){
+            uploadImg(ret.data);
+        }
+        if(err){
+            alert(err.msg);
+        }
+    });
+}
+function uploadImg(pic){
+    tea.showp('加载中...')
+    api.ajax({
+        url : website + 'upfc.php',
+        method : 'post',
+        timeout : 30,
+        data : {
+            values: {
+                ID: $api.getStorage('ID')
+            },
+            files : {
+                "upfile" : pic
+            }
+        }
+    }, function(ret, err) {
+        api.hideProgress();
+        if(ret.statu == '1'){
+            getPicList();
+        }
+    });
+}
+/*END*/
+
+//查看新鲜事
+function openWinNews(){
+    api.openWin({
+        name: 'tanews_win',
+        url: '../news/tanewslist_win.html',
+        vScrollBarEnabled: false,
+        pageParam: {
+            ID: api.pageParam.friendID
+        }
+    });
+}
+//打招呼
+function openWinSayhi(){
+    api.openWin({
+        name: 'friends_sayhi_win',
+        url: '../friends/friends_sayhi_win.html',
+        bounces: false,
+        pageParam: {
+            friendID : api.pageParam.friendID
+        }
+    });
+}
+//跳转聊天
+function sendmsg() {
+    api.openWin({
+        name: 'chat_win',
+        url: '../friends/chat_win.html',
+        vScrollBarEnabled: false,
+        pageParam: {
+            chatId: api.pageParam.friendID,
+            chatName: vm.userInfo.nickname,
+            chatAvatar: vm.userInfo.img,
+            msgtoken: vm.userInfo.token,
+            chatType: 'PRIVATE'
+        }
+    });
+}
+//发送好友请求
+function addFriend() {
+    var telphone = $api.getStorage('telphone');
+    var nickname = $api.getStorage('nickname');
+    var token = gettoken(telphone);
+    api.ajax({
+        url: website + 'friendship.php?action=sendfrimsg',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        returnAll: false,
+        data: {
+            values: {
+                token: token,
+                fritoken: vm.userInfo.token,
+                myname: nickname
+            },
+        }
+    }, function(ret, err) {
+        if (ret) {
+            if (!ret.errmsg) {
+                if (ret.succ == 'no') {
+                    api.alert({
+                        msg: (ret.msg)
+                    });
+                } else {
+                    api.sendEvent({   //发送到存在好友列表状态的列表页
+                        name: 'updataList',
+                    });
+                    api.sendEvent({
+                        name: 'updataDot',
+                    });
+                    tea.toast('success');
+                    getDataType();
+//                    vm.userInfo.relation = '2'; //状态修改为等待验证
+                    /*api.closeToWin({
+                        name: 'main_win',
+                        animation: {
+                            type: 'flip',
+                            subType: 'from_bottom',
+                            duration: 500
+                        }
+                    });*/
+                }
+            }
+        } else {
+            api.alert({
+                msg: ('错误码：' + err.code + '；错误信息：' + err.msg + '网络状态码：' + err.statusCode)
+            });
+        }
+    });
+}
+//接受好友请求
+function accept(){
+    tea.showp('发送请求中...','请稍等...')
+    api.ajax({
+        url: website + 'friendship.php?action=agrequest',
+        method: 'post',
+        timeout: 30,
+        data: {
+            values: {
+                ID: vm.userInfo.relation_id,    //好友关系id用于同意好友请求
+            },
+        }
+    }, function (ret, err) {
+        api.hideProgress();
+        if(!ret){
+//                tea.toast('ajax');
+            return false;
+        }
+        if(ret.succ == 'ok'){
+            api.sendEvent({   //发送到存在好友列表状态的列表页
+                name: 'updataList',
+            });
+            api.sendEvent({  //发送到车友页面更新 新的好友的红点数据
+                name: 'updataDot',
+            });
+            getDataType();
+            //            vm.userInfo.relation = '1'; //状态修改为已是好友，发消息
+            return true;
+        }
+    });
+}
+</script>
+</html>

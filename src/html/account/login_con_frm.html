@@ -1,0 +1,165 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        html ,body {
+            background: none;
+        }
+        header {
+            background: none !important;
+        }
+    </style>
+</head>
+<body>
+    <header id="header" class="aui-bar aui-bar-nav aui-bar-light" >
+        <a class="aui-btn aui-pull-left aui-margin-l-10" onclick="closeWin()">
+            <span class="aui-iconfont tea-icon-cross tea-text-title tea-big"></span>
+        </a>
+        <a class="aui-btn aui-pull-right aui-padded-10 aui-margin-r-10" tapmode onclick="more()">
+            <span class="aui-iconfont tea-icon-more tea-text-title tea-big"></span>
+        </a>
+    </header>
+    <div id="app">
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {}, vm = null;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    dom = {
+    };
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+
+        },
+        methods: {
+
+        },
+        computed: {
+
+        }
+    })
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+// 回退关闭窗口
+function closeWin(){
+    api.closeWin();
+}
+
+function more(){
+    api.execScript({
+        frameName: 'login_frm',
+        script: 'blur();'
+    });
+    api.actionSheet({
+        buttons: ['切换账号', '找回密码', '注册'],
+        cancelTitle: '取消',
+    }, function(ret, err) {
+        var index = ret.buttonIndex;
+        switch (index) {
+            case 1:
+                api.openWin({
+                    name: 'login_other_win',
+                    url: './login_other_win.html',
+                    pageParam: {
+                        name: 'test'
+                    }
+                });
+                break;
+            case 2:
+                api.openWin({
+                    name: 'password_find_win',
+                    url: './password_find_win.html',
+                    pageParam: {
+                        tel: vm.tel
+                    },
+                    reload: true
+                });
+                break;
+            case 3:
+                api.openWin({
+                    name: 'register_win',
+                    url: './register_win.html',
+                    pageParam: {
+                        tel: vm.tel
+                    }
+                });
+                break;
+            default:
+                break;
+        }
+    });
+}
+/**********************************其他函数**********************************/
+
+</script>
+</html>

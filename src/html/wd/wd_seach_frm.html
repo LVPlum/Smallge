@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui20/aui.2.0.css" />
+    <style type="text/css">
+		body{background: #fff}
+		.r{color:#ED4040}
+    </style>
+</head>
+<body>
+
+	<div class="aui-searchbar" id="search">
+	    <div class="aui-searchbar-input aui-border-radius" tapmode onclick="doSearch()">
+	        <i class="aui-iconfont aui-icon-search"></i>
+	        <form action="javascript:search();">
+	            <input type="search" placeholder="请输入搜索内容" id="search-input" onchange="checkval()" oninput="keyup()">
+	        </form>
+	    </div>
+	    <div class="aui-searchbar-cancel" tapmod>取消</div>
+	</div>
+
+<div class="aui-content" style="padding-top: 50px">
+    <ul class="aui-list aui-list-in" id="list">
+
+    </ul>
+</div>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript">
+    apiready = function(){
+        api.parseTapmode();
+    }
+    function checkval(){   //有内容变化，失去焦点时
+    	search();
+    }
+    function keyup(){
+    	var key = $api.val($api.byId('search-input'));
+    	if(key.length > 1){
+    		setTimeout(search,500);
+    	}
+    }
+	function search(){
+		var key = $api.val($api.byId('search-input'));
+		if(key != ''){
+			api.ajax({
+			    url: website + 'chsysset.php?action=wdsearch',
+			    method: 'post',
+			    timeout: 30,
+			    dataType: 'json',
+			    returnAll:false,
+			    data:{
+			        values: {key: key},
+			    }
+			},function(ret,err){
+			    if (ret) {
+			    	var obj = $api.byId('list');
+			    	var html = '';
+		            for (var i = 0, len = ret.length; i < len; i++) {
+		                var r = ret[i];
+				        html += '<li class="aui-list-item" tapmode onclick="opencontent('+ r.ID +')">';
+				        html += '<div class="aui-list-item-inner">';
+				        html += '<div class="aui-list-item-title"><i class="aui-iconfont aui-icon-question">  '+ redkey(key, r.title) +'</i></div>';
+				        html += '</div>';
+				        html += '</li>';
+		            }
+		            $api.html(obj, html);
+			    }else{
+			    	$api.html($api.byId('list'), '<p class="aui-text-center">无搜索结果</p>');
+			    }
+			});
+		}
+	}
+	function opencontent(id){
+		api.openWin({
+	        name: 'wd_content_win',
+	        url: './wd_content_win.html',
+	        pageParam: {id: id},
+	        vScrollBarEnabled: false
+	   	 });
+	}
+	function redkey(word, str) {
+		str = str.replace(new RegExp("(" + word + ")","ig"), "<strong class='r'>" + word + "</strong>");
+		return str;
+	}
+    var searchBar = document.querySelector(".aui-searchbar-input");
+    if(searchBar){
+        searchBar.onclick = function(){
+            document.querySelector(".aui-searchbar-cancel").style.marginRight = 0;
+        }
+    }
+    document.querySelector(".aui-searchbar-cancel").onclick = function(){
+        this.style.marginRight = "-"+this.offsetWidth+"px";
+        document.getElementById("search-input").value = '';
+        document.getElementById("search-input").blur();
+    }
+</script>
+</html>

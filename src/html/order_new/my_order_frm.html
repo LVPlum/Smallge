@@ -1,0 +1,625 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/swiper-3.4.2.min.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        .aui-btn {
+            margin-left: 0.5rem;
+            width: 3.65rem;
+            height: 1.5rem;
+            line-height: 1.5rem;
+            color: #666;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 0.25rem;
+        }
+        .btn-blue {
+            color: #3399ff;
+            border-color: #0099ff;
+        }
+        .dele-btn{
+            width: 2.75rem;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 100%;
+            display: flex;
+            align-items: center;
+        }
+        .swipeleft{
+            transform:translateX(-16%);
+            -webkit-transform:translateX(-16%);
+        }
+        .aui-list-item-media {
+            width: auto !important;
+            /*padding: 0.75rem 0.5rem 0.75rem 0 !important;*/
+        }
+        .aui-list-item-arrow {
+            position: relative;
+            padding-right: 0.9rem; 
+        }
+        .aui-list-item-arrow:before {
+            right: 0.1rem;
+            z-index: 99;
+        }
+        .aui-iconfont:before {
+            font-size: 2.0rem;
+            /*行高1.5会撑开容器*/
+            line-height: 1;
+        }
+        .flex-start {
+            -webkit-align-self: flex-start;
+                    align-self: flex-start;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" >
+        
+        <section v-if="orderNum == 0" class="tea-nothing">
+            <img src="../../image/nothing_img.png">
+            <p>您还没有任何定单哦~</p>
+        </section>
+        
+        <div class="aui-content aui-margin-b-15">
+            <ul class="aui-list aui-media-list swiper-container" v-for="(item, index) in list" :id="index" v-show="isShow(item.item, item.list.status)">
+                <li class="swiper-wrapper">
+                    <div class="aui-list-item aui-padded-15 swiper-slide"  @click="openWinDetail(item, index)">
+                        <div class="aui-media-list-item-inner">
+                            <div class="aui-list-item-media aui-padded-0 aui-padded-r-10">
+                                <div class="aui-iconfont" :class="type[item.item].icon" :style=" 'color:' + type[item.item].color"></div>   
+                            </div>
+                            <div class="aui-list-item-inner aui-padded-0 aui-padded-b-5">
+                                <div class="aui-list-item-text">
+                                    <div class="aui-list-item-title aui-margin-b-10" style="max-width: 70%">
+                                        <div class="aui-ellipsis-1 aui-list-item-arrow">
+                                            <span class="aui-font-size-16 tea-font-weight-bold">{{type[item.item].title}}</span>
+                                            <span class="aui-font-size-14" v-if="item.item == 'exempt'">(六年免检)</span>
+                                        </div>
+                                        <div class="aui-font-size-12 tea-text-gray aui-ellipsis-1">{{item.list.addtime}}</div>
+                                    </div>
+                                    <div class="aui-list-item-right flex-start aui-font-size-14 tea-text-blue">{{formatStatus(item.list.status, item.item)}}</div>
+                                </div>
+                                <div class="aui-list-item-title tea-text-default aui-font-size-14 aui-ellipsis-1 aui-ellipsis">
+                                   <span>{{type[item.item].carnum(item.list)}}</span>
+                                   <span>{{type[item.item].desc(item.list)}}</span>
+                                </div>
+                                <div class="aui-list-item-title aui-font-size-14 tea-font-weight-bold aui-margin-t-5">
+                                   <span class="aui-ellipsis aui-ellipsis-1">{{type[item.item].price(item.list)}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="aui-info aui-padded-0 aui-margin-0">
+                            <div></div>
+                            <Buttons :type="item.item" :status="item.list.status" :money="item.list.money" @click.native="action(event, item, index)"></Buttons>    
+                        </div>
+                    </div>
+                    
+                    <div v-if="item.list.status == 12" class="aui-bg-danger aui-text-white aui-text-center swiper-slide dele-btn aui-list-item-center" @click="delOrder(index)">
+                        删除
+                    </div>             
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 快速点击 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!--Swiper 引入-->
+<script type="text/javascript" src="../../script/swiper-3.4.2.min.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {}, vm = null, mySwiper = {};
+
+
+/**********************************apiready**********************************/
+apiready = function(){
+    
+    var Buttons = {
+        template: '<div><span class="aui-btn" :class="item.klass" v-for="(item, index) in activeBtns" :data-action="item.action">{{item.text}}</span></div>',
+        props: ['type', 'status', 'money'],
+        data: function(){
+            var data = {
+                btns: {
+                    pay: {
+                        action: 'pay',
+                        text: '去支付',
+                        klass: 'btn-blue',
+                    },
+                    cancel: {
+                        action: 'cancel',
+                        text: '取消',
+                        klass: ''
+                    },
+                    comment: {
+                        action: 'comment',
+                        text: '评价',
+                        klass: 'btn-blue'
+                    }
+                }
+            };
+            return data;
+        },
+        computed: {
+            activeBtns: function(){
+                var arr = [];
+                if (this.money && this.status == 2) {
+                    arr.push(this.btns.pay);
+                }
+                if (this.status == 1 ) {
+                    arr.push(this.btns.comment);
+                }
+                return arr;
+            }
+        }
+    };
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+            mask: true,
+            list: [],
+            statusList: ['全部', '已完成', '未完成'],
+            status: 0,
+            orderType: 'all',
+            type: {
+                check: {
+                    title: '网约审车',
+                    icon: 'tea-icon-check',
+                    color: '#41a4ec',
+                    carnum: function(item){
+                        return item.carnum;
+                    },
+                    desc: function(item){
+                        return item.checkstation
+                    },
+                    price: function(item){
+                        return item.business
+                    }                   
+                },
+                exempt: {
+                    title: '网约审车',
+                    icon: 'tea-icon-check',
+                    color: '#41a4ec',
+                    carnum: function(item){
+                        return item.carnum;
+                    },
+                    desc: function(item){
+                        return item.checkstation
+                    },
+                    price: function(item){
+                        return '¥' + tea.formatMoney(item.money)
+                    }                 
+                },
+                insure: {
+                    title: '车辆保险',
+                    icon: 'tea-icon-insure',
+                    color: '#ff855e',
+                    carnum: function(item){
+                        return item.carnum;
+                    },
+                    desc: function(item){
+                        return item.insurer;
+                    },
+                    price: function(item){
+                        return item.money ? '¥' + tea.formatMoney(item.money) : '审核中';
+                    }                     
+                },
+                tel: {
+                    title: '话费充值',
+                    icon: 'tea-icon-tel',
+                    color: '#ff855e',
+                    carnum: function(item){
+                        return item.tel;
+                    },
+                    desc: function(item){
+                        return item.recharge_money;
+                    },
+                    price: function(item){
+                        return '¥' + tea.formatMoney(item.money);
+                    }                     
+                },
+                agency: {
+                    title: '找代办',
+                    icon: 'tea-icon-agency',
+                    color: '#00be9b',
+                    carnum: function(item){
+                        return '';
+                    },
+                    desc: function(item){
+                        return item.agency_name;
+                    },
+                    price: function(item){
+                        return item.business;
+                    } 
+                },
+                join: {
+                    title: '加盟申请',
+                    icon: 'tea-icon-agency',
+                    color: '#00be9b',
+                    carnum: function(item){
+                        return '';
+                    },
+                    desc: function(item){
+                        return item.agency_name;
+                    },
+                    price: function(item){
+                        return item.shop_address;
+                    }                   
+                },
+                vip: {
+                    title: 'VIP',
+                    icon: 'tea-icon-vip',
+                    color: '#ffc50f',
+                    carnum: function(item){
+                        return item.carnum;
+                    },
+                    desc: function(item){
+                        return '';
+                    },
+                    price: function(item){
+                        return '¥' + tea.formatMoney(item.money);
+                    } 
+                },
+                etc: {
+                    title: 'ETC',
+                    icon: 'tea-icon-etc',
+                    color: '#4874dc',
+                    carnum: function(item){
+                        return item.carnum;
+                    },
+                    desc: function(item){
+                        return '';
+                    },
+                    price: function(item){
+                        return '¥' + tea.formatMoney(item.money);
+                    } 
+                },
+                oil: {
+                    title: '超值加油',
+                    icon: 'tea-icon-oil',
+                    color: '#f5b35e',
+                    carnum: function(item){
+                        return item.carnum;
+                    },
+                    desc: function(item){
+                        return '';
+                    },
+                    price: function(item){
+                        return '¥' + tea.formatMoney(item.money);
+                    } 
+                }
+            }
+        },
+        components: {
+            'buttons': Buttons
+        },
+        methods: {
+            isShow: function(type, status) {
+                if (this.orderType != 'all' && this.orderType != type) {
+                    return false;
+                }
+                if (this.status != 0 && this.status != status) {
+                    return false;
+                }
+                return true;
+            },
+            // 订单状态适配器
+            formatStatus: function(status, type){
+                switch( status ){
+                    case 1:
+                        return '已完成';
+                        break;
+                    case 2:
+                        // 不即时生效的订单为‘已提交’
+                        var arr = ['check', 'join', 'etc', 'agency']
+                        if (~arr.indexOf(type)) {
+                            return '已提交';
+                        }
+                        return '未完成';
+                        break;                    
+                    default :
+                        return '未知状态';
+                        break;
+                }                
+            },       
+            delOrder: function(index){
+                mySwiper[index].slideTo(0, 100, false);//切换到第一个slide，速度为1秒
+
+                api.confirm({
+                    msg: '确认删除订单吗？',
+                    buttons: ['确定', '取消']
+                },function(ret, err){
+                    if (ret.buttonIndex == 1) {
+                        api.showProgress({
+                            title: '订单删除中...',
+                            text: '请稍候...',
+                            modal:  true
+                        });
+                        api.ajax({
+                            url: website + 'api.php?action=delorder',
+                            method: 'post',
+                            timeout: 30,
+                            data:{
+                                values:{
+                                    ID: $api.getStorage('ID'),
+                                    token: $api.getStorage('token'),
+                                    order_id: vm.list[index].order_id,
+                                    order_type: vm.list[index].order_type,
+                                }
+                            },
+                            dataType: 'json',
+                            returnAll: false
+                        },function(ret,err){
+                            api.hideProgress();
+                            if (!ret) {
+                                tea.toast('ajax');
+                                return false;
+                            };
+                            if (ret.success == 0) {
+                                // 删除本地数据
+                                vm.list.splice(index, 1);
+                                getData();
+                                api.closeWin({
+                                    name: 'order_detail_win'
+                                });
+                            }
+                            api.toast({
+                                msg: ret.message,
+                                duration: 2000,
+                                location: 'bottom'
+                            });            
+                        });
+                    }
+                });
+            },
+            test: function(index){
+                api.prompt({
+                    buttons: ['确定', '取消']
+                }, function(ret, err) {
+                    var text = ret.text;
+                    vm.list[index].status = text;
+                });
+            },
+            openWinDetail: function(item, index){
+                api.openWin({
+                    name: 'order_detail_win',
+                    url: './order_detail_win.html',
+                    bounces: false,
+                    pageParam: {
+                        id: item.list.id,
+                        type: item.item,
+                        status: item.list.status,
+                        insureCheck: item.list.insure_check,
+                        money: item.list.money,
+                        index: index
+                    }
+                });
+            },
+            action: function(event, item, index){
+                var target = event.target;
+                var action = $api.attr(target, 'data-action');
+                switch (action) {
+                    case 'pay':
+                        api.openWin({
+                            name: 'pay_win',
+                            url: '../pay/pay_win.html',
+                            pageParam: {
+                                orderId: item.list.id,
+                                deposit: item.list.money
+                            }
+                        });
+                        break;
+                    case 'comment':
+                        api.openWin({
+                            name: 'comment_win',
+                            url: './comment_win.html',
+                            bounces: false,
+                            pageParam: {
+                                orderId: item.list.id,
+                                orderType: item.item,
+                            }
+                        });
+                        break;                    
+                    default:
+                        return false;
+                }
+            }
+        },
+        computed: {
+            //计算当前筛选条件下共有几个订单
+            orderNum: function(){ 
+                var num = 0;
+                this.list.forEach(function(item){
+                    if (vm.isShow(item.item, item.list.status)) {
+                        num ++;
+                    }
+                },this)
+                return num;
+            }
+        },
+        watch: {
+
+        }
+    })
+
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+
+    getData();
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+    // 刷新定单列表
+    api.addEventListener({
+        name: 'refreshOrder'
+    }, function(ret, err){
+        getData();
+    });
+
+    // 监听登录
+    api.addEventListener({
+        name: 'loginOk'
+    }, function(ret, err){
+        getData();
+    });
+
+    // 下拉刷新
+    api.setRefreshHeaderInfo({
+        visible: true,
+        loadingImg: 'widget://image/refresh.png',
+        bgColor: '#f4f4f4',
+        textColor: '#fff',
+        textDown: '下拉刷新...',
+        textUp: '松开刷新...',
+        showTime: true,
+    }, function(ret, err){
+        getData();
+    });
+
+    // 监听删除定单
+    api.addEventListener({
+        name: 'delOrder'
+    }, function(ret, err){
+        vm.delOrder(ret.value.index);
+    });
+
+    api.addEventListener({
+        name: 'setOrderType'
+    }, function(ret, err){
+        vm.orderType = ret.value.type;
+        vm.status = 0;
+    });
+
+    api.addEventListener({
+        name: 'setStatusIndex'
+    }, function(ret, err){
+        vm.status = ret.value.index;
+    });
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+function getData(){
+
+    api.showProgress({
+        title: '数据加载中...',
+        text: '请稍候',
+        modal: false
+    });
+
+    api.ajax({
+        url: website + 'order_api.php?action=list',
+        method: 'post',
+        timeout: 30,
+        data:{
+            values:{
+                ID: $api.getStorage('ID'),
+                token: $api.getStorage('token'),
+                item: undefined,
+                status: 0,
+            }
+        },
+        dataType: 'json',
+        returnAll: false
+    },function(ret,err){
+        api.hideProgress();
+        api.refreshHeaderLoadDone();
+        if (!ret) {
+            tea.toast('ajax');
+            return false;
+        };
+        // 获取订单
+        if (ret.succ == 1) {
+            vm.list = ret.data;
+            // 视图更新后触发
+            vm.$nextTick(function(){
+                vm.list.forEach(function(item, index){
+                    if (item.list.status == 1) {
+                        /*滑动模块*/
+                        mySwiper[index] = new Swiper('#' + index , {
+                            slidesPerView: 'auto',
+                            initialSlide: 0,
+                            resistanceRatio: .7,
+                            // slideToClickedSlide: true,
+                            freeMode: true,
+                            freeModeSticky: true,
+                            autoplayStopOnLast: true
+                        });                
+                    } 
+                });
+            })
+            return true;
+        }
+        // 用户无订单
+        if (ret.succ == 0) {
+            vm.list = [];
+            return true;
+        }
+        // 用户未登录
+        if (ret.succ == 201) {
+            vm.list = [];
+            return false;
+        }
+        // api.toast({
+        //     msg: ret.message,
+        //     duration: 2000,
+        //     location: 'middle'
+        // });
+    });
+    
+
+}
+</script>
+</html>

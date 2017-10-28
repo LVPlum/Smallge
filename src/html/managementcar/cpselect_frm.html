@@ -1,0 +1,142 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui_old.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+</head>
+<style type="text/css">
+body {background-color: #FFFFFF}
+.ac ul li{float:left; padding:1px; margin:2px; border:1px solid #a5b6c8;background:#eef3f7;font-size: 32px;}
+.ac .cur {background-color:#03F}
+.ab ul li{float:left; padding:2px; margin:2px; width:32px; text-align:center; border:1px solid #a5b6c8;background:#eef3f7;font-size: 30px;}
+.ab .cur {background-color:#03F}
+.sz {font-size: 20px;}
+.cur {background-color:#03F}
+.clear{ clear:both}
+</style>
+<body>
+            <div class="aui-content ac" id="sa">
+            <p class="aui-padded-10">先选择归属地</p>
+                <ul>
+                   <li>京</li>
+                   <li>沪</li>
+                   <li>津</li>
+                   <li>渝</li>
+                   <li>冀</li>
+                   <li>晋</li>
+                   <li>蒙</li>
+                   <li>辽</li>
+                   <li>吉</li>
+                   <li>黑</li>
+                   <li>苏</li>
+                   <li>浙</li>
+                   <li>皖</li>
+                   <li>闽</li>
+                   <li>赣</li>
+                   <li>鲁</li>
+                   <li>豫</li>
+                   <li>鄂</li>
+                   <li>湘</li>
+                   <li>粤</li>
+                   <li>桂</li>
+                   <li>琼</li>
+                   <li>川</li>
+                   <li>贵</li>
+                   <li>云</li>
+                   <li>藏</li>
+                   <li>陕</li>
+                   <li>甘</li>
+                   <li>青</li>
+                   <li>宁</li>
+                   <li>新</li>
+                </ul>
+            </div>
+            <div class="clear"></div>
+            <div class="aui-content ab" id="sb">
+            <p class="aui-padded-10">再选择市区</p>
+                <ul>
+                   <li>A</li>
+                   <li>B</li>
+                   <li>C</li>
+                   <li>D</li>
+                   <li>E</li>
+                   <li>F</li>
+                   <li>G</li>
+                   <li>H</li>
+                   <li>I</li>
+                   <li>J</li>
+                   <li>K</li>
+                   <li>L</li>
+                   <li>M</li>
+                   <li>N</li>
+                   <li>O</li>
+                   <li>P</li>
+                   <li>Q</li>
+                   <li>R</li>
+                   <li>S</li>
+                   <li>T</li>
+                   <li>U</li>
+                   <li>V</li>
+                   <li>W</li>
+                   <li>S</li>
+                   <li>Y</li>
+                   <li>Z</li>
+                </ul>
+            </div>
+            <div class="clear"></div>
+
+
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript" src="../../script/zepto.min.js"></script>
+<script type="text/javascript">
+var sa = null, sb = null;
+apiready = function() {
+    api.parseTapmode();
+};
+Zepto(function($) {
+	$("#sa ul").on("tap", "li", function() {
+         $(this).addClass("cur").siblings().removeClass("cur");
+         $("#sb ul li").siblings().removeClass("cur");   //回头重复选的话就清空
+         sb = null;
+         sa = $(this).html();
+         $("#bottom").html("归属地您选择了：   " + sa );
+         $("#bottom").removeClass("aui-btn-success");
+         $("#bottom").unbind();
+
+			$("#sb ul").on("tap", "li", function() {
+		         $(this).addClass("cur").siblings().removeClass("cur");
+		         sb = $(this).html();
+		         //$("#bottom").html("确定提交：   " + sa + "·" +sb);
+		         //$("#bottom").addClass("aui-btn-success");
+		         //$("#bottom").on("tap", function() {
+		         //        selectok();
+		         //});
+		         selectok();
+			});
+	});
+
+});
+function selectok(){
+      if(sa == null || sb == null){
+         api.toast({
+	         msg:'内容没选择完全'
+         });
+         return false;
+      }
+     api.sendEvent({
+	    name: 'selectzm',
+	    extra: {
+	        zm1: sa,
+	        zm2: sb
+	    }
+	 });
+     api.closeWin();
+}
+
+</script>
+</html>

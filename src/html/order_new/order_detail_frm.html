@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        .write {
+            height: 1.2rem;
+            line-height: 1.2rem;
+        }
+
+        .aui-iconfont {
+            font-size: 1rem !important;
+            margin-right: 0.25rem;
+        }
+        .coupon-active{
+            font-size: 0.8rem !important;
+            color: #FF6600 !important;
+        }
+        /*新增：付款详情容器样式 *LVPlum*/
+        .showy{
+            width: 100%;
+            padding: 0.75rem;
+            background: #f7f7f7;
+            position: fixed;
+            bottom: -0.75rem;
+            z-index: 999;
+        }
+        #mask{
+            /*content: '';*/
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            padding-top: 66rem;
+            bottom: 100%;
+            left: 0;
+            background: rgba(0, 0, 0, 0.33);
+        }
+        /*END *LVPlum*/
+        .width-100 {
+            display: inline-block !important;
+            width: 100% !important;
+            text-align: center !important;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak v-if="info">
+        <div class="aui-list aui-card-list aui-list-noborder">
+            <div class="aui-card-list-content-padded aui-padded-t-15 aui-padded-b-15">
+                <div class="aui-list-item-title aui-font-size-18 tea-text-blue">订单{{formatStatus(info.status, type)}}</div>
+                <div class="aui-list-item-text">订单编号：{{info.orderno}}</div>
+                <div class="aui-list-item-text">提交时间：{{info.addtime}}</div>
+            </div>
+        </div>
+        <profile :info="info" :typeobj="typeObj"></profile>
+        <detail :config='typeObj.detailConfig1()'></detail>
+        <detail v-if="typeObj.detailConfig2" :config='typeObj.detailConfig2()'></detail>
+        <!-- 只有审核过的保险订单才需要显示邮寄信息 -->
+        <bill v-if="type == 'insure' && info.status == 2 && info.insure_check == 1" v-bind="info" @setbill="setBill"></bill>
+        <coupon v-if="info.status == 2 && (type == 'insure' && info.insure_check == 1) || (type == 'vip') " :type='type' ></coupon>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.mi.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var vm = null;
+
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(id, type){
+
+    api.showProgress({
+        title: '努力加载中...',
+        text: '请稍候...',
+        modal: false
+    });
+    $api.post(website + 'order_api.php?action=info', {
+        values: {
+            ID: $api.getStorage('ID'),
+            token: $api.getStorage('token'),
+            orderid: id,
+            item: type
+        }
+    }, function(ret, err){
+        api.hideProgress();
+        if (!ret) {
+            tea.toast('ajax');
+            return false;
+        }
+        if (ret.succ == 1) {
+            _alert(ret.data)
+            vm.info = ret.data;
+            return true;
+        }
+        api.toast({
+            msg: ret.msg,
+            duration: 2000,
+            location: 'middle'
+        });
+    });
+
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+
+</script>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+	<title></title>
+	<!-- api样式 -->
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<!-- aui样式 -->
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+	<!-- 小马哥通用样式 -->
+	<link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+		body{background: #fff}
+
+		section ~ section {
+			margin-top: 1.5rem;
+		}
+		.success {
+			margin: 2.0rem auto 0.75rem;
+			height: 3.15rem;
+			width: 3.15rem;
+			border-radius: 50%;
+		}
+		.aui-icon-close {
+			top: 0.3rem;
+			font-size: 1.75rem;
+			font-weight: bold;
+			color: #FFFFFF;
+		}
+		.hide{
+			display: none;
+		}
+    </style>
+</head>
+<body class="tea-body-mask">
+	<div id="fail" class="hide">
+		<section>
+			<div class="success tea-bg-blue">
+				<i class="aui-iconfont aui-icon-close"></i>
+			</div>
+			<div class="tea-text-title aui-font-size-16">订餐失败</div>
+		</section>
+
+		<section>
+			<div class="tea-text-defautlt aui-font-size-14">
+				<span id="plate"></span>
+			</div>
+		</section>
+	</div>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- HTML模板渲染引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+<script type="text/javascript" src="../../script/aui-dialog.js" ></script>
+<script type="text/javascript">
+var userid = null, code = null;
+var toast = new auiToast({})
+    apiready = function(){
+    	code = api.pageParam.code;
+    	userid = $api.getStorage('ID');
+        api.parseTapmode();
+        loaddate();
+    }
+	function loaddate(){
+		showp('数据处理中...','');
+		api.ajax({
+		    url: website + 'fantang/sm/junmafantang.php?action=saodc',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {userid: userid,code: code},
+		    }
+		},function(ret,err){
+		    if (ret) {
+				if(ret.succ == 1){
+					toast.custom({
+						title:"使用成功",
+						html:'<i class="aui-iconfont aui-icon-laud"></i>',
+						duration:3000
+					});
+					setTimeout(function(){
+					api.sendEvent({name: 'reflash'});
+						api.openWin({
+							name: 'ftindex_win',
+							url: './ftindex_win.html',
+							vScrollBarEnabled: false
+						 });
+					}, 3000)
+					api.closeWin();
+				}
+				if(ret.succ == 0){
+					var message = ret.msg ? ret.msg : "测试使用失败";
+					$api.byId('plate').innerHTML = message;
+					var fail = $api.byId('fail')
+					$api.removeCls(fail,"hide");
+				}
+				api.hideProgress();
+		    }
+		});	  		     	
+	}
+</script>
+</html>

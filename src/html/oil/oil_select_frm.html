@@ -1,0 +1,208 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        html,body {
+            height: 100%;
+            background-color: #FFF;
+        }
+        *{
+            background-image: none !important;
+        }
+        .banner{
+            margin-bottom: 1rem;
+        }
+        .banner img{
+            width: 100%;
+        }
+        .aui-list .aui-list-item-label.icon{
+            width: 2.5rem;
+            padding: 0;
+            margin: 0.75rem;
+            border-radius: 50%;
+            box-shadow: 0px 1px 5px 0px rgba(121, 93, 65, 0.2);
+        }
+        .aui-list .aui-list-item-label.icon>img{
+            width: 100%;
+        }
+        .btn{
+            margin-right: 0.5rem;
+        }
+        .aui-btn-block{
+            height: 2.2rem;
+            line-height: 2.2rem;
+            font-size: 0.8rem;
+            font-weight: 100;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <div class="banner"><img src="../../image/oil/oil_banner.png"></div>
+        <ul class="aui-list aui-media-list">
+            <li v-for="(value,index) in item" class="aui-list-item aui-padded-0">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-inner aui-padded-l-15">
+                        <div class="aui-info" style="padding:0">
+                            <div class="aui-list-item-label icon">
+                                <img :src="value.card_brand == 'cnpc' ? '../../image/oil/icon_cnpc.png' : '../../image/oil/icon_sg.png' " class="aui-img-round">
+                            </div>
+                            <div class="aui-list-item-input aui-font-size-16 tea-font-weight-bold tea-text-title">
+                                {{value.cn_name}}
+                            </div>
+                        </div>
+                        <div class="aui-font-size-16 tea-text-title" style="margin-left: 3rem">
+                            <span v-for="(val,i) in value.type" class="aui-margin-r-15" @click="checked(value,val)"><label :class="checkedOn == val.id ? 'aui-checked' : '' " class="aui-radio btn"></label>{{val.cn_name}}</span>
+                            <!--<span class="aui-margin-l-15" @click="checked('2')"><label :class="checkedOn == '2' ? 'aui-checked' : '' " class="aui-radio btn"></label>柴油</span>-->
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <!--<li class="aui-list-item aui-padded-0">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-inner aui-padded-l-15">
+                        <div class="aui-info" style="padding:0">
+                            <div class="aui-list-item-label icon">
+                                <img src="../../image/oil/icon_sg.png">
+                            </div>
+                            <div class="aui-list-item-input aui-font-size-16 tea-font-weight-bold tea-text-title">
+                                中国石化
+                            </div>
+                        </div>
+                        <div class="aui-font-size-16 tea-text-title" style="margin-left: 3rem">
+                            <span class="aui-margin-r-15" @click="checked('3')"><label :class="checkedOn == '3' ? 'aui-checked' : '' " class="aui-radio btn"></label>汽油</span>
+                            <span class="aui-margin-l-15" @click="checked('4')"><label :class="checkedOn == '4' ? 'aui-checked' : '' " class="aui-radio btn"></label>柴油</span>
+                        </div>
+                    </div>
+                </div>
+            </li>-->
+        </ul>
+        <footer style="margin: 2rem 2rem 0rem" @click="openWinApply">
+            <div class="aui-btn aui-btn-block aui-text-white tea-btn-radius" :class="errorMsg ? 'tea-bg-light-blue' : 'tea-bg-blue' ">下一步</div>
+        </footer>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var vm = null;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+            item: [
+                {cn_name:'中国石油',card_brand: 'cnpc', type: [{card_type:'petrol',cn_name:'汽油卡',id:'1'},{card_type:'diesel',cn_name:'柴油卡',id:'2'}]},
+                {cn_name:'中国石化',card_brand: 'sg', type: [{card_type:'petrol',cn_name:'汽油卡',id:'3'},{card_type:'diesel',cn_name:'柴油卡',id:'4'}]}
+            ],
+            checkedOn: '',
+            pageParamVal: {},
+        },
+        methods: {
+            checked: function(value,val){
+                vm.checkedOn = val.id
+                vm.pageParamVal = {
+                    card_brand: value.card_brand,
+                    card_type: val.card_type
+                }
+            },
+            openWinApply: function(){
+                if(!this.errorMsg){
+                    api.openWin({
+                        name: 'oil_apply_win',
+                        url: './oil_apply_win.html',
+                        pageParam: vm.pageParamVal
+                    });
+                }else {
+                    api.toast({
+                        msg: this.errorMsg,
+                        duration: 2000,
+                        location: 'middle'
+                    });
+                }
+            }
+        },
+        computed: {
+            errorMsg: function(){
+                var rule = new tea.checkRule();
+                rule.add(this.checkedOn, [{
+                    condition: 'isNoEmpty',
+                    errorMsg: '请选择一个油卡类型'
+                }]);
+                var errorMsg = rule.start();
+                return errorMsg;
+            }
+        }
+    })
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+
+</script>
+</html>

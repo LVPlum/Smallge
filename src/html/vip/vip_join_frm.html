@@ -1,0 +1,610 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>购买VIP</title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+		html,body {
+            height: 100%;
+            overflow: hidden;
+            background: #fff;
+		}
+
+        .aui-list-item-arrow.tea-blue:before {
+            right: 0;
+            border-color: #3399ff;
+        }
+
+        .aui-form-list .tea-list-item-select:after{
+            right: 0
+        }
+
+        .aui-list.aui-list-in .aui-list-item:last-child {
+            background-position: 0.75rem bottom;
+        }
+
+        .blue {
+            background-color: #3399ff !important;
+        }
+        .blue * {
+            color: #fff !important;
+        }
+        .yellow {
+            background-color: #ff9900!important;
+        }
+        .yellow * {
+            color: #fff !important;
+        }
+
+        .coupon-active{
+            font-size: 0.8rem !important;
+            color: #FF6600 !important;
+        }
+        .VIP-deal{
+            width: 100%;
+            margin: 0rem 0.7rem;
+            text-align: left;
+            font-size: 1.2rem;
+            color: #3399ff;
+
+        }
+        .VIP-icon{
+            width: 100%;
+            text-align: left;
+            font-size: 0.6rem;
+            color: #3399ff;
+            position: relative;
+        }
+        .VIP-icon:before{
+            content: ' ';
+            width: 0.6rem;
+            height: 0.6rem;
+            margin-right:  0.7rem;
+            background: url("../../image/VIP_icons/te_bingo@2x.png") no-repeat;
+            background-size: 0.6rem;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <section class="aui-content">
+        <ul class="aui-list aui-media-list aui-list-noborder">
+            <li class="aui-list-item tea-noactive">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title project-title aui-margin-t-5 aui-margin-b-5">
+                        <span class="u-title">请选择你的车型</span>
+                    </div>
+                    <div class="aui-row aui-row-padded">
+                        <div class="aui-col-xs-6" tapmode onclick="selectCarColor(0)">
+                            <ul class="aui-list aui-media-list aui-list-noborder">
+                                <li id="blue-btn" class="aui-list-item tea-bg-default tea-border-radius-10 aui-padded-l-10">
+                                    <div class="aui-media-list-item-inner">
+                                        <div class="aui-list-item-inner aui-padded-r-10 aui-padded-t-15 aui-padded-b-15">
+                                            <div class="aui-list-item-text aui-margin-b-5">
+                                                <div class="aui-list-item-title aui-font-size-14">蓝牌车</div>
+                                            </div>
+                                            <div class="aui-list-item-text aui-ellipsis-2  tea-font-size-11">
+                                                蓝牌车,家用小轿车
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="aui-col-xs-6 u-btn" tapmode onclick="selectCarColor(1)">
+                            <ul class="aui-list aui-media-list aui-list-noborder">
+                                <li id="yellow-btn" class="aui-list-item tea-bg-default tea-border-radius-10 aui-padded-l-10">
+                                    <div class="aui-media-list-item-inner">
+                                        <div class="aui-list-item-inner aui-padded-r-10 aui-padded-t-15 aui-padded-b-15">
+                                            <div class="aui-list-item-text aui-margin-b-5">
+                                                <div class="aui-list-item-title aui-font-size-14">
+                                                    黄牌车<span class="tea-text-default tea-font-size-11">(含蓝牌运营车)</span>
+                                                </div>
+                                            </div>
+                                            <div class="aui-list-item-text aui-ellipsis-2 tea-font-size-11">
+                                                黄车牌,货车,运营车辆
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </section>
+    <section class="tea-bg-white aui-margin-r-15">
+        <ul class="aui-list aui-list-in aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label" tapmode onclick="openWinPlateProvince()" style="width: 4rem">
+                        <span id="plate-province" class="tea-text-title tea-text-star-red tea-text-arrow-down">桂E</span>
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input id="plate-num" type="text" placeholder="请输入车牌后5位数" tapmode oninput="input(0)">
+                    </div>
+                    <div id="select" class="tea-text-round tea-big" tapmode onclick="openHistory()">选</div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label-icon" style="padding: 0; min-width: 0;">
+                        <span class="tea-text-red">*</span>
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input id="tel" type="tel" placeholder="请输入您的手机号码" tapmode oninput="input(1)" required>
+                        <div class="tea-clear-btn" onclick="tea.clear('tel');input(1);">
+                            <i class="aui-iconfont aui-icon-close"></i>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner aui-list-item-arrow" tapmode onclick="openCouponLists()">
+                    <div class="aui-list-item-label" style="width: 4rem">
+                        <span class="tea-text-title">现金券</span>
+                    </div>
+                    <div id="coupon" class="aui-font-size-14 tea-text-gray aui-margin-r-15">暂无可用现金券</div>
+                </div>
+            </li>
+        </ul>
+    </section>
+    <div class="VIP-deal" tapmode onclick="openWinXieyi()">
+        <span class="VIP-icon">我同意《VIP会员服务协议》</span>
+    </div>
+
+    <footer style="margin: 0.75rem 2rem">
+        <div id="pay-btn" class="aui-btn aui-btn-block aui-text-white tea-bg-light-blue tea-btn-radius" tapmode onclick="pay()">确认支付</div>
+        <p style="margin: 0.5rem 0 2.2rem 0.75rem" class="aui-font-size-12 aui-text-center tea-text-blue">支付成功则不可退款</p>
+    </footer>
+</body>
+
+
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- aui -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {};
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    initVar();
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+    // ajax请求数据
+    getPlate();
+    getCoupon();//获取现金券列表
+};
+
+/**********************************初始化变量**********************************/
+function initVar(){
+
+    dom = {
+        cols: $api.domAll('.aui-col-xs-6 .aui-list-item'),
+        blueBtn: $api.byId('blue-btn'),
+        yellowBtn: $api.byId('yellow-btn'),
+        tel: $api.byId('tel'),
+        plateNum: $api.byId('plate-num'),
+        plateProvince: $api.byId('plate-province'),
+        select: $api.byId('select'),
+        payBtn: $api.byId('pay-btn'),
+        coupon: $api.byId('coupon'),
+        update : updateDom
+    };
+
+    data = {
+        id: $api.getStorage('ID'),
+        result: [],　　　　//存放本页面所需对应现金券的结果数组
+        couponsIndex : 0　//现金券页面需要选中项的下标
+    };
+
+    values = {
+        carid:  null,
+        carnum: '桂E',
+        tel: $api.getStorage('telphone'),
+        carcolor: 0, //蓝牌0 黄牌1
+        paymoney: 600,
+        coupon_m: 0,
+        coupon_id: '',
+        update: updateVar
+    };
+
+
+    // 使左右两个按钮高度一致
+    tea.sameHeight(dom.cols);
+
+    updateHTML();
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+    api.addEventListener({
+        name: 'addOldCar'
+    }, function(ret, err){
+        if( ret ){
+            values.carcolor = ret.value.cartype;
+            values.carid = ret.value.carid;
+            values.carnum = ret.value.car;
+            values.tel = ret.value.tel;
+            updateHTML();
+        }else{
+            //alert( JSON.stringify( err ) );
+        }
+    });
+
+    api.addEventListener({
+        name: 'selectPlateProvince'
+    }, function(ret, err){
+        if( ret ){
+            var str = ret.value.province + ret.value.city;
+            values.carnum = str + values.carnum.slice(2);
+            updateHTML();
+        }else{
+            //alert( JSON.stringify( err ) );
+        }
+    });
+
+    /*监听到选择现金券事件，在这里修改页面金额和下次打开现金券列表的下标*/
+    api.addEventListener({
+        name: 'selectCoupon'
+    }, function(ret, err){
+        if( ret ){
+            values.coupon_id = ret.value.coupon.ID;
+            values.coupon_m = ret.value.coupon.coupon_m;
+            data.couponsIndex = ret.value.couponsIndex;
+            updateHTML()
+        }else{
+            //alert( JSON.stringify( err ) );
+        }
+    });
+}
+
+/**********************************ajax请求数据**********************************/
+function getPlate(){
+
+    api.showProgress({
+        style: 'default',
+        animationType: 'fade',
+        title: '努力加载中...',
+        text: '请稍后...',
+        modal: true
+    });
+
+    api.ajax({
+        url: website + 'getmycar.php?action=getmycar',
+        method: 'post',
+        data: {
+            values: {
+                ID: data.id
+            }
+        }
+    },function(ret, err){
+        api.hideProgress();
+            // 长度低于2则不出现选择，长度低于1则不执行操作
+            // if (ret.length < 2) {
+            //     $api.removeCls(dom.select, 'tea-list-item-select');
+            //     $api.rmEvt(dom.select, 'click', openHistory);
+            // }
+            // if (ret.length < 1) {
+            //     return;
+            // }
+
+            // 更新
+        if (ret) {
+            values.update(ret);
+            updateHTML();
+        } else {
+            // tea.toast('ajax');
+        }
+    });
+}
+/*获取现金券数据*/
+function getCoupon(){
+    api.ajax({
+        url: website + 'api_cj.php?action=my_coupon',
+        method: 'post',
+        data: {
+            values: {
+                userid : data.id,
+                state : '2', //2为可用现金券列表
+            }
+        }
+    },function(ret,err){
+        if(!ret){
+            tea.toast('ajax');
+            return false
+        }
+        if(ret.length){
+            /*数组排序*/
+            ret.sort(function(a,b){
+                return parseFloat(a.coupon_m) > parseFloat(b.coupon_m) ? 1 : -1;
+            });
+            for(i in ret){
+                if(ret[i].coupon_type == 'vip'){
+                    data.result.unshift(ret[i]);
+                }else {
+                    data.result.push(ret[i]);
+                }
+            }
+            if(data.result[0].coupon_type == 'vip'){
+                values.coupon_m = data.result[0].coupon_m;
+                values.coupon_id = data.result[0].ID;
+            }
+            updateHTML();
+        }else {
+            return false
+        }
+
+    })
+}
+/**********************************更新变量**********************************/
+function updateVar(ret_){
+
+    // 页面传参是否带有id
+    if (api.pageParam.carid) {
+        for (var i = 0; i < ret_.length; i++) {
+            if (ret_[i].ID == api.pageParam.carid) {
+                update(ret_[i]);
+                return;
+            }
+        }
+    }
+    else {
+        // 取不是vip的最后一辆车
+        for (var i = 0; i < ret_.length; i++) {
+            if (ret_[i].vip == 0) {
+                update(ret_[i]);
+                return;
+            }
+        }
+    }
+
+    function update(item){
+        values.carid = item.ID;
+        values.carnum = item.carnum;
+        values.tel = item.tel;
+        values.carcolor = item.cartype;
+
+        if (item.carcolor = 0) {
+            values.paymoney = 600;
+        }
+        else {
+            values.paymoney = 1000;
+        }
+    }
+
+
+}
+function updateDom(){
+
+}
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+    selectCarColor(values.carcolor, true);
+    $api.val(dom.tel, values.tel);
+    $api.text(dom.plateProvince, values.carnum.slice(0,2));
+    $api.val(dom.plateNum, values.carnum.slice(2));
+
+    /*进行现金券dom更新，*新加 */
+//    _alert(values.coupon_id);
+    if(values.coupon_id){
+        $api.text(dom.coupon, '-￥'+values.coupon_m);
+        $api.addCls(dom.coupon, 'coupon-active');
+    }else {
+        $api.text(dom.coupon, '暂无可用现金券');
+        $api.removeCls(dom.coupon, 'coupon-active');
+    }
+
+    checkForm();
+
+}
+
+/**********************************DOM响应**********************************/
+function selectCarColor(index_, first_) {
+    // 不是初始化且点击按钮为当前选中按钮则返回
+    first_ = tea.check(first_, false);
+    if (!first_ && values.carcolor == index_) {
+        return;
+    }
+    values.carcolor = index_;
+    if (index_ == 0) {
+        $api.addCls(dom.blueBtn, 'blue');
+        $api.removeCls(dom.yellowBtn, 'yellow');
+        values.paymoney = 600;
+    }
+    else {
+        $api.addCls(dom.yellowBtn, 'yellow');
+        $api.removeCls(dom.blueBtn, 'blue');
+        values.paymoney = 1000;
+    }
+}
+
+// 打开选择历史车牌号码窗口
+function openHistory(){
+    api.openWin({
+        name: 'plateNum',
+        url: '../car_plate/plate_num_win.html',
+        pageParam: {
+            vip: false
+        }
+    });
+}
+
+// 打开选择车牌地区简称窗口
+function openWinPlateProvince(){
+    event.stopPropagation();
+    api.openWin({
+        name: 'plateProvince',
+        url: '../car_plate/plate_province_win.html',
+        pageParam: {
+            name: 'test'
+        }
+    });
+}
+
+// 输入框的响应函数
+function input(index_){
+    if (index_ == 0) {
+        var value = $api.val(dom.plateNum);
+        values.carnum = values.carnum.slice(0,2) + value;
+    }
+    if (index_ == 1) {
+        var value = $api.val(dom.tel);
+        values.tel = value;
+    }
+    checkForm();
+}
+
+function pay(){
+    // 检查表单
+    var result = check();
+    if ( result !== true ){
+        tea.toast('fail',result);
+        return;
+    }
+
+    // 检查此号码是否已加入VIP
+    checkcarnum(values.carnum,function(result){
+        if(result == '1'){
+            var addcar = false;
+            if(values.carid) {
+                addcar = true;
+            }
+            var json = {
+                carid:  values.carid,
+                carnum: values.carnum,
+                tel: values.tel,
+                carcolor: values.carColor,
+                paymoney: values.paymoney,
+                addcar: addcar,
+                mtype: '8',
+                coupon_id: values.coupon_id, //现金券id
+                coupon_m: values.coupon_m,    //优惠金额
+            };
+            api.openWin({
+                name: 'pay_win',
+                url: '../pay/pay_win.html',
+                pageParam: {
+                    title:'支付VIP费用',
+                    money: values.paymoney,
+                    result_m: parseFloat(values.paymoney) - parseFloat(values.coupon_m),
+                    type: 'addvip',
+                    values: json
+                },
+                vScrollBarEnabled: false
+            });
+        }else{
+            tea.toast('custom','此车牌已加入VIP</br>无需重复加入');
+        }
+   });
+}
+/**********************************其他函数**********************************/
+function check(){
+    values.tel = tea.toNum(values.tel);
+    if (!tea.checkPhone(values.tel)) {
+        return '请输入格式正确</br>的手机号码';
+    }
+    if (values.carnum.length < 3){
+        return '请输入格式正确</br>的车牌号码';
+    }
+    return true;
+}
+
+// 检查表单是否可提交
+function checkForm(){
+    if (check() === true) {
+        $api.addCls(dom.payBtn, 'tea-active');
+    }
+    else {
+        $api.removeCls(dom.payBtn, 'tea-active');
+    }
+}
+
+function checkcarnum(carnum,callback){
+    api.ajax({
+        url: website + 'api.php?action=checkcarnum',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        returnAll:false,
+        data:{
+            values: {
+                userid: data.id,
+                carnum: values.carnum,
+                car_type: values.carColor,
+                telphone: values.tel
+            }
+        }
+    },function(ret,err){
+        if (ret) {
+            callback(ret.succ);
+        }
+    });
+}
+//打开可用现金券列表
+function openCouponLists(){
+    api.openWin({
+        name: 'coupon_list_win',
+        url: '../unit/coupon_list_win.html',
+        pageParam: {
+            coupons: data.result,
+            couponType: 'vip',　　　//本页面对应的现金券的类型
+            couponsIndex: data.couponsIndex,
+        }
+    });
+}
+
+//打开协议
+function openWinXieyi(){
+    api.openWin({
+        name: 'vipxieyi',
+        url: './vipxieyi_win.html',
+        vScrollBarEnabled: false
+    });
+}
+</script>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        header {
+            overflow: hidden;
+        }
+
+        footer {
+            border-top: 1px solid #EDEDED;
+        }
+
+        /* 当不可见时，阻止隐藏，以免获取不到高度 */
+        .hidden.aui-hide {
+            visibility: hidden;
+            display: block !important;
+        }
+        .aui-bar-tab {
+            color: #999;
+        }
+        .aui-bar-tab .aui-active {
+            color: #0099ff;
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="app">
+    <!-- 首页 -->
+    <header :class="{'aui-hide' : navIndex != 0}"></header>
+
+    <!-- 新鲜事 -->
+    <header class="aui-bar aui-bar-light aui-bar-nav" :class="[{'hidden': hidden}, {'aui-hide': navIndex != 1}]">
+        <div class="aui-title tea-text-title">新鲜事</div>
+        <a class="aui-btn aui-pull-right" tapmode @click="openWinNews()">
+            <span class="aui-iconfont tea-icon-camera tea-text-title tea-text-blue"></span>
+        </a>
+    </header>
+
+    <!-- 车友 -->
+    <header class="aui-bar aui-bar-light aui-bar-nav" :class="[{'hidden': hidden}, {'aui-hide': navIndex != 2}]">
+        <div class="aui-title tea-text-title">车友</div>
+        <span class="aui-btn aui-pull-right" tapmode @click="openWinContacts()">
+            <span class="aui-iconfont tea-icon-contacts tea-text-title tea-text-blue"></span>
+        </span>
+    </header>
+
+    <!-- 我的 -->
+    <header :class="[{'hidden': hidden}, {'aui-hide': navIndex != 4}]"></header>
+
+
+    <footer class="aui-bar aui-bar-tab" id="footer">
+        <div v-for="(item, index) in list" class="aui-bar-tab-item" :class="{'aui-active' : index == navIndex}" tapmode @click="setNavMenuIndex(index);">
+            <div class="aui-badge" v-if="item.text == '车友' && unread.total">{{unread.total >= 9 ? '9+' : unread.total }}</div>
+            <i class="aui-iconfont" :class="item.icon"></i>
+            <div class="aui-bar-tab-label">{{item.text}}</div>
+        </div>
+    </footer>
+
+</div>
+
+</body>
+
+<script type="text/javascript" src="../../script/api.js"></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- HTML模板渲染引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 极光推送 -->
+<script type="text/javascript" src="../../script/ajpush.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var header, footer, dom = {}, vm = null, ajpush = null, keybackType = '';
+
+// 声明全局变量
+var headerH, footerH;
+
+/**********************************apiready**********************************/
+apiready = function() {
+
+    var sys = api.systemType;
+    //极光初始化 
+    ajpush = api.require('ajpush');       
+    if(sys == 'android') {
+        ajpush.init(function(ret) {
+            if (ret && ret.status){
+            }
+        });
+    }
+
+    //绑定用户别名和标签。服务端可以指定别名和标签进行消息推送
+    var param = {
+        alias: $api.getStorage('ID'),
+        //第1个记名字，第2个记电话号码
+        tags: [
+            $api.getStorage('nickname'),
+            $api.getStorage('telphone')
+        ]
+    };
+    ajpush.bindAliasAndTags(param,function(ret) {
+        var statusCode = ret.statusCode;
+    });
+
+    //开启监听
+    eventListener[sys]();
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+            unread: {total:0,contacts:0,friend:0,chat:0,badge:0,system:0,contact:0},
+            hidden: true,
+            navIndex: 0,
+            winH: api.winHeight,
+            footerH: $api.offset($api.byId('footer')).h,
+            location: {},//经纬度
+            list: [
+                {
+                    text: '首页',
+                    icon: 'tea-icon-home',
+                    headerH: '',
+                    frameName: 'home_frm',
+                    frameGroupName: '',
+                    url: '../home/'
+                },
+                {
+                    text: '新鲜事',
+                    icon: 'tea-icon-news',
+                    headerH: '',
+                    frameName: 'news_frm',
+                    frameGroupName: '',
+                    url: '../new/'
+                },
+                {
+                    text: '车友',
+                    icon: 'tea-icon-friends',
+                    headerH: '',
+                    frameName: 'chat_list_frm',
+                    frameGroupName: '',
+                    url: '../friends/'
+                },
+                {
+                    text: '我的',
+                    icon: 'tea-icon-me',
+                    headerH: '',
+                    frameName: 'me_frm',
+                    frameGroupName: '',
+                    url: '../me/'
+                },
+            ]
+        },
+        methods: {
+            setNavMenuIndex: function(index) {
+                // 登录后才能查看除了首页的其他页面
+                if (index == 0 || tea.token()) {
+                    vm.navIndex = index;
+                }          
+            },
+            openWinContacts: function() {
+                tea.openWin({
+                    name: 'contacts_win.html',
+                    url: '../friends/contacts_win.html',
+                    pageParam: {
+                        name: 'test'
+                    }
+                });
+            },
+            openWinNews: function(){
+                api.execScript({
+                    frameName: 'news_frm',
+                    script: 'opennews();'
+                });
+            } 
+        },
+        watch: {
+            navIndex:{
+                handler: function(val, oldVal){
+                    // 切换FrameGroup
+                    api.setFrameGroupAttr({
+                        name: vm.list[val].frameGroupName,
+                        hidden: false
+                    });
+                    api.setFrameGroupAttr({
+                        name: vm.list[oldVal].frameGroupName,
+                        hidden: true
+                    });   
+                    // 切换Frame
+                    api.setFrameAttr({
+                        name: vm.list[val].frameName,
+                        rect: {
+                            y: vm.list[val].headerH,
+                        }
+                    });
+                    api.setFrameAttr({
+                        name: vm.list[oldVal].frameName,
+                        rect: {
+                            y: vm.winH
+                        }
+                    });                 
+                },
+                deep: true
+            },
+        }
+    })
+
+    // 初始化
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init() {
+
+    dom = {};
+
+    initHeader();
+
+    openFrames();
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule() {
+    /*新增：定位模块 *LVPlum*/
+        var bMap = api.require('bMap');
+        bMap.getLocation({
+            accuracy: '100m',
+            autoStop: true,
+            filter: 1
+        }, function (ret, err) {
+            if(ret.status){
+                vm.location.longitude = ret.lon; //经度
+                vm.location.latitude = ret.lat;  //纬度
+                if($api.getStorage('token')){
+                    upLocal();
+                }
+                return true
+            }
+        });
+    /*END *LVPlum*/
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener() {
+
+    //监控后退事件
+    api.addEventListener({
+        name:'keyback'
+    } ,function(ret,err){
+        // 判断是否在播放视频
+        if ( keybackType == 'video') {
+            api.closeFrame({
+                name: 'video_frm'
+            });
+            api.setFrameAttr({
+                name: 'video_con_frm',
+                hidden: true
+            });
+            api.hideProgress();
+            keybackType = '';
+            return;
+        }
+        api.closeWidget({
+            retData: {name:'closeWidget'},
+            animation: {
+                type: 'flip',
+                subType: 'from_bottom',
+                duration: 500
+            }
+        });
+    });
+
+    api.addEventListener({
+        name: 'messageUnread'
+    }, function(ret, err){
+
+        if(ret.value.type == 'contacts'){
+            vm.unread.contacts = Number(ret.value.num)
+        }
+        if(ret.value.type == 'friend') {
+            vm.unread.friend = Number(ret.value.num)
+        }
+        if(ret.value.type == 'chat'){
+            vm.unread.chat = Number(ret.value.num)
+        }
+        vm.unread.total = vm.unread.contacts + vm.unread.friend + vm.unread.chat;
+
+        var token = $api.getStorage('token');
+        if(typeof token === "undefined"){
+            vm.unread.total = 0;
+        }
+
+        setAppIconBadge();
+    });
+
+    api.addEventListener({
+        name: 'rereportcount'
+    }, function(ret, err){
+       getnoread();
+    });
+    api.addEventListener({
+        name: 'rehb'
+    }, function(ret, err){
+       getnoread();
+    });
+    api.addEventListener({   //重刷通迅录角标
+        name: 'retxl'
+    }, function(ret, err){
+       getnoread();
+    });
+
+    api.addEventListener({   //重刷通迅录角标
+        name: 'getunread'
+    }, function(ret, err){
+       getnoread();
+    });
+
+    //监控登陆上传位置信息
+    api.addEventListener({
+        name: 'loginSuccess'
+    },function(ret,err){
+        upLocal();
+    });
+
+}
+
+
+/**********************************DOM响应**********************************/
+// 回退关闭窗口
+function closeWin() {
+    api.closeWin();
+}
+
+/**********************************打开Frame**********************************/
+// 打开Frame,不需要打开Frame请删除
+function openFrames() {
+
+    var list = vm.list;
+    // 打开Frames，只显示第一个Frame
+    vm.list.forEach(function(item, index) {
+        // 通过设置起始位置等于winH来把Frame隐藏在窗口下方
+        var y = (index === vm.navIndex)? item.headerH : vm.winH;
+        var h = vm.winH - vm.footerH - item.headerH;
+        var url = item.url + item.frameName + '.html';
+        var bounces = false;
+
+        api.openFrame({
+            name: item.frameName,
+            url: url,
+            rect: {
+                x: 0,
+                y: y,
+                w: 'auto',
+                h: h
+            },
+            pageParam: {
+                headerH: item.headerH
+            },
+            // 页面是否弹动
+            bounces: bounces
+        });        
+    }, this);
+
+}
+
+/**********************************其他函数**********************************/
+function initHeader(){
+    // 处理沉浸式效果，获取header高度
+    var headers = $api.domAll('header');
+    for (var i = 0, len = headers.length; i < len; i++) {
+        var header = headers[i];
+        $api.fixStatusBar(header);
+        // 创建头部高度数组
+        vm.list[i].headerH = $api.offset(header).h;
+        vm.hidden = false;
+    }
+}
+
+
+function getnoread(){
+    var ID = $api.getStorage('ID');
+    api.showProgress({
+        style: 'default',
+        animationType: 'fade',
+        title: '努力加载中...',
+        text: '请稍候...',
+        modal: false
+    });
+    api.ajax({
+        url: website + 'index.php?action=getnoread',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        returnAll:false,
+        data:{
+            values: {ID: ID},
+        }
+    },function(ret,err){
+        if (ret) {
+            vm.unread.system = parseInt(ret.noread);
+            gettxlnoread();
+        }
+    });
+}
+
+function gettxlnoread(){    //通讯录未读条数
+    var ID = $api.getStorage('ID');
+    api.ajax({
+        url: website + 'index.php?action=gettxlnoread',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        returnAll:false,
+        data:{
+            values: {ID: ID},
+        }
+    },function(ret,err){
+        api.hideProgress();
+        if (ret) {
+            vm.unread.contact = parseInt(ret.txlnoread);
+            setAppIconBadge();
+        }
+    });     
+}
+
+function setAppIconBadge(){
+    // 设置app图标角标
+    vm.unread.badge = vm.unread.total + vm.unread.system;
+    ajpush.setBadge({
+        badge: vm.unread.badge
+    });
+
+    api.setAppIconBadge({
+        badge: vm.unread.badge
+    });
+
+    api.sendEvent({
+        name: 'noticeUnread',
+        extra: {
+            unread: vm.unread.system + vm.unread.contact
+        }
+    });
+}
+
+/*新增：上传定位 *LVPlum*/
+function upLocal(){
+    api.ajax({
+        url: website + 'nearby.php?action=position',
+        method: 'post',
+        data: {
+            values: {
+                ID: $api.getStorage('ID'),
+                longitude: vm.location.longitude,
+                latitude: vm.location.latitude,
+            },
+        }
+    }, function (ret, err) {
+        if(ret.succ == '1'){
+            console.log('上传成功')
+        }
+    });
+}
+/*END *LVPlum*/
+</script>
+
+</html>

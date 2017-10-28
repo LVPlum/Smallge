@@ -1,0 +1,259 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html, body {
+            width: 100%;
+            height: 100%;
+            /*overflow: auto;*/
+        }
+    </style>
+</head>
+<body>
+<!--<ul class="aui-list aui-media-list aui-list-noborder">
+    <li  class="aui-list-item aui-list-item-middle" >
+        <div class="aui-media-list-item-inner">
+            <div class="aui-list-item-media" style="width: 3rem;">
+                <img :src="value.img" class="aui-list-img-sm">
+            </div>
+            <div class="aui-list-item-inner" style="max-width: 60%">
+                <div class="aui-list-item-text">
+                    <div class="aui-list-item-title aui-font-size-14">{{ value.nickname }}</div>
+                </div>
+                <div class="aui-list-item-text aui-ellipsis-1">
+                    <p class="aui-ellipsis-1">{{ value.msg ? value.msg : value.telphone }}</p>
+                </div>
+            </div>
+            <div class="aui-list-item-media" style="width: 4rem;">
+                <div class="aui-list-item-text">
+                    等待通过
+                </div>
+            </div>
+        </div>
+    </li>
+</ul>-->
+    <div id="app" v-cloak>
+        <div v-if="list.length" class="aui-content aui-margin-b-15">
+            <ul class="aui-list aui-media-list aui-list-noborder">
+                <li v-for="(value,index) in list" v-if="value.telphone" class="aui-list-item aui-list-item-middle" tapmode @click="openInfo(value.sID)">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-media" style="width: 3rem;">
+                            <img :src="value.img" class="aui-list-img-sm">
+                        </div>
+                        <div class="aui-list-item-inner" style="max-width: 60%">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-14">{{ value.nickname }}</div>
+                            </div>
+                            <div class="aui-list-item-text" v-if="value.telphone">
+                                <!--避免出现手机号为null的情况，特殊情况下出现空用户会导致replace替换出错-->
+                                <p class="aui-ellipsis-1">{{ value.msg ? value.msg : value.telphone.replace(/(\d{3})\d{5}(\d{3})/,'$1*****$2') }}</p>
+                            </div>
+                        </div>
+                        <div class="aui-list-item-media" style="width: 4rem;">
+                            <div v-if="value.ok == 0　&& value.isfri == 0" class="aui-list-item-text">
+                                等待通过
+                            </div>
+                            <div v-else-if="value.ok == 0　&& value.isfri == 1" class="aui-btn aui-btn-info" style="padding: 0 0.5rem" tapmode @click.stop="accept(value,index)">通过</div>
+                            <div v-else class="aui-list-item-text">
+                                已是好友
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div v-else>
+            <div class="aui-text-center" style="margin-top: 4rem;">
+                <p>您还没有新的好友</p>
+                <div class="aui-btn aui-btn-info tea-btn-radius aui-margin-t-15" style="margin: 0 auto" taomode onclick="share()">
+                    邀请好友
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/javascript" src="../../script/share.js"></script>
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+    // 声明DOM对象
+    var dom = {}, vm = null;
+
+/**********************************apiready**********************************/
+    apiready = function(){
+
+        // 初始化变量
+        init();
+
+    };
+
+/**********************************初始化变量**********************************/
+    function init(){
+        dom = {
+
+        };
+
+        vm = new Vue({
+            el: '#app',
+            data: {
+                list: [],
+            },
+            methods: {
+                accept: function(value,index){
+                    acceptRequest(value.tempid,index);
+                },
+                openInfo: function(id){
+                    /*api.openWin({
+                        name: 'friendinfo_win',
+                        url: './friendinfo_win.html',
+                        pageParam: {
+                            id: id
+                        },
+                        vScrollBarEnabled: false
+                    });*/
+                    api.openWin({
+                        name: 'user_info_win',
+                        url: '../location/user_info_win.html',
+                        pageParam: {
+                            friendID: id,
+                            pageType: 'new_friends'
+                        },
+                        vScrollBarEnabled: false
+                    });
+                }
+            },
+            computed: {
+
+            }
+        })
+
+        //获取数据
+        getData();
+
+        // 初始化模块
+        initModule();
+
+        // 初始化监听
+        initEventListener();
+
+    };
+
+/**********************************初始化模块**********************************/
+    function initModule(){
+
+
+    }
+
+/**********************************初始化监听**********************************/
+    function initEventListener(){
+        //监听发送好友请求时
+        api.addEventListener({
+            name: 'reloaddate'
+        }, function (ret, err) {
+            getData()
+        });
+
+        //location/user_ionfo_frm页面发送来的更新页面列表
+        api.addEventListener({
+            name: 'updataList'
+        }, function (ret, err) {
+            getData()
+        });
+    }
+
+/**********************************ajax请求数据**********************************/
+    function getData(){
+        tea.showp('刷新中...','请稍等...',true)
+        api.ajax({
+            url: website + 'friendship.php?action=gethf',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll: false,
+            data: {
+                values: {
+                    ID: $api.getStorage('ID'),
+                }
+            }
+        }, function (ret, err) {
+//            _alert(ret);
+            api.hideProgress();
+            if(!ret){
+//                tea.toast('ajax');
+                return false;
+            }
+            if(ret){
+                vm.list = ret;
+                return true;
+            }
+        });
+    }
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+    //　接受好友请求
+    function acceptRequest(id,index){
+        tea.showp('发送请求中...','请稍等...')
+        api.ajax({
+            url: website + 'friendship.php?action=agrequest',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll: false,
+            data: {
+                values: {
+                    ID: id
+                },
+            }
+        }, function (ret, err) {
+            api.hideProgress();
+            if(!ret){
+//                tea.toast('ajax');
+                return false;
+            }
+            if(ret.succ == 'ok'){
+                api.sendEvent({
+                    name: 'reloaddate',
+                });
+                api.sendEvent({
+                    name: 'retxl',
+                });
+
+                api.sendEvent({  //发送到车友页面更新 新的好友的红点数据
+                    name: 'updataDot',
+                });
+                vm.list[index].ok = 1;
+
+                return true;
+            }
+        });
+    }
+</script>
+</html>

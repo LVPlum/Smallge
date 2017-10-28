@@ -1,0 +1,283 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <header id="header" class="aui-bar aui-bar-nav aui-bar-light" >
+        <a class="aui-btn aui-pull-left" tapmode onclick="closeWin()">
+            <span class="aui-iconfont aui-icon-left tea-text-title"></span>
+        </a>
+        <div class="aui-title tea-text-title">订单详情</div>
+    </header>
+
+    <section id="main"></section>
+
+    <footer id="footer" class="aui-bar aui-bar-tab aui-margin-t-15 aui-hide">
+        <div class="aui-bar-tab-item tea-border-t" tapmode style="width: auto;">
+            <span class="aui-font-size-12 tea-text-title">合计：</span>
+            <span class="aui-font-size-12 tea-text-orange">¥</span>
+            <span id="price" class="aui-font-size-18 tea-text-orange"></span>
+            <!--新增:保险详单按钮 * LVPlum-->
+            <span id="detail" class="aui-font-size-12 aui-text-default aui-margin-10 aui-hide" tapmode onclick="orderDetail()">明细
+                <i class="aui-iconfont aui-icon-down" style="top: -1px;font-size: 10px"></i>
+            </span>
+            <!--END * LVPlum-->
+        </div>
+        <div class="aui-bar-tab-item tea-bg-orange aui-text-white" tapmode onclick="pay()" style="width: 40%;">
+            <div class="search-input aui-font-size-16">立即支付</div>
+        </div>
+    </footer>
+
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- HTML模板渲染引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 处理沉浸式效果，计算header和footer的高度
+    header = $api.byId('header');
+    $api.fixStatusBar(header);
+    headerH = $api.offset(header).h;
+    footer = $api.byId('footer');
+    footerH = $api.offset(footer).h;
+
+    // 初始化DOM对象
+    initDOM();
+
+    // 初始化变量
+    initVar();
+
+    // 初始化HTML
+    initHTML();
+
+    // 初始化监听
+    initEventListener();
+
+    // 初始化其他模块
+    initModule();
+
+    // 打开Frame
+    openFrame();
+
+    // ajax请求数据
+    getData();
+
+};
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var header, footer;
+
+// 声明全局变量
+var headerH, footerH;
+
+/**********************************初始化变量**********************************/
+// 初始化DOM对象
+function initDOM(){
+    switch (api.pageParam.type) {
+        case '车辆保险':
+            if (api.pageParam.status == "已完成") {
+                return;
+            }
+            // 只有审核完的保险才显示价格
+            if (api.pageParam.sh != 1) {
+                return;
+            }
+            break;
+        case "特权卡":
+            if (api.pageParam.status == "已完成") {
+                return;
+            }
+            // 只有未支付的保险才显示价格
+            if (api.pageParam.sh != 0) {
+                return;
+            }
+            break;
+        default :
+            return;
+            break;
+    }
+
+    /*新增:保险付款按钮显示保险详情* LVPlum*/
+    if(api.pageParam.type == '车辆保险'){
+        var detail = $api.byId('detail');
+        $api.removeCls(detail,'aui-hide'); //显示价格时，将价格详情按钮显示出来
+    }
+    /*END* LVPlum*/
+
+    $api.removeCls(footer, 'aui-hide');
+    footerH = $api.offset(footer).h;
+
+};
+
+// 初始化变量
+function initVar(){
+
+
+
+};
+
+// 初始化HTML
+function initHTML(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+    api.addEventListener({
+        name: 'updateFooter'
+    }, function(ret, err){
+        var price = $api.byId('price');
+        price.innerHTML = parseFloat(ret.value.price);
+    });
+
+}
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************更新变量**********************************/
+// 更新DOM对象
+function updateDOM(){
+
+
+
+}
+
+// 更新变量
+function updateVar(){
+
+
+
+}
+
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+
+
+/**********************************广播消息**********************************/
+function sendEvent(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+// 回退关闭窗口
+function closeWin(){
+    api.closeWin();
+}
+
+// 支付保险订单
+function pay(){
+    switch (api.pageParam.type) {
+        case '车辆保险':
+            api.execScript({
+                frameName: 'order_detail_frm',
+                script:'insurePay();'
+            });
+            break;
+        case "特权卡":
+            api.execScript({
+                frameName: 'order_detail_frm',
+                script:'checkcarnum(openWinPayVIP)'
+            });
+            break;
+        default :
+            break;
+    }
+}
+/*新增：订单收费详情按钮 *LVPlum*/
+function orderDetail(){
+    api.execScript({
+        frameName: 'order_detail_frm',
+        script: 'payDetail('+footerH+')'
+    });
+}
+/*END *LVPlum*/
+/**********************************打开Frame**********************************/
+// 打开Frame,不需要打开Frame请删除
+function openFrame(){
+
+    api.openFrame({
+        name: 'order_detail_frm',
+        url: './order_detail_frm.html',
+        rect: {
+            x: 0,
+            y: headerH,
+            w: 'auto',
+            h: api.winHeight - headerH -footerH
+        },
+        pageParam: {
+            param: api.pageParam
+        },
+        // frame的背景颜色
+        bgColor: '#f2f5f8',
+        // 页面是否弹动
+        bounces: false
+    });
+
+}
+
+/**********************************其他函数**********************************/
+
+
+
+</script>
+</html>

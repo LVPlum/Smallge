@@ -1,0 +1,486 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            overflow: auto;
+            background: none;
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content:center;
+                    justify-content:center;
+            -webkit-align-items: center;
+                    align-items: center;
+            -webkit-flex-direction: column;
+                    flex-direction: column;
+        }
+
+        section {
+            /* position: absolute; margin: auto;
+            left: 0; right: 0; top: 0; bottom: 0; */
+            width: 15.0rem;
+            height: auto;
+            background-color: #FFF;
+        }
+
+        .list-height {
+            height: 2.75rem;
+            line-height: 2.75rem;
+        }
+
+        .aui-list-item-label{
+            width: 45% !important;
+        }
+
+        .aui-icon-close:before {
+            padding: 0.1rem;
+            height: 1rem;
+            border: 1px solid #999;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body tapmode ontouchend="tea.closeFrame(event,'section')">
+    <section id="section" class="tea-content-radius-10 aui-padded-l-15 aui-padded-r-15" >
+        <header id="header" class="aui-bar aui-bar-nav aui-bar-light" >
+            <div class="tea-text-title" style="width: 100%">拍照上传</div>
+        </header>
+
+        <ul class="aui-list aui-media-list">
+            <li class="aui-list-item aui-padded-r-15">
+                <div class="aui-info" style="padding-bottom:0" tapmode onclick="openWinMediaScanner()">
+                    <div id="title" class="aui-info-item aui-font-size-16 tea-text-title">
+                        上传行驶证照片
+                    </div>
+                    <div class="aui-info-item tea-big">
+                        <i id="camera" class="aui-iconfont aui-font-size-18 aui-icon-camera tea-text-blue"></i>
+                    </div>
+                </div>
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media">
+                        <img id="pic" src="../../image/lisence.png" style="width: 3.75rem; height: 2.5rem;" tapmode onclick="event.stopPropagation();openBigImg(this)" >
+                    </div>
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text" style="line-height: 2.5rem;">
+                            <span id = 'tip' class="">样板</span>
+
+                            <i id="close" class="aui-iconfont aui-font-size-14 aui-icon-close aui-hide tea-big" tapmode onclick="event.stopPropagation();delImg()"></i>
+
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item list-height">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        手机号码
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input id="telphone" type="tel" placeholder="请输入手机号码" tapmode oninput="input(this)">
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <footer id="footer">
+            <div class="aui-content list-height">
+                <ul class="aui-list aui-list-noborder aui-form-list aui-padded-r-15">
+                    <li class="aui-list-item aui-row">
+                        <div class="aui-col-xs-6 aui-border-r" tapmode onclick="hideFrame()">
+                            取消
+                        </div>
+                        <div class="aui-col-xs-6 tea-text-blue" tapmode onclick="openWinInsurePrice()">
+                            下一步
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </footer>
+    </section>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化DOM对象
+    initDOM();
+
+    // 初始化变量
+    initVar();
+
+    // 更新HTML
+    initHTML();
+
+    // 初始化监听
+    initEventListener();
+
+    // 初始化其他模块
+    initModule();
+
+    // ajax请求数据
+    getData();
+
+};
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {}, imageFilter = null, imageBrowser = null;
+
+/**********************************初始化变量**********************************/
+// 初始化DOM对象
+function initDOM(){
+
+    dom.title = $api.byId('title');
+    dom.tip = $api.byId('tip');
+    dom.pic = $api.byId('pic');
+    dom.telphone = $api.byId('telphone');
+    dom.close = $api.byId('close');
+    dom.camera = $api.byId('camera');
+
+};
+
+// 初始化变量
+function initVar(){
+
+    // 初始化values
+    values = api.pageParam.values;
+
+    // 初始化手机号码
+    values.telphone = tea.getStorage('telphone');
+
+    values.imgLocal = null;
+    values.img = null;
+
+    order = api.pageParam.order;
+
+    if (typeof order != "undefined") {
+        updateVar();
+    }
+
+};
+
+// 初始化HTML
+function initHTML(){
+
+    $api.val(dom.telphone, values.telphone);
+
+    var src = values.imgLocal;
+    // if 没有行驶证，则提示要求传入买车发票
+    if (values.lisence === false) {
+        dom.title.innerHTML = '请上传车辆发票';
+        if (src === null) {
+            src = '../../image/ticket.png';
+        }
+        $api.attr(dom.pic, 'src', src);
+    }
+    else {
+        dom.title.innerHTML = '上传行驶证照片';
+        if (src === null) {
+            src = '../../image/lisence.png';
+        }
+        $api.attr(dom.pic, 'src', src);
+    }
+
+
+
+}
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+    api.addEventListener({
+        name: 'getimgarr'
+    }, function(ret, err){
+        values.imgLocal = ret.value.img;
+        $api.attr(dom.pic, 'src', values.imgLocal);
+        $api.addCls(dom.tip, 'aui-hide');
+        $api.removeCls(dom.close, 'aui-hide');
+        $api.addCls(dom.camera, 'tea-text-default');
+    });
+
+}
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+    // 引入过滤压缩模块
+    imageFilter = api.require("imageFilter");
+    // 引入图片浏览模块
+    imageBrowser = api.require('imageBrowser');
+
+}
+
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************更新变量**********************************/
+// 更新DOM对象
+function updateDOM(){
+
+
+
+}
+
+// 更新变量
+function updateVar(){
+
+    if (order.img) {
+        values.img = order.img;
+        values.imgLocal = website + 'carrexsz_img/' + order.img;
+    }
+
+
+}
+
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+
+
+/**********************************广播消息**********************************/
+function sendEvent(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+// 隐藏层
+function hideFrame(){
+    api.setFrameAttr({
+        hidden: true
+    });
+}
+
+// 打开报价页面
+function openWinInsurePrice(){
+    if(check()){
+        // if (values.img !== null) {
+        //     api.openWin({
+        //         name: 'insure_price_win',
+        //         url: './insure_price_win.html',
+        //         pageParam: {
+        //             values: values,
+        //             order: order
+        //         }
+        //     });
+        //     return;
+        // }
+        api.showProgress({
+            style: 'default',
+            animationType: 'fade',
+            title: '图片上传中...',
+            text: '请稍候...',
+            modal: false
+        });
+        imgCompress(values.imgLocal, 0.8, 0.8, getExt(values.imgLocal), function(compressImg) {
+            uploadFile(compressImg, function(serverImg) {
+                values.img = serverImg;
+                api.hideProgress();
+                api.openWin({
+                    name: 'insure_price_win',
+                    url: './insure_price_win.html',
+                    pageParam: {
+                        values: values,
+                        order: order
+                    }
+                });
+            });
+        });
+
+    }
+}
+
+
+// 输入的响应函数
+function input(el_){
+
+    values.telphone = $api.val(el_);
+    $api.val(dom.telphone, values.telphone);
+
+}
+
+
+
+// 打开媒体选择窗口
+function openWinMediaScanner(){
+    api.openWin({
+        name: 'media1_win',
+        url: '../unit/media1_win.html',
+        pageParam: {
+            limit: 1,
+            imgId: 1
+        }
+    });
+}
+
+// 查看大图
+function openBigImg(el_){
+    var img = $api.attr(el_, 'src');
+    if (values.imgLocal === null) {
+        var names = img.split('/');
+        img = names[names.length - 1];
+        img = website + 'image/big-' + img;
+        //
+    }
+    imageBrowser.openImages({
+        showList : false,
+        imageUrls: [img]
+    });
+}
+
+// 删除图片
+function delImg(){
+    values.imgLocal = null;
+
+    $api.removeCls(dom.tip, 'aui-hide');
+    $api.addCls(dom.close, 'aui-hide');
+    $api.removeCls(dom.camera, 'tea-text-default');
+
+    // if 没有行驶证，则提示要求传入买车发票
+    if (values.lisence) {;
+        $api.attr(dom.pic, 'src', '../../image/lisence.png');
+    }
+    else {
+        $api.attr(dom.pic, 'src', '../../image/ticket.png');
+    }
+}
+/**********************************其他函数**********************************/
+
+function uploadFile(data, callback) {
+    api.ajax({
+        url : website + 'upcarrexsz.php',
+        method : 'post',
+        timeout : 30,
+        dataType : 'json',
+        returnAll : false,
+        data : {
+            files : {
+                "upfile" : data
+            }
+        }
+    }, function(ret, err) {
+        if (ret) {
+           callback(ret.path);
+        }
+    });
+}
+function imgCompress(imgsrc, quality, scale, ext, callback) {
+    // 压缩文件的保存目录
+    var savePath = api.cacheDir + "/" + getNowFormatDate() + "/";
+    // 压缩文件生成的随机文件名称
+    var savename = NewGuid() + "." + ext;
+    imageFilter.compress({
+        img : imgsrc,
+        quality : quality,
+        scale : quality,
+        save : {
+            album : false,
+            imgPath : savePath,
+            imgName : savename
+        }
+    }, function(ret, err) {
+        if (ret) {
+            callback(savePath + savename);
+        } else {
+            alert(JSON.stringify(err));
+        }
+    });
+}
+function NewGuid() {
+    function S4() {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    }
+
+    return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+}
+
+// 获取当前的时间，拼接成2015-11-09这样的格式，主要用于对图片进行时间分类
+function getNowFormatDate() {
+    var date = new Date();
+    var seperator1 = "-";
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    var strDate = date.getDate();
+    if (month >= 1 && month <= 9) {
+        month = "0" + month;
+    }
+    if (strDate >= 0 && strDate <= 9) {
+        strDate = "0" + strDate;
+    }
+    var currentdate = year + seperator1 + month + seperator1 + strDate
+    return currentdate;
+}
+
+// 获取文件拓展名
+function getExt(fileName) {
+    return fileName.substring(fileName.lastIndexOf('.') + 1);
+}
+
+// 验证表单
+function check(){
+    if (values.imgLocal === null) {
+        api.toast({
+            msg: '请先上传图片~',
+            duration: 2000,
+            location: 'middle'
+        });
+        return false;
+    }
+    values.telphone = tea.toNum(values.telphone);
+    if (!tea.checkPhone(values.telphone)) {
+        api.toast({
+            msg: '请输入格式正确的11位手机号码',
+            duration: 2000,
+            location: 'middle'
+        });
+        return false;
+    }
+    return true;
+}
+</script>
+</html>

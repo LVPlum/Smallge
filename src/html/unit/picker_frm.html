@@ -1,0 +1,246 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+		html,body {
+            height: 100%;
+            overflow: auto;
+            background: none;
+		}
+
+        section {
+            position: fixed;
+            bottom: 0;
+            overflow: scroll;
+            width: 100%;
+            /* height: 8.8rem; */
+            background-color: #FFF;
+        }
+
+    </style>
+</head>
+<body tapmode ontouchend="tea.closeFrame(event,'section')">
+    <section id="section">
+         <header id="header" class="aui-bar aui-bar-nav aui-bar-light tea-bg-default" >
+            <div class="aui-pull-left" tapmode onclick="hideFrame()">
+                取消
+            </div>
+            <div id="title" class="aui-title tea-text-title">选择金额</div>
+            <div class="aui-pull-right" tapmode onclick="sure()">
+                确定
+            </div>
+        </header>
+        <footer id="footer"></footer>
+    </section>
+
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化DOM对象
+    initDOM();
+
+    // 初始化变量
+    initVar();
+
+    // 更新HTML
+    initHTML();
+
+    // 初始化监听
+    initEventListener();
+
+    // 初始化其他模块
+    initModule();
+
+    // ajax请求数据
+    getData();
+
+};
+
+/**********************************声明全局变量**********************************/
+// 声明全局变量
+var dom = {}, UICustomPicker;
+
+// 声明DOM对象
+var data = {}, values = {};
+
+/**********************************初始化变量**********************************/
+// 初始化DOM对象
+function initDOM(){
+
+
+
+};
+
+// 初始化变量
+function initVar(){
+    // 获取选项
+    data = api.pageParam;
+
+};
+
+// 初始化HTML
+function initHTML(){
+
+    var footer = $api.byId('footer');
+    $api.css(footer, 'height:' + api.pageParam.height + 'px');
+
+}
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+    api.addEventListener({
+        name: 'optionsChange'
+    }, function(ret, err){
+        if( ret ){
+            data.options = ret.value.options;
+            // 初始化选中的值
+            data.option = data.options[0];
+            data.index = ret.value.index;
+            UICustomPicker.close({
+                id: data.id
+            });
+            initModule();
+        }else{
+            //alert( JSON.stringify( err ) );
+        }
+    });
+
+}
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+    var header = $api.byId('header');
+    var headerH = $api.offset(header).h;
+    UICustomPicker = api.require('UICustomPicker');
+    UICustomPicker.open({
+        rect: {
+            x: 0,
+            y: api.winHeight - data.height,
+            w: api.frameWidth,
+            h: data.height
+        },
+        styles: {
+            bg: 'rgba(0,0,0,0)',
+            normalColor: '#999',
+            selectedColor: '#333',
+            selectedSize: 32,
+            tagColor: '#3685dd',
+            tagSize: 14
+        },
+        data: data.options,
+        rows: 5,
+        autoHide: false,
+        fixedOn: 'picker_frm',
+        fixed: true
+    }, function(ret, err) {
+        if (ret) {
+            data.id = ret.id;
+            if (ret.eventType === 'selected'){
+                data.option = ret.data;
+            }
+            // UICustomPicker.setValue({
+            //     id: ret.id,
+            //     data: data.options
+            // });
+        } else {
+            //alert(JSON.stringify(err));
+        }
+    });
+
+}
+
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************更新变量**********************************/
+// 更新DOM对象
+function updateDOM(){
+
+
+
+}
+
+// 更新变量
+function updateVar(){
+
+
+
+}
+
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+
+
+/**********************************广播消息**********************************/
+function sendEvent(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+// 隐藏层
+function hideFrame(){
+    api.setFrameAttr({
+        hidden: true
+    });
+}
+
+// 确定按钮
+function sure(){
+    api.sendEvent({
+        name: 'pickerSure',
+        extra: {
+            index: data.index,
+            option: data.option
+        }
+    });
+    api.closeFrame();
+}
+
+/**********************************其他函数**********************************/
+
+/**********************************功能模块1**********************************/
+
+</script>
+</html>

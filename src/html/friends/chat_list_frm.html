@@ -1,0 +1,725 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        .aui-list-item.wechat-top {
+            background-color: #f3f3f7;
+        }
+        
+        .aui-list .wechat-avatar {
+            width: 3rem;
+        }
+        
+        .wechat-avatar .aui-row-padded {
+            background-color: #dddee0;
+            padding: 0.1rem;
+            border-radius: 0.2rem;
+            margin-left: -0.05rem;
+            margin-right: -0.05rem;
+        }
+        
+        .wechat-avatar .aui-row-padded [class*=aui-col-xs-] {
+            padding: 0.05rem;
+        }
+        
+        .wechat-avatar,
+        .wechat-avatar>img {
+            border-radius: 0.2rem;
+        }
+        .icon-font{
+            font-size: 1.75rem !important;
+        }
+        .li-padding{
+            padding-top: 0.25rem !important;
+            padding-bottom: 0.25rem !important;
+        }
+        .aui-badge{
+            height: 0.9rem;
+            width: 0.9rem;
+            line-height: 0.9rem;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+<!--新增：同城车友，新的朋友，好友推荐　*LVPlum-->
+    <ul class="aui-list aui-media-list">
+        <li class="aui-list-item wechat-top aui-list-item-arrow tea-bg-white li-padding" tapmode onclick="openWinLocalFriends();">
+            <div class="aui-media-list-item-inner">
+                <div class="aui-list-item-label-icon" style="min-width: 2.5rem">
+                    <i class="aui-iconfont tea-icon-local icon-font" style="color: #ff6666"></i>
+                </div>
+                <div class="aui-list-item-inner">
+                    同城车友
+                    <a class="aui-pull-right">
+                        <span class="aui-font-size-14" style="color: #FF9933">老司机带带我</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item wechat-top aui-list-item-arrow tea-bg-white li-padding" tapmode onclick="openWinNewFriends();">
+            <div class="aui-media-list-item-inner">
+                <div class="aui-list-item-label-icon" style="min-width: 2.5rem">
+                    <i class="aui-iconfont tea-icon-newfriend icon-font" style="color: #ff9966"></i>
+                </div>
+                <div class="aui-list-item-inner">
+                    新的朋友
+                    <a class="aui-pull-right">
+                        <div id="newfriend" class="aui-badge aui-font-size-16 aui-hide" style="position:relative;top:0; left:0">8</div>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item wechat-top aui-list-item-arrow tea-bg-white li-padding" tapmode onclick="openWinSuggestFriend();">
+            <div class="aui-media-list-item-inner">
+                <div class="aui-list-item-label-icon" style="min-width: 2.5rem">
+                    <i class="aui-iconfont tea-icon-recommend icon-font" style="color: #3399FF"></i>
+                </div>
+                <div class="aui-list-item-inner">
+                    好友推荐
+                    <a class="aui-pull-right">
+                        <div id="suggest" class="aui-badge tea-font-size-13 aui-hide" style="position:relative;top:0; left:0">9+</div>
+                    </a>
+                </div>
+            </div>
+        </li>
+    </ul>
+<!--END *LVPlum-->
+    <div id="app" class="aui-content aui-margin-b-15" v-cloak>
+        <ul class="aui-list aui-media-list">
+            <li class="aui-list-item aui-list-item-middle" v-for="item in msgList" @click="openWinChat(item.chatType, item.chatId, item.chatName)" tapmode>
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media wechat-avatar">
+                        <div class="unread aui-badge" v-show="item.chatUnread">
+                            {{item.chatUnread}}
+                        </div>
+                        <img :src="item.chatAvatar" />
+                    </div>
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title">{{item.chatName}}</div>
+                            <div class="aui-list-item-right btime">{{tea.formatDate(item.chatTime, 'day')}}</div>
+                        </div>
+                        <div class="aui-list-item-title aui-font-size-12 msgnr tea-text-default aui-ellipsis-2" v-html="setLastMsgText(item.chatMsg, item.chatMsgType)">
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js"></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- 框架 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+
+<script type="text/javascript" src="../../script/rongyun.js"></script>
+<!--转换表情-->
+<script type="text/javascript" src="../../script/emo.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+/**********************************声明全局变量**********************************/
+var dom = {},
+    vm = null,
+    rong = null;
+
+/**********************************apiready**********************************/
+apiready = function() {
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+            msgList: [],
+            userId: $api.getStorage('ID')
+        },
+        methods: {
+            initList: function(ret) {
+                getChatData(ret, function(arr) {
+                    vm.msgList = arr;
+                    api.hideProgress();
+                    api.refreshHeaderLoadDone();
+                    //console.log(JSON.stringify(vm.msgList, null, 4));
+                });
+            },
+            openWinChat: function(type, id, name) {
+                tea.openWin({
+                    name: 'chat_win',
+                    url: './chat_win.html',
+                    bounces: false,
+                    pageParam: {
+                        chatType: type,
+                        chatId: id,
+                        chatName: name
+                    }
+                });
+            },
+            setLastMsgText: function(msg, type) {
+                var result = "";
+                switch (type) {
+                    // 文本类型
+                    case "RC:TxtMsg":
+                        // if (isConversationList) {
+                        // 	result =  _transEmo(msgObj.latestMessage.text);
+                        // } else {
+                        // 	result =  _transEmo(msgObj.content.text);
+                        // }
+                        result = _transEmo(msg);
+                        break;
+                        // 语音类型
+                    case "RC:VcMsg":
+                        result = "[语音消息]";
+                        break;
+                        // 图片消息
+                    case "RC:ImgMsg":
+                        result = "[图片消息]";
+                        break;
+                        // 图文消息
+                    case "RC:ImgTextMsg":
+                        result = "<span class='tea-text-red'>[客户咨询]：</span>" + msg;
+                        break;
+                    case "RC:news":
+                        result = "" + msgObj.latestMessage.title;
+                        break;
+                    case "RC:CmdMsg":
+                        result = "<span class='tea-text-blue'>[正在浏览]：</span>" + msg;
+                        break;
+                }
+                return result;
+            },
+            updateHTML: function(msg, type) {
+                getChatData([msg], completeData)
+
+                function completeData(arr) {
+                    var msg = arr[0];
+                    rong.getUnreadCount({
+                        conversationType: msg.chatType,
+                        targetId: msg.chatId
+                    }, function(ret, err) {
+                        if (ret.status === 'success') {
+                            msg.chatUnread = ret.result;
+                            updateList(msg);
+                        }
+                    })
+                }
+
+                function updateList(msg) {
+                    var list = vm.msgList;
+                    // 如果list中已存在，则删除掉原有消息，并置顶
+                    if (list.length > 0) {
+                        for (var i = 0; i < list.length; i++) {
+                            var item = list[i];
+                            // 若是
+                            if (item.chatId == msg.chatId || item.chatId == msg.targetId) {
+                                list.splice(i, 1);
+                                list.unshift(msg);
+                                return;
+                            }
+                        }
+                    }
+                    // 如果是接受到新消息，则在插入后提醒
+                    list.unshift(msg);
+                    if (type == 'receive') {
+                        // 状态栏提醒
+                        api.notification({
+                            vibrate: [300, 500],
+                            sound: 'default',
+                            light: true,
+                            notify: {
+                                title: '接收到新的消息',
+                                // content : item.chatMsg,
+                                updateCurrent: true,
+                                //extra : JSON.stringify(ret.result.message)
+                            }
+                        }, function(ret, err) {
+                            api.cancelNotification({
+                                id: ret.id
+                            });
+                        });
+                    }
+                }
+
+            },
+            clearUnread: function(chatId, chatType) {
+                var list = vm.msgList;
+                // 如果list中已存在，则将该消息未读数清零
+                if (list.length > 0) {
+                    for (var i = 0; i < list.length; i++) {
+                        var item = list[i];
+                        if (item.chatId == chatId) {
+                            item.chatUnread = 0;
+                            return;
+                        }
+                    }
+                }
+                // 更新系统未读数
+                rong.getTotalUnreadCount(function(ret, err) {
+                    api.sendEvent({
+                        name: 'messageUnread',
+                        extra: {
+                            type: 'chat',
+                            num: ret.result
+                        }
+                    });
+                })
+            }
+        },
+        watch: {
+
+        }
+    })
+
+    // 初始化
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init() {
+
+    dom = {};
+
+    updateHTML();
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(type) {
+    vm.userId = $api.getStorage('ID');
+
+        api.showProgress({
+            style: 'default',
+            animationType: 'fade',
+            title: '努力加载中...',
+            text: '先喝杯茶...',
+            modal: false
+        });
+    
+    api.ajax({
+        url: website + 'rong/index2.php?action=getrongtoken',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        returnAll: false,
+        data: {
+            values: {
+                ID: $api.getStorage('ID'),
+                nickname: $api.getStorage('nickname'),
+                img: $api.getStorage('img') ? $api.getStorage('img') : '123'
+            }
+        }
+    }, function(ret, err) {
+        api.hideProgress();
+        if (ret) {
+            $api.setStorage('rongtoken', ret.token);
+            // 融云初始化
+            rongyun.init();
+            // 连接并获取会话列表
+            rongyun.connect(initList);
+            // 监听融云状态
+            rongyun.initEventListener();
+        } else {
+            tea.toast('ajax');
+        };
+    }); 
+
+
+/*新增：  *LVPlum*/
+    //获取通讯录数据
+    getSuggest(type);
+
+    //获取新的好友数据
+    getNewFriend(type);
+/*END *LVPlum*/
+
+
+    function initList() {
+        if (type != 'hideProgress') {
+            api.showProgress({
+                style: 'default',
+                animationType: 'fade',
+                title: '努力加载中...',
+                text: '先喝杯茶...',
+                modal: false
+            });
+        }
+        rongyun.getConversationList(function(ret) {
+            vm.initList(ret.result);
+        });
+    }
+}
+
+function initList() {
+    api.showProgress({
+        style: 'default',
+        animationType: 'fade',
+        title: '努力加载中...',
+        text: '先喝杯茶...',
+        modal: false
+    });
+
+    rongyun.getConversationList(function(ret) {
+        vm.initList(ret.result);
+    });
+}
+/**********************************初始化监听**********************************/
+function initEventListener() {
+
+    // 监听登录
+    // api.addEventListener({
+    //     name: 'loginOk'
+    // }, function(ret, err) {
+    //     initModule(ret);
+    // });
+    api.addEventListener({
+        name: 'loginSuccess'
+    }, function(ret, err){
+        initModule('hideProgress');
+    });
+
+    api.addEventListener({
+        name: 'loginOut'
+    }, function(ret, err){
+        rongyun.loginOut();
+    });
+
+    // 监听是否需要发送消息
+    api.addEventListener({
+        name: 'sendMsgStart'
+    }, function(ret, err) {
+        if (ret && ret.value) {
+            // 调用统一接口发送信息，发送成功后调用回调函数，更新视图
+            rongyun.sendMsg(ret.value, updateHTML)
+            var msg = ret.value;
+            //msg.result.message.content.extra = $api.strToJson(msg.result.message.content.extra);
+            // rongyun.sendMsg(msg.msgType, msg.conversationType, msg.targetId, msg.content, msg.extra);
+        }
+    });
+
+    // 监听是否会话需要获取最新消息
+    api.addEventListener({
+        name: 'getLastMsgStart'
+    }, function(ret, err) {
+        if (ret && ret.value) {
+            var msg = ret.value;
+            // 获取最新消息
+            rongyun.getLatestMessages(msg.chatType, msg.chatId);
+        }
+    });
+
+    // 删除指定对像聊天
+    api.addEventListener({
+        name: 'clearTheMessage'
+    }, function(ret, err) {
+        if (ret && ret.value) {
+
+        }
+    });
+
+    // 清除未读记录数
+    api.addEventListener({
+        name: 'clearUnread'
+    }, function(ret, err) {
+        if (ret && ret.value) {
+            var msg = ret.value;
+            // 清除融云上的未读数
+            rongyun.clearUnread(msg.chatId, msg.chatType, vm.clearUnread);
+        }
+    });
+
+    // 监听下拉刷新
+    api.setRefreshHeaderInfo({
+        visible: true,
+        loadingImg: 'widget://image/refresh.png',
+        bgColor: '#f4f4f4',
+        textColor: '#fff',
+        textDown: '下拉刷新...',
+        textUp: '松开刷新...',
+        showTime: true
+    }, function(ret, err) {
+        // 获取最新消息列表并重新加载数据
+        initList();
+
+        /*新增：  *LVPlum*/
+            //获取通讯录数据
+            getSuggest();
+            //获取新的好友数据
+            getNewFriend();
+        /*END *LVPlum*/
+    });
+
+    // 监听是否需要获取历史消息
+    api.addEventListener({
+        name: 'getHistoryMessages'
+    }, function(ret, err){
+        rongyun.getHistoryMessages(ret.value, function(ret){
+            api.sendEvent({
+                name: 'getHistoryMessagesDone',
+                extra: ret
+            });
+        });
+    });
+
+    api.addEventListener({
+        name: 'delMsg'
+    }, function(ret, err){
+        rongyun.deleteMessages(ret.value.msgId)
+    });
+
+/*添加：新的朋友监听红点  *LVPlum*/
+    api.addEventListener({
+        name: 'updataDot'
+    }, function (ret, err) {
+        getNewFriend()
+        getSuggest()
+    });
+/*END *LVPlum*/
+}
+
+
+/**********************************更新HTML**********************************/
+function updateHTML() {
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+function getChatData(ret, callback) {
+    var idArr = [],
+        arr = [];
+    // 保证ret是一个数组
+    ret = Array.isArray(ret) ? ret : [ret];
+    if (ret.length < 1) {
+        callback(arr);
+        return;        
+    }
+    for (var i = 0, len = ret.length; i < len; i++) {
+        var item = ret[i];
+        // 获取列表信息时是latestMessage，单条信息是content
+        item.msg = item.latestMessage ? item.latestMessage : item.content;
+        // 某些类型需特殊处理
+        if (item.objectName == 'RC:CmdMsg') {
+            item.msg = $api.strToJson(item.content.data);
+        }
+        if (item.objectName == 'RC:ImgTextMsg') {
+            item.msg.text = item.msg.title;
+        }
+        var extra = $api.strToJson(item.msg.extra);
+        var info = {
+            chatId: item.senderUserId,
+            targetId: item.targetId,
+            chatTime: item.sentTime,
+            chatAvatar: extra.userphoto,
+            chatName: extra.username,
+            chatMsg: item.msg.text,
+            chatMsgType: item.objectName,
+            chatUnread: item.unreadMessageCount,
+            chatType: item.conversationType
+        };
+        // if 发送者是自己
+        if (item.senderUserId == vm.userId) {
+            info.chatId = item.targetId;
+            info.chatTime = item.sentTime;
+        }
+        // 将结果保存到数组
+        idArr.push(info.chatId);
+        arr.push(info);
+    }
+    // 若用户信息已完整则返回
+    if (idArr.length < 1) {
+        callback(arr);
+        return;
+    };
+    // 获取用户信息
+    getUsersInfo(idArr.toString(), addUsersInfo);
+    // 补充用户信息
+    function addUsersInfo(userArr) {
+        for (var i = 0; i < userArr.length; i++) {
+            var user = userArr[i];
+            for (var j = 0; j < arr.length; j++) {
+                var item = arr[j];
+                if (item.chatId == user.userid) {
+                    item.chatAvatar = website + user.userphoto;
+                    item.chatName = user.username;
+                }
+            }
+        }
+        callback(arr);
+        // console.log(JSON.stringify(vm.msgList, null, 4))
+    }
+
+}
+
+function getUsersInfo(ids, callback) {
+    tea.ajax({
+        url: website + "rong/index.php?action=getlastuserlist&ids=" + ids,
+        method: 'get',
+        timeout: 30,
+        dataType: 'json',
+        returnAll: false
+    }, function(ret, err) {
+        if (ret) {
+            callback(ret);
+        } else {
+            tea.toast('ajax');
+            return false;
+        };
+    });
+}
+
+/*增加：跳转同城车友，新的朋友，好友推荐  *LVPlum */
+    function openWinLocalFriends(){
+        tea.openWin({
+            name: 'friends_local_win',
+            url: './friends_local_win.html',
+            bounces: false,
+        });
+    }
+
+    function openWinNewFriends(){
+        tea.openWin({
+            name: 'new_friends_win',
+            url: './new_friends_win.html',
+            bounces: false,
+            pageParam: {key : 'value'}
+        });
+    }
+
+    function openWinSuggestFriend(){
+        api.openWin({
+            name: 'friend_suggest_win',
+            url: './friend_suggest_win.html',
+            bounces: false,
+            pageParam: {key : 'value'}
+        });
+    }
+
+    //获取手机联系人数据
+    function getSuggest(type){
+        
+        tea.showp('数据加载中','请稍候');
+        
+        var contacts = api.require('contacts');
+        contacts.queryByPage({
+            pageIndex: 0,
+        },function(ret,err){
+            api.ajax({
+                url: website + 'friendship.php?action=fricommlist',
+                method: 'post',
+                timeout: 30,
+                data: {
+                    values: {
+                        content: ret,
+                        dm: api.deviceModel,
+                        ID: $api.getStorage('ID'),
+                        token: $api.getStorage('token'),
+                    },
+                }
+            }, function (ret, err) {
+                api.hideProgress();
+                if(!ret){
+//                    tea.toast('ajax');
+                    return false;
+                }
+                if(ret){
+                    var result = []; //存放用于筛选未发送请求的通讯录好友
+                    var len;
+                    for(i in ret){
+                        if(ret[i].hadd == 0){
+                            result.push(ret[i]);
+                        }
+                    }
+                    api.sendEvent({
+                        name:'messageUnread',
+                        extra: {
+                            type: 'contacts',
+                            num: result.length,
+                        }
+                    });
+                    if(result.length > 0){
+                        len = result.length;
+                        if(result.length > 9){
+                            len = "9+";
+                        }
+                        $api.removeCls($api.byId('suggest'),'aui-hide');
+                        $api.text($api.byId('suggest'),len);
+                        return;
+                    }
+                    $api.addCls($api.byId('suggest'), 'aui-hide');
+                }
+            });
+        })
+    };
+
+    function getNewFriend(type){
+        
+        tea.showp('数据加载中','请稍候');
+        
+        api.ajax({
+            url: website + 'friendship.php?action=newcount',
+            method: 'post',
+            timeout: 30,
+            data: {
+                values: {
+                    ID: $api.getStorage('ID'),
+                },
+            }
+        }, function (ret, err) {
+            api.hideProgress();
+            if(!ret){
+                return false;
+            }
+            if(ret.succ == 1){
+                api.sendEvent({
+                    name:'messageUnread',
+                    extra: {
+                        type: 'friend',
+                        num: ret.num
+                    }
+                });
+                if(ret.num > 0){
+                    $api.removeCls($api.byId('newfriend'),'aui-hide');
+                    $api.text($api.byId('newfriend'),ret.num);
+                    return true;
+                }
+                $api.addCls($api.byId('newfriend'), 'aui-hide');
+            }
+        });
+    }
+
+/*END *LVPlum*/
+
+</script>
+
+</html>

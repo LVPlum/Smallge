@@ -1,0 +1,160 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/common.css" />
+</head>
+<style type="text/css">
+body{    
+    text-align:center
+}
+canvas{
+    background-color:#FEEBB3;
+    position:relative;
+    text-align:center;
+    width:100%;
+}
+.content{
+   position:absolute; 
+   width:100%; 
+   height:220px; 
+   bottom:0; 
+   left:0; 
+   z-inden:1;
+   padding-left:20px;
+   padding-right:20px;
+   background-color:#ADE7EF;
+}
+.content h1{
+   font-size:25px;
+   color: #FF0000;
+}
+.content p{
+   font-size:15px;
+   color:#333333;
+}
+.red{
+   color:#FF0000;
+}
+.bu{
+   color:#136CE5;
+}
+.ge{
+   height:10px;
+}
+.content .jg{font-size: 13px; color:#999999}
+</style>
+<body>
+	<canvas id="canvas-keleyi-com"></canvas>
+	<div class="content">
+	<h1>恭喜!</h1>
+	<p>小马哥官方向您推送了<span class="red" id="hongbao"></span>元的红包</p>
+	<p>推送原因：<span class="bu" id="pagecontent"></span></p>
+	<div class="ge"></div>
+	<p class="jg">红包已经直接存入您的账号余额中，可以直接在小马哥中消费或提现，请在 我-我的钱包-收支明细 中查看。</p>
+	</div>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript">
+var txt = null;
+	apiready = function() { 
+	    api.parseTapmode(); 
+	    txt = api.pageParam.txt;    
+	    yh();
+	    loaddate();
+	};
+	
+	function loaddate(){
+         $api.text($api.byId('hongbao'), txt.money);  
+         $api.text($api.byId('pagecontent'), txt.content);      	
+	}
+	
+	function yh(){
+			var c = document.getElementById('canvas-ke'+'leyi-com');
+			if (!c.getContext) alert('系统出错，版本过低');
+			else(function(c, cvs) {
+			//随着窗口调整画布大小
+			var W, H;
+			var up = 0; 
+			c.width = W = api.frameWidth;
+			c.height = H = api.frameHeight;
+			//生成一个烟花
+			function createPT(x, y, r, g, b) {
+			return {
+			r: r,g: g,b: b,
+			x: x,y: y,
+			//轨迹序列
+			pl: [],
+			dx: rnd(20) - 10,
+			dy: rnd(10) - 7,
+			life: 30 + rnd(30),
+			//移动函数，修改加速度和坐标
+			move: function() {
+			this.dx *= .98;
+			this.dy *= .98;
+			this.dy += .22;
+			this.x += this.dx;
+			this.y += this.dy;
+			this.pl.push([this.x, this.y]);
+			//保持轨迹长度
+			if (this.pl.length > 10) this.pl.shift();
+			this.life--;
+			}
+			};
+			}
+			//总烟火数组
+			var B = [];
+			//在x,y位置创建一个烟火
+			function createBoom(x, y) {
+			var q = [],
+			r = rnd(255) | 0,
+			g = rnd(255) | 0,
+			b = rnd(255) | 0;
+			for (var i = 0; i < rnd(16) + 15; i++) q.push(createPT(x, y, r, g, b));
+			B.push(q);
+			}
+			setInterval(function() {
+			cvs.clearRect(0, 0, W, H);
+			//依次绘制烟火
+			for (var n = 0; n < B.length; n++) {
+			var q = B[n];
+			for (var i = 0; i < q.length; i++) {
+			var pt = q[i];
+			pt.move();
+			dq(pt.pl, pt.life / 30, pt.r, pt.g, pt.b);
+			//超过生存周期就消失 
+			if (pt.life <= 0) q.splice(i, 1);
+			}
+			//当一个烟火包含的烟花个数为零，则消灭这个烟火
+			if (!B[n].length) B.splice(n, 1);
+			}
+			//每隔一段时间添加一个新烟火
+			if (new Date - up < 1000 + rnd(1000)) return;
+			up = new Date;
+			createBoom(rnd(W / 2) + W / 4, rnd(50) + 50);
+			},20);
+			
+			function rnd(n) {
+			return (n || 1) * Math.random();
+			}
+			function dq(ar, z, r, g, b) {
+			cvs.save();
+			//绘制轨迹。思路是每次都绘制一条透明的轨迹，叠加起来形成一条渐变的样子
+			for (var i = 0; i < ar.length; i++) {
+			cvs.strokeStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + Math.abs(.2 * z) + ')';
+			cvs.lineWidth = Math.min(i + 1, 4)*2;
+			cvs.beginPath();
+			cvs.moveTo(ar[i][0], ar[i][1]);
+			for (var j = i + 1; j < ar.length; j++) cvs.lineTo(ar[j][0], ar[j][1]);
+			cvs.stroke();
+			}
+			cvs.restore();
+			}
+			})(c, c.getContext('2d'));
+	}
+</script>
+</html>

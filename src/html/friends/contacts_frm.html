@@ -1,0 +1,293 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+		html,body {
+            height: 100%;
+            overflow: auto;
+		}
+
+        img {
+            width: 1.8rem !important;
+            height: 1.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="list"  class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-media-list">
+            <!--<li class="aui-list-item aui-list-item-middle" style="padding-left: 0.5rem" tapmode onclick="openWinNewFriends()">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media" style="width: 2.3rem; padding-right: 0.5rem">
+                        <img src="../../image/newfriend.png" class="aui-list-img-sm">
+                    </div>
+                    <div class="aui-list-item-inner aui-list-item-arrow">
+                        新的朋友
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item aui-list-item-middle" style="padding-left: 0.5rem" tapmode onclick="openWinSuggestFriend()">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media" style="width: 2.3rem; padding-right: 0.5rem">
+                        <img src="../../image/carfriend_tuijian.png" class="aui-list-img-sm">
+                    </div>
+                    <div class="aui-list-item-inner aui-list-item-arrow">
+                        好友推荐
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item aui-list-item-middle" style="padding-left: 0.5rem" tapmode onclick="openFrameQRcode()">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media" style="width: 2.3rem; padding-right: 0.5rem">
+                        <img src="../../image/qrcode.png" class="aui-list-img-sm">
+                    </div>
+                    <div class="aui-list-item-inner aui-list-item-arrow">
+                        我的二维码
+                    </div>
+                </div>
+            </li>-->
+        </ul>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化DOM对象
+    initDOM();
+
+    // 初始化变量
+    initVar();
+
+    // 更新HTML
+    initHTML();
+
+    // 初始化监听
+    initEventListener();
+
+    // 初始化其他模块
+    initModule();
+
+    // ajax请求数据
+    getData();
+
+};
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {};
+
+/**********************************初始化变量**********************************/
+// 初始化DOM对象
+function initDOM(){
+
+    dom.list = $api.byId('list');
+
+};
+
+// 初始化变量
+function initVar(){
+
+    var telphone = $api.getStorage('telphone');
+    values.token = gettoken(telphone);   //下面函数内经常读不出，重写一次
+    data.listH = $api.offset(dom.list).h;
+
+
+};
+
+// 初始化HTML
+function initHTML(){
+
+
+
+}
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+    api.ajax({
+        url: website + 'friendship.php?action=list',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        returnAll:false,
+        data:{
+            values: values,
+        }
+    },function(ret,err){
+
+        if(ret){
+            console.log(JSON.stringify(ret));
+//            _alert(ret);
+            var obj = api.require('listContact');
+            obj.open({
+                y: data.listH,
+                h: api.frameHeight - data.listH,
+                rightBtn: [{
+                    color: '#8B0000',
+                    title: '备注'
+                }],
+                groupTitle: {
+                	bgColor: '#f4f4f4'
+                },
+                color: '#666',
+                size: '14',
+                bgColor: '#f4f4f4',
+                indicator: { },
+                borderColor: '#f4f4f4',
+                cellBgColor : '#FFFFFF',
+                data: ret,
+                fixedOn: api.frameName
+            }, function(ret, err) {
+//                _alert(ret);
+                openfriendinfo(ret.index,ret.key);
+            });
+            api.hideProgress();
+            api.refreshHeaderLoadDone();
+        }else {
+            api.alert({
+                msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+            });
+        }
+    });
+
+
+}
+
+/**********************************更新变量**********************************/
+// 更新DOM对象
+function updateDOM(){
+
+
+
+}
+
+// 更新变量
+function updateVar(){
+
+
+
+}
+
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+
+
+/**********************************广播消息**********************************/
+function sendEvent(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+function openFrameQRcode() {
+    api.openFrame({
+        name: 'code_frm',
+        url: '../me/code_frm.html',
+        rect: {
+            x: 0,
+            y: 0,
+            w: 'auto',
+            h: 'auto'
+        },
+        pageParam: {
+            name: 'test'
+        },
+        bounces: false,
+        bgColor: 'rgba(0,0,0,0.6)',
+        vScrollBarEnabled: true,
+        hScrollBarEnabled: true
+    });
+
+}
+
+function openWinNewFriends(){
+    tea.openWin({
+        name: 'new_friends_win',
+        url: './new_friends_win.html',
+        bounces: false,
+        pageParam: {key : 'value'}
+    });
+}
+
+function openWinSuggestFriend(){
+    api.openWin({
+        name: 'friend_suggest_win',
+        url: './friend_suggest_win.html',
+        bounces: false,
+        pageParam: {key : 'value'}
+    });
+}
+
+function openfriendinfo(index,key){
+    api.openWin({
+        name: 'user_info_win',
+        url: '../location/user_info_win.html',
+        vScrollBarEnabled: false,
+        pageParam : {
+            pageType: 'contacts',
+            index: index,
+            key: key
+        }
+    });
+    /*api.openWin({
+        name: '详细资料',
+        url: './friendinfo_win.html',
+        vScrollBarEnabled: false,
+        pageParam : {index: index,key: key}
+    });*/
+}
+/**********************************其他函数**********************************/
+
+
+</script>
+</html>

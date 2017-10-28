@@ -1,0 +1,303 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <header id="header" class="aui-bar aui-bar-nav aui-bar-light" tapmode onclick="openFrameOrderType()">
+        <a class="aui-btn aui-pull-left" tapmode onclick="closeWin();event.stopPropagation();">
+            <span class="aui-iconfont aui-icon-left tea-text-title"></span>
+        </a>
+        <div class="aui-title tea-text-title">
+            <span id="title" class="tea-text-triangle-down">我的订单</span>
+        </div>
+    </header>
+
+    <section class="aui-tab aui-border-b" id="tab">
+        <div class="aui-tab-item aui-active" tapmode>全部</div>
+        <div class="aui-tab-item" tapmode>已完成</div>
+        <div class="aui-tab-item" tapmode>未完成</div>
+    </section>
+
+    <footer id="footer"></footer>
+
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/aui-tab.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- HTML模板渲染引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 处理沉浸式效果，计算header和footer的高度
+    header = $api.byId('header');
+    $api.fixStatusBar(header);
+    headerH = $api.offset(header).h;
+    main = $api.byId('tab');
+    mainH = $api.offset(main).h;;
+    footer = $api.byId('footer');
+    footerH = $api.offset(footer).h;
+
+    // 初始化DOM对象
+    initDOM();
+
+    // 初始化变量
+    initVar();
+
+    // 初始化HTML
+    initHTML();
+
+    // 初始化监听
+    initEventListener();
+
+    // 初始化其他模块
+    initModule();
+
+    // 打开Frame
+    openFrame();
+
+    // ajax请求数据
+    getData();
+
+};
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var header, footer, main, dom = {};
+
+// 声明全局变量
+var headerH, footerH, mainH, values = {};
+
+/**********************************初始化变量**********************************/
+// 初始化DOM对象
+function initDOM(){
+
+    dom.tabs = $api.domAll(tab, '.aui-tab-item');
+    dom.title = $api.byId('title');
+
+};
+
+// 初始化变量
+function initVar(){
+
+    values.frameOpened = false;
+
+};
+
+// 初始化HTML
+function initHTML(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+    api.addEventListener({
+        name: 'typeSelected'
+    }, function(ret, err){
+        if(ret){
+            dom.title.innerHTML = ret.value.type;
+            values.frameOpened = false;
+        }
+    });
+
+}
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+    var tab = new auiTab({
+        element:document.getElementById("tab"),
+    },function(ret){
+        var index = ret.index - 1;
+        api.setFrameGroupIndex({
+            name: 'my_order',
+            index: index,
+            scroll: true
+        });
+    });
+
+}
+
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+}
+
+/**********************************更新变量**********************************/
+// 更新DOM对象
+function updateDOM(){
+
+
+
+}
+
+// 更新变量
+function updateVar(){
+
+
+
+}
+
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+
+
+/**********************************广播消息**********************************/
+function sendEvent(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+// 回退关闭窗口
+function closeWin(){
+    // api.closeToWin({
+    //     name: 'main_win',
+    //     animation: {
+    //         type: 'flip',
+    //         subType: 'from_bottom',
+    //         duration: 500
+    //     }
+    // });
+    api.closeWin();
+}
+
+// function selectStatus(status_) {
+
+// }
+/**********************************打开Frame**********************************/
+// 打开Frame,不需要打开Frame请删除
+function openFrame(ret_){
+    // api.showProgress({
+    //     title: '数据加载中...',
+    //     text: '请稍候...',
+    //     modal:  false
+    // });
+
+    api.openFrameGroup({
+        name: 'my_order',
+        scrollEnabled: true,
+        rect: {
+            x: 0,
+            y: headerH + mainH + 1,
+            w: 'auto',
+            h: api.winHeight - headerH - mainH - footerH -1
+        },
+        index: 0,
+        preload: 3,
+        frames: [{
+            name: 'order_all',
+            url: './my_order_frm.html',
+            pageParam:{index:0}
+        },{
+            name: 'order_done',
+            url: './my_order_frm.html',
+            pageParam:{index:1}
+        },{
+            name: 'order_undone',
+            url: './my_order_frm.html',
+            pageParam:{index:2}
+        }]
+    }, function(ret, err){
+        //_alert(ret)
+        var name  = ret.name;
+        var index = ret.index;
+        for (var i = 0; i < dom.tabs.length; i++) {
+            if (i === index) {
+                $api.addCls(dom.tabs[i], 'aui-active');
+            }
+            else {
+                $api.removeCls(dom.tabs[i], 'aui-active');
+            }
+        }
+    });
+
+
+}
+
+function openFrameOrderType(){
+
+    // if 层是打开的就隐藏它
+    if (values.frameOpened) {
+        values.frameOpened = false;
+        api.setFrameAttr({
+            name: 'order_type_frm',
+            hidden: true
+        });
+        return;
+    }
+    values.frameOpened = true;
+    if (tea.token()) {
+        api.openFrame({
+            name: 'order_type_frm',
+            url: './order_type_frm.html',
+            rect: {
+                x: 0,
+                y: headerH,
+                w: 'auto',
+                h: api.winHeight - headerH - footerH
+            },
+            pageParam: {
+                name: 'test'
+            },
+            bounces: false,
+            bgColor: 'rgba(0,0,0,0.6)',
+            vScrollBarEnabled: true,
+            hScrollBarEnabled: true
+        });
+    }
+
+}
+
+
+/**********************************其他函数**********************************/
+
+
+
+</script>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            height: 100%;
+            overflow: auto;
+        }
+
+        .aui-content-padded {
+               -moz-box-shadow: 0px 0.1rem 0.5rem #d8e0e7;
+            -webkit-box-shadow: 0px 0.1rem 0.5rem #d8e0e7;
+                    box-shadow: 0px 0.1rem 0.5rem #d8e0e7;
+        }
+
+        .tea-clear-btn {
+            right: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="aui-content-padded" id="content">
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+    <ul class="aui-list aui-list-in aui-form-list aui-list-noborder">
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                {{?it.item == 'carnum'}}
+                <div class="aui-list-item-label" tapmode onclick="openWinPlateProvince()" style="width: 4rem">
+                    <span id="plate-province" class="tea-text-title tea-text-arrow-down">桂E</span>
+                </div>
+                {{?}}
+                <div class="aui-list-item-input">
+                    {{?it.item == 'carnum'}}
+                    <input id="carnum" type="text" placeholder="请输入车牌后5位数" value="{{=(it.val=='未填写' ? '' : it.val.slice(2) )}}" required />
+                    <div class="tea-clear-btn" onclick="tea.clear('carnum');">
+                        <i class="aui-iconfont aui-icon-close"></i>
+                    </div>
+                    {{?}}
+                    {{?it.item == 'telphone'}}
+                    <input id="telphone" type="tel" placeholder="请输入新的手机号码" value="{{=(it.val=='未填写' ? '' : it.val )}}" required />
+                    <div class="tea-clear-btn" onclick="tea.clear('telphone');">
+                        <i class="aui-iconfont aui-icon-close"></i>
+                    </div>
+                    {{?}}
+                    {{?it.item == 'carlicense'}}
+                    <input id="carlicense" type="text" placeholder="请输入行驶证所有人" value="{{=(it.val=='未填写' ? '' : it.val )}}" required />
+                    <div class="tea-clear-btn" onclick="tea.clear('carlicense');">
+                        <i class="aui-iconfont aui-icon-close"></i>
+                    </div>
+                    {{?}}
+                </div>
+            </div>
+        </li>
+    </ul>
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {};
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    initVar();
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+    // ajax请求数据
+    getData();
+
+};
+
+/**********************************初始化变量**********************************/
+function initVar(){
+
+    data = {
+    };
+
+    values = {
+        item: api.pageParam.item,
+        val: api.pageParam.val
+    };
+
+    updateHTML(values);
+
+    dom = {
+        plateProvince: $api.byId('plate-province')
+    };
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+    api.addEventListener({
+        name: 'selectPlateProvince'
+    }, function(ret, err){
+        if( ret ){
+            dom.plateProvince.textContent = ret.value.province + ret.value.city;
+        }else{
+            //alert( JSON.stringify( err ) );
+        }
+    });
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+
+/**********************************更新HTML**********************************/
+function updateHTML(data){
+
+    tea.doT(data, 'template', 'content');
+
+}
+
+/**********************************DOM响应**********************************/
+// 打开选择车牌地区简称窗口
+function openWinPlateProvince(){
+    api.openWin({
+        name: 'plateProvince',
+        url: '../car_plate/plate_province_win.html',
+        pageParam: {
+            name: 'test'
+        }
+    });
+}
+
+
+/**********************************其他函数**********************************/
+function save(){
+    var item = values.item;
+    var el = $api.byId(item);
+    var val = $api.val(el);
+    //val = tea.toNum(val);
+    if (val == '') {
+        tea.toast('fail', '内容不可为空');
+        return false;
+    }
+    if (item == 'telphone' && !tea.checkPhone(val)) {
+        tea.toast('fail', '手机号码格式有误');
+        return false;
+    }
+    if (item == 'carnum') {
+        val = dom.plateProvince.textContent + val;
+    }
+    api.sendEvent({
+        name: 'carManageChangeSave',
+        extra: {
+            item: item,
+            val: val
+        }
+    });
+    api.closeWin();
+}
+
+</script>
+</html>

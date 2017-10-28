@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui-win.css" />
+</head>
+<style type="text/css">
+.addcar{font-size: 12px;}
+</style>
+<body>
+    <header class="aui-bar aui-bar-nav aui-bar-success" id="aui-header">
+        <a class="aui-btn aui-btn-success aui-pull-left" id="back">
+            <span class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <div class="aui-title">车辆管理</div>
+        <a class="aui-btn aui-btn-success aui-pull-right" id="rightbtn">
+          <span class="addcar" tapmode="" onclick="addnewcar();">增加汽车</span>
+        </a>        
+    </header>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript">
+    apiready = function(){
+        var header = $api.byId('aui-header');
+        $api.fixIos7Bar(header);
+          $api.fixStatusBar(header);// 马秋强，添加 2017-4-24
+        var headerPos = $api.offset(header);
+        var body_h = $api.offset($api.dom('body')).h;
+        api.openFrame({
+            name: 'mycar_frm',
+            url: 'mycar_frm.html',
+            bounces: false,
+            vScrollBarEnabled: false,
+            rect: {
+                x: 0,
+                y: headerPos.h,
+                w: headerPos.w,
+                h: 'auto'
+            }
+        });
+        $api.addEvt($api.byId('back'), 'click', function(){
+        	 api.sendEvent({
+			    name: 'carok'
+			 }); 
+            api.closeWin();
+        });
+    };
+    function addnewcar(){
+			api.openWin({
+		        name: 'addnewcar_win',
+		        url: 'mycar_set_win.html',
+		        pageParam: {type: 'add'},
+		        vScrollBarEnabled: false
+		   	 });    
+    }
+</script>
+</html>

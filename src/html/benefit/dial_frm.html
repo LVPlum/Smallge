@@ -1,0 +1,490 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="teletel=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            height: 100%;
+            overflow: auto;
+            background: none;
+        }
+        .tea-dial-circle{
+            width: 15.8rem;
+            height: 18.25rem;
+            background-image: url(../../image/benefit/benefit_dial_circle@2x.png);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            position: relative;
+            margin: 0 auto;
+            /*width: 17.8rem;
+            height: 20.25rem;
+            background-image: url(../../image/benefit/benefit_dial_circle@2x.png);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            position: relative;*/
+        }
+        .tea-dial-award,.tea-dial-start{
+            background-size: 100%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+        }
+        .tea-dial-award{
+            width: 14rem;
+            height: 14rem;
+            /*background-image: url(../../image/benefit/benefit_dial_award@2x.png);*/
+            z-index: -1;
+            margin-left: -7rem;
+            margin-top: -7rem;
+            background-repeat: no-repeat;
+        }
+        .tea-dial-start{
+            width: 4.95rem;
+            height: 5.72rem;
+            background-image: url(../../image/benefit/benefit_dial_start@2x.png);
+            margin-left: -2.47rem;
+            margin-top: -2.86rem;
+            background-repeat: no-repeat;
+        }
+        .success{
+            background: #ffaa4e;
+            width: 75%;
+            height: 2rem;
+            margin: 0 auto;
+            line-height: 2rem;
+            border-radius: 30px;
+            box-shadow: 2px 2px 1px 0px #ff603a;
+            position: absolute;
+            left: 12.5%;
+        }
+        .hide{
+            opacity: 0;
+        }
+        .closeBtn{
+            position: absolute;
+            right: 10%;
+            z-index: 999;
+        }
+    </style>
+</head>
+<body class="tea-body-mask" tapmode ontouchend="tea.closeFrame(event,'app')" >
+    <div id="app" v-cloak class="aui-padded-b-10" style="overflow: hidden;width: 100%">
+        <!--<dial :test="test"></dial>-->
+        <div class="closeBtn" tapmode @click="closeFrm"><i class="aui-iconfont aui-icon-close tea-font-weight-bold aui-text-white"></i></div>
+        <div class="tea-dial-circle">
+            <div id="rotate" class="tea-dial-award">
+                <img :src="award ? award : '../../image/benefit/benefit_dial_award@2x.png' ">
+            </div>
+            <div class="tea-dial-start" tapmode @click="dialStart"></div>
+        </div>
+        <div v-show="result" class="success" id="result" tapmode @click="closeFrm">
+            <div class="aui-font-size-16 tea-text-title">
+                <span id="msg" class="aui-font-size-14" style="color: #41271e;font-weight: bold">{{ result }}</span>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+
+</script>
+<script type="text/javascript" src="../../script/aui-dialog.js" ></script>
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {},vm = null;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    initVar();
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+    // ajax请求数据
+    getData();
+
+};
+
+/**********************************初始化变量**********************************/
+function initVar(){
+
+    dom = {
+    };
+
+    data = {
+        deg: 0,
+        award_name: '',
+    };
+
+    values = {
+    };
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+            mask: true,    //阻止连续点击时，抽奖事件连续触发
+            result: '',     //抽奖结果
+            award: '', //转盘奖项默认值
+        },
+        methods: {
+            dialStart: function(){
+                if(vm.mask){
+                    vm.mask = false;
+                    getResult();
+                }
+            },
+            closeFrm: function(){
+                api.closeFrame();
+            }
+        },
+        computed: {
+
+        }
+    });
+
+    //获取抽奖项目
+    getDial();
+
+    updateHTML();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************更新变量**********************************/
+function updateVar(){
+
+
+}
+
+function updateDom(){
+
+
+
+}
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+/*获取抽奖项目*/
+function getDial(){
+    tea.showp('加载中');
+    api.ajax({
+        url: website + 'api_cj.php?action=get_lottery_item',
+        method: 'post',
+        timeout: 30,
+        data: {
+            values: {
+                lottery_item: '7',
+                ID: $api.getStorage('ID')
+            },
+        }
+    }, function (ret, err) {
+        api.hideProgress();
+//        _alert(ret);
+        if(!ret){
+            tea.toast('ajax');
+            return false;
+        }
+        if(ret.ok == 1){
+            vm.award = ret.lottery_img;
+        }
+    });
+}
+/*获取抽奖结果*/
+function getResult() {
+    tea.showp('加载中');
+    api.ajax({
+        url: website + 'api_cj.php?action=draw',
+        method: 'post',
+        timeout: 30,
+        data: {
+            values: {
+                lottery_item: '7',
+                userid: $api.getStorage('ID'),
+                token: $api.getStorage('token'),
+                deviceId: api.deviceId,
+                nickname: $api.getStorage('nickname'),
+            },
+        }
+    }, function (ret, err) {
+        api.hideProgress();
+        if(!ret){
+            tea.toast('ajax');
+            vm.mask = true;
+            return false;
+        }
+        if(ret.succ == 1){
+//            _alert(ret);
+            whichAward(ret.lottery_id);
+
+            /*在css3动画结束后，开始执行中奖提示*/
+            var award = document.getElementById('rotate');
+            award.addEventListener('webkitTransitionEnd',function() {
+                if (ret.lottery_id != 8) {
+                    vm.result = "恭喜获得"+ ret.lottery_open + "~";
+                } else {
+                    vm.result = '很遗憾未中奖~明天再来哦！';
+                }
+                /*抽奖完成发送到签到页面刷新抽奖状态*/
+                api.sendEvent({
+                    name: 'lotteryOK',
+                });
+                vm.mask = true;
+            });
+            return true;
+        }
+        api.toast({
+            msg: ret.msg,
+            duration: 2000,
+            location: 'middle'
+        });
+        vm.mask = true;
+        return false;
+    });
+}
+
+/*确定旋转的角度位置*/
+function whichAward(award_id){
+    data.deg = Math.floor(Math.random()*20+10);
+    switch (award_id){
+        case 1:
+            data.deg+=0*45;
+            break;
+        case 2:
+            data.deg+=1*45;
+            break;
+        case 3:
+            data.deg+=2*45;
+            break;
+        case 4:
+            data.deg+=3*45;
+            break;
+        case 5:
+            data.deg+=4*45;
+            break;
+        case 6:
+            data.deg+=5*45;
+            break;
+        case 7:
+            data.deg+=6*45;
+            break;
+        case 8:
+            data.deg+=7*45;
+            break;
+    }
+    rotateEle("rotate",data.deg)
+}
+
+/*转盘旋转*/
+function rotateEle(ele,deg){
+    var rotate = document.getElementById(ele);
+    data.deg+=360*5;
+    rotate.style.cssText ='transition:all 5s;transform:rotate('+data.deg+'deg)';
+}
+
+
+    /*/!*点击开始抽奖*!/
+    function dialStart(){
+        if(!data.mask) return; //阻止转盘事件重复触发
+        if(data.mask){
+            showp('');
+            data.mask = false;
+            /!*获取抽奖项目判断是否在活动时间ok：1活动范围*!/
+            api.ajax({
+                url:  website +'api_cj.php?action=get_lottery_item',
+                method: 'post',
+                data: {
+                    values:{
+                        lottery_item: '2',
+                        ID: $api.getStorage('ID')
+                    }
+                }
+            },function(ret,err){
+                api.hideProgress();
+                if(!ret){
+                    tea.toast('ajax');
+                    data.mask = true;
+                    return false;
+                };
+                if(ret.ok == 1){
+                    getLotteryResult();
+                    return true;
+                };
+                api.toast({
+                    msg: ret.msg,
+                    duration: 2000,
+                    location: 'middle'
+                });
+                data.mask = true;
+            })
+        }
+    }
+    /!*获取抽奖结果*!/
+    function getLotteryResult(){
+        showp('');
+        api.ajax({
+            url: website + 'api_cj.php?action=draw',
+            method: 'post',
+            timeout: 30,
+            data: {
+                values: {
+                    lottery_item: '2',
+                    userid: $api.getStorage('ID'),
+                    token: $api.getStorage('token'),
+                    deviceId: api.deviceId,
+                    nickname: $api.getStorage('nickname'),
+                }
+            }
+        }, function (ret, err) {
+            api.hideProgress();
+            if(!ret){
+                tea.toast('ajax');
+                data.mask = true;
+                return false;
+            };
+            if(ret.succ == 1){
+                whichAward(ret.lottery_id);
+
+                /!*在css3动画结束后，开始执行弹窗提示*!/
+                var award = document.getElementById('rotate');
+                award.addEventListener('webkitTransitionEnd',function() {
+                    if (ret.lottery_id != 8) {
+                        var news = "恭喜获得" + ret.lottery_open + "~";
+                        lotteryPop(news);
+                    } else {
+                        var news = '很遗憾未中奖~明天再来哦！';
+                        lotteryPop(news);
+                    }
+                    /!*抽奖完成发送到签到页面成功事件进行签到*!/
+                    api.sendEvent({
+                        name: 'lotteryOK',
+                    });
+                    data.mask = true;
+                });
+                return true;
+            }
+            api.toast({
+                msg: ret.msg,
+                duration: 2000,
+                location: 'middle'
+            });
+            data.mask = true;
+        });
+    }
+
+    /!*确定旋转的角度位置*!/
+    function whichAward(award_id){
+        data.deg = Math.floor(Math.random()*20+10);
+        switch (award_id){
+            case 1:
+                data.deg+=3*45,data.award_name = '10积分';
+                break;
+            case 2:
+                data.deg+=1*45,data.award_name = '20积分';
+                break;
+            case 3:
+                data.deg+=5*45,data.award_name = '30积分';
+                break;
+            case 4:
+                data.deg+=2*45,data.award_name = '审车现金券 ￥10';
+                break;
+            case 5:
+                data.deg+=0*45,data.award_name = '汽车保险现金券 ￥20';
+                break;
+            case 6:
+                data.deg+=6*45,data.award_name = '审车现金券 ￥5';
+                break;
+            case 7:
+                data.deg+=4*45,data.award_name = '特权卡现金券 ￥50';
+                break;
+            case 8:
+                data.deg+=7*45,data.award_name = '谢谢参与';
+                break;
+        }
+        rotateEle("rotate",data.deg)
+    }
+
+    /!*转盘旋转*!/
+    function rotateEle(ele,deg){
+        var rotate = document.getElementById(ele);
+        data.deg+=360*5;
+    //    alert(deg);
+        rotate.style.cssText ='transition:all 5s;transform:rotate('+data.deg+'deg)';
+
+    }
+
+    /!*抽奖弹窗提示*!/
+    function lotteryPop(message){
+        var show = $api.byId('result');
+        var dialResult = $api.byId('msg');
+        $api.removeCls(show, 'hide');
+        $api.text(dialResult, message);
+
+    }
+    /!* 关闭弹窗 *!/
+    function closeFrm(){
+        api.closeFrame();
+    }
+*/
+
+</script>
+</html>

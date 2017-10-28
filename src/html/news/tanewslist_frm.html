@@ -1,0 +1,178 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/common.css" />
+</head>
+<style type="text/css">
+.tp{padding-top:10px}
+.bo{margin-bottom: 5px;}
+.tb{font-size:12px}
+.ap{
+          overflow: hidden;
+}
+.as{
+          background-color: #FA9150;
+}
+</style>
+<body>
+<div class="aui-content tp">
+    <ul class="aui-timeline" id="list">
+
+    </ul>
+</div>
+</div>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript" src="../../script/tea.js" ></script>
+<script type="text/javascript" src="../../script/aui-toast.js" ></script>
+<script type="text/javascript">
+var ID  = null, curdate = null, mypage = null;
+apiready = function() {
+    ID = api.pageParam.ID;
+    api.parseTapmode();
+    loaddate(1,0);
+    mypage = 1;
+	api.addEventListener({        //上拉翻页
+	    name: 'scrolltobottom'
+	}, function(ret, err){
+		    mypage++;
+		    showp('数据加载中...','请梢候');
+		    loaddate(mypage,0);
+	});
+	api.addEventListener({
+	    name: 'reflashnews'
+	}, function(ret, err){
+        mypage = 1;
+        loaddate(mypage,1);
+	});
+};
+function loaddate(page,act){
+    showp('数据加载中...','请梢候');
+	api.ajax({
+	    url: website + 'getnewslist.php?action=tanewslist&page=' + page,
+	    method: 'post',
+	    timeout: 30,
+	    dataType: 'json',
+	    returnAll:false,
+	    data:{
+	        values: {ID: ID},
+	    }
+	},function(ret,err){
+		api.hideProgress();
+	    if (ret) {
+	        var obj = $api.byId('list');
+	        var html = '';
+            for (var i = 0, len = ret.length; i < len; i++) {
+                var r = ret[i];
+                var md = new Date(r.addtime.replace(/-/g,'/'));
+                var showdate = md.getMonth() + 1 + '-' + md.getDate();
+                var showtime = md.getHours() + ':' + md.getMinutes();
+                var body = r.body;
+                if(body.length > 55){
+                   body = body.substr(0,55) + '...';
+                }
+                if(r.hbmode != '1'){
+                	html += '<li tapmode onclick="opencontent('+ r.ID +')">';
+                }else{
+                    html += '<li>';
+                }
+                if(showdate != curdate){
+                	html += '<div class="aui-time-label aui-bg-info">'+ showdate +'</div>';
+                }
+                html += '<div class="aui-timeline-item">';
+                if(r.hbmode == '1'){
+            	    var hbmsg = r.description == '' ? '平安是福，行车顺利' : r.description;
+	            		html += '<div class="aui-content ap"><ul class="aui-list-view"><li class="aui-list-view-cell aui-img as" tapmode onclick="openhb('+ r.hongbaoid +')"><img class="aui-img-object aui-pull-left" src="../../image/chathongbao.png"><div class="aui-img-body">红包驾到<p class="aui-ellipsis-2">'+ hbmsg +'</p></div></li></ul></div>';
+                }else{
+                		html += '<div class="aui-timeline-body">'+ body +'</div>';
+                }
+
+	        	if(r.pic != ''){
+	        	html += '<div class="aui-content ap"><ul class="aui-list-view aui-grid-view bo">';
+	           	   var picarry = r.pic.split(',');
+	        	   for(var a = 0; a < picarry.length; a++){
+	        	      html += '<li class="aui-list-view-cell aui-img aui-col-xs-4" onclick="openbigimg(' + r.ID + ',' + a + ');"><img class="aui-img-object" src="' + website + 'newspicup/smallimg/'+ picarry[a] +'"></li>';
+	        	   }
+	        	html += '</ul>';
+	        	}
+
+                html += '<div class="aui-timeline-footer">';
+                html += '<p class="tb"><i class="aui-iconfont aui-icon-time"></i> '+ showtime +'</p>';
+                if(r.hbmode != '1'){
+	            	html += '<p class="tb"><i class="aui-iconfont aui-icon-location"></i> '+ r.wz +'</p>';
+                }
+
+                html += '</div>';
+                html += '</div>';
+                html += '</li>';
+                curdate = showdate;
+            }
+            if(act == 0){
+                $api.append(obj, html);
+            }else{
+            	$api.html(obj, html);
+            }
+	    }
+		else {
+			tea.toast('fail','暂无更多新鲜事');
+		}
+
+	});
+}
+function opencontent(ID){
+			api.openWin({
+		        name: 'tanewscontent',
+		        url: './tanewscontent_win.html',
+		        vScrollBarEnabled: false,
+		        pageParam: {ID: ID}
+		   	 });
+}
+function openhb(hongbaoid){
+		api.openWin({
+		    name: 'lingqunhongbao_win',
+		    url: '../red_packet/lingqunhongbao_win.html',
+            pageParam: {hongbaoID: hongbaoid}
+		});
+}
+function openbigimg(picid,index){
+	api.ajax({
+	    url: website + 'getnewslist.php?action=getimglist',
+	    method: 'post',
+	    timeout: 30,
+	    dataType: 'json',
+	    returnAll:false,
+	    data:{
+	        values: {ID: picid},
+	    }
+	},function(ret,err){
+	    if (ret) {
+	       if(!ret.errmsg){
+                 if(ret.succ == 'ok'){
+                    var imgarry = ret.img.split(',');
+                    var imgurl = [];
+                    for(var a = 0; a < imgarry.length; a++){
+                            var str = website+ 'newspicup/' +imgarry[a];
+                            imgurl.push(str);
+                    }
+					var imageBrowser = api.require('imageBrowser');
+					imageBrowser.openImages({
+					    imageUrls: imgurl,
+					    showList: false,
+					    activeIndex : index
+					});
+                 }
+	        }
+	    }else {
+	        api.alert({
+	            msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+	        });
+	    }
+	});
+}
+</script>
+</html>

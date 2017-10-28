@@ -1,0 +1,132 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>历史充值号码</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+		html,body {
+            height: 100%;
+            overflow: auto;
+		}
+	  html,body{
+	        background-color: #f2f5f8;
+	    }
+    </style>
+</head>
+<body>
+
+<div class="aui-tab aui-margin-t-15" id="tab">
+    <div class="aui-tab-item aui-active" tapmode onclick="">历史号码</div>
+    <div class="aui-tab-item" tapmode onclick="_openContacts()" >通讯录</div>
+</div>
+<div class="aui-content aui-margin-b-15">
+    <ul class="aui-list aui-list-in"  id="list">
+
+
+    </ul>
+</div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+var userid = null;
+/**********************************apiready**********************************/
+apiready = function(){
+ api.parseTapmode();
+ userid = $api.getStorage('ID');
+   loaddate();
+};
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {};
+
+
+	function loaddate(){
+		showp('数据载入中','');
+		api.ajax({
+		    url: website + 'cz.php?action=mytellist',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {userid: userid},
+		    }
+		},function(ret,err){
+			api.hideProgress();
+		    if (ret) {
+		    	var obj = $api.byId('list');
+		    	var html = ' <li class="aui-list-header" style="background-color: #f2f5f8;">'+
+					        	    '轻触选择要充值的号码'+
+					        '</li>';
+	            for (var i = 0, len = ret.length; i < len; i++) {
+	                var r = ret[i];
+	                 html += '<li class="aui-list-item"  tapmode onclick="selecttel(\''+ r.tel +'\')">'+
+					            '<div class="aui-list-item-inner">'+
+					                r.tel +
+					            '</div>'+
+					        '</li>';
+	            }
+	            $api.append(obj, html);
+	            api.parseTapmode();
+			}else{
+				var obj = $api.byId('list');
+				var html = ' <li class="aui-list-header" style="background-color: #f2f5f8;">'+
+					        	    '暂无历史号码'+
+					        '</li>';
+				 $api.html(obj, html);
+			}
+		});
+	}
+
+	function selecttel(tel){
+         api.sendEvent({
+		    name: 'selecttel',
+		    extra: {
+		        tel: tel
+		    }
+		 });
+		 api.closeWin();
+	}
+	// 打开通讯录
+	function _openContacts(){
+		api.openContacts(function(ret, err) {
+		    if (ret && ret.status) {
+		        var name = ret.name;
+		        var phone = ret.phone;
+		        selecttel(phone);
+		    } else {
+				api.toast({
+	                msg:err.msg
+                });
+		    }
+		});
+	}
+</script>
+</html>

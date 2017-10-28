@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style>
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html, body {
+            width: 100%;
+            /*height: 100%;*/
+            overflow: auto;
+        }
+
+        .foot{
+            width: 100%;
+            height: 2.2rem;
+            position: fixed;
+            bottom: 0;
+            text-align: center;
+            line-height: 2.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="aui-bar aui-bar-nav aui-bar-light" id="aui-header">
+        <a class="aui-btn aui-pull-left" tapmode onclick="closeWin()">
+            <span class="aui-iconfont aui-icon-left tea-text-title"></span>
+        </a>
+        <div class="aui-title tea-text-title">预约报餐</div>
+        <a class="aui-btn aui-pull-right" tapmode onclick="submitFood()">
+            <span class="tea-text-blue">提交</span>
+        </a>
+    </header>
+
+    <footer class="foot" id="aui-footer">
+        <span class="aui-col-xs-6 aui-font-size-16 tea-text-title" style="background: #F0F0F0" tapmode onclick="unChecked()">取消全选</span>
+        <span class="aui-col-xs-6 aui-font-size-16 aui-text-white tea-bg-blue" tapmode onclick="checkedAll()">全选</span>
+    </footer>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+<script type="text/javascript">
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('aui-header');
+        var footer = $api.byId('aui-footer');
+        var footerH = $api.offset(footer).h
+        $api.fixIos7Bar(header);
+        $api.fixStatusBar(header);// 马秋强，添加 2017-4-24
+        var headerPos = $api.offset(header);
+        var body_h = $api.offset($api.dom('body')).h;
+        api.openFrame({
+            name: 'mulityy_frm',
+            url: './mulityy_frm.html',
+            bounces: false,
+            pageParam:{com: api.pageParam.com, bumen: api.pageParam.bumen},
+ 	    	vScrollBarEnabled: false,
+	   		hScrollBarEnabled: false,
+            rect: {
+                x: 0,
+                y: headerPos.h,
+                w: 'auto',
+                h: api.winHeight - headerPos.h - footerH
+            }
+        })
+
+
+    };
+    function closeWin(){
+        api.closeWin({
+
+        });
+    }
+    function submitFood(){
+        api.sendEvent({
+            name: "postFood",
+            extra:{
+                key1: 1,
+            }
+        });
+    }
+    function checkedAll(){
+        var jsfun = 'vm.checkedAll();';
+        api.execScript({
+            frameName: 'mulityy_frm',
+            script: jsfun
+        });
+    }
+    function unChecked(){
+        var jsfun = 'vm.unChecked();';
+        api.execScript({
+            frameName: 'mulityy_frm',
+            script: jsfun
+        });
+    }
+
+</script>
+</html>

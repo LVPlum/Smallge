@@ -1,0 +1,250 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        html,body{
+            background-color: #fff;
+            color: #333;
+        }
+        .aui-col-xs-4{
+            display: table;
+        }
+        .money-type{
+            width: 100%;
+            height: 3.15rem;
+            text-align: center;
+            color: #999;
+            border: 1px solid #999;
+            border-radius: 0.25rem;
+            display:table-cell;
+            vertical-align: middle;
+        }
+        .active-money-type{
+            color: #3399ff;
+            border: 1px solid #3399ff;
+        }
+        .money-checked{
+            background-color: #3399ff;
+            color: white;
+        }
+        .aui-btn-block{
+            height: 2.2rem;
+            line-height: 2.2rem;
+            font-size: 0.8rem;
+            font-weight: 100;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <div class="aui-content aui-margin-b-15">
+            <div class="aui-card-list-content-padded">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title aui-margin-b-10 aui-margin-t-15 tea-text-gray">请选择充值金额</div>
+                    <div class="aui-row aui-row-padded">
+                        <div v-for="(val,i) in item" class="aui-col-xs-4" @click="checkOn(val)">
+                            <div class="money-type active-money-type" :class="index == val.itemid ? 'money-checked' : '' ">
+                                <div class="aui-font-size-16">{{ val.price }}</div>
+                                <div class="aui-font-size-12">到账：{{ val.actual }}元</div>
+                            </div>
+                        </div>
+                        <!--<div class="aui-col-xs-4">
+                            <div class="money-type active-money-type">
+                                <div class="aui-font-size-16 ">100元</div>
+                                <div class="aui-font-size-12 ">到账：601元</div>
+                            </div>
+                        </div>
+                        <div class="aui-col-xs-4">
+                            <div class="money-type active-money-type">
+                                <div class="aui-font-size-16 ">100元</div>
+                                <div class="aui-font-size-12 ">到账：601元</div>
+                            </div>
+                        </div>
+                        <div class="aui-col-xs-4">
+                            <div class="money-type active-money-type">
+                                <div class="aui-font-size-16 ">100元</div>
+                                <div class="aui-font-size-12 ">到账：601元</div>
+                            </div>
+                        </div>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer style="margin: 0rem 2rem" @click="submit">
+            <div class="aui-btn aui-btn-block aui-text-white tea-btn-radius" :class="index == '' ? 'tea-bg-light-blue' : 'tea-bg-blue' ">确定充值</div>
+        </footer>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var vm = null;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+            item: [
+                {itemid:'1',price:'100.00',actual:'101.00',count:'11'},
+                {itemid:'2',price:'100.00',actual:'101.00',count:'11'},
+            ],
+            index: '',       //选中充值项id
+            pageParam: null, //保存的页面参数
+            saveUrl: '',     //保存订单url,用于区分办卡订单和充值订单
+            title: '',       //支付标题
+            type: '',        //支付的类型，办卡和充值
+        },
+        methods: {
+            checkOn: function(val){
+                vm.index = val.itemid;
+            },
+            submit: function(){
+                if(vm.index != ''){
+                    if(api.pageParam.cardno){
+                        vm.saveUrl = 'oil_api.php?action=charge';
+                        vm.title = '支付油卡充值';
+//                        vm.type = 'oil_recharge';
+                        vm.pageParam = {
+                            ID: $api.getStorage('ID'),
+                            cardno: api.pageParam.cardno,
+                            charge_item: vm.index,
+                        }
+                    }else {
+                        vm.saveUrl = 'oil_api.php?action=save';
+                        vm.title = '支付油卡办理';
+//                        vm.type = 'oil_apply';
+                        vm.pageParam = api.pageParam;
+                        vm.pageParam.ID = $api.getStorage('ID');
+                        vm.pageParam.charge_item = vm.index;
+                    }
+                    saveOrder(vm.saveUrl,vm.pageParam);
+                }else {
+                    api.toast({
+                        msg: '请选择要充值的项目',
+                        duration: 2000,
+                        location: 'middle'
+                    });
+                }
+            }
+        },
+        computed: {
+
+        }
+    })
+    
+    //获取充值项
+    getData();
+    
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+    api.ajax({
+        url: website + 'oil_api.php?action=charge_item',
+        method: 'post',
+        timeout: 30,
+    }, function (ret, err) {
+        if(ret.succ == '1'){
+            vm.item = ret.data;
+            return true;
+        }
+    });
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+function saveOrder(url,data){
+    api.ajax({
+        url: website + url,
+        method: 'post',
+        timeout: 30,
+        data: {
+            values: data,
+        }
+    }, function (ret, err) {
+//        _alert(ret);
+        if(ret.succ == '1'){
+            api.openWin({
+                name: 'pay_win',
+                url: '../pay/pay_win.html',
+                pageParam: {
+                    title: vm.title,
+                    money: ret.data.money,
+                    type: 'oil',
+                    values: {
+                        payid: ret.data.payid,
+                        paymoney: ret.data.money,
+                        mtype: ret.data.mtype,
+                    }
+                },
+            });
+        }
+    });
+}
+function toPay(pageParam){
+    api.openWin({
+        name: 'pay_win',
+        url: '../pay/pay_win.html',
+        pageParam: vm.pageParam,
+    });
+}
+</script>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/common.css" />
+</head>
+<style type="text/css">
+
+</style>
+<body>
+    <div class="aui-tips aui-tips-info">
+        <div class="aui-tips-content aui-ellipsis-1">
+                                        已经选择的日期为：<span id="result"></span>
+        </div>
+    </div>
+<div class="aui-content">
+    <ul class="aui-list-view" id="showtime">
+
+    </ul>
+</div>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript">
+var d = null, contetn = null;
+	apiready = function() { 
+	    api.parseTapmode();     
+	    d = api.pageParam.d;
+	    content = api.pageParam.content;
+	    $api.text($api.byId('result'), d);
+	    loaddate();
+	};
+	function loaddate(){
+	   showp('时间加载中','请稍候...');
+       var strs = content.split(","); 
+       var obj = $api.byId('showtime');
+       var html = '';
+       for(var i = 0; i < strs.length; i++ ){
+              var realtime = d + ' ' + strs[i] + ':00:00';
+              //getrecount(realtime);   //取数量
+              var date1 = new Date(realtime.replace(/-/g,'/'));
+              var date2 = new Date(getNowFormatDate().replace(/-/g,'/'));
+              if( Date.parse(date1) > Date.parse(date2)){
+	          		html += '<li class="aui-list-view-cell" onclick="postdate('+ strs[i] +')"><a class="aui-arrow-right">';	          
+	          		//html += strs[i] + '点<span class="aui-badge aui-badge-danger" id="'+ realtime +'">读取中...</span>';
+	          		html += strs[i] + '点';
+	          		html += '</a></li>';
+	          }else{   //已经超时的钟点数
+	          		html += '<li class="aui-list-view-cell" style="text-decoration:line-through;color:blue">';	          
+	          		html += strs[i] + '点';
+	          		html += '</li>';	          
+	          }
+       }
+       api.hideProgress();
+       $api.html(obj, html);
+	}
+	function postdate(t){
+       var realtime = d + ' ' + t +':00:00';
+       var strtime = d + '   ' + t +'点';
+	     api.sendEvent({
+		    name: 'selectretime',
+		    extra: {
+		        realtime: realtime, 
+		        strtime: strtime
+		    }
+		 });
+		 api.closeToWin({
+	         name: api.pageParam.winName
+         });         	  
+	}
+	function getrecount(retime){
+		api.ajax({
+		    url: website + 'gettheretime.php?action=getrecount',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {retime: retime},
+		    }
+		},function(ret,err){
+		    if (ret) {
+               $api.text($api.byId(retime), ret.recount);
+		    }
+		});	
+	}
+	function getNowFormatDate() {
+	    var date = new Date();
+	    var seperator1 = "-";
+	    var seperator2 = ":";
+	    var month = date.getMonth() + 1;
+	    var strDate = date.getDate();
+	    var strH = date.getHours();
+	    if (month >= 1 && month <= 9) {
+	        month = "0" + month;
+	    }
+	    if (strDate >= 0 && strDate <= 9) {
+	        strDate = "0" + strDate;
+	    }
+	    if (strH >=0 && strH <= 9){
+	        strH = parseInt(strH);
+	    }
+	    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+	            + " " + strH + seperator2 + date.getMinutes()
+	            + seperator2 + date.getSeconds();
+	    return currentdate;
+	}	
+</script>
+</html>

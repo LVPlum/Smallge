@@ -1,0 +1,814 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-slide.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            /* 防止点击闪烁 */
+            -webkit-tap-highlight-color:rgba(0,0,0,0);
+            /* 缩放网页，文字大小不变 */
+            -webkit-text-size-adjust:none;
+        }
+        ul{list-style: none}
+        body,html{
+            /*height: 100%;*/
+            background-color: #f2f5f8;
+        }
+        header{
+            width:100%;
+            height:9.75rem;
+            position:relative;
+            overflow: hidden;
+        }
+        /*顶部遮罩层*/
+        .Masked{
+            width: 100%;
+            height: 4.875rem;
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            background: url("../../image/icon/heise@2x.png") no-repeat;
+            background-size: cover;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            z-index: 9999;
+
+        }
+        .header-icon{
+            width:1.1rem;
+            position: absolute;
+            top: 0.7rem;
+            border-radius: 0.2rem;
+            z-index: 499999999;
+        }
+        .header-icon-left{
+            height: 1.1rem;
+            left: 0.75rem;
+            background: url("../../image/icon/saoyisao@2x.png") no-repeat;
+            background-size: cover;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+
+
+        }
+        .header-icon-rigth{
+            height: 1.2rem;
+            right: 0.75rem;
+            background: url("../../image/icon/xiaoxi@2x.png") no-repeat;
+            background-size: cover;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+        }
+        nav{
+            width: 100%;
+            height: 4.5rem;
+            background-color: #fff;
+        }
+        nav>ul{
+            width: 100%;
+            height: 100%;
+            text-align: center;
+        }
+        nav>ul li{
+            width: 25%;
+            height: 100%;
+            float: left;
+            text-align: center;
+            margin: 0 auto;
+            color: #333;
+        }
+        .navImgContent{
+            width: 2.25rem;
+            height: 2.25rem;
+            margin: 0.75rem auto 0 auto;
+            border-radius: 50%;
+        }
+        .navImgContent>img{
+            width: 100%;
+            height: 100%;
+        }
+        .navTitle{
+            margin-bottom: 0.3rem;
+            font-size: 0.6rem;
+        }
+        section{
+            width: 100%;
+            height: auto;
+            margin-bottom: 2.45rem;
+        }
+        article{
+            width: 100%;
+            height: 2.7rem;
+            line-height: 2.7rem;
+            margin: 1rem 0;
+            background-color: #fff;
+        }
+        .article-content{
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .article-content-left{
+            width: 50%;
+            height: 100%;
+            float: left;
+            overflow: hidden;
+        }
+        .article-content-left-img{
+            width: 1.9rem;
+            height: 1.9rem;
+            float: left;
+            margin: 0.4rem 0.5rem 0.4rem 0.75rem;
+            border-radius: 0.2rem;
+            display: inline-block;
+        }
+        .article-content-left-img>img{
+            width: 100%;
+            height: 100%;
+        }
+        .article-content-left-text{
+            line-height: 2.7rem;
+            font-size: 0.7rem;
+            color: #b2b2b2;
+            display: inline-block;
+        }
+        .article-content-right{
+            width: 50%;
+            height: 100%;
+            float: right;
+            overflow: hidden;
+        }
+        .article-content-right-img{
+            width: 1.9rem;
+            height: 1.9rem;
+            float: right;
+            margin: 0.4rem 0.75rem;
+            border-radius: 0.2rem;
+        }
+        .article-content-right-img>img{
+            width: 100%;
+            height: 100%;
+        }
+        footer{
+            width: 100%;
+            height: 2.45rem;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #fff;
+        }
+        footer>ul{
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            overflow: hidden;
+        }
+        footer>ul li{
+            width: 25%;
+            height: 100%;
+            float: left;
+            margin:0 auto;
+            text-align: center;
+            color: #333;
+        }
+        .footerImgContent{
+
+            text-align: center;
+            border-radius: 0.2rem;
+
+        }
+        .home-icon{
+            width: 1.15rem;
+            height: 1.1rem;
+            margin: 0.4rem auto 0.25rem;
+        }
+        .xinXianShi-icon{
+            width: 1.35rem;
+            height: 1rem;
+            margin: 0.5rem auto 0.25rem;
+        }
+        .friend-icon{
+            width: 1.25rem;
+            height: 1.05rem;
+            margin: 0.4rem auto 0.25rem;
+        }
+        .my-icon{
+            width: 1.15rem;
+            height: 1.15rem;
+            margin: 0.4rem auto 0.15rem ;
+        }
+        .footerImgContent>img{
+            width: 100%;
+            height: 100%;
+        }
+        .footerTitle{
+            font-size: 0.5rem;
+            color: #333;
+        }
+
+        .aui-dot {
+            top: 0;
+            right: 10%;
+        }
+
+
+        .aui-slide-page-dot {
+            background: #fff;
+            opacity: .5;
+            -webkit-transition: all 0.5s;
+                    transition: all 0.5s;
+        }
+        .aui-slide-page-active {
+            background: #fff;
+            opacity: 1;
+        }
+
+        .fixs {
+		    position: fixed;
+		    top: 0;
+		    right: 0;
+		    left: 0;
+		    /* max-width: 540px; */
+		    margin: 0 auto;
+		    z-index: 7;
+            background: rgba(248, 248, 248, 1);
+            border-top: 1px solid #ededed;
+		    border-bottom: 1px solid #ededed;
+		    box-shadow: 0 2px 8px hsla(0,0%,87%,.5);
+		    -webkit-transition: all .3s ease;
+		    transition: all .3s ease;
+		}
+
+        .sticky {
+            /*滚过初始位置时自动吸顶*/
+            position: -webkit-sticky;
+            position: sticky;
+            /*吸顶时的定位*/
+            top: 0;
+            left: 0;
+            /*z比下方所有z高*/
+            /*margin: 0 auto;*/
+            z-index: 999;
+            background: rgba(248, 248, 248, 1);
+            border-top: 1px solid #ededed;
+            border-bottom: 1px solid #ededed;
+            box-shadow: 0 2px 8px hsla(0,0%,87%,.5);
+            -webkit-transition: all .3s ease;
+            transition: all .3s ease;
+        }
+
+        /*#news-list {
+            overflow: auto;
+        }*/
+    </style>
+</head>
+<body id="body" class="aui-border-t">
+
+    <header  id="header">
+        <div id="header_slide_img" class="aui-slide-wrap" tapmode onclick="openWinVip()">
+
+        </div>
+        <div class="aui-slide-page-wrap"></div>
+        <div id='Masked' class="Masked"></div>
+        <span id="header_saoYiSao" class="header-icon-left header-icon tea-big" tapmode onclick="saoYisao()"></span>
+        <span id="header_xiaoXi" class="header-icon-rigth header-icon tea-big" tapmode onclick="openWinNotice()"><div id="dot" class="aui-dot aui-hide"></div></span>
+    </header>
+
+    <nav class="aui-margin-b-5 sticky" id ="nav">
+        <ul>
+            <li id="teQuanKa" tapmode onclick="openWinVip()">
+                <div class="navImgContent"><img src="../../image/icon/vip@2x.png" alt="特权卡"></div>
+                <span class="navTitle">特权卡</span>
+            </li>
+            <li id="yuYueShenChe" tapmode onclick="openWinCarCheck()">
+                <div class="navImgContent"><img src="../../image/icon/shenche@2x.png" alt="网约审车"></div>
+                <span class="navTitle">网约审车</span>
+            </li>
+            <li id="qiCheBaoXian" tapmode onclick="openWinInsure()">
+                <div class="navImgContent"><img src="../../image/icon/baoxian@2x.png" alt="汽车保险"></div>
+                <span class="navTitle">车辆保险</span>
+            </li>
+            <li id="woYaoDaiBan" tapmode onclick="openWinAgency()">
+                <div class="navImgContent"><img src="../../image/icon/daiban@2x.png" alt="我要代办"></div>
+                <span class="navTitle">找代办</span>
+            </li>
+
+        </ul>
+    </nav>
+    <!-- <div class="aui-margin-10 aui-text-center">
+        <p class="aui-font-size-14 tea-text-title" style="font-weight: bold">— 小马哥新闻 —</p>
+    </div> -->
+    <section id="news-list" class="aui-content aui-margin-b-5">
+
+    </section>
+
+
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/aui-slide.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- 弹窗模块 -->
+<script type="text/javascript" src="../../script/dialog.js"></script>
+
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+    <ul class="aui-list aui-media-list">
+        {{~it:value:index}}
+        <li class="aui-list-item" tapmode onclick="openWinDetail({{=value.ID}});">
+            <div class="aui-media-list-item-inner">
+                <div class="aui-list-item-media">
+                    <img data-url="{{=(value.pic == ''? '': website +'newstitleimg/'+ value.pic)}}" src="../../image/holder_car.png" onload="tea.loadImage(this)">
+                </div>
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-text">
+                        <div class="aui-list-item-title">{{=value.title}}</div>
+                        <!--<div class="aui-list-item-right">08:00</div>-->
+                    </div>
+                    <div class="aui-list-item-text">
+                        {{=value.description}}
+                    </div>
+                </div>
+            </div>
+        </li>
+        {{~}}
+    </ul>
+</script>
+
+<script type="text/javascript">
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化DOM对象
+    initDOM();
+
+    // 初始化变量
+    initVar();
+
+    // 更新HTML
+    initHTML();
+
+    // 初始化监听
+    initEventListener();
+
+    // 初始化其他模块
+    initModule();
+
+    // ajax请求数据
+    getData();
+
+    api.sendEvent({
+        name: 'getunread',
+        extra: {
+        }
+    });
+
+	// 下拉重新加载定单列表信息
+	_setRefreshHeaderInfo(getData);
+
+    checkupdate();
+
+    checkOffers();
+
+};
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {}, noread = 0;
+
+/**********************************初始化变量**********************************/
+// 初始化DOM对象
+function initDOM(){
+
+    var newsList = $api.byId('news-list');
+    // var h = api.frameHeight - $api.offset(newsList).t;
+    // $api.css(newsList, 'height:' + h + 'px');
+
+};
+
+// 初始化变量
+function initVar(){
+
+    var header_slide_img = $api.byId('header_slide_img');// 头部轮播图片
+    var Masked = $api.byId('Masked');// 头部轮播图片--遮罩层
+
+
+};
+
+// 初始化HTML
+function initHTML(){
+
+     var data = [
+        {src:"../../image/home-vip.png"},
+        {src:"../../image/home-vip2.png"}
+    ];
+    var oDiv = '';
+    var header_slide_img = $api.byId('header_slide_img'); // 头部轮播图片 content
+    for(var i =0,len = data.length; i<len; i++){
+        oDiv += '<div class="aui-slide-node aui-slide-node-center">'+
+                     '<img src="'+data[i]["src"]+'" />'+
+//                   '<a href="'+data[i]["href"]+'"><img src="'+data[i]["src"]+'" /></a>'+
+                '</div>';
+    }
+    $api.html(header_slide_img, oDiv);
+    api.parseTapmode();
+
+}
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+        api.addEventListener({
+            name: 'noticeUnread'
+        }, function(ret, err){
+            var dot = $api.byId('dot');
+            if(ret.value.unread > 0){
+                $api.removeCls(dot, 'aui-hide');
+            }else{
+                $api.addCls(dot, 'aui-hide');
+            }
+        });
+
+        var nav = $api.byId('nav');
+        fnInitScrollEventListenner(nav);
+
+        api.addEventListener({
+            name: 'loginSuccess'
+        }, function(ret, err){
+            checkOffers();
+        });
+}
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+    var UIScrollPicture = new auiSlide({
+        container:document.getElementById("header"),
+    //     "width":auto,
+        //"height":195,
+        "speed":1000,
+        "autoPlay": 4000, //自动播放
+        "loop":true,
+        "pageShow":true,
+        "pageStyle":'dot',
+        'dotPosition':'center'
+    })
+
+}
+
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+    api.showProgress({
+        title: '新闻加载中...',
+        text: '请稍候',
+        modal: false
+    });
+
+    api.ajax({
+        url: website + 'api.php?action=top10news',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        returnAll:false
+    },function(ret,err){
+        api.hideProgress();
+        api.refreshHeaderLoadDone();
+        if (ret) {
+            tea.doT(ret, 'template', 'news-list');
+            return;
+        }
+        //tea.toast('ajax');
+        api.toast({
+            msg: '暂无更多新闻',
+            duration: 2000,
+            location: 'bottom'
+        });
+    });
+
+
+}
+
+/**********************************更新变量**********************************/
+// 更新DOM对象
+function updateDOM(){
+
+
+
+}
+
+// 更新变量
+function updateVar(){
+
+
+
+}
+
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+
+
+/**********************************广播消息**********************************/
+function sendEvent(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+function openWinCarCheck(){
+    /*tea.openWin({
+        name: 'car_check_partOne_win',
+        url: '../car_check/car_check_partOne_win.html',
+
+    });*/
+    tea.openWin({
+         name: 'car_check_index_win',
+         url: '../car_check/car_check_index_win.html',
+    });
+}
+
+function openWinAgency(){
+    tea.openWin({
+        name: 'agency_win',
+        url: '../agency/agency_win.html',
+        pageParam: {
+            name: 'test'
+        }
+    });
+}
+
+function openWinVip(){
+    if (tea.token()){
+        api.openWin({
+            name: 'vip_win',
+            url: '../vip/vip_win.html',
+        });
+    }
+
+}
+// 扫一扫
+function saoYisao(){
+    api.openWin({
+        name: 'code_win',
+        url: './code_win.html',
+        pageParam: {name: 'code_win'}
+    });
+
+    }
+
+function openWinInsure(){
+
+    tea.openWin({
+        name: 'insure_win',
+        url: '../insure/insure_win.html',
+        pageParam: {
+            name: 'test'
+        }
+    });
+
+}
+
+
+function openWinNotice(){
+    /*tea.openWin({
+        name: 'saler_index_win',
+        url: '../saler/saler_index_win.html',
+        pageParam: {
+            name: 'test'
+        }
+    });*/
+    tea.openWin({
+        name: 'message_center_win',
+        url: '../notice/message_center_win.html',
+        bounces: false,
+        pageParam: {
+            key: 'value'
+        }
+    });
+}
+
+function openWinNews(){
+    api.openWin({
+        name: 'winname',
+        url: '../news/smallge_news_list_win.html',
+        bounces: false,
+        pageParam: {key : 'value'}
+    });
+}
+
+function openWinDetail(id_){
+      api.openWin({
+        name: 'smallge_news_win',
+        url: '../news/smallge_news_win.html',
+        bounces: false,
+        pageParam: {id : id_}
+    });
+}
+/**********************************其他函数**********************************/
+function openfriinfo(telphone_){
+
+    var telphone = $api.getStorage('telphone');
+    var token = gettoken(telphone);
+    var nickname = $api.getStorage('nickname');
+    var seachval = telphone_;
+    api.ajax({
+        url: website + 'api.php?action=addfriend',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        returnAll:false,
+        data:{
+            values: {token: token,frival: seachval},
+        }
+    },function(ret,err){
+        if (ret) {
+            if(!ret.errmsg){
+
+                    if(ret.succ == 'no'){
+                        api.alert({msg:(ret.msg)});
+                    }else{
+                        var mdiv = $api.byId('seelogo');
+                        api.openWin({
+                            name: '详细资料',
+                            url: '../friends/friendinfo_win.html',
+                            vScrollBarEnabled: false,
+                            pageParam : {friid: ret.friid, fritoken:ret.fritoken}
+                        });
+                    }
+                    api.hideProgress();
+            }
+        }else {
+            api.hideProgress();
+            api.alert({
+                msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+            });
+        }
+    });
+}
+function checkupdate(){
+
+    var ID = $api.getStorage('ID');
+    var nickname = $api.getStorage('nickname');
+    var version = api.appVersion;
+
+    var systemType = api.systemType;
+    var systemVersion = api.systemVersion;
+    var deviceId = api.deviceId;
+    var deviceModel = api.deviceModel;
+    var deviceName = api.deviceName;
+    var operator = api.operator;
+    var connectionType = api.connectionType;
+
+    api.ajax({
+        url: website + 'checkversion.php',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        returnAll:false,
+        data:{
+            values: {ID: ID, nickname: nickname, version: version, systemType: systemType, systemVersion: systemVersion, deviceId: deviceId, deviceModel: deviceModel, deviceName: deviceName, operator:operator,connectionType: connectionType},
+        }
+    },function(ret,err){
+        if (ret) {
+            if(ret.succ == 0){
+
+                    var appurl = ret.appurl;
+                    api.confirm({
+                        title: ret.title,
+                        msg: ret.msg,
+                        buttons: ['否', '是']
+                    },function( ret1, err ){
+                        if( ret1 ){
+                                if( ret1.buttonIndex == 2){
+                                    api.openApp({
+                                        iosUrl: appurl
+                                    });
+                                }
+                                if( ret1.buttonIndex == 1){
+                                    api.closeWidget({silent:true});
+                                }
+                        }
+                    });
+            }
+        }
+    });
+}
+
+    function getcontent(){
+    var ID = $api.getStorage('ID');
+    showp('数据处理中...','请梢候');
+		api.ajax({
+		    url: website + 'listre.php?action=listcurre',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {userid: ID},
+		    }
+		},function(ret,err){
+		    if (ret) {
+					api.openWin({
+				        name: 'saorecode',
+				        url: '../car_check/saorecode_win.html',
+				        vScrollBarEnabled: false,
+				        pageParam: {carjson: ret}
+				   	 });
+			 	     api.hideProgress();
+		    }
+		});
+    }
+ 
+
+
+// 初始化滚轮事件监听，请注意需要先定义.fixs样式
+function fnInitScrollEventListenner(el){
+
+    // 获取元素距离网页顶部的距离
+    var elT = $api.offset(el).t;
+
+    // 定义对滚轮事件的响应
+    var scrollEvent = function(){
+        // 获取网页被卷去的高，兼容IE
+        var scrollHeight = document.documentElement.scrollTop||document.body.scrollTop;
+        // var headerH = api.pageParam.headerH;
+
+        // 滚动的距离大于固定栏距离顶部的距离时就让固定栏固定
+        if(scrollHeight > elT){
+            $api.addCls(el, 'fixs');
+        }else{
+            $api.removeCls(el, 'fixs');
+        }
+    }
+
+    // 添加事件监听
+    if (api.systemType != 'ios') {
+        addEvent(window,'scroll',function(){
+            scrollEvent();
+        })
+    }
+
+
+}
+
+// 添加事件监听通用函数，兼容IE
+function addEvent(obj , event , fn){
+
+    if (obj.addEventListener) {
+        obj.addEventListener(event,fn)
+    }else if(obj.attachEvent){
+        obj.attachEvent('on'+event,fn)
+    }
+
+}
+
+function checkOffers(){
+    $api.post(website + 'activity.php?action=coupon', {
+        values: {
+            ID: $api.getStorage('ID')
+        }
+    }, function(ret){
+        console.log(JSON.stringify(ret, null, 4));
+        if (ret.succ == 1) {
+            openFrmDialog(ret.data);
+        }
+    });
+}
+</script>
+</html>

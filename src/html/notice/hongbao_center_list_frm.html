@@ -1,0 +1,137 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui18/aui-flex.css" />
+</head>
+<style type="text/css">
+	body{background: #FFFFFF}
+	.aui-ellipsis-1  { padding: 0; margin: 0; }
+	.aui-btn {color: #333333; font-size: 14px; background: #fdfdfd; border: none;}
+	.bg-white { background: #ffffff; }
+	.aui-bar { background: #12b7f5; }
+	.corner { position: absolute; left: 0; top: 0; width: 15%; }
+	.corner img { width: 100% }
+
+	#banner { margin-bottom: 0; }
+	#banner img { width: 100%; display: block;}
+
+	#classify { padding: 10px 0 5px 0; margin-bottom: 10px;}
+	#classify img { width: 30%; }
+
+	#recommend { margin-bottom: 10px; position: relative;}
+	#recommend img.left-img { width: 100%; display: block;}
+	#recommend big { font-size: 18px; color: #333333;}
+
+	.title { font-size: 16px; color: #333333; }
+	.title span { font-size: 12px; color: #999999; }
+	.title span .aui-iconfont { font-size: 14px; color: #999999; }
+
+	#hot-list { position: relative; }
+	#hot-list img { width: 50%; display: block; margin: 0 auto 5px; }
+	#hot-list .aui-flex-item-4 { padding: 10px 5px; }
+	#hot-list big { font-size: 14px;}
+	#hot-list p { font-size: 12px;}
+	#hot-list .corner { left: -15px; width: 50%; }
+	#hot-list .aui-btn { margin-top: 5px; }
+
+	.all-game-btn { margin: 0 auto; padding: 2px 10px; font-size: 14px; color: #999999;}
+	.all-game-btn:after { border-radius: 30px; }
+
+	#good {}
+	#good img { width: 100%; }
+	#good-list > div{ position: relative; }
+	#good-list .good-title { position: absolute; left: 10px; top: 50%; margin-top: -15px; font-size: 14px; }
+
+	#good-box {}
+	.good-box-title { padding: 10px; background: url('image/good-4.jpg') no-repeat; background-position: right bottom; background-size: contain; background-color: #ffffff; font-size: 14px; }
+	#good-box .all-game-btn { color: #333333; display: inline; font-size: 12px; padding: 4px 8px; }
+	#good-box-list { background: #ffffff; padding: 10px 0 5px;}
+	#good-box-list img { width: 60%; }
+	#good-box-list big { font-size: 14px; }
+	#good-box-list p { font-size: 12px; margin: 0; }
+	#good-box-list > div { margin-bottom: 10px; }
+	#good-box-list .aui-flex-item-9 { padding-bottom: 10px;}
+	.yl{color:#666666; font-size: 13px;}
+</style>
+<body>
+	<section class="aui-content" id="good-box">
+		<div id="good-box-list">
+
+		</div>
+	</section>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/conn.js" ></script>
+<script type="text/javascript">
+var ID = null;
+	apiready = function() {
+		ID = $api.getStorage('ID');
+	    api.parseTapmode();
+	    loaddate();
+		api.addEventListener({
+		    name: 'rehb'
+		}, function(ret, err){
+            loaddate();
+		});
+	};
+	function loaddate(){
+	showp('红包加载中...','请梢候');
+		api.ajax({
+		    url: website + 'hongbao.php?action=getnoreadlist',
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data:{
+		        values: {ID: ID},
+		    }
+		},function(ret,err){
+		    if (ret && ret.noreadarr) {
+		    var obj = $api.byId('good-box-list');
+		    var html = '';
+                for (var i = 0, len = ret.noreadarr.length; i < len; i++) {
+                	var r = ret.noreadarr[i];
+                	html += '<div class="aui-flex-col aui-flex-middle">';
+                	html += '<div class="aui-flex-item-3 aui-text-center"><img src="../../image/hongbao.png" /></div>';
+                	html += '<div class="aui-flex-item-9 aui-border-b">';
+                	html += '<div class="aui-flex-item-8">';
+                	html += '<big>'+ r.hbstr +'</big>';
+                	html += '<p>'+ r.addtime +'</p>';
+                	html += '</div>';
+                	html += '<div class="aui-flex-item-4 aui-text-center">';
+                	if(r.lc == 0){
+                		html += '<div class="aui-btn aui-border aui-border-radius" tapmode onclick="kaihongbao('+ r.hbid +',\''+ r.hbtype +'\',\''+r.content+'\')">领取</div>';
+                	}else{
+                	    html += '<div class="yl">已领取现金'+ r.m +'元</div>';
+                	}
+                	html += '</div></div></div>';
+                }
+                $api.html(obj, html);
+		    }
+		    api.hideProgress();
+		});
+	}
+	function kaihongbao(hbid,hbtype,content){
+		api.openFrame({
+		    name: 'kaihongbao_frm',
+		    url: './kaihongbao_frm.html',
+		    rect: {
+		        x: 0,
+		        y: 0,
+		        w: api.winWidth,
+		        h: api.winHeight
+		    },
+		    pageParam: {hongbaoid: hbid, hbtype: hbtype, content: content},
+		    bounces: false,
+		    bgColor: 'rgba(0,0,0,0)',
+		    vScrollBarEnabled: false,
+		    hScrollBarEnabled: false
+		});
+	}
+</script>
+</html>

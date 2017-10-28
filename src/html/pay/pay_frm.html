@@ -1,0 +1,726 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="../../script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+		html,body {
+            height: 100%;
+            overflow: auto;
+		}
+
+        .title {
+            padding: 1rem 0 0.75rem;
+            text-align: center;
+            font-size: 0.8rem;
+            line-height: 1;
+        }
+        .money {
+            padding-bottom: 1.35rem;
+            text-align: center;
+            font-size: 1.8rem;
+            line-height: 1;
+        }
+        .deal{
+            line-height: 1;
+            margin-bottom: 3rem;
+        }
+        .deal .aui-radio {
+            margin-top: 0.1rem;
+            height: 0.7rem;
+            width: 0.7rem;
+        }
+        /*修改单选框的大小*/
+        .deal .aui-radio:before,
+        .deal .aui-radio:after {
+            -webkit-transform: rotate(-45deg) scale(0.7);
+                    transform: rotate(-45deg) scale(0.7);
+        }
+
+    </style>
+</head>
+<body>
+    <div id="title" class="title aui-font-size-16 tea-text-title tea-bg-white">标题</div>
+    <div id="money" class="money tea-text-title tea-bg-white">¥</div>
+    <ul id="type-box" class="aui-list aui-list-noborder">
+        <li id="sum-box" class="aui-list-item" tapmode onclick="setType(0)">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">
+                    <i class="aui-iconfont tea-icon-sum tea-text-blue tea-font-size-19 aui-margin-r-10"></i>余额支付
+                    <span id="sum">(¥)</span>
+                </div>
+                <div class="aui-list-item-right">
+                    <span id="tip">余额不足</span>
+                    <label class="aui-radio"></label>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item" tapmode onclick="setType(1)">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">
+                    <i class="aui-iconfont tea-icon-alipay tea-text-blue tea-font-size-19 aui-margin-r-10"></i>支付宝支付
+                </div>
+                <div class="aui-list-item-right">
+                    <label class="aui-radio"></label>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item" tapmode onclick="setType(2)">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">
+                    <i class="aui-iconfont tea-icon-wechat tea-text-blue tea-font-size-19 aui-margin-r-10"></i>微信支付
+                </div>
+                <div class="aui-list-item-right">
+                    <label class="aui-radio"></label>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item tea-opacity">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">
+                    <i class="aui-iconfont tea-icon-unionpay tea-font-size-19 aui-margin-r-10"></i>银联支付
+                </div>
+                <div class="aui-list-item-right">
+                    即将开通
+                </div>
+            </div>
+        </li>
+    </ul>
+    <div class="aui-content-padded deal">
+        <span class="tea-big" tapmode onclick="toggleDeal(this)">
+            <span id="deal-radio" class="aui-radio aui-checked aui-margin-r-5 "></span>
+        </span>
+        <span class="aui-font-size-12 tea-text-blue" tapmode onclick="openWinDeal()">我已同意小马哥在线支付协议</span>
+    </div>
+    <div class="aui-content-padded" tapmode onclick="paystar()">
+        <div class="aui-btn aui-btn-info aui-btn-block aui-font-size-16 tea-btn-radius">确认支付</div>
+    </div>
+
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/aui-toast.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化DOM对象
+    initDOM();
+
+    // 初始化变量
+    initVar();
+
+    // 更新HTML
+    initHTML();
+
+    // 初始化监听
+    initEventListener();
+
+    // 初始化其他模块
+    initModule();
+
+    // ajax请求数据
+    getData();
+
+};
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {}, paycode = null;
+
+/**********************************初始化变量**********************************/
+// 初始化DOM对象
+function initDOM(){
+
+    dom.sum = $api.byId('sum');
+    dom.sumBox = $api.byId('sum-box');
+    dom.typeBox = $api.byId('type-box');
+    dom.radios = $api.domAll(dom.typeBox, '.aui-radio');
+    dom.dealRadio =$api.byId('deal-radio');
+
+};
+
+// 初始化变量
+function initVar(){
+
+    data = api.pageParam.data;
+    //data.money = formatCurrency(data.money);
+//    _alert(data);
+    values = data.values;
+    values.title = data.title;
+    values.wxmony = values.paymoney;
+    values.result_m = data.result_m ? data.result_m+'.00' : values.paymoney;
+    //values.paymoney = formatCurrency(values.paymoney);
+    values.deal = true;
+    values.payType = 0;
+    values.ID = $api.getStorage('ID');
+    values.token = $api.getStorage('token');
+    values.nickname = $api.getStorage('nickname');
+	values.telphone = $api.getStorage('telphone');
+    // 获取随机交易单号
+    values.orderid = curDateTime()+RndNum(10);
+    values.zftype = '1';
+};
+
+// 初始化HTML
+function initHTML(){
+
+    var title = $api.byId('title');
+    title.innerHTML = data.title;
+    var money = $api.byId('money');
+
+    /*判断是否存在现金券，如果存在显示优惠后的金额否则显示正常金额*/
+//    _alert(data)
+    if(data.result_m){
+        money.innerHTML = '¥' + formatCurrency(data.result_m);
+    }else {
+        money.innerHTML = '¥' + formatCurrency(data.money);
+    }
+
+    if (data.type == "recharge") {
+        var sumBox = $api.byId('sum-box');
+        $api.addCls(sumBox, 'aui-hide');
+        $api.addCls(dom.radios[1], 'aui-checked');
+        values.payType = 1;
+    }
+    else {
+        getSum(updateSum);
+    }
+
+}
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+    api.addEventListener({
+        name: 'paycodeok'
+    }, function(ret, err){
+        if( ret ){
+            var posturl = 'paymember.php?t=zfb';
+            switch (data.type) {
+                case "addvip":
+                    posturl = 'paymember.php?t=zfb';
+                    break;
+                case "recharge":
+                    posturl = 'chongzhi.php';
+                    break;
+                case "phoneRecharge":
+                    posturl = 'cz.php?action=yucz';
+                    break;
+                case "reward":
+                    posturl = 'hongbao.php?action=dx';
+                    break;
+                case "redpacket":
+                    posturl = 'hongbao.php?action=qunhongbao';
+                    values.hongbao = values.paymoney;
+                    break;
+                case "insure":
+                    posturl = 'paybx.php';
+                    break;
+            /*新增：ETC支付、六年内免检车支付、油卡办理、油卡充值  *LVPlum*/
+                case "etc":
+                    posturl = 'etc.php?action=pay';
+                    break;
+                case "exempt":
+                    posturl = 'exempt_api.php?action=pay';
+                    break;
+                case "oil":
+                    posturl = 'oil_api.php?action=pay';
+                    break;
+            /*END *LVPlum*/
+                default :
+                    break;
+            }
+//            _alert(values);
+            api.ajax({
+                url: website + posturl,
+                method: 'post',
+                timeout: 30,
+                dataType: 'json',
+                returnAll:false,
+                data:{
+                    values: values,
+                }
+            },function(ret,err){
+                if (ret) {
+                    if(ret.succ == '1'){
+                        openWinSuccess(ret);
+                    }
+                    if(ret.succ == "0"){
+                        api.alert({msg:(ret.msg)});
+                        return false;
+                    }
+                }
+            });
+        }else{
+             alert( JSON.stringify( err ) );
+        }
+    });
+
+}
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************更新变量**********************************/
+// 更新DOM对象
+function updateDOM(){
+
+
+
+}
+
+// 更新变量
+function updateVar(){
+
+
+
+}
+
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+
+
+/**********************************广播消息**********************************/
+function sendEvent(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+function openWinDeal(){
+	api.openWin({
+	    name: 'zfxy_win',
+	    url: './zfxy_win.html'
+    });
+}
+
+function toggleDeal(el_){
+    values.deal = tea.toggle(dom.dealRadio, 'aui-checked');
+}
+
+
+function setType(index_){
+    if (index_ === 0 && $api.hasCls(dom.sumBox, 'tea-opacity')) {
+        tea.toast('fail','余额不足');
+        return;
+    }
+
+    if (index_ === values.payType ){
+        return;
+    }
+    values.payType = index_;
+    for (var i = 0; i < dom.radios.length; i++) {
+        if ( i === index_) {
+            $api.addCls(dom.radios[i], 'aui-checked');
+        }
+        else {
+            $api.removeCls(dom.radios[i], 'aui-checked');
+        }
+    }
+}
+
+function paystar(){
+    if (!values.deal) {
+        tea.toast('fail', '支付之前<br/>请先同意协议');
+        return;
+    }
+    switch (values.payType) {
+        case 0:
+            sumPay();
+            break;
+        case 1:
+            aliPay();
+            break;
+        case 2:
+            wechatPay();
+            break;
+        default:
+            tea.toast('fail','请选支付方式');
+            break;
+    }
+}
+
+/**********************************其他函数**********************************/
+function getSum(callback){
+
+    api.showProgress({
+        style: 'default',
+        animationType: 'fade',
+        title: '努力加载中...',
+        text: '请稍候...',
+        modal: true
+    });
+    api.ajax({
+        url: website + 'getmyinfo.php',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        returnAll:false,
+        data:{
+            values: {token: values.token},
+        }
+    },function(ret,err){
+        if (ret) {
+            paycode = ret.paycode;
+            callback(ret.mymoney);
+        }
+    });
+}
+
+function updateSum(sum_){
+    dom.sum.innerHTML = '(¥' + formatCurrency(sum_) + ')';
+
+    var radio = $api.dom(dom.sumBox, '.aui-radio');
+    // 余额不足
+    var tip  = $api.byId('tip');
+    if (parseFloat(data.money) > parseFloat(sum_)){
+        // 余额不足，增加透明度，隐藏单选框，提示余额不足, 默认选择其他支付方式
+        $api.addCls(dom.sumBox, 'tea-opacity');
+        $api.addCls(radio, 'aui-hide');
+        $api.removeCls(tip, 'aui-hide');
+        $api.addCls(dom.radios[1], 'aui-checked');
+        values.payType = 1;
+    }
+    else {
+        $api.removeCls(dom.sumBox, 'tea-opacity');
+        $api.removeCls(radio, 'aui-hide');
+        $api.addCls(tip, 'aui-hide');
+        $api.addCls(dom.radios[0], 'aui-checked');
+    }
+    api.hideProgress();
+
+}
+
+
+
+function aliPay(){
+//    _alert(values);
+//    return false;
+    showp('数据处理中...','请稍候');
+    api.ajax({
+        url: website + 'alipay_temp.php?action=add',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        returnAll:false,
+        data:{
+            values: values,
+        }
+    },function(ret,err){
+//        _alert(ret);
+        if (ret) {
+            api.hideProgress();
+            if(ret.succ == '1'){
+                var obj = api.require('aliPay');
+                var subject = data.title;
+                var body = data.title;
+                var amount = data.money;
+                if(data.result_m){
+                    amount = data.result_m;
+                }
+                var notifyURL = website + 'aliPay_notifyURL.php';
+                obj.config({
+                    partner:'2088421213998519',
+                    seller:'junma@jmwlw.com',
+                    rsaPriKey:'MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBAL+iN9gS/pC2DcP9tME5VkuR9ssd0FEteGN3VJUpF0C6PG/QgV3fmlDGaS6Iah/nqV7PdC0Iob6dkHwIhE/LPotmGFoBqL33OW+6ArkxV9epKn3oSxwU1YnWG21VZJCw0oa3hnM15EDRYpUIMnUBFg7I2KHxi7erQ6tbZxgyVvLLAgMBAAECgYEAkyioR7a2ZDxZr9MpNmSofxnU8j+v1Fbdp0xg2LaYU61wcdElNwhaAYOMDB7XmC6XIuaeaWLCipWG+ai0qm4CVUWIIY74Mf4LefxYFhruAoVi/lInc2w07Tq7XZABwe6ZDb3XbwCcXUrIxn+ZxsSRfo8LL+I2w2Jx+caY8Cu7lqkCQQD5FGIikoE0XiSS6HDT6k2+orCkQkTOOMRKhaiWUkF4gxLqCpQFWKmwaxuEJ+VYlMI+9EZitdJQMWuerV51ayA1AkEAxPU93+GzpvLLSyWafC6DBtSXtj42jAd9NWR0zSexw3AKlDylAJSikrsrhiqGOcVJoFS1bFgc/QAhABCrTbIm/wJBAKepy+E/ww9QK8hkBMbxWkHv233GSfCTD7amP/RoDEAl4w597mOm6hqiDpSoEl7NS+/6mIKLp7VpfusCAqqBYN0CQQCR7ZZ7g3GlN2zyb5kHezqvW+JQL8YgeAgIADceLdPilufvrwMd7AKMLstvq6Apu4fyl/CXpq1LssXAk5koht+nAkBb++/Q5YGD86C6tkinSQqWqxTAJkc0OC9q7wWGf9jf/Nqf55mIqpYmJQkHn5fmcgK4lc6iY5VT96/XkmznXoxu',
+                    rsaPubKey:'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC/ojfYEv6Qtg3D/bTBOVZLkfbLHdBRLXhjd1SVKRdAujxv0IFd35pQxmkuiGof56lez3QtCKG+nZB8CIRPyz6LZhhaAai99zlvugK5MVfXqSp96EscFNWJ1httVWSQsNKGt4ZzNeRA0WKVCDJ1ARYOyNih8Yu3q0OrW2cYMlbyywIDAQAB',
+                    notifyURL:notifyURL
+                },function(ret,err) {
+                    if(err){
+                        api.alert({
+                            title: '发生错误',
+                            msg: err.code,
+                            buttons: ['确定']
+                        });
+                    }
+                });
+                obj.pay({
+                    subject:subject,
+                    body:body,
+                    amount:amount,
+                    tradeNO:values.orderid
+                },function(ret,err) {
+                    if(ret.code == '9000'){
+                        openWinSuccess(ret);
+                    }
+                });
+            }
+        }
+    });
+}
+
+function curDateTime() {
+    var d = new Date();
+    var year = d.getFullYear()+"";
+    var month = d.getMonth() + 1;
+    var date = d.getDate();
+    var day = d.getDay();
+    var Hours=d.getHours(); //获取当前小时数(0-23)
+    var Minutes=d.getMinutes(); //获取当前分钟数(0-59)
+    var Seconds=d.getSeconds(); //获取当前秒数(0-59)
+    var curDateTime = year;
+    if (month > 9){
+    curDateTime = curDateTime + month;
+    }
+    else{
+    curDateTime = curDateTime + "0" + month;
+    }
+    if (date > 9){
+    curDateTime = curDateTime + date;
+    }else{
+    curDateTime = curDateTime + "0" + date;
+    }
+    if (Hours > 9){
+    curDateTime = curDateTime + Hours;
+    }else{
+    curDateTime = curDateTime + "0" + Hours;
+    }
+    if (Minutes > 9){
+    curDateTime = curDateTime + Minutes;
+    }else{
+    curDateTime = curDateTime + "0" + Minutes;
+    }
+    if (Seconds > 9){
+    curDateTime = curDateTime + Seconds;
+    }else{
+    curDateTime = curDateTime + "0" + Seconds;
+    }
+    return curDateTime;
+}
+function RndNum(n){
+        var rnd="";
+        for(var i=0;i<n;i++){
+        rnd+=Math.floor(Math.random()*10);
+        }
+        return rnd;
+}
+
+//微信支付
+function wechatPay(){
+        // 微信以分为单位
+        var str = $api.jsonToStr(values);
+        var wxvalues = $api.strToJson(str);
+        wxvalues.paymoney =  values.paymoney * 100;
+        if(data.result_m){
+            wxvalues.paymoney = parseFloat(data.result_m) * 100;
+        }
+        //_alert(values)
+        //开始提交数据
+//        _alert(wxvalues);
+        showp('数据处理中...','请梢候');
+        api.ajax({
+            url: website + 'wxpay_temp.php?action=getord',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: wxvalues,
+            }
+        },function(ret,err){
+            if (ret) {
+//                _alert(ret);
+                if(ret.succ == '1'){
+                    api.hideProgress();
+                    var wx = ret.data;
+                    var wxPay = api.require('wxPay');
+//                    _alert(wx)
+                    wxPay.payOrder({
+                        apiKey: wx.appid,
+                        orderId: wx.prepayid,
+                        mchId: wx.partnerid,
+                        nonceStr: wx.noncestr,
+                        timeStamp: wx.timestamp,
+                        package: wx.package,
+                        sign: wx.sign
+                    }, function(ret, err){
+                        if(ret.status){
+                            openWinSuccess(ret);
+                        }
+                    });
+                }
+            }
+        });
+}
+
+
+function sumPay(){
+
+    var winName = '';
+    switch (paycode) {
+        case 0: 
+            winName = 'setpaycode1_win';
+            break;
+        case 1:
+            winName = 'paycode_win';
+            break;
+        default:
+            tea.toast('fail', '发起支付未成功<br/>请返回重试');
+            return;
+    }
+    api.openWin({
+        name: winName,
+        url: './' + winName + '.html',
+        pageParam: {
+            name: 'test'
+        }
+    });
+}
+
+function formatCurrency(num) {   //格式化数字转金额
+    num = num.toString().replace(/\$|\,/g,'');
+    if(isNaN(num))
+    num = "0";
+    sign = (num == (num = Math.abs(num)));
+    num = Math.floor(num*100+0.50000000001);
+    cents = num%100;
+    num = Math.floor(num/100).toString();
+    if(cents<10)
+    cents = "0" + cents;
+    for (var i = 0; i < Math.floor((num.length-(1+i))/3); i++)
+    num = num.substring(0,num.length-(4*i+3))+','+
+    num.substring(num.length-(4*i+3));
+    return (((sign)?'':'-') + num + '.' + cents);
+}
+
+function sendsms(templateId,param,telphone){
+	api.ajax({
+	    url: website + 'sendsmspay.php',
+	    method: 'post',
+	    timeout: 30,
+	    dataType: 'json',
+	    returnAll:false,
+	    data:{
+	        values: {templateId: templateId,param: param, telphone: telphone},
+	    }
+	},function(ret,err){
+        //_alert(ret);
+	});
+}
+
+function openWinSuccess() {
+    var datas;
+    var result = '支付成功';
+    switch (data.type) {
+        case "addvip":
+            sendsms('22209',values.carnum,values.tel);
+            datas =  {
+                '0': ['您选择的车辆已经成功加入VIP'],
+                '1': []
+            }
+            break;
+        case "recharge":
+            result = '充值成功';
+            datas = {
+                '0': ['充值成功，您已经成功充值'+ data.money +'元']
+            }
+            break;
+        case "phoneRecharge":
+            result = "充值成功";
+            datas = {
+                '0': ['充值订单已提交，等候充值中...']
+            }
+            break;
+        case 'reward':
+            api.sendEvent({
+                name: 'rewardSuccess',
+                extra: {
+                    msg: values.msg,
+                    tzid: values.tzid,
+                    targetID: values.targetID,
+                    paymoney: formatCurrency(values.paymoney),
+                    targetname: values.targetname
+                }
+            });
+            api.closeToWin({
+                name: 'main_win'
+            });
+            return;
+            break;
+        case 'redpacket':
+            api.sendEvent({
+                name: 'redpacketSuccess',
+                extra: {
+                }
+            });
+            api.closeToWin({
+                name: 'main_win'
+            });
+            return;
+    /*新增：ETC支付  *LVPlum*/
+        case "etc":
+            result = "支付成功";
+            datas = {
+                '0': ['小马哥工作人员将会联系您','请保持手机通畅并提供以下手续'],
+                '1': ['个人车辆','身份证、行驶证'],
+                '2': ['单位车辆','营业执照副本、委托书','经办人身份证、行驶证'],
+            }
+            break;
+        case "oil":
+            result = "充值成功";
+            datas = {
+                '0': ['小马哥工作人员将会联系您','请保持电话畅通'],
+            }
+            break;
+    /*END *LVPlum*/
+        default :
+            result = '支付成功';
+            break;
+    }
+    api.openWin({
+        name: 'success_win',
+        url: '../unit/success_win.html',
+        bounces: false,
+        pageParam: {
+            title: '支付成功页',
+            result: result,
+            data: datas
+        }
+    });
+}
+</script>
+</html>

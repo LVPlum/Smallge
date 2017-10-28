@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>群发红包</title>
+    <script src="../../script/Flexible-fontSize.js"></script><!--不用aui.css 有微小的冲突-->
+    <link rel="stylesheet" href="../../css/aui-slide.css" /><!--aui 轮播组件-->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+    <style>
+        input {
+            outline: none;
+        }
+        /*群发红包btn 颜色 #cc3333*/
+        ul{list-style: none;}
+        html,body{
+            color: #333;
+            background-color: #f2f5f8;
+        }
+        header{
+            width: 100%;
+            height: 7rem;
+            overflow: hidden;
+        }
+        .header-content{
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        .header-left{
+            margin: 0 auto;
+            padding: 3.8rem 0 1.9rem 1.5rem;
+            font-size: 1.4rem;
+            float: left;
+        }
+        .header-text{
+            width: 100%;
+            height: 100%;
+            font-size: 1.6rem;
+            text-align: center;
+            margin-top: 3.5rem;
+        }
+        .header-right{
+            width: 2rem;
+            height: 2rem;
+            margin: 3.5rem 1.5rem 0 0;
+            float: right;
+            background: url("../../image/my_icon/help@2x.png") no-repeat;
+            background-size: cover;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+
+        }
+        section{
+            width: 100%;
+            height: auto;
+            overflow: hidden;
+        }
+        article{
+            width: 100%;
+            height: auto;
+            overflow: hidden;
+        }
+        .article-content{
+            width: 34.5rem;
+            height: 9.5rem;
+            margin: 0 auto;
+            overflow: hidden;
+
+        }
+        .article-content>p{
+            width: 100%;
+            font-size: 1.2rem;
+        }
+        .article-inp-Content{
+            width: 100%;
+            height: 5.5rem;
+            position: relative;
+            color: #333;
+            background-color: #fff;
+            border-radius: 8px;
+        }
+
+        .article-inp-Content:before,.article-inp-Content:after{
+            height: 5.5rem;
+            line-height: 5.5rem;
+            padding-left: 1.5rem;
+            position: absolute;
+            content: ' ';
+            font-size: 1.6rem;
+            color: #333;
+        }
+
+        .hongBao-money:before{
+            content: '总金额';
+        }
+        .hongBao-money:after{
+            content: '元';
+        }
+        .hongBao-Number:before{
+            content: '红包个数';
+        }
+        .hongBao-Number:after{
+            content: '个';
+        }
+        .article-inp-Content>input{
+            box-sizing:content-box;
+            width: 22.5rem;
+            padding-left: 6.3rem;
+            line-height: normal;
+            font-size: 1.6rem;
+            text-align: right;
+            vertical-align: middle;
+            color: #333;
+            background-color: #fff;
+            margin-top: 1.65rem;
+            border: none;
+        }
+        .article-inp-title{
+            margin-left: 1.5rem;
+            margin-top: 0.8rem;
+            display: inline-block;
+        }
+        .clickHongbao_text{
+            color: #3399ff;
+        }
+        aside{
+            width: 100%;
+            height: auto;
+            overflow: hidden;
+        }
+        .aside-inp-content{
+            width: 34.5rem;
+            height: 7rem;
+            /* line-height: 11rem; */
+            position: relative;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 8px;
+            border: none;
+            overflow: hidden;
+
+        }
+        /* .aside-inp-content:before{
+            position: absolute;
+            left: 1.5rem;
+            bottom: 3rem;
+            content: '说点什么';
+            font-size: 1.6rem;
+            color: #333;
+        } */
+        .aside-inp-content>textarea{
+            outline: none;
+            width: 33rem;
+            line-height: normal;
+            margin: 1rem auto 4.7rem;
+            padding-left: 1.5rem;
+            font-size: 1.6rem;
+            background-color: #fff;
+            border: none;
+        }
+        .aside-show-moneyNum-content{
+            width: 100%;
+            height: 8.8rem;
+            margin: 0 auto;
+            font-size: 3.6rem;
+            text-align: center;
+            overflow: hidden;
+        }
+        #show_moneyNum{
+            width: 100%;
+            height: auto;
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 3.6rem;
+            color: #333;
+        }
+        .aside-btn{
+            width: 29rem;
+            height: 4.9rem;
+            line-height: 4.9rem;
+            margin: 0 auto;
+            font-size: 1.6rem;
+            text-align: center;
+            color: #fff;
+            overflow: hidden;
+            border-radius: 99px;
+        }
+        /*.aside-btn>p{*/
+            /*width: 29rem;*/
+            /*height: 4.9rem;*/
+            /*line-height: 4.9rem;*/
+            /*padding: 2px;*/
+            /*margin: -2px;*/
+            /*appearance:button;*/
+            /*-moz-appearance:button; !* Firefox *!*/
+            /*-webkit-appearance:button; !* Safari 和 Chrome *!*/
+            /*border: none;*/
+            /*background-color: #cc3333;*/
+        /*}*/
+        .isPutMoney_btn{
+            width: 100%;
+            height: 100%;
+            line-height: 4.9rem;
+            border: none;
+            border-radius: 99px;
+            background-color: #e69999;
+        }
+        .isPutMoney_btn_active{
+            padding: 4px;/*兼容appearance*/
+            margin: -4px;/*兼容appearance*/
+            background-color: #cc3333;
+        }
+    </style>
+</head>
+<body>
+    <!-- <header>
+        <div class="header-content">
+            <div class="header-left"  tapmode onclick=" closeWin();">关闭</div>
+            <div class="header-right"></div>
+            <div class="header-text" id="qunFaHongBao_title">群发红包</div>
+        </div>
+    </header> -->
+    <section style="margin-top: 1rem">
+        <article>
+            <div class="article-content">
+                <p class="article-inp-Content hongBao-money">
+                	<input id="hongBao_money"  type="tel" placeholder="0.00" maxlength="9"  tapmode >
+                </p>
+                <p>
+                    <span class="article-inp-title" id="clickHongbao-title">当前为拼手气红包,</span>
+                    <span  id="clickHongbao_text" class="clickHongbao_text">点击改为普通红包</span>
+                </p>
+            </div>
+            <div class="article-content">
+                <p class="article-inp-Content hongBao-Number">
+                	<input id="hongBao_Number"  type="tel" placeholder="填写个数" maxlength="4" oninput="check()">
+                </p>
+                <p>
+                    <span class="article-inp-title" style="color: #999;">最多可填写1000个</span>
+                </p>
+            </div>
+        </article>
+        <aside>
+            <div class="aside-inp-content">
+                <textarea rows="" cols="" id="comment" type="text" placeholder="平安是福,行车顺利"></textarea>
+            </div>
+            <div class="aside-show-moneyNum-content">
+                <p id="show_moneyNum">￥0.00</p>
+            </div>
+            <div class="aside-btn">
+                <p class="isPutMoney_btn" id="isPutMoney_btn">放钱进袋</p>
+            </div>
+        </aside>
+    </section>
+</body>
+
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/base.js"></script>
+<script type="text/javascript" src="../../script/tea.js"></script>
+<script type="text/javascript" src="../../script/zepto.min.js"></script>
+<script>
+	apiready = function(){
+
+	 	api.parseTapmode();//解析元素 tapmode 属性，优化点击事件处理
+	 	var hongBao_money = $api.byId('hongBao_money');// 红包金额的输入框
+	 	var clickHongbao_title = $api.byId('clickHongbao-title');// 点击红包类型提示的title标题文字
+	 	var clickHongbao_text = $api.byId('clickHongbao_text');// 点击切换红包类型的文字
+	 	var hongBao_Number = $api.byId('hongBao_Number');// 红包个数的输入框
+	 	var comment = $api.byId('comment');// 用户评论的输入框
+	 	var show_moneyNum = $api.byId('show_moneyNum');// 显示总金额的文本
+	 	var isPutMoney_btn = $api.byId('isPutMoney_btn');// 放进钱袋的提交按钮
+	 	var hongBaoType = 1;//红包类型--》：1、为拼手气红包 ; 2、为普通红包
+
+        tea.moneyInput('hongBao_money',function(el){
+            // 判断如果，总金额有值，就给提交按钮添加高光样式
+            if( el.value > 0 && hongBao_Number.value > 0){
+                $api.addCls(isPutMoney_btn, 'isPutMoney_btn_active');
+            }else{
+            	$api.removeCls(isPutMoney_btn, 'isPutMoney_btn_active');
+            }
+            var text = el.value.replace(/[\.]$/, '');
+            text = Number(text).toFixed(2);
+            $api.text($api.byId('show_moneyNum'), '￥' + text);
+        })
+
+
+
+	 	// 点击切换红包类型的文字 点击 事件
+	 	$api.addEvt(clickHongbao_text, 'click', function(){
+
+	 		var clickHongbao_title_val = $api.trim($api.text(clickHongbao_title));// 点击红包类型提示的title标题文字的值
+	 		var clickHongbao_text_val = $api.trim($api.text(clickHongbao_text));// 点击切换红包类型文字的值
+
+	 		if(clickHongbao_title_val == '当前为拼手气红包,' ||clickHongbao_text_val == '点击改为普通红包'){
+
+	 			$api.text(clickHongbao_title, '当前为普通红包,');
+	 			$api.text(clickHongbao_text, '点击改为拼手气红包');
+	 		}else{
+	 			$api.text(clickHongbao_title, '当前为拼手气红包,');
+	 			$api.text(clickHongbao_text, '点击改为普通红包');
+	 		}
+
+
+	 	});
+	 	// 提交按钮点击事件
+	 	$api.addEvt(isPutMoney_btn, 'click', function(){
+
+	 		var hongBao_money_val = $api.val(hongBao_money);// 红包金额的输入框的值
+	 		var hongBao_Number_val = $api.val(hongBao_Number);// 红包个数的输入框的值
+	 		var commentVal = $api.val($api.byId('comment')); // 红包评论
+	 		(commentVal.length === 0) && (commentVal = '平安是福,行车顺利');// 默认红包评论
+	 		if(hongBao_money_val.length === 0){
+	 			api.toast({
+			  	  msg: '掌柜的,请输入您的红包金额'
+				});
+
+	 		}else if(hongBao_Number_val.length === 0){
+	 			api.toast({
+			  	  msg: '掌柜的,请输入红包个数'
+				});
+	 		}else if(hongBao_Number_val>1000){
+	 			api.toast({
+			  	  msg: '红包个数不可多于1000个'
+				});
+	 		} else{
+	 			var hongBaoTypeText = $api.trim($api.text(clickHongbao_title));
+	 			if(hongBaoTypeText == '当前为拼手气红包,'){
+	 				hongBaoType = 1; // 1、表示  拼手气红包
+
+	 			}else{
+	 				hongBaoType = 2;// 2、表示 普通红包
+
+	 			}
+	 			//_openWin('群红包支付','../pay/pay_win.html',{title: '群发红包',mtype: 'hb', m: hongBao_money_val, hbcount: hongBao_Number_val, hbtype: hongBaoType});
+                 // 打开红包支付页面
+                var values = {
+                    msg: commentVal,
+                    hbcount: hongBao_Number_val,
+                    hbtype: hongBaoType,
+                    hongbao: hongBao_money_val,
+                    paymoney: hongBao_money_val,
+                    mtype: '6'
+                }
+                api.openWin({
+                    name: 'pay_win',
+                    url: '../pay/pay_win.html',
+                    pageParam: {
+                        title:'群发红包',
+                        money: hongBao_money_val,
+                        type: 'redpacket',
+                        values: values
+                    },
+                    vScrollBarEnabled: false
+                });
+	 		}
+
+	 	});
+	}
+	function closeWin(){
+	    api.closeWin({});
+    }
+
+    function check(){
+        // 判断如果，总金额有值，就给提交按钮添加高光样式
+        if( hongBao_money.value > 0 && hongBao_Number.value > 0){
+            $api.addCls(isPutMoney_btn, 'isPutMoney_btn_active');
+        }else{
+            $api.removeCls(isPutMoney_btn, 'isPutMoney_btn_active');
+        }      
+    }
+
+
+</script>
+</html>

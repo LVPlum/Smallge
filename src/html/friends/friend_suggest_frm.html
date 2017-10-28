@@ -1,0 +1,271 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <ul v-if="list.length" class="aui-list aui-media-list">
+            <li v-for="(value,index) in list" class="aui-list-item aui-list-item-middle" @click="openWinFriendInfo(value)">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media" style="width: 3rem;">
+                        <img :src=" value.img ? website+value.img : '../../image/nologo.png' " class="aui-img-round" >
+                    </div>
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title aui-font-size-14">{{ value.conname }}</div>
+                        </div>
+                        <div class="aui-list-item-text">小马哥昵称: {{ value.nickname }}</div>
+                    </div>
+                    <div class="aui-list-item-media" tapmode @click.stop="addFriend(value,index)">
+                        <div v-if="value.hadd == 0" 　class="aui-label aui-label-info tea-bg-blue aui-text-white">添加好友</div>
+                        <div v-else class="aui-list-item-text">等待通过</div>
+                    </div>
+                </div>
+            </li>
+            <!--<li class="aui-list-item aui-list-item-middle">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media" style="width: 3rem;">
+                        <img src="../../image/nologo.png" class="aui-img-round" >
+                    </div>
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title aui-font-size-14">名字</div>
+                        </div>
+                        <div class="aui-list-item-text">小马哥昵称</div>
+                    </div>
+                    <div class="aui-list-item-right aui-margin-r-15">
+                        <div class="aui-label aui-label-info">加为好友</div>
+                    </div>
+                </div>
+            </li>-->
+        </ul>
+        <div v-else>
+            <p class="aui-text-center">您的手机通讯录中没有任何人已经加入过小马哥</p>
+            <p class="aui-text-center">点击右上角的"邀请"去邀请好友加入小马哥</p>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/javascript" src="../../script/share.js"></script>
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+    // 声明DOM对象
+    var dom = {}, vm = null;
+
+/**********************************apiready**********************************/
+    apiready = function(){
+
+        // 初始化变量
+        init();
+
+    };
+
+/**********************************初始化变量**********************************/
+    function init(){
+
+        dom = {
+        };
+
+        vm = new Vue({
+            el: '#app',
+            data: {
+                website: website,
+                list: [],
+            },
+            methods: {
+                addFriend: function(value,index){
+                    if(value.hadd == 0){
+                        sendRequest(value.token,index);
+                    }else {
+                        this.openWinFriendInfo(value)
+                    }
+                },
+                openWinFriendInfo: function(value){
+                    /*api.openWin({
+                        name: 'friendinfo_win',
+                        url: './friendinfo_win.html',
+                        pageParam: {
+                            id: value.userid
+                        },
+                        vScrollBarEnabled: false
+                    });*/
+                    api.openWin({
+                        name: 'user_info_win',
+                        url: '../location/user_info_win.html',
+                        pageParam: {
+                            friendID: value.userid,
+                            pageType: 'suggest'
+                        },
+                        vScrollBarEnabled: false
+                    });
+                }
+            },
+            computed: {
+
+            }
+        });
+
+        // 初始化模块
+        initModule();
+
+        // 初始化监听
+        initEventListener();
+
+    };
+
+/**********************************初始化模块**********************************/
+    function initModule(){
+        /* 获取手机通讯录模块 */
+        tea.showp('数据加载中','请稍候');
+        var contacts = api.require('contacts');
+        contacts.queryByPage({
+            pageIndex: 0,
+        },function(ret,err){
+            getData(ret)
+        })
+    }
+
+/**********************************初始化监听**********************************/
+    function initEventListener(){
+        //location/user_ionfo_frm页面发送来的更新页面列表
+        api.addEventListener({
+            name: 'updataList'
+        }, function (ret, err) {
+            initModule(); //重新更新通讯录页面
+        });
+    }
+
+/**********************************ajax请求数据**********************************/
+    function getData(content){
+        api.ajax({
+            url: website + 'friendship.php?action=fricommlist',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll: false,
+            data: {
+                values: {
+                    content: content,
+                    dm: api.deviceModel,
+                    ID: $api.getStorage('ID'),
+                    token: $api.getStorage('token'),
+                },
+            }
+        }, function (ret, err) {
+            api.hideProgress();
+//            _alert(ret);
+            if(!ret){
+                tea.toast('ajax');
+                return false;
+            }
+            if(ret){
+                vm.list = ret;
+                return true;
+            }
+        });
+    }
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+    /*　获取好友信息　*/
+//    function getFriendInfo(telephone){
+//        tea.showp('发送请求中...')
+//        api.ajax({
+//            url: website + 'api.php?action=addfriend', //测试服里没有此接口　正式服website: 'http://120.24.169.112/'
+//            method: 'post',
+//            timeout: 30,
+//            dataType: 'json',
+//            returnAll: false,
+//            data: {
+//                values: {
+//                    token: gettoken($api.getStorage('telphone')),
+//                    frival: telephone,
+//                }
+//            }
+//        }, function (ret, err) {
+//            if(!ret){
+//                tea.toast('ajax');
+//                return false;
+//            }
+//            if(ret.succ == 0){
+//                sendRequest(ret.fritoken)
+//                return true;
+//            }
+//            api.toast({
+//                msg: ret.msg,
+//                duration: 2000,
+//                location: 'middle'
+//            });
+//        });
+//    }
+    //发送好友请求
+    function sendRequest(fritoken,index){
+        tea.showp('请求发送中','请稍候');
+        api.ajax({
+            url:  website + 'friendship.php?action=sendfrimsg',
+            method: 'post',
+            timeout: 30,
+            data: {
+                values: {
+                    token: gettoken($api.getStorage('telphone')),
+                    fritoken: fritoken,
+                },
+            }
+        }, function (ret, err) {
+            api.hideProgress();
+            if(!ret){
+                tea.toast('ajax');
+                return false
+            };
+            if(ret.succ == 'ok'){
+                //发送请求后刷新状态
+                vm.list[index].hadd = 1;
+
+                /*发送到车友页面修改红点信息*/
+                api.sendEvent({
+                    name: 'updataDot',
+                    extra: {key1: 'value', key2: 'value'}
+                });
+                return true;
+            };
+            api.toast({
+                msg: ret.msg,
+                duration: 2000,
+                location: 'middle'
+            });
+        });
+    }
+</script>
+</html>

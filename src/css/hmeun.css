@@ -1,0 +1,18 @@
+.wrap{ width: 308px; height: 27px; position: absolute; right: 0; bottom: 0;overflow:hidden;}
+.icon_menu{width:34px;height:27px;position:absolute;bottom:1px;right:-1px;z-index:10;}
+.icon_menu span{diplay:none;}
+
+.btn1{width:62px;height:27px;background:url(../image/bgt3.png) no-repeat;background-size:62px 27px; z-index:1;position:absolute;bottom:0;right:-129px;margin:0 5px 2px 0;}
+.btn2{width:62px;height:27px;background:url(../image/bgt1.png) no-repeat;background-size:62px 27px; z-index:1;position:absolute;bottom:0;right:-129px;margin:0 5px 2px 0;}
+.btn3{width:62px;height:27px;background:url(../image/bgt2.png) no-repeat;background-size:62px 27px; z-index:1;position:absolute;bottom:0;right:-129px;margin:0 5px 2px 0;}
+.btn1, .btn2, .btn3{-webkit-transition:bottom .2s,right .2s;-moz-transition:bottom .2s,right .2s;-o-transition:bottom .2s,right .2s;-ms-transition:bottom .2s,right .2s;transition:bottom .2s,right .2s;}
+.btn1.close, .btn2.close, .btn3.close, .btn4.close{bottom:0;right:-129px;}
+/*.btn1.open{bottom:0px;right:32px;}
+.btn2.open{bottom:0px;right:92px;}
+.btn3.open{bottom:0px;right:152px;}*/
+
+.btn1.open{bottom:0px;right:40px;}
+.btn2.open{bottom:0px;right:102px;}
+.btn3.open{bottom:0px;right:164px;}
+
+.red{width:62px;height:27px;background:url(../image/bgt2red.png) no-repeat;background-size:62px 27px; z-index:1;position:absolute;bottom:0;right:-129px;margin:0 5px 2px 0;}
