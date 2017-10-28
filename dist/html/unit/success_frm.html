@@ -1,0 +1,15 @@
+<!DOCTYPE html> <html> <head> <meta charset=utf-8> <meta name=viewport content="maximum-scale=1,minimum-scale=1,user-scalable=0,width=device-width,initial-scale=1"/> <meta name=format-detection content="telephone=no,email=no,date=no,aItemress=no"> <title>title</title> <link rel=stylesheet type=text/css href=../../css/api.css /> <link rel=stylesheet type=text/css href=../../css/aui.css /> <link rel=stylesheet type=text/css href=../../css/aui-skin.css /> <link rel=stylesheet type=text/css href=../../css/tea.css /> <style type=text/css>body,html{height:100%;overflow:auto;color:#666;text-align:center;font-size:.7rem；}section~section{margin-top:1.5rem}.success{margin:2rem auto .75rem;height:3.15rem;width:3.15rem;border-radius:50%}.aui-icon-correct{top:.3rem;font-size:1.75rem;font-weight:700;color:#fff}</style> </head> <body> <section id=main></section> </body> <script src=../../script/api.js></script> <script src=../../script/aui-toast.js></script> <script src=../../script/tea.js></script> <script src=../../script/conn.js></script> <script src=../../script/doT.min.js></script> <script type=text/template id=template> <section>
+        <div class="success tea-bg-blue">
+            <i class="aui-iconfont aui-icon-correct"></i>
+        </div>
+        <div class="tea-text-title aui-font-size-16">{{=it.result}}</div>
+    </section>
+    {{ for(var prop in it.data){ }}
+    <section>
+        {{~it.data[prop]:value:index}}
+        <div>
+            {{=value}}
+        </div>
+        {{~}}
+    </section>
+    {{ } }} </script> <script>function initDOM(){}function initVar(){}function initEventListener(){}function initModule(){}function getData(){updateVar(),updateHTML()}function updateDOM(){}function updateVar(){}function updateHTML(){}function sendEvent(){}function closeWin(){api.closeWin()}apiready=function(){data=api.pageParam.data,main=$api.byId("main"),tea.doT(data,"template",main),tea.toast("success",data.result),initDOM(),initVar(),initEventListener(),initModule(),getData()};var main,data,values={}</script> </html>

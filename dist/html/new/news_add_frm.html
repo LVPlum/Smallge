@@ -1,0 +1,53 @@
+<!DOCTYPE html> <html> <head> <meta charset=utf-8> <meta name=viewport content="maximum-scale=1,minimum-scale=1,user-scalable=0,width=device-width,initial-scale=1"/> <meta name=format-detection content="telephone=no,email=no,date=no,aItemress=no"> <title></title> <link rel=stylesheet type=text/css href=../../css/api.css /> <link rel=stylesheet type=text/css href=../../css/aui.css /> <link rel=stylesheet type=text/css href=../../css/aui-skin.css /> <link rel=stylesheet type=text/css href=../../css/tea.css /> <style type=text/css>body,html{height:100%;overflow:auto}.aui-list.aui-form-list .aui-list-item-arrow:before{right:.75rem}.aui-checkbox{position:absolute!important;top:.1rem;right:.1rem;text-align:center;z-index:3;background-color:rgba(0,0,0,.5)!important}.tea-img-box{border:1px solid #ededed}</style> </head> <body> <div class="aui-list aui-form-list aui-list-noborder tea-bg-white"> <li class=aui-list-item> <div class=aui-list-item-inner> <div class=aui-list-item-input> <textarea id=textarea placeholder=说点什么吧...></textarea> </div> </div> </li> </div> <section id=list class=tea-bg-white></section> </body> <script src=../../script/api.js></script> <script src=../../script/aui-toast.js></script> <script src=../../script/tea.js></script> <script src=../../script/conn.js></script> <script src=../../script/doT.min.js></script> <script type=text/template id=template> <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-media-list aui-list-noborder">
+            <li class="aui-list-item tea-noactive">
+                <div class="aui-list-item-inner">
+                    <div class="aui-row aui-row-padded aui-padded-r-15" style="width: 100%">
+                    {{?values.type == 'picture'}}
+                        {{?$api.isArray(it)}}
+                        {{~it:value:index}}
+                        <div class="aui-col-xs-3" tapmode onclick="openBigImg({{=index}})">
+                            <img class="tea-img-box" style="background-image: url({{=value}})">
+                            <div class="aui-checkbox tea-big" tapmode onclick="event.stopPropagation();del({{=index}})">
+                                <i class="aui-iconfont aui-text-white aui-icon-close"></i>
+                            </div>
+                        </div>
+                        {{~}}
+                        {{?}}
+                        {{?it.length < 9}}
+                        <div class="aui-col-xs-3" tapmode onclick="openWinMedia()">
+                            <img class="tea-img-box" style="background-image: url(../../image/add.jpg)"/>
+                        </div>
+                        {{?}}
+                    {{??true}}
+                        {{?$api.isArray(it)}}
+                        {{~it:value:index}}
+                        <div class="aui-col-xs-3" tapmode onclick="openVideo(0)">
+                            <img class="tea-img-box" style="background-image: url({{=values.thumbnail[0]}})" src="../../image/stop@2x.png">
+                            <img class="tea-play-box">
+                        </div>
+                        {{~}}
+                        {{?}}
+                        {{?it.length < 1}}
+                        <div class="aui-col-xs-3" tapmode onclick="openWinMedia()">
+                            <img class="tea-img-box" style="background-image: url(../../image/add.jpg)"/>
+                        </div>
+                        {{?}}
+                    {{?}}
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item aui-list-item-arrow" tapmode onclick="openWinLocation()">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label-icon">
+                        <i class="aui-iconfont aui-icon-location" id="icon"></i>
+                    </div>
+                    <div class="aui-list-item-input aui-ellipsis-2" id="address">
+                        所在位置
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div> </script> <script>function initVar(){dom={textarea:$api.byId("textarea")},data={},values={type:api.pageParam.type,thumbnail:api.pageParam.thumbnail,imgArr:api.pageParam.imgArr.slice(0,9),index:0,content:"",token:$api.getStorage("token"),dm:api.deviceModel,picval:"",showwz:0,wz:"",videoPath:!1},updateHTML()}function initModule(){function e(){a.getLocation({accuracy:"100m",autoStop:!0,filter:1},function(e,i){e.status&&a.getNameFromCoords({lon:e.lon,lat:e.lat},function(e,a){e.status&&((data=e).poiList.unshift({name:data.city}),data.poiList.unshift({name:"不显示位置"}),values.wz=data.address,dom.address.innerHTML=values.wz)})})}imageBrowser=api.require("imageBrowser");var a=api.require("bMap");"ios"==api.systemType?a.initMapSDK(function(a){a.status&&e()}):e()}function initEventListener(){api.addEventListener({name:"addressSetted"},function(e,a){if(e){api.closeWin({name:"media_win"});var i=e.value.index;if(values.index=i,0==i)return values.showwz=0,values.wz="",dom.address.innerHTML="所在位置",void $api.removeCls(dom.icon,"tea-text-blue");values.showwz=1,values.wz=data.poiList[i].name,dom.address.innerHTML=values.wz,$api.addCls(dom.icon,"tea-text-blue")}else alert(JSON.stringify(a))}),api.addEventListener({name:"sendImg"},function(e,a){if(e){if("news_add"!=e.value.to)return;api.closeWin({name:"media_win"}),values.thumbnail=e.value.thumbnail,values.imgArr=values.imgArr.concat(e.value.img).slice(0,9),updateHTML()}else alert(JSON.stringify(a))}),api.addEventListener({name:"delVideo"},function(e,a){e?del(0):alert(JSON.stringify(a))})}function getData(){}function updateVar(){}function updateDom(){}function updateHTML(){tea.doT(values.imgArr,"template","list"),dom.address=$api.byId("address"),dom.icon=$api.byId("icon")}function openWinLocation(){$api.isEmptyObject(data)?tea.toast("custom","定位中,请稍候"):api.openWin({name:"location_win",url:"./location_win.html",pageParam:{poiList:data.poiList,index:values.index}})}function openWinMedia(){api.openWin({name:"media_win",url:"../unit/media_win.html",reload:!0,pageParam:{to:"news_add",type:values.type}}),api.sendEvent({name:"reload",extra:{to:"news_add",type:values.type}})}function openBigImg(e){imageBrowser.openImages({imageUrls:values.imgArr,showList:!1,activeIndex:e})}function del(e){values.imgArr.splice(e,1),updateHTML()}function openVideo(e){var a=values.imgArr[e];api.openFrame({name:"video_frm",url:"../unit/video_frm.html",rect:{x:0,y:0,w:api.winWidth,h:api.winHeight},pageParam:{url:a,type:"delete"},bounces:!1,bgColor:"rgba(0,0,0,0)",vScrollBarEnabled:!0,hScrollBarEnabled:!0})}function ajax(){values.textarea=$api.val(dom.textarea),"video"==values.type&&(values.videoPath=values.imgArr[0]);var e={type:values.type,content:values.textarea,token:values.token,dm:values.dm,imgArr:values.imgArr,picval:values.imgArr.join(","),showwz:values.showwz,wz:values.wz,videoPath:values.videoPath,thumbnail:values.thumbnail},a=check();!0===a?(api.sendEvent({name:"addNew",extra:{json:e,upfile:null}}),api.closeToWin({name:"main_win"})):tea.toast("fail",a)}function check(){return!(values.textarea.length<1&&values.imgArr.length<1)||"请添加点内容"}var dom={},data={},values={},imageBrowser;apiready=function(){initVar(),initModule(),initEventListener(),getData()}</script> </html>

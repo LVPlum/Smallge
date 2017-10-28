@@ -1,0 +1,488 @@
+<!DOCTYPE html> <html> <head> <meta charset=utf-8> <meta name=viewport content="maximum-scale=1,minimum-scale=1,user-scalable=0,width=device-width,initial-scale=1"/> <meta name=format-detection content="telephone=no,email=no,date=no,aItemress=no"> <title>title</title> <link rel=stylesheet type=text/css href=../../css/api.css /> <link rel=stylesheet type=text/css href=../../css/aui.css /> <link rel=stylesheet type=text/css href=../../css/aui-skin.css /> <link rel=stylesheet type=text/css href=../../css/tea.css /> <style type=text/css>body,html{overflow:auto}.write{height:1.2rem;line-height:1.2rem}.aui-iconfont{font-size:1rem!important;margin-right:.25rem}.coupon-active{font-size:.8rem!important;color:#f60!important}.showy{width:100%;padding:.75rem;background:#f7f7f7;position:fixed;bottom:-.75rem;z-index:999}#mask{width:100%;height:100%;position:absolute;padding-top:66rem;bottom:100%;left:0;background:rgba(0,0,0,.33)}</style> </head> <body> <section id=section> </section> </body> <script src=../../script/api.js></script> <script src=../../script/aui-toast.js></script> <script src=../../script/tea.js></script> <script src=../../script/conn.js></script> <script src=../../script/doT.min.js></script> <script type=text/template id=check-template> <div class="aui-list aui-card-list aui-list-noborder">
+        <div class="aui-card-list-content-padded aui-padded-t-15 aui-padded-b-15">
+            <div class="aui-list-item-title aui-font-size-18 tea-text-blue">订单{{=(it.status == '未完成'? '已提交': it.status)}}</div>
+            <div class="aui-list-item-text">订单编号：{{=it.orderid}}</div>
+            <div class="aui-list-item-text">提交时间：{{=it.addtime}}</div>
+        </div>
+    </div>
+
+    <div class="aui-list aui-card-list aui-list-noborder">
+        <div class="aui-card-list-header aui-border-b" tapmode onclick="change({{=it.able}})">
+            <div>
+                <i class="aui-iconfont tea-icon-check "></i>
+                <span class="aui-list-item-title">网约审车</span>
+            </div>
+            {{?it.able == 1}}
+            <div class="aui-list-item-right tea-text-blue">修改 ></div>
+            {{?}}
+        </div>
+        <div class="aui-card-list-content-padded">
+            <div class="aui-list-item-title">{{=it.city}}</div>
+            <div class="aui-list-item-title">车牌：{{=it.carnum}}</div>
+            <div class="aui-list-item-title">手机号码：{{=it.telphone}}</div>
+            <div class="aui-list-item-title">预约时间：{{=it.retime}}</div>
+        </div>
+    </div>
+
+    <div class="aui-list aui-card-list aui-list-noborder">
+        <div class="aui-card-list-header aui-border-b" tapmode onclick="change({{=it.able}})">
+            <div>
+                <span class="aui-list-item-title">要办项目</span>
+            </div>
+            {{?it.able == 1}}
+            <div class="aui-list-item-right tea-text-blue">修改 ></div>
+            {{?}}
+        </div>
+        <div class="aui-card-list-content-padded">
+            {{ for(var key in it.business){ }}
+                {{?it.business[key] != 0}}
+                <div class="aui-list-item-text">
+                    <div class="aui-list-item-text">{{=it.business[key].name}}</div>
+                    <div class="aui-list-item-right">¥{{=it.business[key].fee}}</div>
+                </div>
+                {{?}}
+            {{ } }}
+        </div>
+    </div>
+
+    <div class="aui-list aui-card-list aui-list-noborder">
+        <div class="aui-card-list-header aui-border-b" tapmode onclick="change({{=it.able}})">
+            <div>
+                <span class="aui-list-item-title">监测站</span>
+            </div>
+            {{?it.able == 1}}
+            <div class="aui-list-item-right tea-text-blue">修改 ></div>
+            {{?}}
+        </div>
+        <div class="aui-card-list-content-padded">
+            <div class="aui-list-item-title">
+                {{=it.name}}
+            </div>
+            <div class="aui-list-item-text">
+                {{=it.address}}
+            </div>
+        </div>
+    </div> </script> <script type=text/template id=insure-template> <div class="aui-list aui-card-list aui-list-noborder">
+        <div class="aui-card-list-content-padded aui-padded-t-15 aui-padded-b-15">
+            <div class="aui-list-item-title aui-font-size-18 tea-text-blue">订单{{=it.status}}</div>
+            <div class="aui-list-item-text">订单编号：{{=it.orderid}}</div>
+            <div class="aui-list-item-text">提交时间：{{=it.addtime}}</div>
+        </div>
+    </div>
+
+    <!--<div class="aui-list aui-card-list aui-list-noborder">
+        <div class="aui-card-list-header aui-border-b" tapmode onclick="change({{=it.able}})">
+            <div>
+                <i class="aui-iconfont tea-icon-insure "></i>
+                <span class="aui-list-item-title">车辆保险</span>
+            </div>
+            {{?it.able == 1}}
+            <div class="aui-list-item-right tea-text-blue">修改 ></div>
+            {{?}}
+        </div>
+        <div class="aui-card-list-content-padded">
+            <div class="aui-list-item-title">{{=it.comid}}</div>
+            <div class="aui-list-item-title">{{=(it.carnum != ''?  it.carnum : '')}}</div>
+            <div class="aui-list-item-title">投保价格：<span class="tea-text-blue">{{=computedPay()}}</span></div>
+        </div>
+    </div>-->
+
+    <!--修改：汽车保险简介，只显示保险公司和车牌号 comid:保险公司，carnum:车牌号； *LVPlum-->
+    <div class="aui-list aui-card-list aui-list-noborder">
+        <div class="aui-card-list-header aui-border-b" tapmode onclick="change({{=it.able}})">
+            <div>
+                <i class="aui-iconfont tea-icon-insure "></i>
+                <span class="aui-list-item-title">车辆保险</span>
+            </div>
+            {{?it.able == 1}}
+            <div class="aui-list-item-right tea-text-blue">修改 ></div>
+            {{?}}
+        </div>
+        <div class="aui-card-list-content-padded">
+            <div class="aui-list-item-title">{{=it.comid}}</div>
+            <div class="aui-list-item-title">{{=(it.carnum != ''?  it.carnum : '')}}</div>
+        </div>
+    </div>
+    <!--END *LVPlum-->
+
+    {{?it.img == ''}}
+    <div class="aui-list aui-card-list aui-list-noborder">
+        <div class="aui-card-list-header aui-border-b" tapmode onclick="change({{=it.able}})">
+            <div>
+                <span class="aui-list-item-title">手动输入</span>
+            </div>
+            {{?it.able == 1}}
+            <div class="aui-list-item-right tea-text-blue">修改 ></div>
+            {{?}}
+        </div>
+        <div class="aui-card-list-content-padded">
+            <div class="aui-list-item-text">
+                <div class="aui-list-item-text">车架号</div>
+                <div class="aui-list-item-right aui-font-size-16 tea-text-title">{{=it.cjh}}</div>
+            </div>
+            <div class="aui-list-item-text">
+                <div class="aui-list-item-text">姓名</div>
+                <div class="aui-list-item-right aui-font-size-16 tea-text-title">{{=it.xm}}</div>
+            </div>
+            <div class="aui-list-item-text">
+                <div class="aui-list-item-text">身份证号</div>
+                <div class="aui-list-item-right aui-font-size-16 tea-text-title">{{=it.sfz}}</div>
+            </div>
+            <div class="aui-list-item-text">
+                <div class="aui-list-item-text">手机号码</div>
+                <div class="aui-list-item-right aui-font-size-16 tea-text-title">{{=it.telphone}}</div>
+            </div>
+        </div>
+    </div>
+    {{?}}
+    {{?it.img != ''}}
+    <div class="aui-list aui-card-list aui-list-noborder">
+        <div class="aui-card-list-header aui-border-b" tapmode onclick="change({{=it.able}})">
+            <div>
+                <span class="aui-list-item-title">拍照上传</span>
+            </div>
+            {{?it.able == 1}}
+            <div class="aui-list-item-right tea-text-blue">修改 ></div>
+            {{?}}
+        </div>
+        <div class="aui-card-list-content-padded">
+            <ul class="aui-list aui-media-list aui-list-noborder">
+                <li class="aui-list-item aui-padded-l-0">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                {{=(it.carnum != ''? '行驶证照片':'发票照片')}}
+                            </div>
+                        </div>
+                        <div class="aui-list-item-media">
+                            <img onload="tea.loadImage(this)" src="../../image/holder_car.png" data-url="{{=( website  + 'carrexsz_img/' + it.img)}}">
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div class="aui-list-item-text">
+                <div class="aui-list-item-text">手机号码</div>
+                <div class="aui-list-item-right aui-font-size-16 tea-text-title">{{=it.telphone}}</div>
+            </div>
+        </div>
+    </div>
+    {{?}}
+    <!--<div class="aui-list aui-card-list aui-list-noborder">
+        <div class="aui-card-list-header aui-border-b" tapmode onclick="change({{=it.able}})">
+            <div>
+                <span class="aui-list-item-title">商业险</span>
+            </div>
+            {{?it.able == 1}}
+            <div class="aui-list-item-right tea-text-blue">修改 ></div>
+            {{?}}
+        </div>
+        <div class="aui-card-list-content-padded">
+            {{ for(var key in it.insurance_item){ }}
+                <div class="aui-list-item-text">
+                    <div class="aui-list-item-text">{{=it.insurance_item[key].item}}</div>
+                    <div class="aui-list-item-right">{{=(it.sh == 1? '¥' + it.insurance_item[key].fee : '审核中')}}</div>
+                </div>
+            {{ } }}
+        </div>
+    </div>-->
+    <!--修改：显示发票上的总价格，以及发票价格上的收费项(车船使用税不计算在内) *LVPlum-->
+    <div class="aui-list aui-card-list aui-list-noborder">
+        <div class="aui-card-list-header aui-border-b" tapmode onclick="change({{=it.able}})">
+            <div>
+                <span class="aui-list-item-title">收费明细</span>
+            </div>
+            {{?it.able == 1}}
+            <div class="aui-list-item-right tea-text-blue">修改 ></div>
+            {{?}}
+        </div>
+        <div class="aui-card-list-content-padded">
+            {{ for(var key in it.insurance_item){ }}
+            <div class="aui-list-item-text">
+
+                <div class="aui-list-item-text">{{=it.insurance_item[key].item}}</div>
+                <div class="aui-list-item-right">{{=(it.sh == 1? '¥' + it.insurance_item[key].fee : '审核中')}}</div>
+
+            </div>
+            {{ } }}
+            <div class="aui-list-item-text">
+                <div class="aui-list-item-text">合计(不包括车船使用税)</div>
+                <div class="aui-list-item-right">{{=(it.needpay == 0 ? '审核中' : '¥' + it.needpay)}}</div>
+            </div>
+        </div>
+    </div>
+    <!--END *LVPlum-->
+    {{?it.sh == 1}}
+    {{?it.status == '未完成'}}
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        取保单
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner aui-col-xs-6" tapmode onclick="toggleChecked(this)">
+                    <div class="aui-list-item-title">
+                        到店拿
+                        <label id="radio" class="aui-radio aui-margin-l-15 {{=(it.send_bill != 1? 'aui-checked' : 'aui-disabled')}}"></label>
+                    </div>
+                </div>
+                <div class="aui-list-item-inner aui-col-xs-6 tea-border-l aui-padded-l-15" tapmode onclick="toWrite()">
+                    <div class="aui-list-item-title">
+                        邮寄 <span class="tea-text-orange">{{=(it.send_bill_fee == 0 ? '免费': '¥' + it.send_bill_fee) }}</span>
+                        <div class="write aui-btn aui-btn-outlined aui-btn-sm tea-btn-blue aui-margin-l-15 tea-btn-radius">填写</div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <ul id="form" class="aui-list aui-form-list {{=(it.send_bill != 1? 'aui-hide' : '')}}">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        收件人
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input id='jname' type="text" placeholder="请输入您的姓名" oninput="input()" value = "{{=(it.jname == null? '' : it.jname)}}">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        联系电话
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input id="jtelphone" type="tel" placeholder="请输入您的联系电话" oninput="input()" value = "{{=(it.jtelphone == null? '': it.jtelphone)}}">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        地址
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input id="jaddress" type="text" placeholder="请输入您的地址" oninput="input()" value = "{{=(it.jaddress == null? '' : it.jaddress)}}">
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <ul class="aui-list aui-list-in aui-form-list aui-margin-t-5">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner aui-list-item-arrow aui-margin-r-15" tapmode onclick="openCouponLists()">
+                    <div class="aui-list-item-label" style="width: 4rem">
+                        <span class="tea-text-title">现金券</span>
+                    </div>
+                    <div id="coupon" class="aui-font-size-14 tea-text-gray aui-margin-r-15">暂无可用现金券</div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    {{?}}
+    {{?it.status == '已完成'}}
+    <ul class="aui-list aui-margin-b-10">
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner aui-padded-t-10 aui-padded-b-10">
+                <div class="aui-list-item-title tea">
+                    保单
+                </div>
+                <div class="aui-list-item-right tea">
+                    {{?it.send_bill != 1}}
+                    <div class="tea-text-title">到店拿</div>
+                    {{?? true}}
+                        <div class="tea-text-title">邮寄 {{=(it.send_bill_fee == 0 ? '免费': '¥' + it.send_bill_fee) }}</div>
+                        <div>{{=it.jname}} {{=it.jtelphone}}</div>
+                        <div>{{=it.jaddress}}</div>
+                    {{?}}
+                </div>
+            </div>
+        </li>
+    </ul>
+    {{?}}
+    {{?}} </script> <script type=text/template id=vip-template> <div class="aui-list aui-card-list aui-list-noborder">
+        <div class="aui-card-list-content-padded aui-padded-t-15 aui-padded-b-15">
+            <div class="aui-list-item-title aui-font-size-18 tea-text-blue">订单{{=it.status}}</div>
+            <div class="aui-list-item-text">订单编号：{{=it.orderid}}</div>
+            <div class="aui-list-item-text">提交时间：{{=it.addtime}}</div>
+        </div>
+    </div>
+
+    <div class="aui-list aui-card-list aui-list-noborder">
+        <div class="aui-card-list-header aui-border-b" tapmode onclick="change({{=it.able}})">
+            <div>
+                <i class="aui-iconfont tea-icon-vip "></i>
+                <span class="aui-list-item-title">VIP</span>
+            </div>
+            {{?it.able == 1}}
+            <div class="aui-list-item-right tea-text-blue">修改 ></div>
+            {{?}}
+        </div>
+        <div class="aui-card-list-content-padded">
+            <div class="aui-list-item-title">特权卡</div>
+            <div class="aui-list-item-title">车牌：{{=it.car_num}}</div>
+            <div class="aui-list-item-title">{{=computedType()}}</div>
+            <div class="aui-list-item-title">手机号码：{{=it.telphone}}</div>
+            <div class="aui-list-item-title">{{=(it.money == 0? '状态：待支付' : '合计：¥' + it.money)}}</div>
+        </div>
+    </div>
+
+    <div class="aui-list aui-card-list aui-list-noborder">
+        <div class="aui-card-list-header aui-border-b" tapmode onclick="change({{=it.able}})">
+            <div>
+                <span class="aui-list-item-title">特权卡享受以下特权</span>
+            </div>
+        </div>
+        <div class="aui-card-list-content-padded">
+            <section class="article-section">
+                <ul>
+                    <li>1、终身免年审检测费用</li>
+                    <li>2、终身免环保检测费用</li>
+                    <li>3、终身免等级评定检测费用</li>
+                    <li>4、终身免二级维护检测费用</li>
+                    <li>5、环检修理免费、灯光修理免费、刹车修理免费，配件除外。</li>
+                    <li>6、蓝牌特权VIP卡用户购保险享受特殊优惠(除车船使用税)</li>
+                    <li>7、黄牌货车特权VIP卡购买保险同样享受特殊优惠(除车船使用税)
+                        特权VIP卡名下的车辆（限一台，可变更）
+                        相对应在红骏马检测中心进行检测不限次数、终身免费(除国家政策或其它因素影响之外)，购买成功则不可退款，
+                        确保特权VIP卡车辆享受不少于三次免费检测，
+                        检测不足三次可按实际结算退还特权VIP卡购买费用的剩余部份（年检期间不按时来检测，此特权VIP卡车辆责任自负）
+                    </li>
+                </ul>
+            </section>
+            <footer class="article-footer aui-text-center">
+                <p>- 在小马哥购买保险才可享受以上特权 -</p>
+            </footer>
+        </div>
+    </div> </script> <script type=text/template id=agency-template> <div class="aui-list aui-card-list aui-list-noborder">
+        <div class="aui-card-list-content-padded aui-padded-t-15 aui-padded-b-15">
+            <div class="aui-list-item-title aui-font-size-18 tea-text-blue">订单{{=it.status}}</div>
+            <div class="aui-list-item-text">订单编号：{{=it.orderid}}</div>
+            <div class="aui-list-item-text">提交时间：{{=it.addtime}}</div>
+        </div>
+    </div>
+
+    <div class="aui-list aui-card-list aui-list-noborder">
+        <div class="aui-card-list-header aui-border-b" tapmode onclick="change({{=it.able}})">
+            <div>
+                <i class="aui-iconfont tea-icon-agency "></i>
+                <span class="aui-list-item-title">找代办</span>
+            </div>
+            {{?it.able == 1}}
+            <div class="aui-list-item-right tea-text-blue">修改 ></div>
+            {{?}}
+        </div>
+        <div class="aui-card-list-content-padded">
+            <div class="aui-list-item-title">{{=it.name}}</div>
+            <div class="aui-list-item-title">{{=computedCarType()}}</div>
+            <div class="aui-list-item-title">手机号码：{{=it.telphone}}</div>
+        </div>
+    </div>
+
+    <div class="aui-list aui-card-list aui-list-noborder">
+        <div class="aui-card-list-header aui-border-b" tapmode onclick="change({{=it.able}})">
+            <div>
+                <span class="aui-list-item-title">代办项目</span>
+            </div>
+            {{?it.able == 1}}
+            <div class="aui-list-item-right tea-text-blue">修改 ></div>
+            {{?}}
+        </div>
+        <div class="aui-card-list-content-padded">
+            {{ for(var key in it.business){ }}
+                {{?it.business[key] != 0}}
+                <div class="aui-list-item-text">
+                    <div class="aui-list-item-text">{{=it.business[key].name}}</div>
+                    <div class="aui-list-item-right">¥{{=it.business[key].money}}</div>
+                </div>
+                {{?}}
+            {{ } }}
+        </div>
+    </div>
+    {{?it.booktime != '1970-01-01 08:00:00'}}
+    <div class="aui-list aui-card-list aui-list-noborder">
+        <div class="aui-card-list-header aui-border-b" tapmode onclick="change({{=it.able}})">
+            <div>
+                <span class="aui-list-item-title">代办预约时间</span>
+            </div>
+            {{?it.able == 1}}
+            <div class="aui-list-item-right tea-text-blue">修改 ></div>
+            {{?}}
+        </div>
+        <div class="aui-card-list-content-padded">
+            <div class="aui-list-item-title">
+                时间
+            </div>
+            <div class="aui-list-item-text">
+                {{=it.booktime}}
+            </div>
+        </div>
+    </div>
+    {{?}} </script> <script type=text/template id=join-template> <div class="aui-list aui-card-list aui-list-noborder">
+        <div class="aui-card-list-content-padded aui-padded-t-15 aui-padded-b-15">
+            <div class="aui-list-item-title aui-font-size-18 tea-text-blue">订单{{=it.status}}</div>
+            <div class="aui-list-item-text">订单编号：{{=it.orderid}}</div>
+            <div class="aui-list-item-text">提交时间：{{=it.addtime}}</div>
+        </div>
+    </div>
+
+    <div class="aui-list aui-card-list aui-list-noborder">
+        <div class="aui-card-list-header aui-border-b" tapmode onclick="change({{=it.able}})">
+            <div>
+                <i class="aui-iconfont tea-icon-join"></i>
+                <span class="aui-list-item-title">加盟申请</span>
+            </div>
+            {{?it.able == 1}}
+            <div class="aui-list-item-right tea-text-blue">修改 ></div>
+            {{?}}
+        </div>
+        <div class="aui-card-list-content-padded">
+            <div class="aui-list-item-title">{{=it.agency_name}}</div>
+            <div class="aui-list-item-title">{{=it.shop_address}}</div>
+            <div class="aui-list-item-title">手机号码：{{=it.telphone}}</div>
+        </div>
+    </div>
+
+    <div class="aui-list aui-card-list aui-list-noborder">
+        <div class="aui-card-list-header aui-border-b" tapmode onclick="change({{=it.able}})">
+            <div>
+                <span class="aui-list-item-title">加盟条件</span>
+            </div>
+            {{?it.able == 1}}
+            <div class="aui-list-item-right tea-text-blue">修改 ></div>
+            {{?}}
+        </div>
+        <div class="aui-card-list-content-padded">
+            {{?(!tea.isEmpty(it.v_business))}}
+                {{ for(var key in it.v_business){ }}
+                    {{?it.v_business[key]}}
+                    <div class="aui-list-item-text">
+                        <div class="aui-list-item-text">{{=it.v_business[key].item}}</div>
+                    </div>
+                    {{?}}
+                {{ } }}
+            {{?? true}}
+                {{ for(var key in it.c_business){ }}
+                    {{?it.c_business[key]}}
+                    <div class="aui-list-item-text">
+                        <div class="aui-list-item-text">{{=it.c_business[key].item}}</div>
+                    </div>
+                    {{?}}
+                {{ } }}
+            {{??}}
+            {{?}}
+        </div>
+    </div>
+
+    <div class="aui-list aui-card-list aui-list-noborder">
+        <div class="aui-card-list-header aui-border-b" tapmode onclick="change({{=it.able}})">
+            <div>
+                <span class="aui-list-item-title">加盟业务类型</span>
+            </div>
+            {{?it.able == 1}}
+            <div class="aui-list-item-right tea-text-blue">修改 ></div>
+            {{?}}
+        </div>
+
+    </div> </script> <script>function initDOM(){}function initVar(){param=api.pageParam.param,values.send_bill=0}function initHTML(){}function initEventListener(){api.addEventListener({name:"selectCoupon"},function(a,e){a&&(values.coupon_m=a.value.coupon.coupon_m,couponsIndex=a.value.couponsIndex,updateHTML(),updateFooter())}),api.addEventListener({name:"isDetail"},function(a,e){isDetail=!1})}function initModule(){}function getData(a,e){values.id=e,values.userid=$api.getStorage("ID");var t="",n="";switch(a){case"网约审车":t="api_q.php?action=get_carre_by_id",n="check-template";break;case"车辆保险":t="api_q.php?action=get_bxre_by_id",n="insure-template";break;case"找代办":t="api_q.php?action=get_agency_order_by_id",n="agency-template";break;case"特权卡":t="api_q.php?action=get_viptmp_by_id",n="vip-template";break;case"手机充值":t="api_q.php?action=get_sjcz_by_id",n="mobile-template";break;case"加盟申请":t="api_q.php?action=get_agent_apply_by_id",n="join-template"}api.ajax({url:website+t,method:"post",timeout:30,dataType:"json",returnAll:!1,data:{values:values}},function(a,e){a?(data=a.data,tea.doT(data,n,"section"),getCoupon(),updateVar(),updateDOM(),updateFooter()):tea.toast("ajax")})}function updateDOM(){dom.form=$api.byId("form"),dom.radio=$api.byId("radio"),dom.coupon=$api.byId("coupon")}function updateVar(){values.send_bill=parseInt(data.send_bill),1==values.send_bill&&toWrite()}function updateHTML(){0!=values.coupon_m?($api.text(dom.coupon,"-¥"+values.coupon_m),$api.addCls(dom.coupon,"coupon-active")):($api.text(dom.coupon,"暂无可用现金券"),$api.removeCls(dom.coupon,"coupon-active"))}function sendEvent(){}function change(a){if(1==a){var e="",t="";switch(param.type){case"网约审车":e="car_check_partOne_win",t="../car_check/car_check_partOne_win.html";break;case"车辆保险":e="insure_win",t="../insure/insure_win.html";break;case"特权卡":e="vip_join_win",t="../vip/vip_join_win.html";break;case"找代办":e="agency_win",t="../agency/agency_win.html";break;case"加盟申请":e="agency_join_win",t="../agency/agency_join_win.html"}tea.openWin({name:e,url:t,bounces:!1,pageParam:{order:data}})}}function toggleChecked(){tea.toggle(dom.radio,"aui-checked")?values.send_bill=0:values.send_bill=1,tea.toggle(dom.radio,"aui-disabled"),tea.toggle(dom.form),tea.scroll(),updateFooter()}function toWrite(){$api.removeCls(dom.form,"aui-hide"),$api.removeCls(dom.radio,"aui-checked"),$api.addCls(dom.radio,"aui-disabled"),values.send_bill=1,tea.scroll(),updateFooter()}function openWinPayVIP(a){"1"==a?api.openWin({name:"pay_win",url:"../pay/pay_win.html",pageParam:{title:"支付VIP费用",money:data.money,type:"addvip",values:{carnum:data.car_num,tel:data.telphone,carcolor:data.car_type,paymoney:data.money,mtype:"8"}},vScrollBarEnabled:!1}):api.toast({msg:"这个车牌已经加入过VIP了，无需重复加入"})}function checkcarnum(a){values.id=$api.getStorage("ID"),values.carnum=data.car_num,values.car_type=data.car_type,values.telphone=data.telphone,values.able=1,values.vip_tmp_order_id=data.id,api.ajax({url:website+"api.php?action=checkcarnum",method:"post",timeout:30,dataType:"json",returnAll:!1,data:{values:values}},function(e,t){e&&a(e.succ)})}function computedPay(){switch(data.sh){case"0":return"未审核";case"1":return 0!=data.youhuipay?"¥"+data.youhuipay+'<del class="aui-font-size-12 tea-text-gray">¥'+data.needpay+"</del>":"¥"+data.needpay;case"2":return"审核中";default:return""}}function computedType(){switch(data.car_type){case"1":return"蓝牌车";case"2":return"黄牌车";default:return""}}function computedCarType(){switch(data.car_type){case"1":return"轿车";case"2":return"货车";default:return""}}function updateFooter(){var a=null;switch(param.type){case"车辆保险":if(1!=data.sh)return;a=0!=data.youhuipay?data.youhuipay:data.needpay,1==values.send_bill&&(a=(a=parseFloat(a)+parseFloat(data.send_bill_fee)).toFixed(2)),values.needpay=a,values.coupon_id&&(a=parseFloat(a)-parseFloat(values.coupon_m)),values.result_m=a;break;case"特权卡":if(0!=data.pay_status)return;a=data.money}api.sendEvent({name:"updateFooter",extra:{price:a}})}function input(){}function insurePay(){if(values.id=data.ID,values.userid=$api.getStorage("ID"),values.jname=$api.val($api.byId("jname")),values.jtelphone=$api.val($api.byId("jtelphone")),values.jaddress=$api.val($api.byId("jaddress")),1==values.send_bill){var a=check();if("string"==typeof a)return void tea.toast("fail",a)}api.ajax({url:website+"api_q.php?action=post_insurance_send_bill",method:"post",timeout:30,dataType:"json",data:{values:values},returnAll:!1},function(a,e){1==a.succ?openpay(values.id,data.carnum,values.needpay):tea.toast("ajax")})}function check(){return""==values.jname?"请输入您的姓名":(values.jtelphone=tea.toNum(values.jtelphone),tea.checkPhone(values.jtelphone)?""!=values.jaddress||"请输入您的地址":"手机号码格式有误")}function openpay(a,e,t){showp("数据验证中...","请梢候"),api.ajax({url:website+"buybx.php?action=checkpay",method:"post",timeout:30,dataType:"json",returnAll:!1,data:{values:{bxid:a}}},function(t,n){if(t){if(1==t.succ){var o={bxid:a,carnum:e,paymoney:values.needpay,mtype:"13",coupon_id:values.coupon_id,coupon_m:values.coupon_m};api.openWin({name:"pay_win",url:"../pay/pay_win.html",pageParam:{title:"支付保险订单",money:values.needpay,result_m:values.result_m,type:"insure",values:o},vScrollBarEnabled:!1})}else api.alert({msg:"本订单已经支付过了，无需重复支付"});api.hideProgress()}})}function getCoupon(){api.ajax({url:website+"api_cj.php?action=my_coupon",method:"post",data:{values:{userid:$api.getStorage("ID"),state:"2"}}},function(a,e){if(!a)return!1;if(a){if(values.coupon_m=0,values.coupon_id="",0!=a.length){a.sort(function(a,e){return parseFloat(a.coupon_m)>parseFloat(e.coupon_m)?1:-1});for(i in a)"bx"==a[i].coupon_type?couponList.unshift(a[i]):couponList.push(a[i]);"bx"==couponList[0].coupon_type&&(values.coupon_m=couponList[0].coupon_m,values.coupon_id=couponList[0].ID)}updateHTML(),updateFooter()}})}function openCouponLists(){api.openWin({name:"coupon_list_win",url:"../unit/coupon_list_win.html",pageParam:{coupons:couponList,couponType:"bx",couponsIndex:couponsIndex}})}function payDetail(a){var e=[{title:"发票价格",money:data.needpay,mask:"+ ¥"},{title:"车船使用税",money:data.a11,mask:"+ ¥"},{title:"邮费",money:data.send_bill_fee,mask:"+ ¥",send_bill:values.send_bill},{title:"现金券",money:0==values.coupon_m?"暂无可用现金券":values.coupon_m,mask:"- ¥"},{title:"小马哥送礼",money:parseFloat(data.needpay)-(parseFloat(data.youhuipay)-parseFloat(data.a11)),mask:"- ¥"}];isDetail?api.openFrame({name:"pay_detail_frm",url:"./pay_detail_frm.html",rect:{x:0,y:0,w:"auto",h:api.winHeight-a},pageParam:{info:e,isDetail:isDetail},bounces:!1,bgColor:"rgba(0,0,0,0.6)",vScrollBarEnabled:!0,hScrollBarEnabled:!0}):(api.closeFrame({name:"pay_detail_frm"}),isDetail=!0)}apiready=function(){initDOM(),initVar(),initHTML(),initEventListener(),initModule(),getData(param.type,param.id)};var dom={},param={},data={},values={},couponList=[],couponsIndex=0,payInfo={},isDetail=!0</script> </html>

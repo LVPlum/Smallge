@@ -1,0 +1,210 @@
+<!DOCTYPE html> <html> <head> <meta charset=utf-8> <meta name=viewport content="maximum-scale=1,minimum-scale=1,user-scalable=0,width=device-width,initial-scale=1"/> <meta name=format-detection content="telephone=no,email=no,date=no,aItemress=no"> <title></title> <link rel=stylesheet type=text/css href=../../css/api.css /> <link rel=stylesheet type=text/css href=../../css/aui.css /> <link rel=stylesheet type=text/css href=../../css/aui-skin.css /> <link rel=stylesheet type=text/css href=../../css/tea.css /> <style type=text/css>body,html{width:100%;overflow:auto;background:#fff}.aui-list .aui-list-item-media{width:2.4rem;padding:0 .5rem 0 0}i~i{margin-left:.8rem}.aui-popup-arrow{left:.25rem;top:.2rem;-webkit-transform:rotate(135deg);transform:rotate(135deg);margin-top:-.4rem;background-image:-webkit-linear-gradient(45deg,#f2f5f8,#f2f5f8 50%,transparent 50%);background-image:linear-gradient(45deg,#f2f5f8,#f2f5f8 50%,transparent 50%)}.aui-label{padding:.125rem .2rem;color:#39f;font-size:.5rem;line-height:.475rem;border:1px solid #39f;border-radius:.6rem;background-color:#fff}.aui-list .aui-list-item{background-image:none}.tea-min-height-0{min-height:0!important}.red-packet{background-color:#fab948!important}span{display:inline}.margin-r-2{margin-right:.1rem}.aui-ellipsis-1{display:-webkit-box;overflow:hidden;text-overflow:ellipsis;word-wrap:break-word;word-break:break-all;white-space:normal!important;-webkit-line-clamp:1;-webkit-box-orient:vertical}</style> </head> <body tapmode ontouchend=hideChatBox(event)> <section id=offline-list></section> <section id=list class=aui-content> </section> </body> <script src=../../script/api.js></script> <script src=../../script/offline.js></script> <script src=../../script/aui-toast.js></script> <script src=../../script/tea.js></script> <script src=../../script/conn.js></script> <script src=../../script/emo.js></script> <script src=../../script/doT.min.js></script> <script type=text/template id=template> {{~it:value:index}}
+    {{?value.hbmode != 1 || !tea.appleCheck()}}
+    <ul class="aui-list aui-media-list aui-border-b aui-padded-t-15 aui-padded-b-15">
+        <li class="aui-list-item tea-noactive">
+            <div class="aui-media-list-item-inner">
+                <div class="aui-list-item-media aui-padded-t-0" tampode onclick="openWinInfo({{=value.userid}})">
+                    <img onload="tea.loadImage(this)" data-url="{{=value.img}}" src="../../image/avatar.png"/>
+                </div>
+                <div class="aui-list-item-inner aui-padded-t-0 aui-padded-b-5">
+                    <div class="aui-list-item-text aui-margin-b-5">
+                        <div class="aui-list-item-title" tampode onclick="openWinInfo({{=value.userid}})">
+                            <span style="color: #4d6073">{{=value.nickname}}</span>
+                            <div class="aui-label">{{=value.tx}}</div>
+                        </div>
+                        <i class="aui-iconfont tea-icon-share tea-big" tapmode onclick="share({{=page(index)}})">
+                        </i>
+                    </div>
+                    {{?value.hbmode == 1}}
+                        <div class="aui-card-list red-packet aui-margin-r-15 tea-border-radius-10" style="padding-top: 0.25rem; padding-bottom: 0.25rem"
+                            tapmode onclick="openPacket({{=value.hongbaoid}})">
+                            <div class="aui-card-list-content">
+                                <ul class="aui-list aui-media-list" >
+                                    <li class="aui-list-item aui-list-item-middle red-packet aui-padded-l-10">
+                                        <div class="aui-media-list-item-inner">
+                                            <div class="aui-list-item-media aui-padded-0 aui-padded-r-5">
+                                                <img src="../../image/hongbao@2x.png" class="" style="width: 2.45rem">
+                                            </div>
+                                            <div class="aui-list-item-inner">
+                                                <div class="aui-list-item-text">
+                                                    <div class="aui-list-item-title aui-font-size-14 aui-text-white ">
+                                                        <span class="aui-ellipsis-1">{{=value.description}}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="aui-list-item-text aui-text-white tea-font-size-11">
+                                                    领取红包
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    {{??true}}
+                    <div class="aui-list-item-title aui-font-size-14 tea-text-default">
+                        <div class="tea-ellipsis-6 description">{{=value.description}}</div>
+                    </div>
+                    <div class="aui-list-item-text aui-hide show-all aui-margin-t-10 aui-margin-b-5 tea-text-blue tea-big"
+                         tapmode onclick="showAll(this)">全文</div>
+                    {{? value.pic.length > 1}}
+                    <div class="aui-list-item-text">
+                        <div class="aui-row aui-row-padded aui-padded-r-15" style="width: 100%">
+                            {{?value.type == 'video'}}
+                            <div class="aui-col-xs-4" tapmode onclick="openVideo('{{=value.videopath}}','offline')">
+                                <div class="tea-img-box" style="background-image:url({{= value.thumbnail}})"></div>
+                                <div class="tea-play-box"></div>
+                            </div>
+                            {{?}}
+
+                            {{?value.type == 'picture'}}
+                            {{~value.pic.split(','):item:i}}
+                            <div class="aui-col-xs-4" tapmode onclick="openbigimg('{{=value.pic}}', {{=i}}, 'offline')">
+                                <div class="tea-img-box" style="background-image:url({{= item}})"></div>
+                            </div>
+                            {{~}}
+                            {{?}}
+
+                            {{?typeof value.type == 'undefined'}}
+
+                                {{~value.pic.split(','):item:i}}
+                                {{?value.videopath}}
+                                <div class="aui-col-xs-4" tapmode onclick="openVideo('{{= websiteTest + value.videopath}}' ,'{{= website + 'newspicup/smallimg/' + item }}')">
+                                {{??true}}
+                                <div class="aui-col-xs-4" tapmode onclick="openbigimg({{=value.ID}}, {{=i}}, this)">
+                                {{?}}
+                                    <div class="tea-img-box" style="background-image:url({{= website + 'newspicup/smallimg/' + item }})"></div>
+                                    {{?value.videopath}}
+                                    <img class="tea-play-box">
+                                    {{?}}
+                                </div>
+                                {{~}}
+                            {{?}}
+                        </div>
+                    </div>
+                    {{?}}
+                    <p class="aui-margin-t-5 aui-font-size-12 tea-text-dark-blue aui-ellipsis-1">{{=value.wz}}</p>
+                    {{?}}
+                    <div class="aui-info aui-font-size-12" style="padding-top:0; padding-bottom:0">
+                        <div class="aui-info-item tea-text-gray">{{=(value.addtime == '0秒前'? '刚刚' : value.addtime)}}
+                            {{?tea.appleCheck()}}
+                            <span class="tea-text-dark-blue aui-margin-l-10" tapmode onclick="jubao()">举报</span>
+                            {{?}}
+                            {{?value.userid == values.userid}}
+                            <span class="tea-text-dark-blue aui-margin-l-10" tapmode onclick="news.delete('{{=value.ID}}')">删除</span>
+                            {{?}}
+                        </div>
+                        <div class="aui-info-item" id ="{{= 'action' + page(index)}}">
+                            <!-- <input type="hidden" name=""> -->
+                            <i id="comment" class="aui-iconfont tea-icon-comment tea-big" style="margin-top: 0.1rem"
+                                tapmode onclick="event.stopPropagation();comment.action({{=page(index)}});" >
+                                <span class="aui-margin-l-5 tea-text-gray">{{=(value.lycount == 0 ? '': value.lycount)}}</span>
+                            </i>
+                            <i class="aui-iconfont tea-icon-like tea-big {{=(like.self(page(index))? 'aui-active' : '')}}"
+                                tapmode onclick="like.action({{=page(index)}}, this)">
+                                <span class="aui-margin-l-5 tea-text-gray">{{=(value.zancontent.length == 0? '': value.zancontent.length)}}</span>
+                            </i>
+                            {{?!tea.appleCheck()}}
+                            <i class="aui-iconfont tea-icon-reward tea-big {{=(reward.self(page(index))? 'aui-active' : '')}}" tapmode onclick="reward.action({{=page(index)}})">
+                                <span class="aui-margin-l-5 tea-text-gray">{{=(value.dxcount == 0 ? '': value.dxcount)}}</span>
+                            </i>
+                            {{?}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+
+        <li class="aui-list-item tea-noactive tea-min-height-0 {{=(value.zancontent.length != 0||value.lylist.length != 0? '' : 'aui-hide')}}"
+            id ="{{= 'ly' + page(index)}}">
+            <div class="aui-media-list-item-inner">
+                <div class="aui-list-item-media">
+                </div>
+                <div class="aui-list-item-inner tea-bg-default aui-margin-r-15 aui-padded-0 tea-min-height-0">
+                    <div class="aui-popup-arrow aui-padded-l-10" style="border-color: #f2f5f8"></div>
+                    {{?value.zancontent.length != 0}}
+                    <div class="aui-list-item-title aui-font-size-14 aui-padded-l-10 aui-padded-r-10 {{=(value.lylist.length != 0 ? 'aui-border-b': '')}}">
+                        <i class="aui-iconfont tea-icon-like aui-active"></i>
+                        {{~value.zancontent:item:i}}
+                        <span class="tea-text-dark-blue margin-r-2" tampode onclick="openWinInfo({{=item.userid}})">{{=item.nickname}}</span>
+                        {{~}}
+                    </div>
+                    {{?}}
+                    {{?value.lylist.length != 0}}
+                    {{~value.lylist:item:i}}
+                    <div class="aui-list-item-title aui-font-size-14 tea-text-default aui-padded-l-10 aui-margin-t-5"
+                        tapmode="tea-bg-gray" onclick="event.stopPropagation();comment.action({{=page(index)}}, {{=i}})">
+                        {{?item.lymode == 1 && !tea.appleCheck()}}
+                        <span class="tea-text-orange" tampode onclick="openWinInfo({{=item.userid}})">{{=item.nickname}}</span>
+                        <span> 打赏楼主 </span>
+                        <span class="tea-text-orange">¥{{=item.dxmoney}}</span>：{{=(item.liuyan == ''? '平安是福，行车顺利' : _transEmo(item.liuyan))}}
+                        {{?}}
+                        {{?item.lymode != 1}}
+                            {{?item.towho == 0}}
+                                <span class="tea-text-dark-blue" tampode onclick="event.stopPropagation();openWinInfo({{=item.userid}});">{{=item.nickname}}</span>
+                                <span>：{{=_transEmo(item.liuyan)}}</span>
+                            {{??true}}
+                                <span class="tea-text-dark-blue" tampode onclick="event.stopPropagation();openWinInfo({{=item.userid}});">{{=item.nickname}}</span>
+                                <span>回复</span>
+                                <span class="tea-text-dark-blue">{{=item.towho}}</span>
+                                <span>：{{=_transEmo(item.liuyan)}}</span>
+                            {{?}}
+                        {{?}}
+                    </div>
+                    {{~}}
+                    {{?}}
+                </div>
+            </div>
+        </li>
+
+    </ul>
+    {{?}}
+    {{~}} </script> <script type=text/template id=action-template> <i id="comment" class="aui-iconfont tea-icon-comment tea-big" style="margin-top: 0.1rem"
+        tapmode onclick="event.stopPropagation();comment.action({{=it.index}});" >
+        <span class="aui-margin-l-5 tea-text-gray">{{=(it.lycount == 0 ? '': it.lycount)}}</span>
+    </i>
+    <i class="aui-iconfont tea-icon-like tea-big {{=(like.self(it.index)? 'aui-active' : '')}}" tapmode onclick="like.action({{=it.index}}, this)">
+        <span class="aui-margin-l-5 tea-text-gray">{{=(it.zancontent.length == 0? '': it.zancontent.length)}}</span>
+    </i>
+    {{?!tea.appleCheck()}}
+    <i class="aui-iconfont tea-icon-reward tea-big {{=(reward.self(it.index)? 'aui-active' : '')}}" tapmode onclick="reward.action({{=it.index}})">
+        <span class="aui-margin-l-5 tea-text-gray">{{=(it.dxcount == 0 ? '': it.dxcount)}}</span>
+    </i>
+    {{?}} </script> <script type=text/template id=ly-template> <div class="aui-media-list-item-inner">
+        <div class="aui-list-item-media">
+        </div>
+        <div class="aui-list-item-inner tea-bg-default aui-margin-r-15 aui-padded-0 tea-min-height-0">
+            <div class="aui-popup-arrow aui-padded-l-10" style="border-color: #f2f5f8"></div>
+            {{?it.zancontent.length != 0}}
+            <div class="aui-list-item-title aui-font-size-14 aui-padded-l-10 aui-padded-r-10{{=(it.lylist.length != 0 ? 'aui-border-b': '')}}">
+                <i class="aui-iconfont tea-icon-like aui-active"></i>
+                {{~it.zancontent:item:i}}
+                <span class="tea-text-dark-blue margin-r-2" tampode onclick="openWinInfo({{=item.userid}})">{{=item.nickname}}</span>
+                {{~}}
+            </div>
+            {{?}}
+            {{?it.lylist.length != 0}}
+            {{~it.lylist:item:i}}
+            <div class="aui-list-item-title aui-font-size-14 tea-text-default aui-padded-l-10  aui-margin-t-5"
+                tapmode="tea-bg-gray" onclick="event.stopPropagation();comment.action({{=it.index}}, {{=i}})">
+                {{?item.lymode == 1 && !tea.appleCheck()}}
+                <span class="tea-text-orange" tampode onclick="openWinInfo({{=item.userid}})">{{=item.nickname}}</span>
+                <span> 打赏楼主 </span>
+                <span class="tea-text-orange">¥{{=item.dxmoney}}</span>：{{=(item.liuyan == ''? '平安是福，行车顺利' : _transEmo(item.liuyan))}}
+                {{?}}
+                {{?item.lymode != 1}}
+                    {{?item.towho == 0}}
+                        <span class="tea-text-dark-blue" tampode onclick="openWinInfo({{=item.userid}});">{{=item.nickname}}</span>
+                        <span>：{{=_transEmo(item.liuyan)}}</span>
+                    {{??true}}
+                        <span class="tea-text-dark-blue" tampode onclick="openWinInfo({{=item.userid}});">{{=item.nickname}}</span>
+                        <span>回复</span>
+                        <span class="tea-text-dark-blue">{{=item.towho}}</span>
+                        <span>：{{=_transEmo(item.liuyan)}}</span>
+                    {{?}}
+                {{?}}
+            </div>
+            {{~}}
+            {{?}}
+        </div>
+    </div> </script> <script>function initVar(){dom={},data={},values={page:1,userid:$api.getStorage("ID"),nickname:$api.getStorage("nickname"),token:$api.getStorage("token"),avatar:$api.getStorage("img"),tel:$api.getStorage("telphone"),tx:$api.getStorage("tx"),imageArr:[],newsArr:[],localNewsArr:[]},offline(like).init(),offline(comment).init(),offline(news).init(),offline(pic).init(),updateHTML()}function initModule(){reward={self:function(e){for(var a=data[e].lylist,t=a.length-1;t>=0;t--)if(a[t].userid==values.userid&&1==a[t].lymode)return!0;return!1},action:function(e){var a=data[e];if(a.userid==values.userid)return api.toast({msg:"亲，不能自己打赏自己啦，去看看谁顺眼就赏TA~"}),!1;api.openWin({name:"reward_win",url:"../red_packet/reward_win.html",bounces:!1,vScrollBarEnabled:!1,pageParam:{ID:a.userid,target:a.nickname,tzid:a.ID}})}},like={url:website+"api.php?action=addzan",success:function(e){},action:function(e,a){var t=data[e],i={userid:values.userid,nickname:values.nickname};if(tea.toggle(a,"aui-active"))this.url=website+"api.php?action=addzan",t.zancontent.push(i);else{this.url=website+"api.php?action=unsetzan";for(var n=t.zancontent.length-1;n>=0;n--)if(t.zancontent[n].userid===values.userid){t.zancontent.splice(n,1);break}}t.index=e,tea.doT(t,"action-template","action"+e),comment.change(e),this.json={ID:t.ID,userid:values.userid},offline(like).ajax()},self:function(e){for(var a=data[e].zancontent,t=a.length-1;t>=0;t--)if(a[t].userid==values.userid)return!0;return!1},change:function(e,a){}},news={compressing:!1,flag:0,url:websiteTest+"news_video_up/add_news.php?action=save_news",success:function(e){values.page=1,values.localNewsArr.pop(),getData(1,!0,!0),values.newsArr.length>0&&news.compress(values.newsArr[0])},compress:function(e){this.json=e,offline(news).compress()},ajax:function(){this.json.picval=this.json.imgArr.join(","),"video"!=this.json.type?offline(this).ajax():api.ajax({url:this.url,method:"post",data:{values:this.json,files:{upfile:this.file}}},function(e,a){e&&news.success()})},add:function(e){var a={type:e.type,ID:"local"+values.localNewsArr.length,userid:values.userid,nickname:values.nickname,usertelphone:values.tel,hits:"0",hbmode:"0",hongbaoid:null,title:"",description:e.content,body:e.content,dm:e.dm,pic:e.picval,img:values.avatar,zan:"0",addtime:"刚刚",zancontent:[],showwz:e.showwz,wz:e.wz,lycount:"0",dx:"0.00",dxcount:"0",videopath:e.videoPath,lylist:[],tx:values.tx,thumbnail:e.thumbnail[0]};values.page=1,values.newsArr=[],values.localNewsArr.unshift(a),data.unshift(a),tea.doT(data,"template","list"),updateVar(),tea.scroll("top")},delete:function(e){api.confirm({title:"取消提示",msg:"真的要删除？是的话所有留言会一并消失",buttons:["是","否"]},function(a,t){if(a&&1==a.buttonIndex){if("local"==e.substr(0,5)){var i=e.substr(5,1);return offline(news).init(),offline(pic).init(),values.localNewsArr.splice(i,1),data.shift(),void tea.doT(data,"template","list")}api.ajax({url:website+"savenews.php?action=deltitle",method:"post",timeout:30,dataType:"json",returnAll:!1,data:{values:{titleid:e}}},function(e,a){e&&1==e.succ&&(values.page=1,values.localNewsArr.pop(),getData(1,!0),api.toast({msg:"删除成功"}))})}})}},pic={flag:0,url:website+"up.php",cache:{},success:function(e,a){if(this.cache[a]=e.path,this.flag++,void 0!==news.json.imgArr&&this.flag==news.json.imgArr.length){for(var t=Object.keys(this.cache).sort(),i=0;i<t.length;i++){var n=t[i];news.json.imgArr[i]=this.cache[n]}this.cache={},this.flag=0,news.ajax()}},ajax:function(e){for(var a=0;a<e.length;a++)!function(a){pic.file=e[a],offline(pic).ajax()}(a)}},comment={open:!1,url:website+"savenews.php?action=addliuyan",success:function(e){e||api.alert({msg:"错误码："+err.code+"；错误信息："+err.msg+"网络状态码："+err.statusCode})},change:function(e){var a=$api.byId("ly"+e),t=data[e];t.index=e,0==t.zancontent.length&&0==t.lylist.length?$api.addCls(a,"aui-hide"):$api.removeCls(a,"aui-hide"),tea.doT(t,"ly-template",a)},del:function(e,a){var t=data[e];this.url=website+"savenews.php?action=delly",this.json={tzid:t.ID,lyid:t.lylist[a].ID},offline(this).ajax(),t.lylist.splice(a,1),this.change(e),api.toast({msg:"删除成功"})},action:function(e,a){var t=data[e];if(void 0===a)var a=t.lylist.length-1,i=0,n="评论";else{var o=t.lylist[a],i=o.nickname,n="回复@"+o.nickname;if(values.userid==o.userid){if(1==t.lymode)return;return void api.actionSheet({cancelTitle:"取消",destructiveTitle:"删除"},function(t,i){t&&1==t.buttonIndex&&comment.del(e,a)})}}if(1==this.open)return UIChatBox.setPlaceholder({placeholder:n}),UIChatBox.show(),void UIChatBox.popupKeyboard();UIChatBox.open({placeholder:n,maxRows:4,autoFocus:!0,emotionPath:"widget://image/chatBox/emotion",styles:{inputBar:{borderColor:"#ededed",bgColor:"#ffffff"},inputBox:{borderColor:"#B3B3B3",bgColor:"#FFFFFF"},emotionBtn:{normalImg:"widget://image/chatBox/chatBox_face1.png"},indicator:{target:"both",color:"#c4c4c4",activeColor:"#9e9e9e"},sendBtn:{titleColor:"#fff",bg:"#3399ff",activeBg:"#46a91e",titleSize:14}}},function(n){if("show"==n.eventType&&(comment.open=!0),"send"==n.eventType){var o=n.msg;if(!o)return tea.toast("fail","留言不能为空"),!1;comment.json={msg:o,nickname:values.nickname,telphone:values.telphone,token:values.token,userid:values.userid,ID:t.ID,dm:api.deviceModel,towho:i,pushid:t.userid},comment.url=website+"savenews.php?action=addliuyan",offline(comment).ajax(),comment.open=!1;var s={ID:"0",nickname:values.nickname,userid:values.userid,telphone:values.tel,liuyan:o,dm:api.deviceModel,img:values.avatar,addtime:"刚刚",dxmoney:{},lymode:"0",towho:i};t.lylist.splice(a+1,0,s),comment.change(e),api.toast({msg:"回复成功"}),UIChatBox.closeKeyboard(),UIChatBox.close()}})}}}function initEventListener(){api.addEventListener({name:"loginSuccess"},function(e,a){e?(initVar(),getData(1,!0,!0)):alert(JSON.stringify(a))}),api.addEventListener({name:"online"},function(e,a){offline(like).connect(),offline(comment).connect(),offline(pic).connect(),offline(news).connect()}),api.addEventListener({name:"scrolltobottom"},function(e,a){values.page++,getData(values.page,!1)}),api.addEventListener({name:"sendImg"},function(e,a){if(e){if("news"!=e.value.to)return;api.openWin({name:"news_add_win",url:"./news_add_win.html",pageParam:{type:e.value.type,imgArr:e.value.img,thumbnail:e.value.thumbnail}})}else alert(JSON.stringify(a))}),api.addEventListener({name:"addNew"},function(e,a){if(e){if(news.add(e.value.json),!offline(pic).check()||!offline(news).check())return void values.newsArr.push(e.value.json);news.compress(e.value.json)}else alert(JSON.stringify(a))}),api.addEventListener({name:"redpacketSuccess"},function(e,a){e?(tea.toast("success","群发红包成功"),values.page=1,getData(1,!0)):alert(JSON.stringify(a))}),api.addEventListener({name:"rewardSuccess"},function(e,a){if(e){for(var t=data.length-1;t>=0;t--)if(data[t].ID==e.value.tzid){tea.toast("success","打赏成功");var i={ID:"0",nickname:values.nickname,userid:values.userid,telphone:values.tel,liuyan:e.value.msg,dm:api.deviceModel,img:values.avatar,addtime:"刚刚",dxmoney:e.value.paymoney,lymode:"1",towho:e.value.taggetname},n=data[t].lylist.length-1;return data[t].lylist.splice(n+1,0,i),void comment.change(t)}}else alert(JSON.stringify(a))})}function getData(e,a,t){1!=t&&api.showProgress({style:"default",animationType:"fade",title:"努力加载中...",text:"请稍候...",modal:!0}),api.ajax({url:website+"api.php?action=newslist&page="+e,dataType:"json"},function(e,t){if(api.hideProgress(),api.refreshHeaderLoadDone(),e){for(n=e.length-1;n>=0;n--)$api.isArray(e[n].lylist)||(e[n].lylist=[]),$api.isArray(e[n].zancontent)||(e[n].zancontent=[]);if(1==a){data=e;var i=values.localNewsArr;if(i.length>0)for(var n=0;n<i.length;n++)data.unshift(i[n]);tea.doT(data,"template","list")}else data=data.concat(e),tea.doT(e,"template","list","append"),tea.scroll(50);updateVar()}api.hideProgress()})}function updateVar(){dom.descriptions=$api.domAll(".description"),dom.showAll=$api.domAll(".show-all");for(var e=dom.descriptions.length-1;e>=0;e--)$api.offset(dom.descriptions[e]).h!=dom.descriptions[e].scrollHeight&&$api.removeCls(dom.showAll[e],"aui-hide")}function updateDom(){}function updateHTML(){}function openWinInfo(e){void 0===e&&(e=$api.getStorage("ID")),api.openWin({name:"user_info_win",url:"../location/user_info_win.html",pageParam:{friendID:e,pageType:"news"}})}function showAll(e){var a=$api.dom($api.prev(e),".description");tea.toggle(a,"tea-ellipsis-6"),"全文"!=$api.text(e)?$api.text(e,"全文"):$api.text(e,"收起")}function hideChatBox(e){void 0!==UIChatBox&&(UIChatBox.hide(),UIChatBox.closeKeyboard())}function opennews(){tea.appleCheck()?api.actionSheet({cancelTitle:"取消",buttons:["发照片","发视频"]},function(e,a){e&&(1==e.buttonIndex&&api.openWin({name:"media_win",url:"../unit/media_win.html",pageParam:{to:"news",type:"picture"},vScrollBarEnabled:!1}),2==e.buttonIndex&&api.openWin({name:"media_win",url:"../unit/media_win.html",pageParam:{to:"news",type:"video"},vScrollBarEnabled:!1}))}):api.actionSheet({cancelTitle:"取消",destructiveTitle:"群发红包",buttons:["发照片","发视频"]},function(e,a){if(e){if(1==e.buttonIndex)return void api.openWin({name:"red_packet_win",url:"../red_packet/red_packet_win.html"});2==e.buttonIndex&&api.openWin({name:"media_win",url:"../unit/media_win.html",pageParam:{to:"news",type:"picture"},vScrollBarEnabled:!1}),3==e.buttonIndex&&api.openWin({name:"media_win",url:"../unit/media_win.html",pageParam:{to:"news",type:"video"},vScrollBarEnabled:!1})}})}function openbigimg(e,a,t){function i(e){api.require("imageBrowser").openImages({imageUrls:e,showList:!1,activeIndex:a})}"offline"!=t?api.ajax({url:website+"getnewslist.php?action=getimglist",method:"post",timeout:30,dataType:"json",returnAll:!1,data:{values:{ID:e}}},function(e,a){if(e){if(!e.errmsg&&"ok"==e.succ){for(var t=e.img.split(","),n=[],o=0;o<t.length;o++){var s=website+"newspicup/"+t[o];n.push(s)}i(n)}}else api.alert({msg:"错误码："+a.code+"；错误信息："+a.msg+"网络状态码："+a.statusCode})}):i(e.split(","))}function share(e){var a=data[e].ID,t=data[e].body,i=data[e].nickname;api.require("dialogBox").actionMenu({rect:{h:100},tapClose:!0,items:[{text:"微信好友",icon:"widget://image/wxhy.png"},{text:"朋友圈",icon:"widget://image/wxpyq.png"},{text:"复制全文",icon:"widget://image/menu.png"}],styles:{bg:"#FFF",column:3,itemText:{color:"#000",size:12,marginT:8},itemIcon:{size:40}}},function(e){0!=e.index&&1!=e.index||(0==e.index&&(key="session"),1==e.index&&(key="timeline"),api.require("wx").shareWebpage({apiKey:"",scene:key,title:i+"在小马哥分享的新鲜事",description:t,thumb:"widget://image/logo108.png",contentUrl:website+"m/smallgenews.php?ID="+a},function(e,a){e.status&&api.alert({msg:"分享成功"})})),2==e.index&&api.require("clipBoard").set({value:t},function(e,a){e&&(api.require("dialogBox").close({dialogName:"actionMenu"}),api.toast({msg:"复制成功"}))})})}function openVideo(e,a){function t(e,a){api.openFrame({name:"video_frm",url:"../unit/video_frm.html",rect:{x:0,y:0,w:api.winWidth,h:api.winHeight},pageParam:{url:e,thumbnail:a,bg:!0,offline:!0},bounces:!1,bgColor:"rgba(0,0,0,0)",vScrollBarEnabled:!0,hScrollBarEnabled:!0})}"offline"!=a?api.imageCache({url:a},function(a,i){a&&t(e,a.url)}):api.openFrame({name:"video_frm",url:"../unit/video_frm.html",rect:{x:0,y:0,w:api.winWidth,h:api.winHeight},pageParam:{url:e,offline:!0},bounces:!1,bgColor:"rgba(0,0,0,0)",vScrollBarEnabled:!0,hScrollBarEnabled:!0})}function openPacket(e){api.openWin({name:"lingqunhongbao_win",url:"../red_packet/lingqunhongbao_win.html",pageParam:{hongbaoID:e}})}function page(e){return 20*(values.page-1)+e}function jubao(){api.alert({msg:"我们已经收到您的举报信息并尽快做出处理"})}var dom={},data={},values={},like,comment,UIChatBox,ajax,news,reward;apiready=function(){UIChatBox=api.require("UIChatBox"),initModule(),initVar(),initEventListener(),getData(1,!0,!0),api.setRefreshHeaderInfo({visible:!0,bgColor:"#f2f2f2",textColor:"#4d4d4d",textDown:"下拉刷新...",textUp:"松开刷新...",showTime:!0},function(e,a){values.page=1,getData(1,!0,!0)})}</script> </html>

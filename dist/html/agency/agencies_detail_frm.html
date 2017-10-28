@@ -1,0 +1,107 @@
+<!DOCTYPE html> <html> <head> <meta charset=utf-8> <meta name=viewport content="maximum-scale=1,minimum-scale=1,user-scalable=0,width=device-width,initial-scale=1"/> <meta name=format-detection content="telephone=no,email=no,date=no,aItemress=no"> <title>title</title> <link rel=stylesheet type=text/css href=../../css/api.css /> <link rel=stylesheet type=text/css href=../../css/aui.css /> <link rel=stylesheet type=text/css href=../../css/aui-skin.css /> <link rel=stylesheet type=text/css href=../../css/aui-slide.css /> <link rel=stylesheet type=text/css href=../../css/tea.css /> <style type=text/css>body,html{height:100%;width:100%;overflow-x:hidden;overflow-y:auto}section~section{margin-top:.5rem}.title{width:100%;height:30px;line-height:30px;position:absolute;padding:0 1.5rem 0 .75rem;left:0;right:0;bottom:5px;z-index:9999;text-align:left}.page{padding:0 .75rem;text-align:right}.close{position:fixed;padding:0;width:1.3rem;height:1.3rem;top:.75rem;left:.75rem;background:#999;color:#fff;border-radius:50%;z-index:9999;text-align:center}.tea-list-item-media{width:3.5rem;position:relative;padding:.5rem 0;display:inherit;justify-content:space-around;flex-direction:column;align-items:center;font-size:.55rem}.aui-list-item.show{border-bottom:1px solid #ededed}.aui-border-t{border-top:1px solid #ededed!important}</style> </head> <body> <div id=content> <header id=pic> <div class=aui-slide-wrap> <div class="aui-slide-node aui-slide-node-center"> <img src=../../image/holder_car.png /> </div> <div class="aui-slide-node aui-slide-node-center"> <img src=../../image/holder_car.png /> </div> <div class="aui-slide-node aui-slide-node-center"> <img src=../../image/holder_car.png /> </div> </div> <div class=close tapmode onclick=closeWin()> <span class="aui-iconfont aui-icon-left aui-text-white aui-font-size-14"></span> </div> <div class="aui-slide-page-wrap aui-hide"></div> <div class="title aui-text-white aui-font-size-16">北海阳光城市中心审车代办点</div> <div id=page class="title page aui-text-white aui-font-size-12"></div> </header> <section> <ul class="aui-list aui-media-list aui-list-noborder aui-list-in"> <li class=aui-list-item> <div class=aui-media-list-item-inner> <div class=aui-list-item-inner> <div class="aui-list-item-title aui-font-size-14"> <span class="aui-iconfont tea-text-blue aui-icon-location aui-margin-r-5 aui-margin-b-5"></span> 广西北海皇后大道西街37栋B座（麦当劳对面） </div> <div class="aui-list-item-title aui-font-size-14"> <span class="aui-iconfont tea-text-blue aui-icon-phone aui-margin-r-5"></span> <span>林先生</span> <span>18719139485</span> </div> </div> <div class="tea-list-item-media aui-border-l"> <i class="aui-iconfont aui-icon-paper tea-text-blue aui-font-size-18"></i> <span class="tea-text-blue aui-font-size-14">导航</span> </div> </div> </li> </ul> <ul class="aui-list aui-list-noborder aui-list-in aui-border-t"> <li class=aui-list-item> <div class="aui-list-item-inner aui-list-item-arrow"> <div class="aui-list-item-title tea-text-orange">4.8分 非常棒</div> <div class=aui-list-item-right>95%好评 11111条评论</div> </div> </li> </ul> </section> <section> <ul class="aui-list aui-media-list tea-list-in aui-list-noborder"> <li class="aui-list-item aui-list-item-arrow tea" tapmode onclick=agencyToggle(this)> <div class=aui-list-item-inner> <div class=aui-list-item-title>您的选项</div> </div> </li> <li class=aui-list-item> <div class=aui-media-list-item-inner> <div class=aui-list-item-media style=width:4rem> <div class=aui-list-title>轿车：</div> </div> <div class="aui-list-item-inner aui-padded-l-0"> <div id=businessList class="aui-row tea-text-title"> <div class="aui-col-xs-6 aui-ellipsis-1"> <div class="aui-ellipsis-1 tea-text-blue-point">审车</div> </div> <div class=aui-col-xs-6> <div class="aui-ellipsis-1 tea-text-blue-point">审车</div> </div> <div class=aui-col-xs-6> <div class="aui-ellipsis-1 tea-text-blue-point">审车</div> </div> <div class=aui-col-xs-6> <div class="aui-ellipsis-1 tea-text-blue-point">审车</div> </div> </div> </div> </div> </li> </ul> </section> <section> <ul class="aui-list tea-list-in aui-list-noborder"> <li class="aui-list-item aui-list-item-arrow tea" tapmode onclick=agencyToggle(this)> <div class=aui-list-item-inner> <div class=aui-list-item-title>收费标准和需要手续</div> </div> </li> </ul> <ul id=projects class="aui-list aui-select-list aui-list-in aui-hide"> <li class=aui-list-item> <div class=aui-list-item-inner> <div class="aui-list-item-title aui-ellipsis-1">审车 ¥120</div> <div class="aui-list-item-text aui-ellipsis-1">需要手续：审车费用</div> </div> <div class=tea-list-item-media> <label class=aui-pull-right><input class=aui-radio type=radio name=radio checked=checked></label> </div> </li> <li class=aui-list-item> <div class=aui-list-item-inner> <div class="aui-list-item-title aui-ellipsis-1">审车 ¥120</div> <div class="aui-list-item-text aui-ellipsis-1">需要手续：审车费用</div> </div> <div class=tea-list-item-media> <label class=aui-pull-right><input class=aui-radio type=radio name=radio checked=checked></label> </div> </li> </ul> </section> </div> </body> <script src=../../script/api.js></script> <script src=../../script/aui-slide.js></script> <script src=../../script/tea.js></script> <script src=../../script/conn.js></script> <script src=../../script/doT.min.js></script> <script type=text/template id=template> <header id="pic">
+        <div class="aui-slide-wrap" >
+            {{~it.picsArr:value:index}}
+            <div class="aui-slide-node aui-slide-node-center ">
+                <img src="{{= website + 'admin' + value}}" />
+            </div>
+            {{~}}
+        </div>
+        <div class="close" tapmode onclick="closeWin()">
+            <span class="aui-iconfont aui-icon-left aui-text-white aui-font-size-14"></span>
+        </div>
+        <div class="aui-slide-page-wrap aui-hide"><!--分页容器--></div>
+        <div class="title aui-text-white aui-font-size-16">{{=it.name}}</div>
+        <div id="page" class="title page aui-text-white aui-font-size-12"></div>
+    </header>
+    <section>
+        <ul class="aui-list aui-media-list aui-list-noborder aui-list-in">
+            <li class="aui-list-item">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-title aui-font-size-14">
+                            <span class="aui-iconfont tea-text-blue aui-icon-location aui-margin-r-5 aui-margin-b-5"></span>
+                            {{=it.complete_address}}
+                        </div>
+                        <div class="aui-list-item-title aui-font-size-14">
+                            <span class="aui-iconfont tea-text-blue aui-icon-phone aui-margin-r-5"></span>
+                            <span>{{=it.linker}}</span>
+                            <span>{{=it.telphone}}</span>
+                        </div>
+                    </div>
+                    <div class="tea-list-item-media aui-border-l" tapmode onclick="tea.bmapGuide('{{=it.name}}','{{=it.longitude}}','{{=it.latitude}}')">
+                        <i class="aui-iconfont aui-icon-paper tea-text-blue aui-font-size-18"></i>
+                        <span class="tea-text-blue aui-font-size-14">导航</span>
+                    </div>
+                </div>
+            </li>
+
+         </ul>
+         <!-- <ul class="aui-list aui-list-noborder aui-list-in aui-border-t" tapmode onclick="tea.toast('disable')">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-title tea-text-orange ">4.8分 非常棒</div>
+                    <div class="aui-list-item-right">95%好评 11111条评论</div>
+                </div>
+            </li>
+         </ul> -->
+    </section>
+
+    <section>
+        <ul class="aui-list tea-list-in aui-list-noborder ">
+            <li class="aui-list-item aui-list-item-arrow tea" tapmode onclick="agencyToggle(this)">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title">收费标准和需要手续</div>
+                </div>
+            </li>
+        </ul>
+        <ul id="projects" class="aui-list aui-select-list aui-list-in">
+            {{ for(var prop in it.c_business){ }}
+            <li class="aui-list-item" tapmode onclick="selectBusiness(this,{{=prop}})">
+                <div class="aui-list-item-inner aui-ellipsis-1">
+                    <div class="aui-list-item-title aui-ellipsis-1">{{= it.c_business[prop].name}} <span class="tea-text-orange">¥{{= it.c_business[prop].money}}</span></div>
+                    <div class="aui-list-item-title aui-ellipsis-2 tea-text-default aui-font-size-14">{{= it.c_business[prop].condition}}</div>
+                </div>
+                <div class="tea-list-item-media">
+                    <label class="aui-pull-right">
+                    <input class="aui-checkbox" type="checkbox" name="checkbox" {{=(isSelect(prop)? 'checked': '')}}
+                           tapmode onclick="prevent(event)">
+                    </label>
+                </div>
+            </li>
+            {{ } }}
+        </ul>
+    </section>
+
+    <section id="business">
+        <ul class="aui-list aui-media-list tea-list-in aui-list-noborder ">
+            <li class="aui-list-item tea">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title">您的选项</div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media aui-padded-r-0" style="width: 4rem;">
+                        <div class="aui-list-title">{{=(agency.type === 1? '轿车：' : '货车：')}}</div>
+                    </div>
+                    <div class="aui-list-item-inner aui-padded-l-0">
+                        <div id="businessList" class="aui-row tea-text-title">
+                            {{ for(var prop in it.c_business){ }}
+                            <div class="aui-col-xs-6 aui-ellipsis-1">
+                                <div class="aui-ellipsis-1 tea-text-blue-point {{=(isSelect(prop)? '':'aui-hide')}}">
+                                    {{= it.c_business[prop].name}}
+                                </div>
+                            </div>
+                            {{ } }}
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </section> </script> <script type=text/template id=b-template> {{ for(var prop in it.c_business){ }}
+    <div class="aui-col-xs-6 aui-ellipsis-1">
+        <div class="aui-ellipsis-1 tea-text-blue-point {{=(isSelect(prop)? '':'aui-hide')}}">
+            {{= it.c_business[prop].name}}
+        </div>
+    </div>
+    {{ } }} </script> <script>function initDOM(){}function initVar(){(data=api.pageParam.data).picsArr=data.pics.split(","),agency=$api.getStorage("agency"),values.type=agency.type,1!=values.type&&(data.c_business=data.v_business),values.idArr=agency.business}function initHTML(){var e=$api.byId("content");tea.doT(data,"template",e)}function getData(){}function updateDOM(){pic=$api.byId("pic"),page=$api.byId("page"),business=$api.byId("business")}function updateVar(){}function updateHTML(){var e=$api.byId("businessList");tea.doT(data,"b-template",e)}function initEventListener(){}function init(){}function initUIScrollPicture(){var e=new auiSlide({container:pic,height:240,speed:500,autoPlay:3e3,loop:!0,pageShow:!0,pageStyle:"line",dotPosition:"center",currentPage:function(a){page.innerHTML=a+1+"/"+e+"张"}}).pageCount();page.innerHTML="1/"+e+"张"}function addEvent(){}function closeWin(){api.execScript({name:"agencies_detail_win",script:"closeWin();"})}function agencyToggle(e){tea.toggle(e,"show"),tea.toggle("projects")}function selectBusiness(e,a){var i=$api.dom(e,"input"),a=parseInt(a),t=values.idArr.indexOf(a);t>-1?values.idArr.length>1?(values.idArr.splice(t,1),i.click()):api.toast({msg:"请至少选择一个项目",duration:2e3,location:"middle"}):(values.idArr.push(a),i.click()),updateHTML()}function prevent(e){e.preventDefault()}function postAgency(){values.user_id=$api.getStorage("ID"),values.car_type=agency.type,values.telphone=agency.telphone,values.agency_id=data.id,values.business=values.idArr.join(","),values.book_time=agency.book_time;var e=api.pageParam.order;void 0!==e&&(values.id=e.id,values.able=1),api.ajax({url:website+"api_q.php?action=book_agency",method:"post",data:{values:values}},function(e,a){e?1==e.succ?api.openWin({name:"success",url:"../unit/success_win.html",pageParam:{title:"找代办",result:"提交成功",data:{0:["在您提交的代办时间内","工作人员会联系您，请保持手机畅通"]}}}):api.toast({msg:e.msg,duration:2e3,location:"middle"}):tea.toast("ajax")})}function isSelect(e){var e=parseInt(e);return values.idArr.indexOf(e)>-1}apiready=function(){initDOM(),initVar(),initHTML(),initEventListener(),updateDOM(),initUIScrollPicture(),getData()};var data={},values={},agency={},flag=!1,pic,page,business</script> </html>

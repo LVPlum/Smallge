@@ -1,0 +1,48 @@
+ <!DOCTYPE html> <html> <head> <meta charset=utf-8> <meta name=viewport content="maximum-scale=1,minimum-scale=1,user-scalable=0,width=device-width,initial-scale=1"/> <meta name=format-detection content="telephone=no,email=no,date=no,aItemress=no"> <title>title</title> <link rel=stylesheet type=text/css href=../../css/api.css /> <link rel=stylesheet type=text/css href=../../css/aui.css /> <link rel=stylesheet type=text/css href=../../css/aui-skin.css /> <link rel=stylesheet type=text/css href=../../css/aui-flex.css /> <link rel=stylesheet type=text/css href=../../css/tea.css /> <style type=text/css>body,html{overflow:auto;touch-action:manipulation}.aui-btn.tea{width:100%;height:2rem;line-height:2rem;padding:0}.aui-list-item-arrow.tea-blue:before{right:0;border-color:#39f}.project-title{height:2.1rem;line-height:2.1rem}.aui-list-item-media.tea{width:4.4rem;padding:0}.tea-list-item-media{width:2.7rem;position:relative;padding:.5rem 0;display:inherit;flex-direction:column;align-items:center;font-size:.55rem}.aui-icon-paper{font-size:1.15rem;color:#39f}.aui-icon-location{font-size:.55rem;color:#999}.aui-content-padded{margin:0;margin-bottom:.75rem;margin-right:.75rem}.stations{border-top-left-radius:.25rem;border-bottom-left-radius:.24rem}</style> </head> <body> <section id=stationList class="aui-content aui-margin-b-5 tea-bg-white"> <ul class="aui-content-padded aui-list aui-media-list aui-list-noborder"> <li class=aui-list-item> <div class="aui-list-item-title tea-text-star-red project-title">选择检测站</div> <div class="aui-media-list-item-inner tea-bg-default tea-border-radius-10 aui-padded-l-15"> <div class=aui-list-item-inner> <div class=aui-list-item-title>合浦还珠路站</div> <div class="aui-list-item-title tea-text-gray tea-font-size-11"> <span class="aui-iconfont aui-icon-location"></span>这里是内容区域，新版中的列表布局可 </div> </div> <div class="tea-list-item-media aui-border-l"> <i class="aui-iconfont aui-icon-paper"></i> <span class=tea-text-blue>导航</span> </div> </div> </li> </ul> </section> <section class="aui-content aui-margin-b-5"> <ul class="aui-list aui-list-in aui-list-noborder"> <li class="aui-list-item aui-list-item-middle" tapmode onclick=openWinDateSelect()> <div class="aui-list-item-inner aui-list-item-arrow"> <div class="aui-list-item-title tea-text-star-red">预约时间</div> <div id=time class="aui-list-item-right tea-text-default aui-font-size-14"></div> </div> </li> </ul> </section> <section class="aui-content aui-margin-b-5 tea-bg-white"> <ul class="aui-list aui-list-in aui-form-list aui-list-noborder"> <li class=aui-list-item> <div class=aui-list-item-inner> <div class=aui-list-item-label-icon style=padding:0;min-width:0> <span class=tea-text-red>*</span> </div> <div class=aui-list-item-input> <input id=phone type=tel placeholder=请输入经办人手机号码 tapmode oninput=changePhone(this)> </div> </div> </li> </ul> </section> </body> <script src=../../script/api.js></script> <script src=../../script/tea.js></script> <script src=../../script/conn.js></script> <script src=../../script/doT.min.js></script> <script type=text/template id=stationList-template> <ul class="aui-content-padded aui-list aui-media-list aui-list-noborder">
+        <li class="aui-list-item">
+            <div class="aui-list-item-title tea-text-star-red project-title">选择检测站</div>
+            {{~it:value:index}}
+            <div class="aui-media-list-item-inner tea-bg-default tea-border-radius-10 aui-margin-b-10">
+                <div class="stations aui-list-item-inner aui-padded-l-15 aui-border-r {{=(value.stationid == values.stationid? 'tea-active' : '')}}"
+                     tapmode onclick="setStation({{=value.stationid}})" data-id="{{=value.stationid}}" >
+                    <div class="aui-list-item-title">{{=value.name}}</div>
+                    <div class="aui-list-item-title tea-text-gray tea-font-size-11">
+                        <span class="aui-iconfont aui-icon-location"></span>{{=value.address}}
+                    </div>
+                </div>
+                <div class="tea-list-item-media" tapmode onclick="tea.bmapGuide('{{=value.name}}','{{=value.longitude}}','{{=value.latitude}}')">
+                    <i class="aui-iconfont aui-icon-paper"></i>
+                    <span class="tea-text-blue">导航</span>
+                </div>
+            </div>
+            {{~}}
+        </li>
+     </ul>
+    <!-- <ul class="aui-list aui-media-list aui-list-noborder">
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title tea-text-star-red project-title">选择检测站</div>
+                {{~it:value:index}}
+                <div class="aui-row aui-row-padded" tapmode onclick="setStation({{=index}})" onfocus="">
+                    <div class="aui-col-xs-4">
+                        <p><div class="aui-btn tea aui-ellipsis-1 {{=(index == values.stationIndex? 'tea-active' : '')}}">
+                            {{=value.name}}
+                        </div></p>
+                    </div>
+                    <div class="aui-col-xs-8">
+                        <div class="aui-media-list-item-inner">
+                            <div class="aui-list-item-text aui-font-size-12 aui-pull-right">
+                                <span class="aui-ellipsis-2">
+                                    {{=value.address}}
+                                </span>
+                            </div>
+                            <div class="aui-list-item-media tea aui-pull-right">
+                                <img src="../../image/car_check/shenche_daohang@2x.png">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{~}}
+            </div>
+        </li>
+    </ul>  --> </script> <script>function initDOM(){phone=$api.byId("phone"),time=$api.byId("time")}function initVar(){data=api.pageParam.carCheckInfo,values.telphone=$api.getStorage("telphone"),values.ID=$api.getStorage("ID"),values.stationid=data.station[0].stationid,values.retime=data.closest_time,values.time=data.closest_time;var e=$api.jsonToStr(data.business);values.business=$api.strToJson(e);for(var a in values.business)values.business[a]="";values.business.c1=data.business.c1,void 0!==(order=api.pageParam.order)&&updateVar()}function getData(){}function updateDOM(){}function updateVar(){values.telphone=order.telphone,values.retime=order.retime,values.stationid=order.stationid,values.orderid=order.ID,values.able=1;for(var e in order.business)if(0!=order.business[e]){var a=order.business[e].id;values.business[a]=order.business[e].name}}function updateHTML(){updatePlate(),updateStationListHTML(),time.innerHTML=values.retime}function updatePlate(){$api.val(phone,values.telphone)}function updateStationListHTML(){var e=data.station,a=$api.byId("stationList"),t=$api.byId("stationList-template");tea.doT(e,t,a),stations=$api.domAll(a,".stations")}function initEventListener(){api.addEventListener({name:"selectretime"},function(e,a){e&&(time.innerHTML=e.value.strtime,values.retime=e.value.realtime,testForm())}),api.addEventListener({name:"postCarCheck"},function(e,a){e&&(values.nickname=$api.getStorage("nickname"),values.carnum=e.value.partOneVal.plate,values.stationid=values.stationid,values.plate=e.value.partOneVal.plate,values.c1=e.value.partOneVal.c1,values.c2=e.value.partOneVal.c2,values.c3=e.value.partOneVal.c3,values.c4=e.value.partOneVal.c4,values.c5=e.value.partOneVal.c5,values.deviceId=api.deviceId,values.business=e.value.partOneVal.business,tea.showp("提交中","",!0),testValues(values)&&api.ajax({url:website+"api.php?action=carre_save",method:"post",data:{values:values}},function(e,a){api.hideProgress(),e&&(1==e.succ?api.openWin({name:"successCarCheck",url:"../unit/success_win.html",pageParam:{title:"网约审车",result:"预约成功",data:{0:["您的爱车："+values.plate,"预约时间："+values.retime],1:["请带行驶证","请带好交强险有效期内保单","若未买保险，请到小马哥审查出单点购买","返利全市最高"]}}}):api.toast({msg:e.msg,duration:3e3,location:"middle"}))}))}),api.addEventListener({name:"addOldCar"},function(e,a){e&&(values.plate=e.value.car,values.telphone=e.value.tel,updatePlate(),testForm())}),api.addEventListener({name:"selectPlateProvince"},function(e,a){if(e){var t=e.value.province+e.value.city;values.plate=t+values.plate.slice(2),updatePlate(),testForm()}})}function init(){}function addEvent(){}function openWinPlateProvince(){event.stopPropagation(),api.openWin({name:"plateProvince",url:"../car_plate/plate_province_win.html",pageParam:{name:"test"}})}function openWinPlateNum(){api.openWin({name:"plateNum",url:"../car_plate/plate_num_win.html",pageParam:{name:"test"}})}function openWinDateSelect(){api.openWin({name:"dateSelect",url:"../unit/date_select_win.html",pageParam:{winName:"car_check_partTwo_win"}})}function setStation(e){if(tea.scroll("bottom"),e!==values.stationid){values.stationid=e;for(var a=stations.length-1;a>=0;a--)$api.attr(stations[a],"data-id")==e?$api.addCls(stations[a],"tea-active"):$api.removeCls(stations[a],"tea-active")}}function changePhone(e){event.stopPropagation(),values.telphone=$api.val(e),testForm()}function testValues(e){return values.telphone=tea.toNum(values.telphone),tea.checkPhone(e.telphone)?""!==e.retime||(api.toast({msg:"请选择预约时间~",duration:2e3,location:"middle"}),!1):(api.toast({msg:"请输入格式正确的11位手机号码~",duration:2e3,location:"middle"}),phone.focus(),!1)}function testForm(){var e=!1;values.telphone=tea.toNum(values.telphone),tea.checkPhone(values.telphone)&&""!==values.retime&&(e=!0),api.sendEvent({name:"formReady",extra:{ready:e}})}var phone,plateNum,plateProvince,stations,businesses,select,time,data,values={},order={};apiready=function(){initDOM(),initVar(),updateHTML(),initEventListener(),init(),testForm()}</script> </html>

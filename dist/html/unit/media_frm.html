@@ -1,0 +1,49 @@
+<!DOCTYPE html> <html> <head> <meta charset=utf-8> <meta name=viewport content="maximum-scale=1,minimum-scale=1,user-scalable=0,width=device-width,initial-scale=1"/> <meta name=format-detection content="telephone=no,email=no,date=no,aItemress=no"> <title></title> <link rel=stylesheet type=text/css href=../../css/api.css /> <link rel=stylesheet type=text/css href=../../css/aui.css /> <link rel=stylesheet type=text/css href=../../css/aui-skin.css /> <link rel=stylesheet type=text/css href=../../css/tea.css /> <style type=text/css>body,html{overflow:auto}.aui-radio{position:absolute!important;top:.2rem;right:.2rem;text-align:center;z-index:2}.aui-disabled{background-color:rgba(0,0,0,.5)!important}</style> </head> <body> <div class="aui-content aui-margin-b-15"> <ul class="aui-list aui-media-list aui-list-noborder"> <li class="aui-list-item tea-bg-default"> <div class=aui-list-item-inner> <div id=list class="aui-row aui-row-padded"> </div> </div> </li> </ul> </div> </body> <script src=../../script/api.js></script> <script src=../../script/aui-toast.js></script> <script src=../../script/tea.js></script> <script src=../../script/conn.js></script> <script src=../../script/doT.min.js></script> <script type=text/template id=template> {{?values.type == 'picture'}}
+    <div class="aui-col-xs-4 aui-text-center" tapmode onclick="openCamera()">
+       <i class="aui-iconfont aui-icon-camera" style="font-size:35px;"></i>
+       <p id = "text">拍新照片</p>
+    </div>
+    {{~it:value:index}}
+    <div class="aui-col-xs-4">
+        {{?values.limit == 1}}
+            <div class="tea-img-box" style="background-image:url({{=value.thumbPath}})" tapmode onclick="set('{{=value.path}}')"></div>
+        {{??true}}
+            <div class="tea-img-box" style="background-image:url({{=value.thumbPath}})" tapmode onclick="openbigimg('{{=value.path}}', this)"></div>
+            <div class="aui-radio aui-disabled tea-big" onclick="select(this, '{{=value.path}}')"></div>
+        {{?}}
+    </div>
+    {{~}}
+
+    {{??values.type == 'video'}}
+    <div class="aui-col-xs-4 aui-text-center" tapmode onclick="openCamera()">
+       <i class="aui-iconfont aui-icon-camera" style="font-size:35px;"></i>
+       <p id = "text">拍新视频</p>
+    </div>
+    {{~it:value:index}}
+    <div class="aui-col-xs-4" tapmode onclick="openVideo('{{=value.path}}', '{{=value.thumbPath}}')">
+        <div class="tea-img-box" style="background-image:url({{=value.thumbPath}})"></div>
+        <img class="tea-play-box"/>
+    </div>
+    {{~}}
+    {{?}} </script> <script type=text/template id=append-template> {{?values.type == 'picture'}}
+
+    {{~it:value:index}}
+    <div class="aui-col-xs-4">
+        {{?values.limit == 1}}
+            <div class="tea-img-box" style="background-image:url({{=value.thumbPath}})" tapmode onclick="set('{{=value.path}}')"></div>
+        {{??true}}
+            <div class="tea-img-box" style="background-image:url({{=value.thumbPath}})" tapmode onclick="openbigimg('{{=value.path}}', this)"></div>
+            <div class="aui-radio aui-disabled tea-big" onclick="select(this, '{{=value.path}}')"></div>
+        {{?}}
+    </div>
+    {{~}}
+
+    {{??values.type == 'video'}}
+
+    {{~it:value:index}}
+    <div class="aui-col-xs-4" tapmode onclick="openVideo('{{=value.path}}', '{{=value.thumbPath}}')">
+        <div class="tea-img-box" style="background-image:url({{=value.thumbPath}})"></div>
+        <img class="tea-play-box"/>
+    </div>
+    {{~}}
+    {{?}} </script> <script>function initVar(e){dom={},data={},"video"==(values={text:"图片",isIOS:"ios"==api.systemType,to:e.to,type:e.type,limit:e.limit,imgId:e.imgId,imgArr:[],elArr:[],thumbnail:[],flag:0}).type&&(values.text="视频")}function initModule(){UIMediaScanner=api.require("UIMediaScanner"),imageBrowser=api.require("imageBrowser"),videoKit=api.require("videoKit"),updateHTML(!0)}function initEventListener(){api.addEventListener({name:"scrolltobottom",extra:{threshold:0}},function(e,t){updateHTML()}),api.addEventListener({name:"saveVideo"},function(e,t){e?(values.thumbnail[0]=e.value.thumbnail,set(e.value.url)):alert(JSON.stringify(t))}),api.addEventListener({name:"sure"},function(e,t){e?sure():alert(JSON.stringify(t))}),api.addEventListener({name:"reload"},function(e,t){e?(initVar(e.value),updateHTML(!0)):alert(JSON.stringify(t))})}function getData(){}function updateVar(){}function updateDom(){}function updateHTML(e){api.showProgress({style:"default",animationType:"fade",title:values.text+"加载中...",text:"请稍候...",modal:!1}),1!=e?UIMediaScanner.fetch(function(e,t){api.hideProgress(),e.list.length>1?(tea.doT(e.list,"append-template","list","append"),api.hideProgress()):tea.toast("custom","没有更多"+values.text+"了")}):UIMediaScanner.scan({type:values.type,count:20,sort:{key:"time",order:"desc"},thumbnail:{w:800,h:800}},function(e){e&&(tea.doT(e.list,"template","list"),api.hideProgress())})}function openCamera(){var e="video"==values.type?"video":"pic";api.getPicture({sourceType:"camera",encodingType:"jpg",destinationType:"url",mediaValue:e,videoQuality:"high",quality:100,saveToPhotoAlbum:!0},function(e,t){e&&e.data&&(values.imgArr.push(e.data),sure(!0))})}function openbigimg(e,t){var a=$api.next(t),i=$api.text(a);i?transPath(values.imgArr,function(e,t){values.imgArr=e,imageBrowser.openImages({imageUrls:t,showList:!1,activeIndex:i-1})}):transPath(e,function(e,t){imageBrowser.openImages({imageUrls:t,showList:!1,tapClose:!0})})}function openVideo(e,t){function a(e,t){api.openFrame({name:"video_frm",url:"./video_frm.html",rect:{x:0,y:0,w:api.winWidth,h:api.winHeight},pageParam:{url:e,thumbnail:t,type:"pick",autoPlay:!1},bounces:!1,bgColor:"rgba(0,0,0,0)",vScrollBarEnabled:!0,hScrollBarEnabled:!0})}transPath(e,function(e,i){a(i[0],t)})}function set(e){values.imgArr[0]=e,sure()}function select(e,t){var a=$api.text(e);if(values.imgArr.length>8&&!a)return api.toast({msg:"最多选择9张",duration:2e3,location:"middle"}),!1;tea.toggle(e,"aui-disabled")&&$api.text(e,""),tea.toggle(e,"tea-active"),a?(values.elArr.splice(a-1,1),values.imgArr.splice(a-1,1)):(values.elArr.push(e),values.imgArr.push(t)),function(){for(var e=0;e<values.elArr.length;e++)$api.text(values.elArr[e],e+1)}()}function sure(e){values.imgArr.length<1?tea.toast("fail","请先选择"+values.text):e&&"video"==values.type?(api.showProgress({title:values.text+"处理中...",text:"",modal:!0}),values.isIOS?api.require("videoTool").captureScreen({path:values.imgArr[0],startTime:0},function(e,t){0==e.state&&(api.hideProgress(),values.thumbnail[0]=e.imgPath,send())}):videoKit.captureScreen({path:values.imgArr[0],startTime:"0"},function(e,t){e&&e.status&&(api.hideProgress(),values.thumbnail[0]=e.info,send())})):send()}function send(){"video"!=values.type?transPath(values.imgArr,function(e,t){api.sendEvent({name:"sendImg",extra:{to:values.to,type:values.type,img:t,imgId:values.imgId,thumbnail:values.thumbnail}})}):api.sendEvent({name:"sendImg",extra:{to:values.to,type:values.type,img:values.imgArr,imgId:values.imgId,thumbnail:values.thumbnail}})}function transPath(e,t){if($api.isArray(e)||(e=[e]),"ios"==api.systemType){var a=[],i=0;api.showProgress({title:values.text+"加载中...",text:"请稍候",modal:!0});for(var n=0,r=e.length;n<r;n++)!function(n){"tran"==e[n].substr(0,4)?(a[n]=e[n].substr(4),++i==r&&(t(e,a),api.hideProgress())):UIMediaScanner.transPath({path:e[n]},function(s,u){s&&(e[n]="tran"+s.path,a[n]=s.path,++i==r&&(t(e,a),api.hideProgress()))})}(n)}else t(e,e)}var dom={},data={},values={},UIMediaScanner=null,imageBrowser=null,videoKit=null;apiready=function(){initVar(api.pageParam),initModule(),initEventListener(),getData()}</script> </html>

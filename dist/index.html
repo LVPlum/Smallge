@@ -1,0 +1,199 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>title</title>
+    <!-- 手淘移动端自适应方案 iPhone6下兼容aui 1rem=设计稿40px -->
+    <!--<script type="text/javascript" src="./script/flexible.js"></script>-->
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="./css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="./css/aui.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="./css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+        }
+
+        header {
+            border-bottom: 1px solid #EDEDED;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header id="header"></header>
+
+    <section id="main"></section>
+
+    <footer id="footer"></footer>
+
+</body>
+<script type="text/javascript" src="./script/api.js" ></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="./script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="./script/conn.js"></script>
+<!-- HTML模板渲染引擎 -->
+<script type="text/javascript" src="./script/doT.min.js"></script>
+<script type="text/javascript">
+
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var header, footer;
+
+// 声明全局变量
+var headerH, footerH;
+
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 处理沉浸式效果，计算header的高度
+    header = $api.byId('header');
+    $api.fixStatusBar(header);
+    headerH = $api.offset(header).h;
+
+	// 设置状态栏字体颜色，兼容ios和大部分安卓
+    api.setStatusBarStyle({
+        style: 'dark'
+    });
+    // 初始化DOM对象
+    initDOM();
+
+    // 初始化变量
+    initVar();
+
+    // ajax请求数据
+    getData();
+
+    // 初始化监听
+    initEventListener();
+
+    // 初始化其他
+    init();
+
+    // 兼容旧版本
+    var tel = $api.getStorage('telphone');
+    $api.setStorage('tel', tel);
+
+
+     api.openWin({
+         name: 'main_win',
+         //url: './html/main/main_win.html',
+         url: 'html/main/main_win.html',
+         pageParam: {},
+         // 由于是次Window是首页窗口，通过设置参数slidBackEnabled，关闭iOS默认回划关闭窗口的功能
+         slidBackEnabled: false
+     });
+    
+//    api.openFrame({
+//        name: 'index',
+//        //url: './html/index.html', //上传打包时使用
+//        url: 'http://192.168.1.4:8010/', //调试时使用
+//        rect: {
+//            x: 0,
+//            y: 45,
+//            w: 'auto',
+//            h: 'auto'
+//        },
+//        bounces: false,
+//        vScrollBarEnabled: true,
+//        hScrollBarEnabled: true,
+//        useWKWebView: true
+//    });
+
+
+};
+
+/**********************************初始化全局变量**********************************/
+// 初始化DOM对象
+function initDOM(){
+
+
+};
+
+// 初始化变量
+function initVar(){
+
+
+
+};
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+    // 更新变量
+    updateVar();
+
+    // 更新HTML
+    updateHTML();
+
+}
+
+/**********************************更新全局变量**********************************/
+// 更新DOM对象
+function updateDOM(){
+
+
+
+}
+
+// 更新变量
+function updateVar(){
+
+
+
+}
+
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************初始化其他模块**********************************/
+function init(){
+
+
+
+}
+
+/**********************************广播消息**********************************/
+function addEvent(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+// 回退关闭窗口
+function closeWin(){
+    api.closeWin();
+}
+
+
+/**********************************其他函数**********************************/
+
+/**********************************功能模块1**********************************/
+
+</script>
+</html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html> <html> <head> <meta charset=utf-8> <meta name=viewport content="maximum-scale=1,minimum-scale=1,user-scalable=0,width=device-width,initial-scale=1"/> <meta name=format-detection content="telephone=no,email=no,date=no,aItemress=no"> <title></title> <link rel=stylesheet type=text/css href=../../css/api.css /> <link rel=stylesheet type=text/css href=../../css/aui.css /> <link rel=stylesheet type=text/css href=../../css/aui-skin.css /> <link rel=stylesheet type=text/css href=../../css/tea.css /> <style type=text/css>body,html{height:100%;overflow:auto}</style> </head> <body> <div class="aui-content aui-margin-b-15"> <ul id=list class="aui-list aui-select-list"> </ul> </div> </body> <script src=../../script/api.js></script> <script src=../../script/aui-toast.js></script> <script src=../../script/tea.js></script> <script src=../../script/conn.js></script> <script src=../../script/doT.min.js></script> <script type=text/template id=template> {{~it:value:index}}
+    <li class="aui-list-item" tapmode onclick="select({{=index}})">
+        <div class="aui-list-item-inner aui-ellipsis-1 {{=(index == 0 ? 'tea-text-blue' : '')}}">
+            {{=value.name}}
+            {{?value.address}}
+            <div class="aui-list-item-title aui-ellipsis-1 tea-text-default aui-font-size-14">
+                {{=value.address}}
+            </div>
+            {{?}}
+        </div>
+        <div class="aui-list-item-label">
+            <label class="aui-radio {{=(index == values.index ? 'aui-checked' : '')}}" ></label>
+        </div>
+    </li>
+    {{~}} </script> <script>function initVar(){dom={},data={},values={poiList:api.pageParam.poiList,index:api.pageParam.index},updateHTML()}function initModule(){}function initEventListener(){}function getData(){}function updateVar(){}function updateDom(){dom.radios=$api.domAll(".aui-radio")}function updateHTML(){tea.doT(values.poiList,"template","list","append"),updateDom()}function select(i){if(i!=values.index){for(var a=dom.radios.length-1;a>=0;a--)a==i?$api.addCls(dom.radios[a],"aui-checked"):$api.removeCls(dom.radios[a],"aui-checked");send(i)}else send(i)}function send(i){api.sendEvent({name:"addressSetted",extra:{index:i}}),api.closeWin()}var dom={},data={},values={};apiready=function(){initVar(),initModule(),initEventListener(),getData()}</script> </html>

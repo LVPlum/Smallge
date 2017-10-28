@@ -1,0 +1,33 @@
+<!DOCTYPE html> <html> <head> <meta charset=utf-8> <meta name=viewport content="maximum-scale=1,minimum-scale=1,user-scalable=0,width=device-width,initial-scale=1"/> <meta name=format-detection content="telephone=no,email=no,date=no,aItemress=no"> <title>title</title> <link rel=stylesheet type=text/css href=../../css/api.css /> <link rel=stylesheet type=text/css href=../../css/aui.css /> <link rel=stylesheet type=text/css href=../../css/aui-skin.css /> <link rel=stylesheet type=text/css href=../../css/tea.css /> <style type=text/css>body,html{height:100%;overflow:auto}body{padding:.5rem}.aui-list-item-media{width:6.25rem!important;height:4.25rem}.aui-list-item-text.tea{vertical-align:bottom}</style> </head> <body id=agencies-list> <div class="aui-content aui-margin-b-10 tea-border-radius-10" tapmode onclick=openWinAgenciesDetail()> <ul class="aui-list aui-media-list"> <li class=aui-list-item> <div class=aui-media-list-item-inner> <div class=aui-list-item-media> <img src=../image/demo1.png> </div> <div class=aui-list-item-inner> <div class=aui-list-item-text> <div class="aui-list-item-title aui-font-size-16">北海阳光代办机构</div> </div> <div class="aui-list-item-text aui-font-size-12 tea-text-blue"> 4.8分 非常棒 </div> <div class="aui-list-item-text aui-font-size-12"> 距离您多少公里 </div> <div class="aui-list-item-text aui-font-size-12"> 待办项目 </div> <p class="aui-list-item-text tea aui-font-size-12 aui-pull-right"> ¥<span class="aui-font-size-20 tea-text-orange">188</span>起 </p> </div> </div> </li> </ul> </div> <div class="aui-content aui-margin-b-10 tea-border-radius-10" tapmode onclick=openWinAgenciesDetail()> <ul class="aui-list aui-media-list"> <li class=aui-list-item> <div class=aui-media-list-item-inner> <div class=aui-list-item-media> <img src=../image/demo1.png> </div> <div class=aui-list-item-inner> <div class=aui-list-item-text> <div class="aui-list-item-title aui-font-size-16">北海阳光代办机构</div> </div> <div class="aui-list-item-text aui-font-size-12 tea-text-blue"> 4.8分 非常棒 </div> <div class="aui-list-item-text aui-font-size-12"> 距离您多少公里 </div> <div class="aui-list-item-text aui-font-size-12"> 待办项目 </div> <p class="aui-list-item-text tea aui-font-size-12 aui-pull-right"> ¥<span class="aui-font-size-20 tea-text-orange">188</span>起 </p> </div> </div> </li> </ul> </div> </body> <script src=../../script/api.js></script> <script src=../../script/tea.js></script> <script src=../../script/conn.js></script> <script src=../../script/doT.min.js></script> <script type=text/template id=template> {{~it:value:index}}
+    <div class="aui-content aui-margin-b-10 tea-border-radius-10" tapmode onclick="openWinAgenciesDetail({{=index}})">
+        <ul class="aui-list aui-media-list">
+            <li class="aui-list-item">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media">
+                        <img src="{{= website + 'admin' + value.logo}}">
+                    </div>
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title aui-font-size-16">{{=value.name}}</div>
+                            <!-- <div class="aui-list-item-right">08:00</div> -->
+                        </div>
+                        <div class="aui-list-item-text aui-font-size-12 tea-text-blue">
+                            4.8分 非常棒
+                        </div>
+                        {{?value.distance}}
+                        <div class="aui-list-item-text aui-font-size-12">
+                            距离您{{=(value.distance * 0.001).toFixed(2)}}公里
+                        </div>
+                        {{?}}
+                        <div class="aui-list-item-text aui-font-size-12">
+                            地址：{{=value.complete_address}}
+                        </div>
+                        <p class="aui-list-item-text tea aui-font-size-12 aui-pull-right">
+                            ¥<span class="aui-font-size-20 tea-text-orange">188</span>起
+                        </p>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    {{~}} </script> <script>function initDOM(){dom.list=$api.byId("agencies-list")}function initVar(){(data=api.pageParam.data).sort(sortDistance)}function getData(){}function updateDOM(){}function updateVar(){}function updateHTML(){tea.doT(data,"template",dom.list)}function initEventListener(){}function init(){}function addEvent(){}function openWinAgenciesDetail(a){api.openWin({name:"agencies_detail_win",url:"./agencies_detail_win.html",pageParam:{data:api.pageParam.data[a],order:api.pageParam.order}})}function sortDistance(a,t){return"4505202"==t.agid}var dom={},data={},values={};apiready=function(){initDOM(),initVar(),updateHTML(),getData(),initEventListener(),init()}</script> </html>

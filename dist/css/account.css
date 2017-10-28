@@ -1,0 +1,57 @@
+/*
+* @Author: 90431
+* @Date:   2017-09-19 21:32:40
+* @Last Modified by:   90431
+* @Last Modified time: 2017-09-21 12:49:25
+*/
+html, body {
+    background-color: #fff;
+    text-align: center;
+    width: 100%;
+    overflow-x: hidden;
+}
+body {
+    padding: 0 1rem;
+}
+header {
+    margin: 4.9rem auto 1.5rem;
+    font-size: 1.15rem;
+    color: #333;
+}
+i:before {
+    color: #ccc;
+    font-size: 1.1rem;
+}
+label {
+    position: relative;
+    height: 2.2rem;
+    width: 100%;
+    border-bottom: 1px solid #ededed;
+}
+label input {
+    position: absolute;
+    left: 50%;
+    /*因为是登录页采用兼容性更高的写法*/
+    margin-left: -2.4rem !important;
+    /*transform: translate(-2.4rem);*/
+}
+.icon-left {
+    margin-left: 0.5rem; 
+    float: left;
+    height: 2.2rem;
+    line-height: 2.2rem;
+}
+.icon-right {
+    margin-right: 0.5rem; 
+    float: right;
+    height: 2.2rem;
+    line-height: 2.2rem;
+}
+input.center {
+    left: 0;
+    margin-left: 0 !important;
+    text-align: center;         
+}
+footer {
+    margin-top: 1.375rem;
+}

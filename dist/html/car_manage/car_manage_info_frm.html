@@ -1,0 +1,66 @@
+<!DOCTYPE html> <html> <head> <meta charset=utf-8> <meta name=viewport content="maximum-scale=1,minimum-scale=1,user-scalable=0,width=device-width,initial-scale=1"/> <meta name=format-detection content="telephone=no,email=no,date=no,aItemress=no"> <title>car_manage_info</title> <link rel=stylesheet type=text/css href=../../css/api.css /> <link rel=stylesheet type=text/css href=../../css/aui.css /> <link rel=stylesheet type=text/css href=../../css/aui-skin.css /> <link rel=stylesheet type=text/css href=../../css/tea.css /> <style type=text/css>body,html{height:100%;overflow:auto}.aui-label{color:#f66;background-color:#ffe0e0}.aui-list-item-right{font-size:.7rem!important}</style> </head> <body> <section id=section></section> </body> <script src=../../script/api.js></script> <script src=../../script/aui-toast.js></script> <script src=../../script/tea.js></script> <script src=../../script/conn.js></script> <script src=../../script/doT.min.js></script> <script type=text/template id=template> <div class="aui-content aui-margin-b-15">
+        <ul id="list" class="aui-list">
+            <li class="aui-list-item aui-list-item-arrow" tapmode onclick="openWinChange('carnum', this, {{=it.vip}})">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title">
+                        车牌号码
+                        {{?it.vip == 1}}
+                        <span class="aui-label">VIP</span>
+                        {{?}}
+                    </div>
+                    <div id="carnum" class="aui-list-item-right">{{=(it.carnum == null ? '未填写':it.carnum)}}</div>
+                </div>
+            </li>
+            <li class="aui-list-item aui-list-item-arrow" tapmode onclick="openWinChange('carlicense', this)">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title">行驶证所有人</div>
+                    <div id="carlicense" class="aui-list-item-right">{{=(it.xszr == null ? '未填写':it.xszr)}}</div>
+                </div>
+            </li>
+            <li class="aui-list-item aui-list-item-arrow" tapmode onclick="openWinChange('telphone', this)">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title">手机号码</div>
+                    <div id="telphone" class="aui-list-item-right">{{=(it.tel == null ? '未填写':it.tel)}}</div>
+                </div>
+            </li>
+            <li class="aui-list-item aui-list-item-arrow" tapmode onclick="setCarType(this)">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title">车辆类型</div>
+                    <div id="cartype" class="aui-list-item-right">{{=(it.cartype == null ? '未填写': it.cartype)}}</div>
+                </div>
+            </li>
+            <li class="aui-list-item aui-list-item-arrow" tapmode onclick="openWinPicker(0)">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title">下一审车日期</div>
+                    <div id="check-remind-time" class="aui-list-item-right">{{=(it.scextime == null || it.scextime == '0000-00-00' ? '未填写':it.scextime)}}</div>
+                </div>
+            </li>
+            <li class="aui-list-item" tapmode onclick="setRemind(0, this)">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title">审车到期自动提醒</div>
+                    <div class="aui-list-item-right">
+                        <span class="aui-switch {{=(it.scremind == '打开' ? 'aui-checked' : '')}}" >
+                        </span>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item aui-list-item-arrow" tapmode onclick="openWinPicker(1)">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title">下一保险日期</div>
+                    <div id="insure-remind-time" class="aui-list-item-right">{{=(it.bxextime == null || it.bxextime == '0000-00-00' ? '未填写':it.bxextime)}}</div>
+                </div>
+            </li>
+            <li class="aui-list-item" tapmode onclick="setRemind(1, this)">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title">保险到期自动提醒</div>
+                    <div class="aui-list-item-right">
+                        <span class="aui-switch {{=(it.bxremind == '打开' ? 'aui-checked' : '')}}">
+                        </span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    {{?it.vip == 0}}
+    <p class="aui-pull-right aui-font-size-14 aui-margin-r-15 tea-text-blue" tapmode onclick="openWinVip()">我想加入VIP></p>
+    {{?}} </script> <script>function initVar(){dom={checkRemindTime:$api.byId("check-remind-time"),insureRemindTime:$api.byId("insure-remind-time")},data={},values={userid:$api.getStorage("ID"),carid:api.pageParam.id}}function initModule(){}function initEventListener(){api.addEventListener({name:"pickerSure"},function(e,a){if(e){var i=e.value.option.join("-");0==e.value.index&&(data.scextime=i,dom.checkRemindTime.innerHTML=i,post("scextime",i)),1==e.value.index&&(data.bxextime=i,dom.insureRemindTime.innerHTML=i,post("bxextime",i))}else alert(JSON.stringify(a))}),api.addEventListener({name:"carManageChangeSave"},function(e,a){if(e){var i=e.value.item,t=e.value.val,n=$api.byId(i);$api.text(n,t),post(i,t)}else alert(JSON.stringify(a))})}function getData(){api.showProgress({style:"default",animationType:"fade",title:"努力加载中...",text:"请稍候...",modal:!1}),api.ajax({url:website+"getmycar.php?action=carinfo",method:"post",timeout:30,dataType:"json",returnAll:!1,data:{values:{ID:api.pageParam.id}}},function(e,a){api.hideProgress(),e&&(data=e,tea.doT(e,"template","section"),initVar(),initModule(),initEventListener())})}function updateVar(){}function updateDom(){}function updateHTML(){}function openWinPicker(e){var a=(new Date).getFullYear(),i=a,t=a+7;api.openFrame({name:"picker_frm",url:"../unit/picker_frm.html",pageParam:{index:e,height:225,rows:5,option:[i,1,1],options:[{tag:"年",scope:i+"-"+t},{tag:"月",scope:"1-12"},{tag:"日",scope:"1-31"}]}})}function setRemind(e,a){var i=$api.dom(a,".aui-switch"),t=tea.toggle(i,"aui-checked")?0:1;0==e&&post("scremind",t),1==e&&post("bxremind",t)}function setCarType(e){var a=$api.dom(e,".aui-list-item-right"),i=["蓝牌","黄牌"];api.actionSheet({title:"请选择车辆类型",cancelTitle:"取消",buttons:i},function(e,t){if(e){var n=e.buttonIndex;if(3==n)return;var r=i[n-1];a.textContent!=r&&($api.text(a,r),post("cartype",n))}else alert(JSON.stringify(t))})}function openWinChange(e,a,i){if("carnum"!=e||1!=i){var t=$api.dom(a,".aui-list-item-right").textContent;api.openWin({name:"car_manage_change_win",url:"./car_manage_change_win.html",pageParam:{item:e,val:t}})}else tea.toast("fail","VIP车辆<br/>不可修改车牌")}function openWinVip(){$api.byId("id");api.openWin({name:"vip_join_win",url:"../vip/vip_join_win.html",pageParam:{carid:values.carid}})}function post(e,a){var i={userid:values.userid,carid:values.carid,item:e,val:a};api.ajax({url:website+"getmycar.php?action=chcarval",method:"post",timeout:30,dataType:"json",returnAll:!1,data:{values:i}},function(e,a){e&&(1==e.succ?api.sendEvent({name:"carManageInfoChange"}):api.alert({msg:e.msg}))})}var dom={},data={},values={};apiready=function(){getData()}</script> </html>
