@@ -1,59 +1,23 @@
+import BusinessType from 'public/business_type.js'
+
 /**********************************声明全局变量**********************************/
 // 声明DOM对象
 var dom = {}, vm = null;
 
 /**********************************apiready**********************************/
-apiready = function(){
+window.apiready = function(){
+  
+    let businessType = new BusinessType('all');
+    let typeObj = businessType.getResult();
 
     vm = new Vue({
         el: '#app',
         data: {
             type: api.pageParam.orderType,
-            typeArr: {
-                check: {
-                    title: '网约审车',
-                    icon: 'tea-icon-check',
-                    color: '#41a4ec'                    
-                },
-                insure: {
-                    title: '车辆保险',
-                    icon: 'tea-icon-insure',
-                    color: '#ff855e'                    
-                },
-                tel: {
-                    title: '话费充值',
-                    icon: 'tea-icon-tel',
-                    color: '#ff855e'                    
-                },
-                agency: {
-                    title: '找代办',
-                    icon: 'tea-icon-agency',
-                    color: '#00be9b'
-                },
-                join: {
-                    title: '加盟申请',
-                    icon: 'tea-icon-agency',
-                    color: '#00be9b'                    
-                },
-                vip: {
-                    title: 'VIP',
-                    icon: 'tea-icon-vip',
-                    color: '#ffc50f'
-                },
-                etc: {
-                    title: 'ETC',
-                    icon: 'tea-icon-etc',
-                    color: '#4874dc'
-                },
-                oil: {
-                    title: '超值加油',
-                    icon: 'tea-icon-oil',
-                    color: '#f5b35e'
-                }
-            },
+            typeArr: typeObj,
             tab: {
-                bad: ['销售服务差', '车辆不满意', '时间慢', '价格不合理'],
-                good: ['销售服务好', '车辆满意', '时间快', '公司值得信赖']
+                bad: ['服务态度差', '办事效率低', '乱收费', '操作过于复杂'],
+                good: ['服务态度好', '办事效率高', '价格合理', '公司值得信赖']
             },
             tabSetted: {
                 bad: [],
@@ -99,14 +63,36 @@ apiready = function(){
                 }, function(ret){
                     if (!ret) {
                         api.toast({
-                            msg: '网络未连接，请检查后重试',
+                            msg: '网络不佳，请检查后重试',
                             duration: 2000,
                             location: 'middle'
                         });
                         return false;
                     }
-                    if (ret.succ == 1) {
-                        setTimeout(api.closeWin(), 1000); 
+                    if (ret.succ != 1) {
+                        api.openWin({
+                            name: 'success',
+                            url: '../unit/win.html',
+                            bounces: false,
+                            pageParam: {
+                                folder: 'etc',
+                                title: '评价成功',
+                                closeToWin: 'main_win',
+                                config: {
+                                    result: '评价成功',
+                                    item: [
+                                        [
+                                            {text:'提交成功'},
+                                            {text:'恭喜您获得30积分'}
+                                        ],
+                                    ],
+                                    btnGroup:[
+                                        {title:'邀请朋友注册有奖励哦',styleClass:'tea-bg-blue',func:'invite'},
+                                        {title:'返回首页',styleClass:'tea-bg-shallow-blue tea-text-blue border-blue',func:'main'}
+                                    ]
+                                }
+                            }
+                        });
                     }
                     api.toast({
                         msg: ret.msg,
@@ -133,7 +119,7 @@ apiready = function(){
                 var rule = new tea.checkRule();
                 rule.add(this.star, [{
                     condition: 'isTrue',
-                    errorMsg: '请至少选择一颗星'
+                    errorMsg: '请为我们的服务打星～'
                 }]);
                 var errorMsg = rule.start();
                 return errorMsg;

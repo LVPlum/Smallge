@@ -27,7 +27,9 @@ globmaths.forEach(function(name) {
     }
 
     entries[n] = [name];
-    entries[n].push(hotMiddlewareScript);
+    if(process.env.NODE_ENV !== 'production'){
+        entries[n].push(hotMiddlewareScript);
+    }
     chunks.push(n);
 });
 

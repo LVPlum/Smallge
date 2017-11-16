@@ -139,14 +139,22 @@ function init(){
                 vm.checkedOn = val.id
                 vm.pageParamVal = {
                     card_brand: value.card_brand,
-                    card_type: val.card_type
+                    card_type: val.card_type,
+                    folder: 'oil',
+                    title: '超值加油',
                 }
             },
             openWinApply: function(){
                 if(!this.errorMsg){
-                    api.openWin({
+                    /*api.openWin({
                         name: 'oil_apply_win',
                         url: './oil_apply_win.html',
+                        pageParam: vm.pageParamVal
+                    });*/
+                    api.openWin({
+                        name: 'oil_apply_win',
+                        url: '../unit/win.html',
+                        bounces: false,
                         pageParam: vm.pageParamVal
                     });
                 }else {

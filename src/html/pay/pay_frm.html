@@ -551,6 +551,7 @@ function wechatPay(){
         //_alert(values)
         //开始提交数据
 //        _alert(wxvalues);
+//        return false;
         showp('数据处理中...','请梢候');
         api.ajax({
             url: website + 'wxpay_temp.php?action=getord',
@@ -648,11 +649,35 @@ function openWinSuccess() {
     switch (data.type) {
         case "addvip":
             sendsms('22209',values.carnum,values.tel);
-            datas =  {
+            /*datas =  {
                 '0': ['您选择的车辆已经成功加入VIP'],
                 '1': []
-            }
-            break;
+            }*/
+            api.openWin({
+                name: 'success',
+                url: '../unit/win.html',
+                bounces: false,
+                pageParam: {
+                    folder: 'etc',
+                    title: '支付成功',
+                    closeToWin: 'main_win',
+                    config: {
+                        result: '支付成功',
+                        item: [
+                            [
+                                {text:'您选择的车辆已成功加入VIP'},
+                                {text:'恭喜您获得500积分'},
+                                {text:'',color:{text:'ETC现金券200元',textColor:'tea-text-orange'}}],
+                        ],
+                        btnGroup:[
+                            {title:'去购买ETC',styleClass:'tea-bg-blue',func:'etc'},
+                            {title:'返回首页',styleClass:'tea-bg-shallow-blue tea-text-blue border-blue',func:'main'}
+                        ],
+                        tip:{text:'邀请朋友注册有奖励哦 >',styleClass:'tea-text-blue aui-font-size-12',func:'invite'}
+                    }
+                }
+            });
+            return;
         case "recharge":
             result = '充值成功';
             datas = {
@@ -693,13 +718,42 @@ function openWinSuccess() {
             return;
     /*新增：ETC支付  *LVPlum*/
         case "etc":
-            result = "支付成功";
+            /*result = "支付成功";
             datas = {
                 '0': ['小马哥工作人员将会联系您','请保持手机通畅并提供以下手续'],
                 '1': ['个人车辆','身份证、行驶证'],
                 '2': ['单位车辆','营业执照副本、委托书','经办人身份证、行驶证'],
-            }
-            break;
+            };*/
+            api.openWin({
+                name: 'success',
+                url: '../unit/win.html',
+                bounces: false,
+                pageParam: {
+                    folder: 'etc',
+                    title: '支付成功',
+                    closeToWin: 'main_win',
+                    config:{
+                        result: '支付成功',
+                        item: [
+                            [{text:'小马哥工作人员将会联系您'},{text:'请保持手机通畅',color:{text:'并提供以下手续',textColor:'tea-text-blue'}}],
+                            [{text:'个人车辆'},{text:'身份证、行驶证'}],
+                            [{text:'单位车辆:'},{text:'营业执照副本、委托书'},{text:'经办人身份证、行驶证'}]
+                        ],
+                        image:{
+                            icon: 'tea-icon-packet',
+                            iconColor: 'aui-text-white',
+                            title: '恭喜获得分享现金红包',
+                            text: '分享后您和朋友都将获得现金红包',
+                            bg: 'tea-bg-blue',
+                            btn: {
+                                text: '发现金券',
+                                styleClass:'tea-text-blue tea-font-weight-bold tea-bg-white',
+                            }
+                        }
+                    }
+                }
+            });
+            return;
         case "oil":
             result = "充值成功";
             datas = {

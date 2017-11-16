@@ -19,7 +19,6 @@
         }
         .img:before {
             font-size: 3rem;
-            margin: 0.5rem;
         }
         i:before {
             font-size: 1.6rem;
@@ -64,13 +63,10 @@
             width: 15.0rem;
             margin: 0.75rem auto;
         }
-
-        footer .aui-btn {
-            height: 2.3rem;
-            line-height: 2.3rem;
-            border-radius: 2.3rem;
-            color: #fff;
-            background-color: #ed7474;
+        .tea-btn-submit {
+            height: 2.2rem;
+            line-height: 2.2rem;
+            border-radius: 2.2rem;
         }
         .star-active:before {
             color: #ffcc33;
@@ -84,13 +80,13 @@
 </head>
 <body>
     <div id="app" v-cloak>
-        <header>
+        <header class="aui-padded-t-15">
             <i class="aui-iconfont img" :class="typeArr[type].icon" :style=" 'color:' + typeArr[type].color"></i>  
             <p class="tea-text-title aui-font-size-16" style="margin: 0.325rem 0">{{typeArr[type].title}}</p>
             <p class="tea-text-gray">评论可获得
                 <span class="tea-text-orange">30积分</span>
             哦</p>
-            <div style="margin: 1.25rem auto 0.75rem">
+            <div style="margin: 0.75rem auto 0.5rem">
                 <i class="aui-iconfont tea-icon-star" v-for="index in 5" :class="{'star-active': index <= star}" tapmode @click="setStar(index)"></i>
             </div>
             <p class="tea-text-gray aui-font-size-12">您的评论会让小马哥审车做得更好</p>
@@ -100,8 +96,8 @@
             <p class="aui-text-left">请选择标签</p>
             <div class="aui-grid">
                 <div class="aui-row aui-row-padded">
-                    <div class="aui-col-xs-6" tapmode @click="setTab(item)" v-for="(item, index) in tabNow">
-                        <div class="aui-btn aui-btn-block" :class="{'tab-active': ~tabSettedNow.indexOf(item)}">{{item}}</div>
+                    <div class="aui-col-xs-6 tea-noactive" tapmode @click="setTab(item)" v-for="(item, index) in tabNow">
+                        <div class="aui-btn aui-btn-block tea-noactive" :class="{'tab-active': ~tabSettedNow.indexOf(item)}">{{item}}</div>
                     </div>
                 </div>
             </div>                       
@@ -111,7 +107,7 @@
         </section>
 
         <footer>
-            <div class="aui-btn aui-btn-block" :class="{'tea-active' : !errorMsg}" tapmode @click="submit()">提交评价</div>
+            <div class="aui-btn-block tea-btn-submit" :class="{'tea-active' : !errorMsg}" tapmode @click="submit()">提交评价</div>
         </footer>
     </div>
 </body>

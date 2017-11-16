@@ -17,7 +17,7 @@
         /*如页面需要动态滚动到底部请去除height:100%*/
         html,body {
             height: 100%;
-            overflow: auto;
+            /*overflow: auto;*/
         }
         /*针对此页面的框架重写*/
         .aui-list .aui-list-item{
@@ -43,11 +43,20 @@
         .tea-font-size-max {
             font-size: 2.2rem !important;
         }
+        .tea-font-size-middle{
+            font-size: 1.5rem !important;
+        }
         .tea-bg-deep-orange{
             background-color: #FF6633;
         }
         .tea-bg-purple{
             background-color: #5c78cd;
+        }
+        .tea-bg-cyan{
+            background-color: #4fc9e8;
+        }
+        .tea-bg-brown{
+            background-color: #f59f5d;
         }
         /*div边框的半圆形状，通用*/
         .tea-content-semicircle:before,.tea-content-semicircle:after{
@@ -105,6 +114,12 @@
         .tea-content-border-sawtooth-purple:after{
             background-image: -webkit-gradient(radial,0 40%,1,0 50% ,5,from(#5c78cd),color-stop(50%, #5c78cd),color-stop(50%, #FFF),to(#FFF));
         }
+        .tea-content-border-sawtooth-cyan:after{
+            background-image: -webkit-gradient(radial,0 40%,1,0 50% ,5,from(#4fc9e8),color-stop(50%, #4fc9e8),color-stop(50%, #FFF),to(#FFF));
+        }
+        .tea-content-border-sawtooth-brown:after{
+            background-image: -webkit-gradient(radial,0 40%,1,0 50% ,5,from(#f59f5d),color-stop(50%, #f59f5d),color-stop(50%, #FFF),to(#FFF));
+        }
         /*￥符号前缀*/
         .tea-text-white-money{
             margin-left: 1.2rem;
@@ -157,24 +172,31 @@
         <ul class="aui-list aui-media-list tea-bg-default aui-list-noborder" id="benefit_list">
             <li v-for="(value,index) in list" class="aui-list-item tea-bg-white" tapmode @click="goApply(value.coupon_type,value)">
                 <div class="aui-media-list-item-inner tea-content-semicircle">
-                    <div v-if="value.coupon_type == 'vip' " class="aui-list-item-media tea-bg-yellow tea-flex-center tea-content-border-sawtooth tea-content-border-sawtooth-yellow">
+                    <div :class=" ['tea-bg-'+color(value.coupon_type) , 'tea-content-border-sawtooth-'+color(value.coupon_type) ] " class="aui-list-item-media tea-flex-center tea-content-border-sawtooth">
+                        <div :class="parseFloat(value.coupon_m) >= 100 ? 'tea-font-size-middle' : 'tea-font-size-max' " class="aui-text-white tea-text-white-money" style="width:2rem; font-weight:bold; text-align: center;">{{ parseFloat(value.coupon_m) }}</div>
+                    </div>
+                    <!--<div v-else-if="value.coupon_type == 'insure'" class="aui-list-item-media tea-bg-deep-orange tea-flex-center tea-content-border-sawtooth tea-content-border-sawtooth-deep-orange">
                         <div class="aui-text-white tea-text-white-money tea-font-size-max" style="width:2rem; font-weight:bold; text-align: center;">{{ parseFloat(value.coupon_m) }}</div>
                     </div>
-                    <div v-else-if="value.coupon_type == 'bx'" class="aui-list-item-media tea-bg-deep-orange tea-flex-center tea-content-border-sawtooth tea-content-border-sawtooth-deep-orange">
+                    <div v-else-if="value.coupon_type == 'tel'" class="aui-list-item-media tea-bg-purple tea-flex-center tea-content-border-sawtooth tea-content-border-sawtooth-purple">
                         <div class="aui-text-white tea-text-white-money tea-font-size-max" style="width:2rem; font-weight:bold; text-align: center;">{{ parseFloat(value.coupon_m) }}</div>
                     </div>
-                    <div v-else-if="value.coupon_type == 'hf'" class="aui-list-item-media tea-bg-purple tea-flex-center tea-content-border-sawtooth tea-content-border-sawtooth-purple">
+                    <div v-else-if="value.coupon_type == 'etc'" class="aui-list-item-media tea-bg-cyan tea-flex-center tea-content-border-sawtooth tea-content-border-sawtooth-cyan">
+                        <div class="aui-text-white tea-text-white-money" style="width:2rem; font-weight:bold; text-align: center;font-size: 1.5rem">{{ parseFloat(value.coupon_m) }}</div>
+                    </div>
+                    <div v-else-if="value.coupon_type == 'oil'" class="aui-list-item-media tea-bg-brown tea-flex-center tea-content-border-sawtooth tea-content-border-sawtooth-brown">
                         <div class="aui-text-white tea-text-white-money tea-font-size-max" style="width:2rem; font-weight:bold; text-align: center;">{{ parseFloat(value.coupon_m) }}</div>
                     </div>
                     <div v-else class="aui-list-item-media tea-bg-blue tea-flex-center tea-content-border-sawtooth tea-content-border-sawtooth-blue">
                         <div class="aui-text-white tea-text-white-money tea-font-size-max" style="width:2rem; font-weight:bold; text-align: center;">{{ parseFloat(value.coupon_m) }}</div>
-                        <!--<div class="aui-text-white aui-font-size-18" style="width:2rem;font-weight:bold;">{{ list.test_value }}</div> //免费审车的值样式-->
-                    </div>
+                        &lt;!&ndash;<div class="aui-text-white aui-font-size-18" style="width:2rem;font-weight:bold;">{{ list.test_value }}</div> //免费审车的值样式&ndash;&gt;
+                    </div>-->
                     <div class="aui-list-item-inner" style="padding: 0.75rem 0.75rem 0rem 0.75rem;">
                         <div class="aui-list-item-text">
                             <div class="aui-list-item-title aui-font-size-14 tea-text-title">{{ value.readme }}</div>
                         </div>
                         <div class="aui-list-item-text tea-column">
+                            <!--{{value.content}}-->
                             <p v-for="(val,i) in value.content" class="aui-ellipsis aui-font-size-12 tea-text-gray">{{ val }}</p>
                         </div>
                         <div class="aui-list-item-text">
@@ -324,16 +346,16 @@ function initVar(){
                             }
                         });
                         break;
-                    case 'bx':
+                    case 'insure':
                         tea.openWin({
-                            name: 'vip_win',
-                            url: '../vip/vip_win.html',
+                            name: 'insure_win',
+                            url: '../insure/insure_win.html',
                             pageParam: {
                                 name: 'pageparamname'
                             }
                         });
                         break;
-                    case 'hf':
+                    case 'tel':
                         tea.openWin({
                             name: 'phone_pay_win',
                             url: '../wallet/phone_pay_win.html',
@@ -342,7 +364,16 @@ function initVar(){
                             }
                         });
                         break;
-                    case 'sc':
+                    case 'etc':
+                        tea.openWin({
+                            name: 'etc_win',
+                            url: '../etc/etc_win.html',
+                            pageParam: {
+                                name: 'pageparamname'
+                            }
+                        });
+                        break;
+                    case 'check':
                         api.openFrame({
                             name: 'coupon_sc_code_frm',
                             url: './coupon_sc_code_frm.html',
@@ -370,7 +401,27 @@ function initVar(){
             },
             isApple: function(){
                 return api.systemType == "ios" ? true : false;
+            },
+            color: function(type){
+                switch (type){
+                    case 'vip':
+                        return 'yellow';
+                    case 'insure':
+                        return 'deep-orange';
+                    case 'tel':
+                        return 'purple';
+                    case 'etc':
+                        return 'cyan';
+                    case 'oil':
+                        return 'brown';
+                    default:
+                        return 'blue'
+                }
+
             }
+        },
+        computed:{
+
         }
     });
 
@@ -402,7 +453,7 @@ function initEventListener(){
 /**********************************ajax请求数据**********************************/
 function getData(){
     showp('数据加载中···');
-    api.ajax({
+    /*api.ajax({
         url:  website + 'api_cj.php?action=my_coupon',
         method: 'post',
         data: {
@@ -412,6 +463,7 @@ function getData(){
             }
         }
     }, function (ret, err) {
+        _alert(ret);
         api.hideProgress();
         if(!ret){
 //            tea.toast('ajax');
@@ -419,6 +471,30 @@ function getData(){
         }
         if(ret){
             vm.list = ret;
+        }
+    });*/
+    api.ajax({
+        url:  website + 'coupon_api.php?action=list',
+        method: 'post',
+        data: {
+            values: {
+                ID: $api.getStorage('ID'),
+                state: '2', //2 为可用现金券列表
+            }
+        }
+    }, function (ret, err) {
+        api.hideProgress();
+        if(!ret){
+//            tea.toast('ajax');
+            return false;
+        }
+        if(ret.succ == '1'){
+            vm.list = ret.data;
+            return true;
+        }
+        if(ret.succ == '0'){
+            vm.list = []; //没有现金券的情况
+            return false;
         }
     });
 

@@ -1,0 +1,495 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: #FFFFFF;
+        }
+        .banner img{
+            width: 100%;
+            height: auto;
+        }
+        .bar{
+            width: 92%;
+            position: relative;
+            margin-top: -6.5rem;
+        }
+        .warp{
+            border-radius: 0.3rem;
+            overflow: hidden;
+            line-height: normal;
+            -moz-box-shadow:0 0 0.9rem 0 rgba(107, 65, 65, 0.15);
+            -webkit-box-shadow:0 0 0.9rem 0 rgba(107, 65, 65, 0.15);
+            box-shadow:0 0 0.9rem 0 rgba(107, 65, 65, 0.15);
+        }
+        .border{
+            background-position: 0 bottom !important;
+        }
+        /*修改value的placeholder的颜色*/
+        input::-webkit-input-placeholder, textarea::-webkit-input-placeholder{
+            color:   #CCCCCC;
+        }
+        input:-moz-placeholder, textarea:-moz-placeholder {
+            color:    #CCCCCC;
+        }
+        input:-ms-input-placeholder, textarea:-ms-input-placeholder {
+            color:    #CCCCCC;
+        }
+        .aui-radio:checked, .aui-radio.aui-checked.no{
+            background-color: #ccc;
+            border: solid 1px #ccc;
+        }
+        /*修改下边框的位置*/
+        /*@media screen and (-webkit-min-device-pixel-ratio: 1.5){
+            .aui-list, .aui-list .aui-list-item {
+                background-image: none !important;
+            }
+            .aui-list .aui-list-item.border-b{
+                padding-left: 0;
+                margin-left: 0.75rem;
+                background-size: 100% 1px;
+                background-repeat: no-repeat;
+                background-position: left top,right bottom;
+                background-image: linear-gradient(0,#dddddd,#dddddd 50%,transparent 50%),linear-gradient(0,#dddddd,#dddddd 50%,transparent 50%) !important;
+            }
+        }*/
+        @media screen and (-webkit-min-device-pixel-ratio: 1.5){
+            .aui-list,.aui-list .aui-list-item {
+                background-image: none;
+            }
+            .aui-list.border-b,.aui-list .aui-list-item.border-b{
+                background-image: -webkit-linear-gradient(90deg,#dddddd,#dddddd 50%,transparent 50%);
+            }
+        }
+        .aui-list .aui-list-item.border-b-t{
+            padding-left: 0;
+            margin-left: 0.75rem;
+            background-size: 100% 1px;
+            background-repeat: no-repeat;
+            background-position: left top,right bottom;
+            background-image: linear-gradient(0,#dddddd,#dddddd 50%,transparent 50%),linear-gradient(0,#dddddd,#dddddd 50%,transparent 50%) !important;
+        }
+        .aui-list .aui-list-item.border-t{
+            padding-left: 0;
+            margin-left: 0.75rem;
+            background-position: left top;
+            background-image: linear-gradient(0,#dddddd,#dddddd 50%,transparent 50%) !important;
+        }
+        .vip{
+            width: 1.25rem;
+            font-size: 0.6rem;
+            color: #fff;
+            font-weight: bolder;
+            text-align: center;
+            background-color: #CCCCCC;
+            border-radius: 4px;
+        }
+        .vip.black{
+            background-color: #333333;
+            color: #f2d394;
+        }
+        .vip-icon:before{
+            content: '';
+            display: inline-block;
+            width: 0.5rem;
+            height: 0.45rem;
+            background-image: url('../../image/etc/VIP-icon.png');
+            background-size: 100%;
+            background-repeat: no-repeat;
+        }
+        .btn{
+            width: 1rem !important;
+            height: 1rem !important;
+            vertical-align: sub !important;
+            margin-left: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="tea-bg-white">
+        <header class="banner"><img src="../../image/etc/banner@2x.png" alt="banner"></header>
+        <div class="aui-bar-btn bar">
+            <div class="warp aui-margin-b-10">
+                <ul class="aui-list aui-media-list">
+                    <li class="aui-list-item aui-padded-0 border-b">
+                        <div class="aui-media-list-item-inner">
+                            <div class="aui-list-item-inner aui-padded-l-15 aui-padded-r-0">
+                                <div class="aui-list-item-text">
+                                    <div class="aui-list-item-title tea-text-blue aui-font-size-14">车牌号码</div>
+                                </div>
+                                <div class="aui-font-size-16 tea-text-title aui-margin-t-10 aui-padded-b-10 aui-border-b">
+                                    <span  style="width: 40%">小车<label class="aui-radio btn aui-checked"></label></span>
+                                    <span >货车<span class="tea-text-gray">(即将开通)</span><label class="aui-radio btn aui-checked no"></label></span>
+                                </div>
+                                <div class="aui-info aui-padded-0 aui-margin-t-5">
+                                    <div v-if="is_vip" class="aui-margin-r-5">
+                                        <div class="vip black">VIP</div>
+                                    </div>
+                                    <div class="aui-list-item-label" style="width: 4rem;line-height: normal"  @click="openWinProvince">
+                                        <span class="tea-text-title aui-font-size-16 tea-text-arrow-down">桂E</span>
+                                    </div>
+                                    <div class="aui-list-item-input aui-font-size-16">
+                                        <input type="text" placeholder="请输入车牌后5位数" maxlength="8"
+                                               v-model="number">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <ul class="aui-list aui-media-list">
+                    <li class="aui-list-item aui-padded-0">
+                        <div class="aui-media-list-item-inner">
+                            <div class="aui-list-item-inner aui-padded-l-15">
+                                <div class="aui-list-item-text aui-margin-b-10">
+                                    <div class="aui-list-item-title tea-text-blue aui-font-size-14">{{config.title}}</div>
+                                </div>
+                                <div class="aui-font-size-16 tea-text-title">
+                                <span style="width: 40%" v-for="(val,i) in config.way" @click="selectInstall(val)">
+                                    {{val.title}}
+                                    <span v-if="val.money">￥{{val.money}}</span>
+                                    <label :class="installWay == val.value ? 'aui-checked' : '' " class="aui-radio btn"></label>
+                                </span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <div v-show="installWay == 'arrive' " class="aui-list">
+                    <div class="aui-list-item border-b-t">
+                        <div class="aui-info aui-padded-0">
+                            <div class="aui-info-item aui-font-size-16 tea-text-title">
+                                <span>店铺地址</span>
+                                <span class="aui-margin-l-10">{{store}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="aui-list-item">
+                        <div class="aui-info aui-padded-0">
+                            <div class="aui-info-item aui-font-size-16 tea-text-title">
+                                <span>手机号码</span>
+                        <span class="aui-margin-l-10">
+                            <input type="tel" placeholder="请输入您的手机号码" maxlength="11"
+                                   v-model = "tel">
+                        </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div v-show="installWay == 'on_spot' " class="aui-list aui-media-list">
+                    <div class="aui-list-item aui-list-item-arrow border-t">
+                        <div class="aui-media-list-item-inner">
+                            <div class="aui-list-item-inner">
+                                <div class="aui-list-item-text aui-margin-b-5">
+                                    <div v-if="address" class="aui-font-size-16 tea-text-title">{{ address.name }} {{ address.tel ? address.tel.replace(/^(\d{3})(\d{4})(\d{4})$/, "$1 $2 $3") : '' }}</div>
+                                    <div v-else class="aui-font-size-16 tea-text-light-gray">请添加新地址</div>
+                                </div>
+                                <div v-if="address" class="aui-info" style="padding:0">
+                                    <div class="aui-font-size-16 tea-text-title aui-ellipsis-2">{{  address.region+' '+address.detail }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <section class="aui-list aui-media-list aui-margin-t-15">
+                <div class="aui-list-item aui-list-item-arrow">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div class="aui-font-size-16 tea-text-title">现金券</div>
+                                <div class="aui-font-size-16 aui-pull-right tea-text-orange">-￥150</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="aui-content-padded aui-font-size-14 tea-text-default" style="margin-bottom: 3rem">
+            <p>办理须知</p>
+            <p>1.八桂行卡高速收费优惠5%</p>
+            <p>2.免费上门安装服务，仅限北海市区和合浦县城</p>
+            <p>3.办理ETC，收费{{ETCFee}}元，含电子签证、八桂行卡</p>
+            <p>4.仅限小轿车 (货车期待开通...)</p>
+        </div>
+        <footer class="aui-bar aui-bar-tab">
+            <div class="aui-bar-tab-item tea-border-t" style="width: auto;">
+                <span class="tea-text-orange tea-font-weight-bold aui-font-size-16" v-cloak>¥350</span>
+                <!--<span v-show="!is" :class="frm ? 'tea-text-arrow-up' : 'tea-text-arrow-down' " class="aui-font-size-12">明细</span>-->
+            </div>
+            <div class="aui-bar-tab-item aui-text-white tea-bg-blue" style="width: 50%;">
+                <div class="search-input tea-font-weight-bold aui-font-size-16">去支付</div>
+            </div>
+        </footer>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+    var dom = {}, vm = null;
+    vm = new Vue({
+        el: '#app',
+        data: {
+            province: '桂E',
+            number: '',
+            checkedOn: '1',
+            carType: 'sedan',
+            config:{
+                title: '安装方式',
+                way: [
+                    {title:'到店安装',value:'arrive'},
+                    {title:'上门安装',value:'on_spot'}
+                ],
+            },
+            installWay: 'arrive',
+            store: '深圳软件产业基地',
+            tel: '', //到店办理，默认为用户手机号
+            address: '',
+            is_vip: 0,                   //是否是vip，1是，0否
+           /* coupon_type: 'etc',
+            couponList: [],
+            couponFee: 0,
+            coupon_id: '',*/
+            ETCFee: 350,
+            installFee: 0,
+        },
+        methods: {
+            clear: function(key){
+                vm[key] = '';
+            },
+            openWinProvince: function(){
+                event.stopPropagation();
+                api.openWin({
+                    name: 'plateProvince',
+                    url: '../car_plate/plate_province_win.html',
+                });
+            },
+            selectInstall: function(val){
+                vm.installWay = val.value;
+            }
+        },
+        computed: {
+
+        },
+        watch: {
+
+        }
+    })
+
+
+function getData(){
+    tea.showp('加载中...');
+    api.ajax({
+        url: website + 'etc_api.php?action=index',
+        method: 'post',
+        timeout: 30,
+        data: {
+            values: {
+                ID: $api.getStorage('ID')
+            },
+        }
+    }, function (ret, err) {
+        api.hideProgress();
+//        _alert(ret);
+        if(ret.succ == '1'){
+            vm.store = ret.data.shop_address.address;
+            vm.address = ret.data.user_address;
+            vm.ETCFee = ret.data.etc_money;
+            vm.installFee = ret.data.install_money;
+            vm.is_vip = ret.data.is_vip;
+            if(ret.data.carnum){
+                vm.province = ret.data.carnum.slice(0,2);
+                vm.number = ret.data.carnum.slice(2);
+            }
+        }
+    });
+}
+
+//提交表单数据
+function postData(){
+    var postVal = {
+        ID: $api.getStorage('ID'),
+        carnum: vm.province+vm.number,
+        tel: vm.tel,
+        cartype: vm.carType,
+        install: vm.checkedOn == '1' ? 'arrive' : 'on_spot',
+        addrid: vm.address.addrid,
+        coupon_id: vm.coupon_id,
+    };
+    if(!vm.errorMsg){
+        saveOrder(postVal);
+    }else {
+        api.toast({
+            msg: vm.errorMsg,
+            duration: 2000,
+            location: 'middle'
+        });
+    }
+
+}
+function saveOrder(postVal){
+    tea.showp('提交中','',true);
+    api.ajax({
+        url: website + 'etc_api.php?action=save',
+        method: 'post',
+        timeout: 30,
+        data: {
+            values: postVal,
+        }
+    }, function (ret, err) {
+        api.hideProgress();
+        if(!ret){
+            tea.toast('ajax');
+            return false;
+        }
+        if(ret.succ == '1'){
+            var value = {
+                paymoney: ret.data.money,
+                payid: ret.data.payid,
+                mtype: ret.data.mtype,
+                carnum: vm.province+vm.number,
+            }
+            toPay(value);
+        }
+        if(ret.succ == '13'){
+            api.confirm({
+                title: '该车辆已办理过ETC',
+                msg: '是否再次购买?',
+                buttons: ['确定', '取消']
+            }, function(ret, err) {
+                if(ret.buttonIndex == '1'){
+                    postVal.check = 'unnecessary';
+                    saveOrder(postVal)
+                }
+            });
+        }
+        api.toast({
+            msg: ret.msg,
+            duration: 2000,
+            location: 'middle'
+        });
+    });
+}
+
+function checkVip(plate){
+    api.ajax({
+        url: website + 'car_api.php?action=checkvip',
+        method: 'post',
+        data: {
+            values: {
+                ID: $api.getStorage('ID'),
+                carnum: plate
+            },
+        }
+    }, function (ret, err) {
+        if(!ret){
+            tea.toast('ajax');
+            return false
+        }
+        if(ret.succ == '1'){
+            vm.is_vip = ret.data.is_vip;
+            return true
+        }
+        api.toast({
+            msg: ret.msg,
+            duration: 2000,
+            location: 'middle'
+        });
+    });
+}
+//根据地址id获取地址信息
+function getAddressDetail(addrid){
+    tea.showp('加载中...')
+    api.ajax({
+        url: website + 'exempt_api.php?action=addrinfo',
+        method: 'post',
+        timeout: 30,
+        data: {
+            values: {
+                ID: $api.getStorage('ID'),
+                addrid: addrid,
+            },
+        }
+    },function(ret,err){
+        api.hideProgress();
+        if(ret.succ == '1'){
+            vm.address = ret.data;
+        }
+    });
+}
+//跳转支付页面
+function toPay(value) {
+    if (!vm.is_vip) {
+        api.confirm({
+            title: '重磅优惠',
+            msg: '限时活动，加VIP350减200 实付150元 先到先得，送完即止',
+            buttons: ['直接支付', '成为VIP']
+        }, function (ret, err) {
+            if (ret.buttonIndex == '2') {
+                /*toPage.name = 'vip_join_win';
+                toPage.url = '../vip/vip_join_win.html';
+                toPage.pageParam = {};*/
+                api.openWin({
+                    name: 'vip_join_win',
+                    url: '../vip/vip_join_win.html',
+                    pageParam: {},
+                    vScrollBarEnabled: false
+                });
+            }
+            if (ret.buttonIndex == '1') {
+                api.openWin({
+                    name: 'pay_win',
+                    url: '../pay/pay_win.html',
+                    pageParam: {
+                        title: '支付ETC费用',
+                        money: value.paymoney,
+                        type: 'etc',
+                        values: value
+                    },
+                    vScrollBarEnabled: false
+                });
+            }
+        });
+    } else {
+        api.openWin({
+            name: 'pay_win',
+            url: '../pay/pay_win.html',
+            pageParam: {
+                title: '支付ETC费用',
+                money: value.paymoney,
+                type: 'etc',
+                values: value
+            },
+            vScrollBarEnabled: false
+        });
+    }
+}
+</script>
+</html>

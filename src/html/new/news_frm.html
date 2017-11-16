@@ -1370,35 +1370,67 @@ function share(index_){
 }
 
 function openVideo(url_, offline_){
+    var videoPlayer = api.require('videoPlayer');
+    var thumbnail;
+    api.imageCache({
+        url: offline_
+    }, function(ret, err) {
+        if (ret) {
+            thumbnail = ret.url
+        }
+    });
+    openPlayer();
+    function openPlayer(){
+        videoPlayer.play({
+            texts: {
+                head: {
+                    title: ''
+                }
+            },
+            styles: {
+                head: {
+                    bg: 'rgba(0,0,0,0.5)',
+                    height: 40,
+                    titleSize: 18,
+                    titleColor: '#fff',
+                    backSize: 24,
+                    backImg: 'fs://img/back.png',
+                    setSize: 18,
+                    setImg: 'fs://img/set.png'
+                },
+                foot: {
+                    bg: 'rgba(0,0,0,0.5)',
+                    height: 40,
+                    playSize: 18,
+                    playImg: 'fs://img/back.png',
+                    pauseImg: 'fs://img/back.png',
+                    nextSize: 0,
+                    nextImg: 'fs://img/back.png',
+                    timeSize: 18,
+                    timeColor: '#fff',
+                    sliderImg: 'fs://img/slder.png',
+                    sliderSize: 18,
+                    progressColor: '#696969',
+                    progressSelected: '#76EE00',
+                    verticalSize: 18,
+                    verticalImg:'fs://img/vertical.png',
+                    horizontalImg:'fs://img/horizontal.png',
+                }
+            },
+            path: url_,
+            autoPlay: true,
+            fixed: true,
+            coverImg: thumbnail,
+            autorotation: true,
+        }, function(ret, err) {
+            if(ret.eventType == 'failed'){
+                videoPlayer.start();
+            }
+        });
+    }
 
-    // if (api.systemType == 'ios') {
-    //     api.showProgress({
-    //         style: 'default',
-    //         animationType: 'fade',
-    //         title: '努力加载中...',
-    //         text: '先喝杯茶...',
-    //         modal: true
-    //     });
-    //     api.download({
-    //         url: url_,
-    //         report: true,
-    //         cache: true,
-    //         allowResume: true
-    //     }, function(ret, err) {
-    //         if (ret.status == 1) {
-    //             api.hideProgress();
-    //             api.openVideo({
-    //                 url: url_
-    //             });
-    //         }
-    //     });
-    //     return;
-
-    // }
-    // 
-
-
-    if (offline_ == 'offline') {
+    return false;
+    /*if (offline_ == 'offline') {
         api.openFrame({
             name: 'video_frm',
             url: '../unit/video_frm.html',
@@ -1431,7 +1463,6 @@ function openVideo(url_, offline_){
 
 
     function openFrame(url_, thumbnail_){
-
         api.openFrame({
             name: 'video_frm',
             url: '../unit/video_frm.html',
@@ -1452,7 +1483,7 @@ function openVideo(url_, offline_){
             vScrollBarEnabled: true,
             hScrollBarEnabled: true
         });
-    }
+    }*/
 }
 
 function openPacket(hongbaoid){

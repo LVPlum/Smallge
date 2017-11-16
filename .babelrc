@@ -2,5 +2,10 @@
   "presets": [
     ["env", { "modules": false }]
   ],
-  // "plugins": ["transform-runtime"]
+  "plugins": ["transform-runtime"]
 }
+
+// transform-runtime
+// Automatically requires babel-runtime/regenerator when you use generators/async functions.
+// Automatically requires babel-runtime/core-js and maps ES6 static methods (Object.assign) and built-ins (Promise).
+// Removes the inline babel helpers and uses the module babel-runtime/helpers instead.

@@ -15,63 +15,59 @@
     <!-- 小马哥通用样式 -->
     <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
     <style type="text/css">
-
-        /*如页面需要动态滚动到底部请去除height:100%*/
-		html,body {
+        html,body{
             height: 100%;
             overflow: auto;
-		}
- html,body{
-        background-color: #fff;
-        color: #333;
-    }
-    input::-webkit-input-placeholder { /* WebKit browsers */
-        color:    #ccc;
-    }
-    input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-        color:    #ccc;
-    }
-    input::-moz-placeholder { /* Mozilla Firefox 19+ */
-        color:    #ccc;
-    }
-    input:-ms-input-placeholder { /* Internet Explorer 10+ */
-        color:    #ccc;
-    }
-    .aui-col-xs-4{
-        display: table;
-    }
-    .money-type{
-        width: 100%;
-        height: 3.15rem;
-        text-align: center;
-        color: #999;
-        border: 1px solid #999;
-        border-radius: 0.25rem;
-        display:table-cell;
-        vertical-align: middle;
-    }
-    .active-money-type{
-        color: #3399ff;
-        border: 1px solid #3399ff;
-    }
-    .btn{
-        width:15rem;
-        margin: 0 auto;
-        border-radius: 99px;
-        opacity: 0.5;
-    }
-    .active-btn{
-        opacity: 1;
-    }
-    .select_nomey{
-    	background-color:#3399ff;
-    	color:#fff;
-    	border: none;
-    }
-	.coupon-active{
-		font-size: 0.8rem !important;
-		color: #FF6600 !important;
-	}
+            background-color: #fff;
+            color: #333;
+        }
+        input::-webkit-input-placeholder { /* WebKit browsers */
+            color:    #ccc;
+        }
+        input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+            color:    #ccc;
+        }
+        input::-moz-placeholder { /* Mozilla Firefox 19+ */
+            color:    #ccc;
+        }
+        input:-ms-input-placeholder { /* Internet Explorer 10+ */
+            color:    #ccc;
+        }
+        .aui-col-xs-4{
+            display: table;
+        }
+        .money-type{
+            width: 100%;
+            height: 3.15rem;
+            text-align: center;
+            color: #999;
+            border: 1px solid #999;
+            border-radius: 0.25rem;
+            display:table-cell;
+            vertical-align: middle;
+        }
+        .active-money-type{
+            color: #3399ff;
+            border: 1px solid #3399ff;
+        }
+        .btn{
+            width:15rem;
+            margin: 0 auto;
+            border-radius: 99px;
+            opacity: 0.5;
+        }
+        .active-btn{
+            opacity: 1;
+        }
+        .select_nomey{
+            background-color:#3399ff;
+            color:#fff;
+            border: none;
+        }
+        .coupon-active{
+            font-size: 0.8rem !important;
+            color: #FF6600 !important;
+        }
     </style>
 </head>
 <body>
@@ -164,8 +160,9 @@ apiready = function(){
 	     },function(ret,err){
 	     	if(ret){
 	     		if(ret.value.tel){
-	     			 $api.val($api.byId('phone-val'),ret.value.tel);
-	     			 init('1');
+					$api.val($api.byId('phone-val'),ret.value.tel);
+					$("#pay-hint").html('');
+					init('1');
 	     		}else{
 //	     			init('0');
 					return ;
@@ -308,7 +305,7 @@ function isNumber(me){
 		       if(ret.tel != null){
 		            $api.val($api.byId('phone-val'), formattel(ret.tel));
 			   }else{
-			    	$api.val($api.byId('phone-val'), formattel($api.getStorage('telphone')));
+			    	$api.val($api.byId('phone-val'), formattel($api.getStorage('tel')));
 		       }
 		       checkinput($api.val($api.byId('phone-val')));
 		    }
@@ -365,7 +362,7 @@ function isNumber(me){
 			var price = checked.attr('data-price');
 			var id = checked.attr('data-id');
 
-			if(price.replace('元','') >= values.except_money){
+			if(Number(price.replace('元','')) >= Number(values.except_money)){
 				data.isUse = true;
 				updateHTML();
 				var result_m = parseFloat(cost)-parseFloat(values.coupon_m);
@@ -446,7 +443,7 @@ function historyPaynum(){
 /*新增：现金券的使用  *LVPlum*/
 	//获取现金券列表
 	function getCoupon(){
-		api.ajax({
+		/*api.ajax({
 			url: website + 'api_cj.php?action=my_coupon',
 			method: 'post',
 			timeout: 30,
@@ -463,7 +460,7 @@ function historyPaynum(){
 			}
 			if(ret){
 				if(ret.length){
-					/*数组排序*/
+					/!*数组排序*!/
 					ret.sort(function(a,b){
 						return parseFloat(a.coupon_m) > parseFloat(b.coupon_m) ? 1 : -1;
 					});
@@ -482,7 +479,44 @@ function historyPaynum(){
 				}
 				updateHTML();
 			}
-		});
+		});*/
+		api.ajax({
+			url: website + 'coupon_api.php?action=list',
+			method: 'post',
+			data: {
+				values: {
+					ID : $api.getStorage('ID'),
+					state : '2', //2为可用现金券列表
+				}
+			}
+		},function(ret,err){
+			if(!ret){
+				tea.toast('ajax');
+				return false
+			}
+			if(ret.succ == '1'){
+				/*数组排序*/
+				ret.data.sort(function(a,b){
+					return parseFloat(a.coupon_m) > parseFloat(b.coupon_m) ? 1 : -1;
+				});
+				for(i in ret.data){
+					if(ret.data[i].coupon_type == 'tel'){
+						data.result.unshift(ret.data[i]);
+					}else {
+						data.result.push(ret.data[i]);
+					}
+				}
+				if(data.result[0].coupon_type == 'tel'){
+					values.coupon_m = data.result[0].coupon_m;
+					values.coupon_id = data.result[0].coupon_id;
+					values.except_money = data.result[0]['except'].except_money;
+				}
+				updateHTML();
+			}else {
+				return false
+			}
+
+		})
 	}
 	//更新现金券dom
 	function updateHTML(){
@@ -507,7 +541,7 @@ function historyPaynum(){
 			url: '../unit/coupon_list_win.html',
 			pageParam: {
 				coupons: data.result,
-				couponType: 'hf',　　　//本页面对应的现金券的类型
+				couponType: 'tel',　　　//本页面对应的现金券的类型
 				couponsIndex: data.couponsIndex,
 			}
 		});

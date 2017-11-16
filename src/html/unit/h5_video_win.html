@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/video-js.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            wpadding: 0;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            -webkit-user-select: none;
+            user-select: none;
+            overflow: hidden;
+        }
+        .videobox{
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="videobox">
+        <!--<video id="video1" class="video-js vjs-fill vjs-big-play-centered" controls autoplay  preload="auto" poster="http://video-js.zencoder.com/oceans-clip.png" data-setup='{"example_option":true}'>
+            <source id="sourceBox" src="http://120.25.233.136/newspicup/newsvideo/20171114100012_3951.mp4" type='video/mp4'>
+            <p class="vjs-no-js">不支持播放</p>
+        </video>-->
+        <video id="myVideo" src='http://120.25.233.136/newspicup/newsvideo/20171114100012_3951.mp4'
+               class="video-js vjs-fill vjs-big-play-centered" controls autoplay preload="auto">
+        </video>
+        <!--<video id="video" :src="url" controls = "true"
+               preload="auto" webkit-playsinline="true"
+               playsinline="true" x-webkit-airplay="allow" x5-video-player-type="h5"
+               x5-video-player-fullscreen="true" x5-video-orientation="portraint" style="object-fit:fill">
+        </video>-->
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!--<script type="text/javascript"  src="../../script/video.min.js"></script>-->
+<script type="text/javascript">
+    /*var vm = null;
+    vm = new Vue({
+        el: '#app',
+        data: {
+            sure: 'http://120.25.233.136/newspicup/newsvideo/20171114100012_3951.mp4',
+//            url: api.pageParam.url
+        },
+        methods: {
+
+        },
+        computed: {
+
+        }
+    });*/
+    /*var myPlayer = videojs('video1');
+    videojs("video1").ready(function(){
+        var myPlayer = this;
+        myPlayer.play();
+    });*/
+    /*apiready = function () {
+
+        vm = new Vue({
+            el: '#app',
+            data: {
+                sure: 'http://12025.233.136/newspicup/newsvideo/201711141000012_3951.mp4',
+                url: api.pageParam.url
+            },
+            methods: {
+
+            },
+            computed: {
+
+            }
+        })
+
+        _alert(api.pageParam);
+    }*/
+</script>
+</html>

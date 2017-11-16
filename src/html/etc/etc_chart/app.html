@@ -1,0 +1,348 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../../css/tea.css" />
+    <style type="text/css">
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <div class="aui-content">
+            <ul class="aui-list aui-media-list">
+                <li class="aui-list-item aui-list-item-middle">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-16">车牌号码</div>
+                                <div class="aui-list-item-right aui-font-size-16 tea-text-title aui-ellipsis-1">{{ plate }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="aui-list-item aui-list-item-middle">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-16">车型</div>
+                                <div class="aui-list-item-right aui-font-size-16 tea-text-title aui-ellipsis-1">{{ carType == 'sedan' ? '小车' : '货车' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="aui-list-item aui-list-item-middle">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-16">手机号码</div>
+                                <div class="aui-list-item-right aui-font-size-16 tea-text-title aui-ellipsis-1">{{ tel }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="aui-list-item aui-list-item-middle">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-16">安装方式</div>
+                                <div class="aui-list-item-right aui-font-size-16 tea-text-title aui-ellipsis-1">{{install == 'arrive' ? '到店安装' : '上门安装'}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li v-if="install == 'arrive'" class="aui-list-item aui-list-item-middle">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-16">店铺地址</div>
+                                <div class="aui-list-item-right aui-font-size-16 tea-text-title aui-ellipsis-1">{{store}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li v-if="install != 'arrive'" class="aui-list-item aui-list-item-middle">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-16">姓名</div>
+                                <div class="aui-list-item-right aui-font-size-16 tea-text-title ">{{address.name}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li v-if="install != 'arrive'" class="aui-list-item aui-list-item-middle">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-16">用户地址</div>
+                                <div class="aui-list-item-right aui-font-size-16 tea-text-title aui-ellipsis-1">{{address.region+address.detail}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="aui-list-item aui-list-item-middle">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-16">ETC价格</div>
+                                <div class="aui-list-item-right aui-font-size-16 tea-text-title aui-ellipsis-1">￥{{ ETCFee }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="aui-list-item aui-list-item-middle">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-16">ETC安装费用</div>
+                                <div class="aui-list-item-right aui-font-size-16 tea-text-title aui-ellipsis-1">￥{{ installFee }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="aui-list-item aui-list-item-middle">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-16">VIP专享</div>
+                                <div v-if="is_vip" class="aui-list-item-right aui-font-size-16  aui-ellipsis-1">-￥{{ couponFee }}</div>
+                                <div v-else class="aui-list-item-right aui-font-size-16 tea-text-title  aui-ellipsis-1" @click="openWinVip"><a style="color: #3399ff;">暂无，成为VIP</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="aui-list-item aui-list-item-middle">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-16">付款金额</div>
+                                <div class="aui-list-item-right aui-font-size-16 tea-text-title aui-ellipsis-1">￥{{ total }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div v-if="!is_vip" style="padding: 0.5rem 0.5rem;" @cilck="openWinVip"><a style="color: #3399ff; font-size: 16px;" @click="openWinVip">加入VIP，限时优惠200元</a></div>
+            <!--<ul class="aui-list-view" id="mycarinfo">
+                <li class="aui-list-view-cell">车牌号码<span class="ac aui-pull-right">{{plate}}</span></li>
+                <li class="aui-list-view-cell">手机号码<span class="ac aui-pull-right">{{tel}}</span></li>
+                <li class="aui-list-view-cell">安装方式<span class="ac aui-pull-right">{{install == 'arrive' ? '到店安装' : '上门安装'}}</span></li>
+                <li v-if="install == 'arrive'" class="aui-list-view-cell">店铺地址<span class="ac aui-pull-right">{{store}}</span></li>
+                <li v-else class="aui-list-view-cell">店铺地址<span class="ac aui-pull-right">{{address}}</span></li>
+                <li class="aui-list-view-cell">ETC价格<span class="ac aui-pull-right">￥{{ ETCFee }}</span></li>
+                <li class="aui-list-view-cell">ETC安装费用<span class="ac aui-pull-right">￥{{ installFee }}</span></li>
+                <li class="aui-list-view-cell">VIP专享
+                    <span v-if="is_vip" class="ac aui-pull-right">-￥{{ couponFee }}<a style="color: #3399ff;">暂无，成为VIP</a></span>
+                    <span v-else class="ac aui-pull-right"><a style="color: #3399ff;">暂无，成为VIP</a></span>
+                </li>
+                <li class="aui-list-view-cell">付款金额<span class="ac aui-pull-right">￥{{ total }}</span></li>
+            </ul>-->
+        </div>
+        <div class="aui-btn-row aui-margin-t-10" style="margin: 0 auto;width: 86%" @click="postData">
+            <!--<div class="aui-btn aui-btn-block" style="padding: 10px;border-radius: 30px;border: 0;background: #999;color: white;">订单已支付</div>-->
+            <div class="aui-btn aui-btn-block" style="border-radius: 30px;border: 0;background: #3399ff;color: white;">马上支付</div>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../../script/conn.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../../script/fastclick.min.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../../script/vue.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var vm = null;
+/*vm = new Vue({
+    el: '#app',
+    data: {
+        plate: 'dasd',
+        carType: 'sedan',
+        install: 'arrive',
+        address: 'daewqeadafasdad',
+        tel: '15788464546546',
+        is_vip: 1,
+        ETCFee: 350,
+        installFee: 0,
+        store: '合浦还珠南路小马哥审车处',
+        couponFee: 0,
+    },
+    methods: {
+        post: function(){
+            var postVal = {
+                ID: $api.getStorage('ID'),
+                carnum: vm.plate,
+                tel: vm.tel,
+                cartype: vm.carType,
+                install: vm.checkedOn == '1' ? 'arrive' : 'on_spot',
+                addrid: data.address.addrid,
+                coupon_id: vm.coupon_id,
+            };
+
+        },
+        openWinVip: function(){
+            api.openWin({
+                name: 'vip_join_frm',
+                url: './vip_join_win.html',
+                vScrollBarEnabled: false
+            });
+        },
+        total: function(){
+            var money;
+            money = (this.ETCFee + this.installFee) - this.couponFee ;
+            money = tea.formatMoney(money) < 0 ? 0.00 : tea.formatMoney(money);
+            return money;
+        }
+    },
+    computed: {
+
+    },
+    watch: {
+
+    },
+    components: {
+
+    }
+});*/
+window.apiready = function(){
+
+    var data = api.pageParam.postVal;
+    vm = new Vue({
+        el: '#app',
+        data: {
+            plate: data.plate,
+            carType: data.carType,
+            install: data.install,
+            address: data.address,
+            tel: data.tel,
+            is_vip: data.is_vip,
+            ETCFee: data.ETCFee ? data.ETCFee : 350,
+            installFee: data.installFee,
+            store: data.store ? data.store : '合浦还珠南路小马哥审车处',
+            couponFee: data.couponFee,
+        },
+        methods: {
+            postData: function(){
+                var postVal = {
+                    ID: $api.getStorage('ID'),
+                    carnum: vm.plate,
+                    tel: vm.tel,
+                    cartype: vm.carType,
+                    install: vm.checkedOn == '1' ? 'arrive' : 'on_spot',
+                    addrid: data.address.addrid,
+                    coupon_id: vm.coupon_id,
+                };
+                saveOrder(postVal);
+            },
+            openWinVip: function(){
+                api.openWin({
+                    name: 'vip_join_frm',
+                    url: '../vip/vip_join_win.html',
+                    vScrollBarEnabled: false,
+                    pageParam: {
+                        from: "etc",
+                        carnum: vm.plate,
+                        tel: vm.tel,
+                        carcolor: vm.carType == 'sedan' ? 1 : 2,
+                    }
+                });
+            }
+        },
+        computed: {
+            total: function(){
+                var money;
+                money = (this.ETCFee + this.installFee) - this.couponFee ;
+                money = tea.formatMoney(money) < 0 ? 0.00 : tea.formatMoney(money);
+                return money;
+            }
+        },
+        watch: {
+
+        },
+        components: {
+
+        }
+    });
+
+    function saveOrder(postVal){
+        tea.showp('提交中','',true);
+        api.ajax({
+            url: website + 'etc_api.php?action=save',
+            method: 'post',
+            timeout: 30,
+            data: {
+                values: postVal,
+            }
+        }, function (ret, err) {
+            api.hideProgress();
+            if(!ret){
+                tea.toast('ajax');
+                return false;
+            }
+            if(ret.succ == '1'){
+                var value = {
+                    paymoney: ret.data.money,
+                    payid: ret.data.payid,
+                    mtype: ret.data.mtype,
+                    carnum: vm.plate,
+                };
+                toPay(value);
+                return true;
+            }
+            //已提交ETC订单的
+            if(ret.succ == '13'){
+                api.confirm({
+                    title: '该车辆已办理过ETC',
+                    msg: '是否再次购买?',
+                    buttons: ['确定', '取消']
+                }, function(ret, err) {
+                    if(ret.buttonIndex == '1'){
+                        postVal.check = 'unnecessary';
+                        saveOrder(postVal)
+                    }
+                });
+                return false;
+            }
+            api.toast({
+                msg: ret.msg,
+                duration: 2000,
+                location: 'middle'
+            });
+        });
+    }
+
+    function toPay(value){
+        api.openWin({
+            name: 'pay_win',
+            url: '../pay/pay_win.html',
+            pageParam: {
+                title: '支付ETC费用',
+                money: value.paymoney,
+                type: 'etc',
+                values: value
+            },
+            vScrollBarEnabled: false
+        });
+    }
+}
+</script>
+</html>

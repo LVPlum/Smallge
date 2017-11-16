@@ -1078,34 +1078,42 @@ function openpay(bxid,carnum,needpay){
         }
     },function(ret,err){
         if (ret) {
-//            _alert(ret);
-            if(ret.succ == 1){
-
-                    var value = {
-                        bxid: bxid,
-                        carnum: carnum,
-                        paymoney: values.needpay,
-                        mtype: '13',
-                        coupon_id: values.coupon_id, //现金券id
-                        coupon_m: values.coupon_m,    //优惠金额
-                    }
-                    api.openWin({
-                        name: 'pay_win',
-                        url: '../pay/pay_win.html',
-                        pageParam: {
-                            title:'支付保险订单',
-                            money: values.needpay,
-                            result_m: values.result_m,
-                            type: 'insure',
-                            values: value
-                        },
-                        vScrollBarEnabled: false
-                    });
-
-            }else{
-                api.alert({msg:('本订单已经支付过了，无需重复支付')});
-            }
             api.hideProgress();
+            if (!ret) {
+                api.toast({
+                    msg: '当前网络不佳，请稍后再试～',
+                    duration: 2000,
+                    location: 'middle'
+                });
+            }
+            if (ret.succ == 1) {
+                var value = {
+                    bxid: bxid,
+                    carnum: carnum,
+                    paymoney: values.needpay,
+                    mtype: '13',
+                    coupon_id: values.coupon_id, //现金券id
+                    coupon_m: values.coupon_m,    //优惠金额
+                }
+                api.openWin({
+                    name: 'pay_win',
+                    url: '../pay/pay_win.html',
+                    pageParam: {
+                        title:'支付保险订单',
+                        money: values.needpay,
+                        result_m: values.result_m,
+                        type: 'insure',
+                        values: value
+                    },
+                    vScrollBarEnabled: false
+                });
+                return true;
+            }
+            api.toast({
+                msg: ret.msg,
+                duration: 2000,
+                location: 'middle'
+            });
         }
     });
 

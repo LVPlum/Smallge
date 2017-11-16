@@ -53,23 +53,37 @@
             text-align: center !important;
         }
 
+        /* .title-card {
+            margin: 0 1.5rem !important;
+            padding: 1.25rem 0 !important;
+        } */
     </style>
 </head>
 <body>
-    <div id="app" v-cloak v-if="info">
-        <div class="aui-list aui-card-list aui-list-noborder">
-            <div class="aui-card-list-content-padded aui-padded-t-15 aui-padded-b-15">
-                <div class="aui-list-item-title aui-font-size-18 tea-text-blue">订单{{formatStatus(info.status, type)}}</div>
+    <div id="app" v-cloak v-if="info" class="aui-margin-b-10">
+        <div class="aui-list aui-card-list">
+            <div class="aui-card-list-content-padded title-card">
+                <div class="aui-list-item-text">
+                    <div class="aui-list-item-title aui-font-size-18 tea-text-blue">订单{{formatStatus(info.status, type)}}</div>
+                    
+                </div>      
                 <div class="aui-list-item-text">订单编号：{{info.orderno}}</div>
                 <div class="aui-list-item-text">提交时间：{{info.addtime}}</div>
             </div>
         </div>
-        <profile :info="info" :typeobj="typeObj"></profile>
-        <detail :config='typeObj.detailConfig1()'></detail>
+        <profile :info="info" :typeobj="typeObj" :type="type"></profile>
+        <detail v-if="typeObj.detailConfig1()" :config='typeObj.detailConfig1()'></detail>
         <detail v-if="typeObj.detailConfig2" :config='typeObj.detailConfig2()'></detail>
         <!-- 只有审核过的保险订单才需要显示邮寄信息 -->
-        <bill v-if="type == 'insure' && info.status == 2 && info.insure_check == 1" v-bind="info" @setbill="setBill"></bill>
-        <coupon v-if="info.status == 2 && (type == 'insure' && info.insure_check == 1) || (type == 'vip') " :type='type' ></coupon>
+        <bill v-if="type == 'insure' && info.status == 2 && info.insure_check == 1" v-bind="info" @setbill="setBill">
+        </bill>
+        <coupon v-if="info.status == 2 && (type == 'insure' && info.insure_check == 1 || type == 'vip' || type == 'etc') " :type='type' @update="updateCoupon">
+        </coupon>
+        <simple-list v-if="info.status == 1" :title="'去评价'" :content="'评价可获得30积分哦'" :content-klass="'tea-text-orange'" 
+            @click.native="openWinComment(info.id, type)">
+        </simple-list>
+        <simple-list v-if="type == 'etc'" :title="'安装状态'" :content="'已安装'">
+        </simple-list>
     </div>
 </body>
 
@@ -98,11 +112,7 @@ function initModule(){
 }
 
 /**********************************初始化监听**********************************/
-function initEventListener(){
 
-
-
-}
 
 /**********************************ajax请求数据**********************************/
 function getData(id, type){

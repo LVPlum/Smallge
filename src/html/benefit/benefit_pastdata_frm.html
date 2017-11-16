@@ -265,7 +265,7 @@ function initEventListener(){
 function getData(){
 
     showp('数据加载中···')
-    api.ajax({
+    /*api.ajax({
         url:  website + 'api_cj.php?action=my_coupon',
         method: 'post',
         data: {
@@ -283,6 +283,31 @@ function getData(){
         }
         if(ret){
             vm.list = ret;
+        }
+    });*/
+    api.ajax({
+        url:  website + 'coupon_api.php?action=list',
+        method: 'post',
+        data: {
+            values: {
+                ID: $api.getStorage('ID'),
+                state: '3', //
+            }
+        }
+    }, function (ret, err) {
+        api.hideProgress();
+//        _alert(ret);
+        if(!ret){
+//            tea.toast('ajax');
+            return false;
+        }
+        if(ret.succ == '1'){
+            vm.list = ret.data;
+            return true;
+        }
+        if(ret.succ == '0'){
+            vm.list = []; //没有现金券的情况
+            return false;
         }
     });
 

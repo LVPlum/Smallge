@@ -148,7 +148,7 @@ function updateHTML(ret){
             html += 'onclick="vip()">';
         }
         else {
-            html += 'onclick="sendmycar(\''+ item.carnum +'\','+ item.ID +',\''+ item.tel +'\','+ item.cartype +')">';
+            html += 'onclick="sendmycar(\''+ item.carnum +'\','+ item.ID +',\''+ item.tel +'\','+ item.cartype +','+ item.vip +')">';
         }
         html += '<div class="aui-list-item-inner">'
         html += '<div class="aui-list-item-title">'+ item.carnum +'</div>';
@@ -179,7 +179,7 @@ function init(){
 }
 
 /**********************************广播消息**********************************/
-function sendmycar(val,id,tel,cartype){
+function sendmycar(val,id,tel,cartype,vip){
      api.sendEvent({
 	    name: 'addOldCar',
 	    extra: {
@@ -187,6 +187,7 @@ function sendmycar(val,id,tel,cartype){
 	        carid: id,
 	        tel: tel,
 	        cartype: cartype,
+            is_vip: vip
 	    }
 	 });
 	 api.closeWin();

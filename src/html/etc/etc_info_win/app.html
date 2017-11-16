@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+        /*diy 跟随文本的箭头朝下*/
+        .tea-text-arrow-up {
+            position: relative;
+            display: inline-block;
+            padding-right: 1rem !important;
+        }
+        .tea-text-arrow-up:after {
+            content: '';
+            width: 0.4rem;
+            height: 0.4rem;
+            position: absolute;
+            top: 50%;
+            right: 0.2rem;
+            margin-top: -0.1rem;
+            background: transparent;
+            border: 1px solid #999;
+            border-bottom: none;
+            border-left: none;
+            z-index: 2;
+            -webkit-border-radius: 0;
+            border-radius: 0;
+            -webkit-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+        }
+
+    </style>
+</head>
+<body>
+
+    <header id="header" class="aui-bar aui-bar-nav aui-bar-light" >
+        <a class="aui-btn aui-pull-left" tapmode onclick="api.closeWin()">
+            <span class="aui-iconfont aui-icon-left tea-text-title"></span>
+        </a>
+        <div class="aui-title tea-text-title">ETC服务</div>
+    </header>
+
+    <section id="main"></section>
+
+    <footer id="footer" class="aui-bar aui-bar-tab">
+        <div class="aui-bar-tab-item tea-border-t" tapmode @click="openWinFee" style="width: auto;">
+            <span class="tea-text-orange tea-font-weight-bold aui-font-size-16" v-cloak>¥{{ money }}</span>
+            <span v-show="!errorMsg" :class="frm ? 'tea-text-arrow-up' : 'tea-text-arrow-down' " class="aui-font-size-12">明细</span>
+        </div>
+        <div :class="errorMsg ? 'tea-bg-light-gray' : 'tea-bg-blue' " class="aui-bar-tab-item aui-text-white" tapmode @click="pay" style="width: 50%;">
+            <div class="search-input tea-font-weight-bold aui-font-size-16">提交</div>
+        </div>
+    </footer>
+
+
+
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- HTML模板渲染引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+
+</script>
+</html>

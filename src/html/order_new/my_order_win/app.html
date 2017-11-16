@@ -102,7 +102,7 @@ function init() {
         data: {
             mask: false,
             orderType: 0,
-            title: ['我的订单', '找代办', '汽车保险', '网约审车', 'VIP订单', '手机充值'],
+            title: ['我的订单', '找代办', '汽车保险', '网约审车', 'VIP订单', '手机充值', 'ETC订单', '加盟申请'],
             statusIndex: 0,
             statusList: ['全部', '已完成', '未完成']
         },
@@ -206,7 +206,8 @@ function openFrame() {
         },
         pageParam: api.pageParam,
         // 页面是否弹动
-        bounces: false
+        bounces: false,
+        slidBackEnabled: false
     });
 
 }

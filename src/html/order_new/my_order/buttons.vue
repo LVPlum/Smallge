@@ -34,9 +34,11 @@
         computed: {
             activeBtns: function(){
                 var arr = [];
+                //  订单有价格且还未完成则出现支付按钮
                 if (this.money && this.status == 2) {
                     arr.push(this.btns.pay);
                 }
+                // 完成且还未评价的订单提示评价
                 if (this.status == 1 ) {
                     arr.push(this.btns.comment);
                 }

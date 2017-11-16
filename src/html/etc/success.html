@@ -1,0 +1,352 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <!--<link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />-->
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            height: 100%;
+            overflow: auto;
+            color: #666;
+            background-color: #fff;
+            text-align: center;
+        }
+        body{
+            font-size: 0.7rem;
+        }
+        section ~ section {
+            margin-top: 0.75rem;
+        }
+        .success {
+            margin: 0.75rem auto 0.75rem;
+            height: 3.15rem;
+            width: 3.15rem;
+            border-radius: 50%;
+        }
+        .aui-icon-correct {
+            top: 0.3rem;
+            font-size: 1.75rem;
+            font-weight: bold;
+            color: #FFFFFF;
+        }
+        .imageCard{
+            width: 85%;
+            height: 11rem;
+            margin: 0.75rem auto 0;
+            border-radius: 10px;
+        }
+        .imageIcon{
+            font-size: 3rem;
+        }
+        .imageBtn{
+            width: 90%;
+            border-radius: 10px;
+            margin: 0.5rem auto 0;
+        }
+        .opacity{
+            opacity: 0.6;
+        }
+        .btnGroup div{
+            width: 80%;
+            height: 2.2rem;
+            line-height: 2.2rem;
+            font-size: 0.8rem;
+            margin: 0.5rem auto;
+        }
+        .tip{
+            width: 80%;
+            text-align: right;
+            margin: 0 auto;
+        }
+        .tea-text-orange{
+            color: #ff9933 !important;
+        }
+        .tea-bg-shallow-blue{
+            background-color: #EAF5FF !important;
+        }
+        .border-blue{
+            border: 1px solid #3399ff;
+        }
+    </style>
+</head>
+<body>
+<!--通用说明 ①config为配置参数 ②item为提示文本内容 ③image为卡片视图分享按钮 ④btnGroup为成功跳转按钮组 ⑤tip为最后补充说明-->
+    <div id="app" v-cloak>
+        <div v-if="config">
+            <section>
+                <div class="success tea-bg-blue">
+                    <i class="aui-iconfont aui-icon-correct"></i>
+                </div>
+                <div class="tea-text-title aui-font-size-16">{{ config.result }}</div>
+            </section>
+            <section v-if="config.item" v-for="val in config.item">
+                <div v-for="i in val" class="aui-font-size-16">
+                    {{ i.text }}
+                    <span v-if="i.color" :class="i.color.textColor">{{i.color.text}}</span>
+                </div>
+            </section>
+            <section v-if="config.image" class="imageCard" :class="[config.image.bg,config.image.iconColor]">
+                <div class="imageIcon aui-iconfont" :class="config.image.icon"></div>
+                <div class="aui-font-size-20 tea-font-weight-bold">{{config.image.title}}</div>
+                <div class="aui-font-size-12 opacity">{{config.image.text}}</div>
+                <div v-if="config.image.btn" class="aui-btn-block imageBtn" :class="config.image.btn.styleClass" @click="share">
+                    {{config.image.btn.text}}
+                </div>
+            </section>
+            <section v-if="config.btnGroup" class="btnGroup">
+                <div v-for="btn in config.btnGroup" :class="btn.styleClass" class="aui-btn aui-btn-info aui-btn-block tea-btn-radius" @click="goTo(btn.func)">{{btn.title}}</div>
+            </section>
+            <section v-if="config.tip">
+                <div :class="config.tip.styleClass" class="tip" @click="goTo(config.tip.func)">{{config.tip.text}}</div>
+            </section>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- 分享-->
+<script type="text/javascript" src="../../script/share.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var vm = null;
+/*vm = new Vue({
+    el: '#app',
+    data: {
+        config:{
+            result: '支付成功',
+            item: [
+                [
+                    {text:'您选择的车辆已成功加入VIP'},
+                    {text:'恭喜您获得500积分'},
+                    {text:'',color:{text:'ETC现金券200元',textColor:'tea-text-orange'}}],
+            ],
+            btnGroup:[
+                {title:'去购买ETC',styleClass:'tea-bg-blue',func:'etc'},
+                {title:'返回首页',styleClass:'tea-bg-shallow-blue tea-text-blue border-blue',func:'main'}
+            ],
+            tip:{text:'邀请朋友注册有奖励哦 >',styleClass:'tea-text-blue aui-font-size-12'}
+            /!*image:{
+                icon: 'tea-icon-packet',
+                iconColor: 'aui-text-white',
+                title: '恭喜获得分享现金红包',
+                text: '分享后您和朋友都将获得现金红包',
+                bg: 'tea-bg-blue',
+                btn: {
+                    text: '发现金券',
+                    styleClass:'tea-text-blue tea-font-weight-bold tea-bg-white',
+                    func: '',
+                }
+            }*!/
+        }
+    },
+    methods: {
+
+    },
+    computed: {
+
+    }
+})*/
+/**********************************apiready**********************************/
+apiready = function(){
+
+    // 初始化变量
+    init();
+
+};
+
+/**********************************初始化变量**********************************/
+function init(){
+
+    vm = new Vue({
+        el: '#app',
+        data: {
+            config: api.pageParam.config,
+        },
+        methods: {
+            share: function(){
+                getShareUrl();
+            },
+            goTo: function(type){
+                switch(type){
+                    case 'etc':
+                        api.openWin({
+                            name: 'etc_win',
+                            url: '../etc/etc_win.html',
+                            pageParam: {},
+                            vScrollBarEnabled: false
+                        });
+                        break;
+                    case 'main':
+                        api.closeToWin({
+                            name: api.pageParam.closeToWin,
+                            animation: {
+                                type: 'none',
+                                subType: 'from_bottom',
+                                duration: 500
+                            }
+                        });
+                        break;
+                    case 'invite':
+                        api.openWin({
+                            name: 'invite_win',
+                            url: '../invite/invite_win.html',
+                            pageParam: {},
+                            vScrollBarEnabled: false
+                        });
+                        break;
+                    default:
+                        /*api.toast({
+                            msg: '此功能暂未开通，敬请期待~',
+                            duration: 2000,
+                            location: 'middle'
+                        });*/
+                        return;
+                }
+            }
+        },
+        computed: {
+
+        }
+    })
+    tea.toast('success', vm.config.result);
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+    initEventListener();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+function getShareUrl(){
+    api.ajax({
+        url: website + 'share_api.php?action=share_reward',
+        method: 'post',
+        timeout: 30,
+        data: {
+            values: {
+                ID: $api.getStorage('ID'),
+            },
+        }
+    }, function (ret, err) {
+//        _alert(ret);
+        if(ret.succ == '1'){
+            wxShare(ret.data.share_url);
+        }
+    });
+}
+function wxShare(url){
+    var dialogBox = api.require('dialogBox');
+    dialogBox.actionMenu ({
+        rect:{
+            h: 180
+        },
+        texts:{
+            cancel:'取消'
+        },
+        tapClose: true,
+        items:[
+            {
+                text: '微信好友',
+                icon: 'widget://image/wxhy.png'
+            },
+            {
+                text: '朋友圈',
+                icon: 'widget://image/wxpyq.png'
+            }
+        ],
+        styles:{
+            bg:'#FFF',
+            column: 2,
+            itemText: {
+                color: '#000',
+                size: 12,
+                marginT:8
+            },
+            itemIcon:{
+                size:50
+            },
+            border:{color:'#eee', width: 2,
+                marginT:15
+            },
+            cancel:{
+                bg:'fs://icon.png',
+                h:60,
+                color:'#999',
+                size:16
+            }
+        }
+    }, function(ret){
+        if(ret.eventType == 'cancel'){
+            dialogBox.close({
+                dialogName:"actionMenu"
+            })
+            return false;
+        }else if(ret.index == 0){
+            key = 'session';
+        }else if(ret.index == 1){
+            key = 'timeline';
+        }
+        var wx = api.require('wx');
+        wx.shareWebpage({
+            apiKey: '',
+            scene: key,
+            title: '小马哥在线审车',
+            description: '小马哥在线审车，环检加年审只收160元，修理费全免!修到好修到合格为止!',
+            thumb: 'widget://image/logo108.png',
+            contentUrl: url,
+        }, function(ret, err){
+            if(ret.status){
+                api.alert({msg: '分享成功'})
+            }
+        });
+    });
+}
+</script>
+</html>

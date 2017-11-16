@@ -1,0 +1,177 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            height: 100%;
+            background-color: #ebf6ff;
+            overflow-x: hidden;
+        }
+        .aui-list .aui-list-item.coupon{
+            padding: 0rem;
+        }
+        .aui-list .aui-list-item-media.coupon{
+            width: 5rem;
+            height: 5rem;
+            padding: 0;
+        }
+        .warp{
+            margin: 0 0.5rem;
+            padding: 0.75rem;
+            /*background: rgba(51, 102, 153, 0.2);*/
+            position: relative;
+            border-radius: 10px;
+        }
+
+        .banner{
+            background: url("banner.png");
+            height: 24rem;
+            background-size: cover;
+            padding-top: 9.8rem;
+        }
+        .line{
+            margin: 0rem -0.25rem;
+            min-height: 0.6rem;
+        }
+        .line:before,.line:after{
+            content: '';
+            width: 25%;
+            min-height: 0.6rem;
+            display: inline-block;
+            background-size: 100% 2px;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-image: linear-gradient(0,#dddddd,#dddddd 50%,transparent 50%);
+            background-image: -webkit-linear-gradient(90deg,#666,#666 50%,transparent 50%);
+        }
+        .line.rule:before,.line.rule:after{
+            width: 35%;
+        }
+        .line:before{
+            margin-right: 0.5rem;
+        }
+        .line:after{
+            margin-left: 0.5rem;
+        }
+        .text-deep-blue{
+            color: #0c4bb7;
+        }
+        label {
+            position: relative;
+            height: 2.5rem;
+            width: 100%;
+        }
+        .inputStyle{
+            /*text-align: center;*/
+            position: absolute;
+            left: 50%;
+            /*因为是登录页采用兼容性更高的写法*/
+            margin-left: -2.4rem !important;
+            height: 2.5rem !important;
+        }
+        input.center {
+            left: 0;
+            margin-left: 0 !important;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="banner">
+            <section class="warp aui-margin-b-15">
+                <div class="aui-text-center aui-font-size-18 tea-font-weight-bold text-deep-blue">输入手机号领取现金红包！</div>
+                <div class="aui-btn aui-btn-block tea-bg-white tea-btn-radius aui-margin-t-15">
+                    <!--<input type="tel" class="inputStyle" placeholder="请输入手机号" maxlength="11"
+                    v-model="tel" >-->
+                    <label for="tel">
+                        <input id="tel" type="tel" class="inputStyle" placeholder="请输入手机号" maxlength="11"
+                               :class="{ 'center': tel }" :value="tel" @input="tel = $api.trimAll($event.target.value)">
+                    </label>
+                </div>
+                <div class="aui-btn aui-btn-info aui-btn-block tea-btn-radius aui-margin-t-15 aui-font-size-16" @click="post">
+                    立即领取
+                </div>
+            </section>
+
+            <div class="aui-font-size-14 tea-text-title aui-text-center line rule">活动细则</div>
+            <ul class="aui-content-padded aui-margin-t-0 aui-padded-5 aui-font-size-12 aui-text-default">
+                <li>1.使用现金红包时的下单手机号需为领取现金红包时使用的手机号。</li>
+                <li>2.发放至手机号的现金红包需在APP用手机号注册，或将手机号绑定小马哥APP账户后才可使用。</li>
+                <li>3.发放至小马哥APP账户的现金红包登录后即可使用。</li>
+                <li>4.每张订单仅限使用一张现金红包，现金红包不找零。</li>
+                <li>5.小马哥保留法律范围内允许的对活动的解释权。</li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+    var vm = null;
+    vm = new Vue({
+        el: '#app',
+        data: {
+            tel: '',
+        },
+        methods: {
+            post: function(){
+                if(check()){
+                    /*发送请求，参数手机号*/
+                    var share_no = getUrlParam('no');
+                    $.post("url", { share_no: share_no,tel: vm.tel },
+                            function(){
+                                if(ret.succ == 1){
+                                    $api.text(dom.inviteNum, ret.num);
+                                    $api.text(dom.inviteReward, ret.num);
+                                    return true;
+                                }
+                            })
+                }
+            }
+        },
+        computed: {
+
+        }
+    });
+
+    /*验证手机号*/
+    function check(){
+        values.telphone = $api.val(dom.phone),
+        values.telphone = tea.toNum(values.telphone);
+        if (!tea.checkPhone(values.telphone)) {
+            api.toast({
+                msg: '请输入格式正确的11位手机号码',
+                duration: 2000,
+                location: 'middle'
+            });
+            return false;
+        }
+        return true;
+    }
+</script>
+</html>

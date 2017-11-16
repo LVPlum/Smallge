@@ -86,7 +86,7 @@
                         <span class="u-title">请选择你的车型</span>
                     </div>
                     <div class="aui-row aui-row-padded">
-                        <div class="aui-col-xs-6" tapmode onclick="selectCarColor(0)">
+                        <div class="aui-col-xs-6" tapmode onclick="selectCarColor(1)">
                             <ul class="aui-list aui-media-list aui-list-noborder">
                                 <li id="blue-btn" class="aui-list-item tea-bg-default tea-border-radius-10 aui-padded-l-10">
                                     <div class="aui-media-list-item-inner">
@@ -102,7 +102,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <div class="aui-col-xs-6 u-btn" tapmode onclick="selectCarColor(1)">
+                        <div class="aui-col-xs-6 u-btn" tapmode onclick="selectCarColor(2)">
                             <ul class="aui-list aui-media-list aui-list-noborder">
                                 <li id="yellow-btn" class="aui-list-item tea-bg-default tea-border-radius-10 aui-padded-l-10">
                                     <div class="aui-media-list-item-inner">
@@ -135,7 +135,8 @@
                     <div class="aui-list-item-input">
                         <input id="plate-num" type="text" placeholder="请输入车牌后5位数" tapmode oninput="input(0)">
                     </div>
-                    <div id="select" class="tea-text-round tea-big" tapmode onclick="openHistory()">选</div>
+                    <!--<div id="select" class="tea-text-round tea-big" tapmode onclick="openHistory()">选</div>-->
+                    <div class="tea-text-round" style="border: none" tapmode onclick="openHistory()"><img src="../../image/select.png"></div>
                 </div>
             </li>
             <li class="aui-list-item">
@@ -207,7 +208,22 @@ apiready = function(){
     initEventListener();
 
     // ajax请求数据
-    getPlate();
+    if(api.pageParam.from == 'etc'){
+        
+        values.carnum = api.pageParam.carnum;
+        values.tel = api.pageParam.tel;
+        values.carcolor = api.pageParam.carcolor;
+
+        if (api.pageParam.carcolor = 1) {
+            values.paymoney = 600;
+        }
+        else {
+            values.paymoney = 1000;
+        }
+        updateHTML();
+    }else{
+        getPlate();
+    }
     getCoupon();//获取现金券列表
 };
 
@@ -237,7 +253,7 @@ function initVar(){
         carid:  null,
         carnum: '桂E',
         tel: $api.getStorage('telphone'),
-        carcolor: 0, //蓝牌0 黄牌1
+        carcolor: 1, //蓝牌0 黄牌1 
         paymoney: 600,
         coupon_m: 0,
         coupon_id: '',
@@ -292,7 +308,7 @@ function initEventListener(){
         name: 'selectCoupon'
     }, function(ret, err){
         if( ret ){
-            values.coupon_id = ret.value.coupon.ID;
+            values.coupon_id = ret.value.coupon.coupon_id;
             values.coupon_m = ret.value.coupon.coupon_m;
             data.couponsIndex = ret.value.couponsIndex;
             updateHTML()
@@ -334,6 +350,7 @@ function getPlate(){
 
             // 更新
         if (ret) {
+            // _alert(ret);
             values.update(ret);
             updateHTML();
         } else {
@@ -344,11 +361,11 @@ function getPlate(){
 /*获取现金券数据*/
 function getCoupon(){
     api.ajax({
-        url: website + 'api_cj.php?action=my_coupon',
+        url: website + 'coupon_api.php?action=list',
         method: 'post',
         data: {
             values: {
-                userid : data.id,
+                ID : data.id,
                 state : '2', //2为可用现金券列表
             }
         }
@@ -357,21 +374,21 @@ function getCoupon(){
             tea.toast('ajax');
             return false
         }
-        if(ret.length){
+        if(ret.succ == '1'){
             /*数组排序*/
-            ret.sort(function(a,b){
+            ret.data.sort(function(a,b){
                 return parseFloat(a.coupon_m) > parseFloat(b.coupon_m) ? 1 : -1;
             });
-            for(i in ret){
-                if(ret[i].coupon_type == 'vip'){
-                    data.result.unshift(ret[i]);
+            for(i in ret.data){
+                if(ret.data[i].coupon_type == 'vip'){
+                    data.result.unshift(ret.data[i]);
                 }else {
-                    data.result.push(ret[i]);
+                    data.result.push(ret.data[i]);
                 }
             }
             if(data.result[0].coupon_type == 'vip'){
                 values.coupon_m = data.result[0].coupon_m;
-                values.coupon_id = data.result[0].ID;
+                values.coupon_id = data.result[0].coupon_id;
             }
             updateHTML();
         }else {
@@ -408,7 +425,7 @@ function updateVar(ret_){
         values.tel = item.tel;
         values.carcolor = item.cartype;
 
-        if (item.carcolor = 0) {
+        if (item.carcolor = 1) {
             values.paymoney = 600;
         }
         else {
@@ -451,7 +468,7 @@ function selectCarColor(index_, first_) {
         return;
     }
     values.carcolor = index_;
-    if (index_ == 0) {
+    if (index_ == 1) {
         $api.addCls(dom.blueBtn, 'blue');
         $api.removeCls(dom.yellowBtn, 'yellow');
         values.paymoney = 600;
@@ -518,7 +535,7 @@ function pay(){
                 carid:  values.carid,
                 carnum: values.carnum,
                 tel: values.tel,
-                carcolor: values.carColor,
+                carcolor: values.carcolor,
                 paymoney: values.paymoney,
                 addcar: addcar,
                 mtype: '8',

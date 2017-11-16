@@ -147,7 +147,6 @@ export default {
         }
     },
     created: function(){
-        alert(8)
         let _this = this;
         api.addEventListener({
             name: 'orderPost'

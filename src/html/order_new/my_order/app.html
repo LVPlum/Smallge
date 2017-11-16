@@ -66,10 +66,10 @@
     </style>
 </head>
 <body>
-    <div id="app" >
+    <div id="app" v-cloak>
         
         <section v-if="orderNum == 0" class="tea-nothing">
-            <img src="../../image/nothing_img.png">
+            <img :src="nothingImg">
             <p>您还没有任何定单哦~</p>
         </section>
         
@@ -107,7 +107,7 @@
                         </div>
                     </div>
                     
-                    <div v-if="item.list.status == 1" class="aui-bg-danger aui-text-white aui-text-center swiper-slide dele-btn aui-list-item-center" @click="delOrder(index)">
+                    <div class="aui-bg-danger aui-text-white aui-text-center swiper-slide dele-btn aui-list-item-center" @click="delOrder(index)">
                         删除
                     </div>             
                 </li>

@@ -1,0 +1,222 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <header id="header" class="aui-bar aui-bar-nav aui-bar-light" >
+        <a class="aui-btn aui-pull-left" tapmode onclick="closeWin()">
+            <span class="aui-iconfont aui-icon-left tea-text-title"></span>
+        </a>
+        <div class="aui-title tea-text-title">ETC服务</div>
+    </header>
+
+    <section id="main"></section>
+
+    <footer id="footer" class="aui-bar aui-bar-tab">
+        <div class="aui-bar-tab-item tea-border-t" tapmode @click="openWinFee" style="width: auto;">
+            <span class="tea-text-orange tea-font-weight-bold aui-font-size-16" v-cloak>¥{{ money }}</span>
+            <span v-show="!is" :class="frm ? 'tea-text-arrow-up' : 'tea-text-arrow-down' " class="aui-font-size-12">明细</span>
+        </div>
+        <div :class="is ? 'tea-bg-light-gray' : 'tea-bg-blue' " class="aui-bar-tab-item aui-text-white" tapmode @click="pay" style="width: 50%;">
+            <div class="search-input tea-font-weight-bold aui-font-size-16">去支付</div>
+        </div>
+    </footer>
+
+
+
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- HTML模板渲染引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template"></script>
+
+<script type="text/javascript">
+
+    /**********************************声明全局变量**********************************/
+// 声明DOM对象
+    var header, footer, dom = {}, vm = null;
+
+    // 声明全局变量
+    var headerH, footerH;
+
+    /**********************************apiready**********************************/
+    apiready = function(){
+
+        // 处理沉浸式效果，计算header和footer的高度
+        header = $api.byId('header');
+        $api.fixStatusBar(header);
+        headerH = $api.offset(header).h;
+        footer = $api.byId('footer');
+        footerH = $api.offset(footer).h;
+
+        // 初始化变量
+        init();
+
+        // 打开Frame
+        openFrame();
+
+    };
+
+    /**********************************初始化变量**********************************/
+    function init(){
+
+        dom = {
+        };
+
+        vm = new Vue({
+            el: 'footer',
+            data: {
+                is: false,
+                frm: false,
+                money: 0.00,
+                fee: {
+                    ETCFee: 350,
+                    installFee: 0,
+                    couponFee: 0,
+                }
+            },
+            methods: {
+                pay:function(){
+                    api.execScript({
+                        frameName: 'etc_frm',
+                        script: 'postData('+vm.money+')'
+                    });
+                },
+                openWinFee: function(){
+                    if(vm.is) return false;
+                    if (vm.frm) {
+                        vm.frm = false;
+                        api.closeFrame({
+                            name: 'etc_fee_frm'
+                        });
+                        return false;
+                    }
+                    api.openFrame({
+                        name: 'etc_fee_frm',
+                        url: './etc_fee_frm.html',
+                        rect: {
+                            x: 0,
+                            y: 0,
+                            w: 'auto',
+                            h: api.winHeight - footerH
+                        },
+                        pageParam: vm.fee,
+                        bounces: false,
+                        bgColor: 'rgba(0,0,0,0.6)',
+                        vScrollBarEnabled: true,
+                        hScrollBarEnabled: true
+                    });
+                    vm.frm = true;
+                },
+                total: function(){
+                    vm.money = (vm.fee.ETCFee + vm.fee.installFee) - vm.fee.couponFee ;
+                    vm.money = tea.formatMoney(vm.money) < 0 ? 0.00 : tea.formatMoney(vm.money);
+                    return vm.money;
+                }
+            },
+            computed: {
+            },
+            watch: {
+            }
+        });
+
+        // 初始化模块
+        initModule();
+
+        // 初始化监听
+        initEventListener();
+
+    };
+
+    /**********************************初始化模块**********************************/
+    function initModule(){
+
+    }
+
+    /**********************************初始化监听**********************************/
+    function initEventListener(){
+        api.addEventListener({
+            name: 'formReady'
+        }, function (ret, err) {
+            vm.is = ret.value.ready;
+            vm.fee = ret.value.fee;
+
+            vm.total()
+        });
+
+        api.addEventListener({
+            name: 'isDetail'
+        }, function (ret, err) {
+            vm.frm = false;
+        });
+    }
+
+    /**********************************ajax请求数据**********************************/
+    function getData(){
+
+
+
+    }
+
+
+    /**********************************DOM响应**********************************/
+// 回退关闭窗口
+    function closeWin(){
+        api.closeWin();
+    }
+
+    /**********************************打开Frame**********************************/
+// 打开Frame,不需要打开Frame请删除
+    function openFrame(){
+
+        var frameName = api.winName.replace('win', 'frm');
+        api.openFrame({
+            name: frameName,
+            url: './' + frameName + '.html',
+            rect: {
+                x: 0,
+                y: headerH,
+                w: 'auto',
+                h: api.winHeight - headerH - footerH
+            },
+            pageParam: api.pageParam,
+            // 页面是否弹动
+            bounces: false
+        });
+
+    }
+
+    /**********************************其他函数**********************************/
+
+</script>
+</html>

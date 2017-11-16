@@ -334,7 +334,7 @@ function updateVar(){
     var area = order.area.qu;
     values.areaIndex = data.areaIdArr.indexOf(area);
 
-    values.telphone = order.telphone;
+    values.telphone = order.tel;
     // 不选则默认为"1970-01-01 08:00:00"
     values.book_time = order.booktime == "1970-01-01 08:00:00"? '' : order.booktime;
 

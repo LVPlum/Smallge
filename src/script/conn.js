@@ -1,5 +1,5 @@
-﻿//var website = 'http://120.24.169.112/';
-var website = 'http://smtest.smallge.com/';  //测试用服务器
+﻿var website = 'http://120.24.169.112/';
+// var website = 'http://smtest.smallge.com/';  //测试用服务器
 
 
 // 因流量计费的关系，转从测试服读取视频

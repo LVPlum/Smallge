@@ -58,6 +58,15 @@ var headerH, footerH;
 /**********************************apiready**********************************/
 apiready = function(){
 
+    api.openWin({
+        name: 'main_win',
+//         url: './html/main/main_win.html',
+        url: 'dist/html/main/main_win.html',
+        pageParam: {},
+        // 由于是次Window是首页窗口，通过设置参数slidBackEnabled，关闭iOS默认回划关闭窗口的功能
+        slidBackEnabled: false
+    });
+    return;
     // 处理沉浸式效果，计算header的高度
     header = $api.byId('header');
     $api.fixStatusBar(header);
@@ -85,20 +94,18 @@ apiready = function(){
     // 兼容旧版本
     var tel = $api.getStorage('telphone');
     $api.setStorage('tel', tel);
-
-     /*api.openWin({
+     api.openWin({
          name: 'main_win',
-         //url: './html/main/main_win.html',
+//         url: './html/main/main_win.html',
          url: 'dist/html/main/main_win.html',
          pageParam: {},
          // 由于是次Window是首页窗口，通过设置参数slidBackEnabled，关闭iOS默认回划关闭窗口的功能
          slidBackEnabled: false
      });
-     return;*/
-
+     return;
    api.openFrame({
        name: 'index',
-       //url: './html/index.html', //上传打包时使用
+//       url: './html/index.html', //上传打包时使用
        url: 'http://192.168.1.216:8011/html/index.html', //调试时使用
        rect: {
            x: 0,
@@ -111,8 +118,6 @@ apiready = function(){
        hScrollBarEnabled: true,
        useWKWebView: true
    });
-
-
 };
 
 /**********************************初始化全局变量**********************************/

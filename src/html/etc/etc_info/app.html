@@ -1,0 +1,371 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: #FFFFFF;
+        }
+        .banner img{
+            width: 100%;
+            height: auto;
+        }
+        .bar{
+            width: 92%;
+            position: relative;
+        }
+        .warp{
+            border-radius: 0.3rem;
+            overflow: hidden;
+            line-height: normal;
+            -moz-box-shadow:0 0 0.9rem 0 rgba(107, 65, 65, 0.15);
+            -webkit-box-shadow:0 0 0.9rem 0 rgba(107, 65, 65, 0.15);
+            box-shadow:0 0 0.9rem 0 rgba(107, 65, 65, 0.15);
+        }
+        .border{
+            background-position: 0 bottom !important;
+        }
+        .aui-radio:checked, .aui-radio.aui-checked.no{
+            background-color: #ccc;
+            border: solid 1px #ccc;
+        }
+        @media screen and (-webkit-min-device-pixel-ratio: 1.5){
+            .aui-list,.aui-list .aui-list-item {
+                background-image: none;
+            }
+            .aui-list.border-b,.aui-list .aui-list-item.border-b{
+                background-image: -webkit-linear-gradient(90deg,#dddddd,#dddddd 50%,transparent 50%);
+            }
+        }
+        .aui-list .aui-list-item.border-b-t{
+            padding-left: 0;
+            margin-left: 0.75rem;
+            background-size: 100% 1px;
+            background-repeat: no-repeat;
+            background-position: left top,right bottom;
+            background-image: linear-gradient(0,#dddddd,#dddddd 50%,transparent 50%),linear-gradient(0,#dddddd,#dddddd 50%,transparent 50%) !important;
+        }
+        .aui-list .aui-list-item.border-t{
+            padding-left: 0;
+            margin-left: 0.75rem;
+            background-position: left top;
+            background-image: linear-gradient(0,#dddddd,#dddddd 50%,transparent 50%) !important;
+        }
+        .vip{
+            width: 1.25rem;
+            font-size: 0.6rem;
+            color: #fff;
+            font-weight: bolder;
+            text-align: center;
+            background-color: #CCCCCC;
+            border-radius: 4px;
+        }
+        .vip.black{
+            background-color: #333333;
+            color: #f2d394;
+        }
+        .tip{
+            color: #ff0000;
+            padding: 0.5rem 0.5rem 0 0;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak class="tea-bg-white aui-margin-t-10">
+        <div class="aui-bar-btn bar">
+            <div class="warp">
+                <ul class="aui-list aui-media-list">
+                    <li class="aui-list-item aui-padded-0 border-b">
+                        <div class="aui-media-list-item-inner">
+                            <div class="aui-list-item-inner aui-padded-l-15 aui-padded-r-0">
+                                <div class="aui-info aui-padded-0 aui-margin-t-5">
+                                    <div v-if="is_vip" class="aui-margin-r-5">
+                                        <div class="vip black">VIP</div>
+                                    </div>
+                                    <div class="aui-list-item-label aui-font-size-16 tea-font-weight-bold" style="width: 100%;line-height: normal">
+                                        {{ plate.substring(0,2) +" "+ plate.substring(2) }} <span class="aui-font-size-14 tea-text-gray aui-margin-l-15" style="font-weight: normal">{{ carType == 'sedan' ? '小车' : '货车' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <input-option :config="optionConfig" :checked="checkedOn" @checked="checked"></input-option>
+                <div v-show="checkedOn == '1' " class="aui-list">
+                    <div class="aui-list-item border-b-t">
+                        <div class="aui-info aui-padded-0">
+                            <div class="aui-info-item aui-font-size-16 tea-text-title">
+                                <span>店铺地址</span>
+                                <span class="aui-margin-l-10">{{store}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="aui-list-item">
+                        <div class="aui-info aui-padded-0">
+                            <div class="aui-info-item aui-font-size-16 tea-text-title">
+                                <span>手机号码</span>
+                            <span class="aui-margin-l-10">
+                                <input type="tel" placeholder="请输入您的手机号码" maxlength="11"
+                                       v-model = "tel">
+                            </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <site v-show="checkedOn == '2' " :address="address" @updata="updataMsg"></site>
+            </div>
+            <p v-show="checkedOn == '2' " class="aui-font-size-14 tip">免费上门安装服务，仅限北海市区和合浦县城</p>
+            <coupon :type='coupon_type' @updata="updataMsg" ></coupon>
+        </div>
+        <div class="aui-content-padded aui-font-size-14 tea-text-default">
+            <p>办理须知</p>
+            <p>1.八桂行卡高速收费优惠5%</p>
+            <p>2.免费上门安装服务，仅限北海市区和合浦县城</p>
+            <p>3.办理ETC，收费{{ETCFee}}元，含电子签证、八桂行卡</p>
+            <p>4.仅限小轿车 (货车期待开通...)</p>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var vm = null;
+
+/**********************************apiready**********************************/
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+function getData(){
+    tea.showp('加载中...');
+    api.ajax({
+        url: website + 'etc_api.php?action=index',
+        method: 'post',
+        timeout: 30,
+        data: {
+            values: {
+                ID: $api.getStorage('ID')
+            },
+        }
+    }, function (ret, err) {
+        api.hideProgress();
+        if(ret.succ == '1'){
+            vm.store = ret.data.shop_address.address;
+            vm.address = ret.data.user_address;
+        }
+    });
+}
+function postData(){
+    /*api.openWin({
+        name: 'success',
+        url: '../unit/win.html',
+        bounces: false,
+        pageParam: {
+            folder: 'etc',
+            title: '支付成功',
+            closeToWin: 'main_win',
+            config:{
+                result: '支付成功',
+                item: [
+                    [{text:'小马哥工作人员将会联系您'},{text:'请保持手机通畅',color:{text:'并提供以下手续',textColor:'tea-text-blue'}}],
+                    [{text:'个人车辆'},{text:'身份证、行驶证'}],
+                    [{text:'单位车辆:'},{text:'营业执照副本、委托书'},{text:'经办人身份证、行驶证'}]
+                ],
+                image:{
+                    icon: 'tea-icon-packet',
+                    iconColor: 'aui-text-white',
+                    title: '恭喜获得分享现金红包',
+                    text: '分享后您和朋友都将获得现金红包',
+                    bg: 'tea-bg-blue',
+                    btn: {
+                        text: '发现金券',
+                        styleClass:'tea-text-blue tea-font-weight-bold tea-bg-white',
+                    }
+                }
+            }
+        }
+    });
+    return false;*/
+    var postVal = {
+        ID: $api.getStorage('ID'),
+        plate: vm.plate,
+        tel: vm.tel,
+        carType: vm.carType,
+        install: vm.checkedOn == '1' ? 'arrive' : 'on_spot',
+        addrid: vm.address.addrid,
+        address: vm.address,
+        coupon_id: vm.coupon_id,
+        couponFee: vm.couponFee,
+        ETCFee: vm.ETCFee,
+        installFee: vm.installFee,
+        is_vip: vm.is_vip,
+        store: vm.store
+    };
+    if(vm.errorMsg){
+        api.toast({
+            msg: vm.errorMsg,
+            duration: 2000,
+            location: 'middle'
+        });
+        return false;
+    }
+    nextStep(postVal);
+//    saveOrder(postVal);
+}
+
+function nextStep(postVal){
+    api.openWin({
+        name: 'etc_chart',
+        url: '../unit/win.html',
+        bounces: false,
+        pageParam: {
+            folder: 'etc',
+            title: 'ETC服务',
+            postVal: postVal
+        }
+    });
+}
+
+function saveOrder(postVal){
+    tea.showp('提交中','',true);
+    api.ajax({
+        url: website + 'etc_api.php?action=save',
+        method: 'post',
+        timeout: 30,
+        data: {
+            values: postVal,
+        }
+    }, function (ret, err) {
+        api.hideProgress();
+        if(!ret){
+            tea.toast('ajax');
+            return false;
+        }
+        if(ret.succ == '1'){
+            var value = {
+                paymoney: ret.data.money,
+                payid: ret.data.payid,
+                mtype: ret.data.mtype,
+                carnum: vm.plate,
+            };
+            //是vip直接调用
+            if(vm.is_vip){
+                toPay(value);
+                return;
+            }
+            api.confirm({
+                title: '重磅优惠',
+                msg: '限时活动，加VIP350减200 实付150元 先到先得，送完即止',
+                buttons: ['直接支付', '成为VIP']
+            }, function (ret, err) {
+                if (ret.buttonIndex == '2') {
+                    api.openWin({
+                        name: 'vip_join_win',
+                        url: '../vip/vip_join_win.html',
+                        pageParam: {},
+                        vScrollBarEnabled: false
+                    });
+                    return;
+                }
+                toPay(value);
+            });
+            return true;
+        }
+        //已提交ETC订单的
+        if(ret.succ == '13'){
+            api.confirm({
+                title: '该车辆已办理过ETC',
+                msg: '是否再次购买?',
+                buttons: ['确定', '取消']
+            }, function(ret, err) {
+                if(ret.buttonIndex == '1'){
+                    postVal.check = 'unnecessary';
+                    saveOrder(postVal)
+                }
+            });
+            return false;
+        }
+        api.toast({
+            msg: ret.msg,
+            duration: 2000,
+            location: 'middle'
+        });
+    });
+}
+
+function toPay(value){
+    api.openWin({
+        name: 'pay_win',
+        url: '../pay/pay_win.html',
+        pageParam: {
+            title: '支付ETC费用',
+            money: value.paymoney,
+            type: 'etc',
+            values: value
+        },
+        vScrollBarEnabled: false
+    });
+}
+
+//根据地址id获取地址信息
+function getAddressDetail(addrid){
+    tea.showp('加载中...')
+    api.ajax({
+        url: website + 'exempt_api.php?action=addrinfo',
+        method: 'post',
+        timeout: 30,
+        data: {
+            values: {
+                ID: $api.getStorage('ID'),
+                addrid: addrid,
+            },
+        }
+    },function(ret,err){
+        api.hideProgress();
+        if(ret.succ == '1'){
+            vm.address = ret.data;
+        }
+    });
+}
+</script>
+</html>

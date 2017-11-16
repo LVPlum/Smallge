@@ -58,7 +58,8 @@
             background: transparent !important;
         }
         .vip{
-            width: 3.5rem;
+            /*width: 3.5rem;*/
+            padding: 0 0.3rem;
             font-size: 0.5rem;
             color: white;
             height: 0.9rem;
@@ -164,9 +165,9 @@
                                 <div class="aui-list-item-title aui-text-white tea-font-weight-bold">{{ userInfo.nickname ? userInfo.nickname : '小马哥' }}</div>
                             </div>
                             <div class="aui-list-item-text aui-margin-t-5">
-                                <div v-if="userInfo.vipCount" class="vip">
+                                <div v-if="userInfo.vipCount != '0' " class="vip">
                                     <i class="aui-iconfont tea-icon-new-vip" style="font-size: 0.5rem"></i>
-                                    <span>特权VIP</span>
+                                    <span class="tea-font-weight-bold" style="color: #ffe77b">VIP{{ userInfo.vipCount }}</span>
                                 </div>
                                 <div v-else class="vip" style=" opacity: 0.4;background-color: gray;background-image:none">
                                     <i class="aui-iconfont tea-icon-new-vip" style="font-size: 0.5rem"></i>
@@ -248,11 +249,12 @@
             {title:'问题解答',icon:'tea-icon-question',color:'#6699FF',func:'question'},
         ],
         userInfo: {
-            avatar: '../../image/me/default_male.png',
-            nickname: '二十六画',
-            integral: 18000,
-            tx: '军长',
-            phoneNum: '18537454545',
+            avatar: '',
+            nickname: '',
+            tx: '散兵',
+            phoneNum: '66666666666',
+            integral: 0,
+            vipCount: 0,
         }
     },
     methods: {
@@ -361,9 +363,9 @@
                         case 'phone':
                             openWinPhone();
                             break;
-                        case 'oil':
+                        /*case 'oil':
                             openWinOil();
-                            break;
+                            break;*/
                         case 'msg':
                             openWinMsgCenter();
                             break;
@@ -582,8 +584,8 @@
     //ETC
     function openWinEtc(){
         tea.openWin({
-            name: 'etc_win',
-            url: '../etc/etc_win.html',
+            name: 'etc_index_win',
+            url: '../etc/etc_index_win.html',
             bounces: false,
             pageParam: {
                 key: 'value'

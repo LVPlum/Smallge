@@ -50,7 +50,8 @@
                     <div class="aui-list-item-inner">
                         <div class="aui-list-item-text">
                             <div class="aui-font-size-14 tea-text-title">安装费用</div>
-                            <div class="aui-font-size-14 aui-pull-right tea-text-orange">+ ¥{{tea.formatMoney(installFee)}}</div>
+                            <div v-if="installFee" class="aui-font-size-14 aui-pull-right tea-text-orange">+ ¥{{tea.formatMoney(installFee)}}</div>
+                            <div v-else class="aui-font-size-14 aui-pull-right tea-text-orange">免费</div>
                         </div>
                     </div>
                 </div>
@@ -59,8 +60,8 @@
                 <div class="aui-media-list-item-inner">
                     <div class="aui-list-item-inner">
                         <div class="aui-list-item-text">
-                            <div class="aui-font-size-14 tea-text-title">VIP优惠</div>
-                            <div class="aui-font-size-14 aui-pull-right tea-text-orange">- ¥{{tea.formatMoney(VIPFee)}}</div>
+                            <div class="aui-font-size-14 tea-text-title">VIP专享</div>
+                            <div class="aui-font-size-14 aui-pull-right tea-text-orange">- ¥{{tea.formatMoney(couponFee)}}</div>
                         </div>
                     </div>
                 </div>
@@ -77,7 +78,7 @@
                     <div class="aui-list-item-right aui-font-size-16 tea-text-title">+ ¥{{tea.formatMoney(installFee)}}</div>
                 </div>
                 <div class="aui-list-item-text">
-                    <div class="aui-list-item-text aui-font-size-16 tea-text-title">VIP优惠</div>
+                    <div class="aui-list-item-text aui-font-size-16 tea-text-title">VIP专享</div>
                     <div class="aui-list-item-right aui-font-size-16 tea-text-title">- ¥{{tea.formatMoney(VIPFee)}}</div>
                 </div>
             </div>
@@ -113,7 +114,7 @@ apiready = function(){
         data: {
             ETCFee: param.ETCFee,
             installFee: param.installFee,
-            VIPFee: param.travelFee,
+            couponFee: param.couponFee,
         },
         methods: {
 
@@ -145,8 +146,17 @@ function init(){
 /**********************************初始化模块**********************************/
 function initModule(){
 
-
-
+    tea.closeFrame = function(event_,el_){
+        var el_ = (!tea.isElement(el_)) ? $api.byId(el_) : el_;
+        if(!tea.contains(el_, event_.target)){
+            api.sendEvent({
+                name: 'isDetail',
+            });
+            setTimeout(function(){
+                api.closeFrame();
+            },200);
+        }
+    }
 }
 
 /**********************************初始化监听**********************************/

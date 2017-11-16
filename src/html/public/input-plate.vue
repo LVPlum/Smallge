@@ -14,10 +14,14 @@
                         </div>
                         <div class="aui-list-item-input aui-font-size-16">
                             <input type="text" placeholder="请输入车牌后5位数" maxlength="8"
-                                   :value="value"
-                                   @blur="updateValue($event.target.value)">
+                                   v-model="value"
+                                   @input="updateValue($event.target.value)"
+                                   @keyup.enter="downEnter">
+                                   <!--:value="value"
+                                   @blur="updateValue($event.target.value)">-->
                         </div>
-                        <div class="tea-text-round tea-big"  @click="openWinPlate">选</div>
+                        <div class="tea-text-round" style="border: none;"  @click="openWinPlate"><img src="../../image/select.png"></div>
+                        <!--<div class="tea-text-round tea-big"  @click="openWinPlate">选</div>-->
                     </div>
                 </div>
             </div>
@@ -51,9 +55,16 @@
                 });
             },
             updateValue: function(value){
+                value = $api.trimAll(value).toUpperCase();
                 this.$emit('input',value);
                 this.$emit('updata','is_vip',value);
+            },
+            downEnter: function(){
+                this.$emit('updata','enter',this.value);
             }
+        },
+        watch: {
+
         },
         created: function(){
             let _this = this;
@@ -66,6 +77,7 @@
             api.addEventListener({
                 name: 'addOldCar'
             },  function(ret, err) {
+//                _alert(ret);
                 _this.$emit('updata','pla',ret)
             });
         }

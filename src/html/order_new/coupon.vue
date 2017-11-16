@@ -1,5 +1,5 @@
 <template id="coupon">
-    <ul class="aui-list aui-list-in aui-form-list aui-margin-t-5">
+    <ul class="aui-list aui-list-in aui-form-list aui-margin-t-5 aui-list-noborder">
         <li class="aui-list-item">
             <div class="aui-list-item-inner aui-list-item-arrow aui-margin-r-15" @click="openWinCouponList()">
                 <div class="aui-list-item-label" style="width: 4rem">

@@ -3,10 +3,10 @@
         <li class="aui-list-item">
             <div class="aui-list-item-inner aui-list-item-arrow aui-margin-r-15" @click="openWinCouponList()">
                 <div class="aui-list-item-label" style="width: 4rem">
-                    <span class="tea-text-title">优惠券</span>
+                    <span class="tea-text-title">现金券</span>
                 </div>
-                <div id="coupon" class="aui-font-size-14 tea-text-gray aui-margin-r-15" :class="{'coupon-active': couponFee}">
-                    {{couponFee? '- ¥ ' + tea.formatMoney(couponFee) : '暂无可用优惠券'}}
+                <div class="aui-font-size-14 tea-text-gray aui-margin-r-15" :class="{'coupon-active': couponFee}">
+                    {{couponFee? '- ¥ ' + tea.formatMoney(couponFee) : '暂无'}}
                 </div>
             </div>
         </li>
@@ -21,7 +21,8 @@
         data: function() {
             return {
                 couponList: [],
-                index: 0
+                index: 0,
+                coupon_id: '',
             }
         },
         computed: {
@@ -41,12 +42,13 @@
                 return arr;
             },
             couponFee: function(){
-                let fee = 0;
+                let fee = 0,feeID = '';
                 if (this.list.length > 0) {
                     let item = this.list[this.index];
                     fee = item.coupon_type == this.type ? item.coupon_m : 0;
+                    feeID = item.coupon_type == this.type ? item.coupon_id : '';
                 }
-                this.$emit('updata','coupon',fee)
+                this.$emit('updata','coupon',{fee:fee,feeID:feeID});
                 return fee;
             }
         },
@@ -57,7 +59,7 @@
                     url: '../unit/coupon_list_win.html',
                     pageParam: {
                         coupons: this.list,
-                        couponType: this.type,　　　//本页面对应的优惠券的类型
+                        couponType: this.type,　　　//本页面对应的现金券的类型
                         couponsIndex: this.index,
                     }
                 });
@@ -65,11 +67,11 @@
         },
         created: function(){
             let _this = this;
-            //获取优惠券列表信息
+            //获取现金券列表信息
             $api.post(website + 'coupon_api.php?action=list',{
                 values: {
                     ID : $api.getStorage('ID'),
-                    state : '2', //2为可用优惠券状态
+                    state : '2', //2为可用现金券状态
                 }
             }, (ret, err) => {
                 if (!ret) {
@@ -80,7 +82,7 @@
                     _this.couponList = ret.data;
                     return true;
                 }
-                // 无优惠券
+                // 无现金券
                 if (ret.succ == 0) {
                     return false;
                 }

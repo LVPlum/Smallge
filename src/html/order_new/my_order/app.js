@@ -1,9 +1,108 @@
 import Buttons from './buttons.vue';
+import BusinessType from 'public/business_type.js'
+
 
 let vm;
 
 window.apiready = function(){
-    
+
+    class OrderType extends BusinessType {
+        constructor(typeArr) {
+            super(typeArr);
+            if (typeArr === 'all') {
+                for (let key in this.typeObj) {
+                    if (this.typeObj.hasOwnProperty(key)) {
+                        this.typeObj[key].carnum = function(item){
+                            return item.carnum || item.tel || '';
+                        }
+                    }
+                }
+            }
+            else {
+                typeArr.forEach((item) => {
+                    this.result[item].carnum = function(item){
+                        return item.carnum || item.tel || '';
+                    }
+                })
+            }
+        }
+    }
+
+    let orderType = new OrderType('all');
+    orderType.addProperty('check', {
+        desc: function(item){
+            return item.checkstation
+        },
+        price: function(item){
+            return item.business
+        }
+    });
+    orderType.addProperty('exempt', {
+        desc: function(item){
+            return item.checkstation
+        },
+        price: function(item){
+            return '¥' + tea.formatMoney(item.money)
+        } 
+    });
+    orderType.addProperty('insure',{
+        desc: function(item){
+            return item.insurer;
+        },
+        price: function(item){
+            return item.money ? '¥' + tea.formatMoney(item.money) : '审核中';
+        }
+    });
+    orderType.addProperty('tel',{
+        desc: function(item){
+            return '¥' + tea.formatMoney(item.recharge_money);
+        },
+        price: function(item){
+            return '¥' + tea.formatMoney(item.money);
+        }
+    });
+    orderType.addProperty('agency',{
+        desc: function(item){
+            return item.agency_name;
+        },
+        price: function(item){
+            return item.business;
+        }
+    });
+    orderType.addProperty('join',{
+        desc: function(item){
+            return item.agency_name;
+        },
+        price: function(item){
+            return item.shop_address;
+        }   
+    });
+    orderType.addProperty('vip',{
+        desc: function(item){
+            return '';
+        },
+        price: function(item){
+            return '¥' + tea.formatMoney(item.money);
+        } 
+    });
+    orderType.addProperty('etc',{
+        desc: function(item){
+            return '';
+        },
+        price: function(item){
+            return '¥' + tea.formatMoney(item.money);
+        } 
+    });
+    orderType.addProperty('oil',{
+        desc: function(item){
+            return '';
+        },
+        price: function(item){
+            return '¥' + tea.formatMoney(item.money);
+        } 
+    });
+    let typeObj = orderType.getResult();
+
     vm = new Vue({
         el: '#app',
         data: {
@@ -12,134 +111,8 @@ window.apiready = function(){
             statusList: ['全部', '已完成', '未完成'],
             status: 0,
             orderType: 'all',
-            type: {
-                check: {
-                    title: '网约审车',
-                    icon: 'tea-icon-check',
-                    color: '#41a4ec',
-                    carnum: function(item){
-                        return item.carnum;
-                    },
-                    desc: function(item){
-                        return item.checkstation
-                    },
-                    price: function(item){
-                        return item.business
-                    }                   
-                },
-                exempt: {
-                    title: '网约审车',
-                    icon: 'tea-icon-check',
-                    color: '#41a4ec',
-                    carnum: function(item){
-                        return item.carnum;
-                    },
-                    desc: function(item){
-                        return item.checkstation
-                    },
-                    price: function(item){
-                        return '¥' + tea.formatMoney(item.money)
-                    }                 
-                },
-                insure: {
-                    title: '车辆保险',
-                    icon: 'tea-icon-insure',
-                    color: '#ff855e',
-                    carnum: function(item){
-                        return item.carnum;
-                    },
-                    desc: function(item){
-                        return item.insurer;
-                    },
-                    price: function(item){
-                        return item.money ? '¥' + tea.formatMoney(item.money) : '审核中';
-                    }                     
-                },
-                tel: {
-                    title: '话费充值',
-                    icon: 'tea-icon-tel',
-                    color: '#ff855e',
-                    carnum: function(item){
-                        return item.tel;
-                    },
-                    desc: function(item){
-                        return item.recharge_money;
-                    },
-                    price: function(item){
-                        return '¥' + tea.formatMoney(item.money);
-                    }                     
-                },
-                agency: {
-                    title: '找代办',
-                    icon: 'tea-icon-agency',
-                    color: '#00be9b',
-                    carnum: function(item){
-                        return '';
-                    },
-                    desc: function(item){
-                        return item.agency_name;
-                    },
-                    price: function(item){
-                        return item.business;
-                    } 
-                },
-                join: {
-                    title: '加盟申请',
-                    icon: 'tea-icon-agency',
-                    color: '#00be9b',
-                    carnum: function(item){
-                        return '';
-                    },
-                    desc: function(item){
-                        return item.agency_name;
-                    },
-                    price: function(item){
-                        return item.shop_address;
-                    }                   
-                },
-                vip: {
-                    title: 'VIP',
-                    icon: 'tea-icon-vip',
-                    color: '#ffc50f',
-                    carnum: function(item){
-                        return item.carnum;
-                    },
-                    desc: function(item){
-                        return '';
-                    },
-                    price: function(item){
-                        return '¥' + tea.formatMoney(item.money);
-                    } 
-                },
-                etc: {
-                    title: 'ETC',
-                    icon: 'tea-icon-etc',
-                    color: '#4874dc',
-                    carnum: function(item){
-                        return item.carnum;
-                    },
-                    desc: function(item){
-                        return '';
-                    },
-                    price: function(item){
-                        return '¥' + tea.formatMoney(item.money);
-                    } 
-                },
-                oil: {
-                    title: '超值加油',
-                    icon: 'tea-icon-oil',
-                    color: '#f5b35e',
-                    carnum: function(item){
-                        return item.carnum;
-                    },
-                    desc: function(item){
-                        return '';
-                    },
-                    price: function(item){
-                        return '¥' + tea.formatMoney(item.money);
-                    } 
-                }
-            }
+            type: typeObj,
+            nothingImg: '../../image/nothing.png'
         },
         components: {
             'buttons': h => h(Buttons)
@@ -249,10 +222,17 @@ window.apiready = function(){
                 });
             },
             action: function(event, item, index){
+                // 获取按钮及按钮类型
                 var target = event.target;
                 var action = $api.attr(target, 'data-action');
+
                 switch (action) {
                     case 'pay':
+                        // 保险订单支付跳详情，方便使用优惠券和查看投保价格
+                        if (item.item == "insure") {
+                            vm.openWinDetail(item, index);
+                            break;
+                        }
                         api.openWin({
                             name: 'pay_win',
                             url: '../pay/pay_win.html',
@@ -281,7 +261,7 @@ window.apiready = function(){
             }
         },
         computed: {
-            //计算当前筛选条件下共有几个订单
+            // 计算当前筛选条件下共有几个订单
             orderNum: function(){ 
                 var num = 0;
                 this.list.forEach(function(item){
@@ -293,7 +273,29 @@ window.apiready = function(){
             }
         },
         watch: {
-
+            list: {
+                handler: function(val, oldVal){
+                    if (val.length !== oldVal.lenght) {
+                        // 视图更新后触发
+                        vm.$nextTick(function(){
+                            vm.list.forEach(function(item, index){
+                                /*滑动模块*/
+                                mySwiper[index] = new Swiper('#' + index , {
+                                    slidesPerView: 'auto',
+                                    initialSlide: 0,
+                                    resistanceRatio: .4,
+                                    slideToClickedSlide: true,
+                                    freeMode: true,
+                                    freeModeSticky: true,
+                                    autoplayStopOnLast: true,
+                                    shortSwipes: false,
+                                    threshold: 35
+                                });          
+                            });
+                        })
+                    }
+                }
+            }
         }
     })
 
@@ -414,23 +416,6 @@ function getData(){
         // 获取订单
         if (ret.succ == 1) {
             vm.list = ret.data;
-            // 视图更新后触发
-            vm.$nextTick(function(){
-                vm.list.forEach(function(item, index){
-                    if (item.list.status == 1) {
-                        /*滑动模块*/
-                        mySwiper[index] = new Swiper('#' + index , {
-                            slidesPerView: 'auto',
-                            initialSlide: 0,
-                            resistanceRatio: .6,
-                            slideToClickedSlide: true,
-                            freeMode: true,
-                            freeModeSticky: true,
-                            autoplayStopOnLast: true
-                        });                
-                    } 
-                });
-            })
             return true;
         }
         // 用户无订单

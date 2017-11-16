@@ -295,7 +295,12 @@ u.deleteMessages = function(id){
 	rong.deleteMessages({
 		messageIds: [id]
 	}, function(ret, err) {
-		api.toast({ msg: ret.status });
+		if (ret.status == 'success') {
+			api.sendEvent({
+				name: 'delSuccess',
+				extra: {id: id}
+			});
+		}
 	})
 }
 

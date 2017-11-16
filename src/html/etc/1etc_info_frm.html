@@ -1,0 +1,131 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+
+    </style>
+</head>
+<body>
+    <div id="app" class="tea-bg-white">
+        <header class="banner"><img src="../../image/etc/banner@2x.png" alt="banner"></header>
+        <!--<div class="aui-bar-btn bar">
+            <div class="warp aui-margin-b-10">
+                <ul class="aui-list aui-media-list">
+                    <li class="aui-list-item aui-padded-0 border-b">
+                        <div class="aui-media-list-item-inner">
+                            <div class="aui-list-item-inner aui-padded-l-15 aui-padded-r-0">
+                                <div class="aui-info aui-padded-0 aui-margin-t-5">
+                                    <div v-if="is_vip" class="aui-margin-r-5">
+                                        <div class="vip black">VIP</div>
+                                    </div>
+                                    <div class="aui-list-item-label aui-font-size-16 tea-font-weight-bold" style="width: 100%;line-height: normal">
+                                        {{ plate.substring(0,2) +" "+ plate.substring(2) }} <span class="aui-font-size-14 tea-text-gray aui-margin-l-15" style="font-weight: normal">{{ carType == 'sedan' ? '小车' : '货车' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <input-option :config="optionConfig" :checked="checkedOn" @checked="checked"></input-option>
+                <div v-show="checkedOn == '1' " class="aui-list">
+                    <div class="aui-list-item border-b-t">
+                        <div class="aui-info aui-padded-0">
+                            <div class="aui-info-item aui-font-size-16 tea-text-title">
+                                <span>店铺地址</span>
+                                <span class="aui-margin-l-10">{{store}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="aui-list-item">
+                        <div class="aui-info aui-padded-0">
+                            <div class="aui-info-item aui-font-size-16 tea-text-title">
+                                <span>手机号码</span>
+                            <span class="aui-margin-l-10">
+                                <input type="tel" placeholder="请输入您的手机号码" maxlength="11"
+                                       v-model = "tel">
+                            </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <site v-show="checkedOn == '2' " :address="address" @updata="updataMsg"></site>
+            </div>
+            <coupon :type='coupon_type' @updata="updataMsg" ></coupon>
+            &lt;!&ndash;<section class="aui-list aui-media-list aui-margin-t-15">
+                <div class="aui-list-item aui-list-item-arrow">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div class="aui-font-size-16 tea-text-title">现金券</div>
+                                <div class="aui-font-size-16 aui-pull-right tea-text-orange">-￥150</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>&ndash;&gt;
+        </div>-->
+        <div class="aui-content-padded aui-font-size-14 tea-text-default">
+            <p>办理须知</p>
+            <p>1.八桂行卡高速收费优惠5%</p>
+            <p>2.免费上门安装服务，仅限北海市区和合浦县城</p>
+            <!--<p>3.办理ETC，收费{{ETCFee}}元，含电子签证、八桂行卡</p>-->
+            <p>4.仅限小轿车 (货车期待开通...)</p>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var vm = null;
+
+/**********************************apiready**********************************/
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+
+
+}
+
+function getData(){
+
+
+
+}
+
+</script>
+</html>

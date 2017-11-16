@@ -1,0 +1,321 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 小马哥通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+
+        /*如页面需要动态滚动到底部请去除height:100%*/
+        html,body {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+        }
+        .body-bg {
+            /*position: relative;
+            !* width: 100%; *!
+            !* height: 0; *!
+            margin: 0;
+            !* padding-bottom: 100%; *!
+            !* border: 1px solid red; *!
+            overflow: hidden;
+            background-color: #000;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 100%;*/
+        }
+    </style>
+</head>
+<body id="body" class="body-bg" tapmode onclick="openFrame()">
+
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- aui toast -->
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<!-- 小马哥通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+
+/**********************************声明全局变量**********************************/
+// 声明DOM对象
+var dom = {};
+
+// 声明全局变量
+var data = {}, values = {}, moviePlayer = null, flag = true, flag2 = true, timer = null;
+
+/**********************************apiready**********************************/
+apiready = function(){
+
+    /*api.execScript({
+        name: 'main_win',
+        script: 'keybackType = "video";'
+    });*/
+
+    // 初始化变量
+    initVar();
+
+    // 初始化模块
+    initModule();
+
+    // 初始化监听
+//    initEventListener();
+//    _alert(api.pageParam);
+    tea.showp('数据加载中...');
+    openPlayer();
+    return false;
+
+        // 判断是否本地文件
+        if (api.pageParam.offline != true) {
+//            openPlayer();
+            return;
+        }
+
+        // 网络文件则进行下载缓存
+        api.showProgress({
+            style: 'default',
+            animationType: 'fade',
+            title: '视频加载中...',
+            text: '请稍候...',
+            modal: false
+        });
+        api.download({
+            url: api.pageParam.url,
+            report: true,
+            cache: true,
+            allowResume: true
+        }, function(ret, err) {
+            _alert(ret);
+            // 只取第一个回调
+
+            //未缓存则直接打开播放器
+            if (flag && ret.percent < 100) {
+                //if (ret.fileSize > 8000) {
+                flag = false;
+//                openPlayer();
+                return;
+                //}
+            }
+            // 缓存完毕则替换为本地地址
+            if (flag && ret.state == 1) {
+                flag = false;
+                api.pageParam.url = ret.savePath;
+//                openPlayer();
+            }
+        })
+
+};
+
+/**********************************初始化变量**********************************/
+function initVar(){
+
+    dom = {
+    };
+
+    data = {
+    };
+
+    values = {
+        type: '',
+        isIOS: api.systemType == "ios"? true : false
+    };
+
+    updateHTML();
+
+};
+
+/**********************************初始化模块**********************************/
+function initModule(){
+
+    moviePlayer = api.require('moviePlayer');
+
+}
+
+/**********************************初始化监听**********************************/
+function initEventListener(){
+
+    moviePlayer.addEventListener(function(ret){
+//        _alert(ret);
+
+        //退出时进行屏幕恢复
+        if(ret && ret.eventType == 'back'){
+            api.setFullScreen({
+                fullScreen: false
+            });
+            api.setScreenOrientation({
+                orientation: 'portrait_up'
+            });
+            api.closeWin();
+            return;
+        }
+        //处理播放错误
+        if(ret && ret.eventType == 'error'){
+//            alert('服务器繁忙，请稍候');
+            moviePlayer.replay({
+                path : api.pageParam.url
+            });
+            return false;
+        }
+        //播放结束处理
+        if(ret && ret.eventType == 'complete'){
+            api.hideProgress();
+            clearInterval(timer)
+        }
+        //开始播放按钮
+        if(ret && ret.eventType == 'play'){
+            tea.showp('数据加载中...');
+            moviePlayer.isPlaying(function(ret){
+                if(ret.state){
+                    api.hideProgress()
+                }
+            });
+            timer = setInterval(isPlay,1000);
+        }
+        //暂停播放
+        if(ret && ret.eventType == 'pause'){
+            api.hideProgress();
+            clearInterval(timer)
+        }
+    });
+
+}
+
+/**********************************ajax请求数据**********************************/
+function getData(){
+
+
+
+}
+
+/**********************************更新变量**********************************/
+function updateVar(){
+
+
+}
+
+function updateDom(){
+
+
+
+}
+/**********************************更新HTML**********************************/
+function updateHTML(){
+
+
+
+}
+
+/**********************************DOM响应**********************************/
+
+/**********************************其他函数**********************************/
+function openFrame(){
+
+}
+
+function openPlayer(){
+    moviePlayer.open({
+        rect: {
+            x: 0,   //（可选项）数字类型；模块左上角的 x 坐标（相对于所属的 Window 或 Frame）；默认：0
+            y: 0,   //（可选项）数字类型；模块左上角的 y 坐标（相对于所属的 Window 或 Frame）；默认：0
+            w: api.frameWidth,
+            h: api.frameHeight  //（可选项）数字类型；模块的高度；默认：w的3/4
+        },
+        styles:{
+            head:{
+                bg: 'rgba(0,0,0,0.5)',
+                height: 44,
+                y:0,
+                title:{
+                    size:20,
+                    color:'#fff',
+                    width:40,
+                    leftMargin:10
+                },
+                backSize: 20,
+                backImg:'widget://image/back.png',
+                customButtons:[{
+                    w:30,
+                    h:30,
+                    rightMagin:10,
+                    img:'widget://image/image/collect.png',
+                    imgSelected:'fs://image/collectSelected.png',
+                }]},
+            foot:{
+                bg: 'rgba(0,0,0,0.5)',
+                height: 44,
+                palyBtn:{
+                    size: 20,
+                    playImg:'widget://image/play.png',
+                    pauseImg:'widget://image/pause.png',
+                    marginLeft:5
+                },
+                currentTimeLabel:{
+                    textSize:14,
+                    textColor:"#FFF",
+                    textWidth: 43,
+                    marginLeft:5
+                },
+                seekBar:{
+                    sliderImg:'widget://image/circle.png',
+                    sliderW : 20,
+                    sliderH : 20,
+                    progressColor: '#696969',
+                    progressSelected: '#76EE00',
+                    marginLeft:10,
+                    marginRight:10
+                },
+                totalTimeLabel:{
+                    textSize:14,
+                    textColor:"#FFF",
+                    textWidth: 43,
+                    marginRight:5
+                },
+                fullscreenBtn:{
+                    size:20,
+                    verticalImg:'widget://image/vertical.png',
+                    horizontalImg:'widget://image/horizontal.png',
+                }
+            } },
+        path: api.pageParam.url,
+        autoPlay: true,
+        coverImg: api.pageParam.thumbnail,
+        autorotation: false,
+    },function(ret, err){
+//        _alert(ret);
+        if(ret.status){
+            timer = setInterval(isPlay,1000);
+            initEventListener();
+        }
+    });
+}
+
+function isPlay() {
+    moviePlayer.isPlaying(function(ret){
+        if(!ret.state){
+//                _alert(ret)
+            tea.showp('数据加载中...');
+        }else {
+            api.hideProgress()
+        }
+//            _alert(ret);
+    });
+}
+</script>
+</html>

@@ -120,12 +120,13 @@
             <div class="warp aui-margin-b-10">
                 <input-plate :province="province" v-model="number" @updata="updataMsg">
                     <div slot="car_type" class="aui-font-size-16 tea-text-title aui-margin-t-10 aui-padded-b-10 aui-border-b">
-                        <span style="width: 40%">小车<label class="aui-radio btn aui-checked"></label></span>
-                        <span>货车<span class="tea-text-gray">(即将开通)</span><label class="aui-radio btn aui-checked no"></label></span>
+                        <span @click="selectCarType('sedan')" style="width: 40%">小车<label class="aui-radio btn aui-checked"></label></span>
+                        <span @click="selectCarType('truck')">货车<span class="tea-text-gray">(即将开通)</span><label class="aui-radio btn aui-checked no"></label></span>
                     </div>
-                    <div slot="vip" class="aui-margin-r-5">
-                        <div v-if="is_vip" class="vip">VIP</div>
-                        <div v-else class="vip black"><i class="vip-icon"></i>3</div>
+                    <div v-if="is_vip" slot="vip" class="aui-margin-r-5">
+                        <div class="vip black">VIP</div>
+                        <!--<div v-if="!is_vip" class="vip">VIP</div>
+                        <div v-else class="vip black"><i class="vip-icon"></i>3</div>-->
                     </div>
                 </input-plate>
                 <input-option :config="optionConfig" :checked="checkedOn" @checked="checked"></input-option>
@@ -170,7 +171,7 @@
             <p>办理须知</p>
             <p>1.八桂行卡高速收费优惠5%</p>
             <p>2.免费上门安装服务，仅限北海市区和合浦县城</p>
-            <p>3.办理ETC，收费350元，含电子签证、八桂行卡</p>
+            <p>3.办理ETC，收费{{ETCFee}}元，含电子签证、八桂行卡</p>
             <p>4.仅限小轿车 (货车期待开通...)</p>
         </div>
     </div>
@@ -297,79 +298,94 @@ function initEventListener(){
 
 /**********************************ajax请求数据**********************************/
 function getData(){
+    tea.showp('加载中...');
     api.ajax({
-        url: website + '',
+        url: website + 'etc_api.php?action=index',
         method: 'post',
         timeout: 30,
         data: {
             values: {
-                name: 'values'
+                ID: $api.getStorage('ID')
             },
         }
     }, function (ret, err) {
-
+        api.hideProgress();
+//        _alert(ret);
+        if(ret.succ == '1'){
+            vm.store = ret.data.shop_address.address;
+            vm.address = ret.data.user_address;
+            vm.ETCFee = ret.data.etc_money;
+            vm.installFee = ret.data.install_money;
+            vm.is_vip = ret.data.is_vip;
+            if(ret.data.carnum){
+                vm.province = ret.data.carnum.slice(0,2);
+                vm.number = ret.data.carnum.slice(2);
+            }
+        }
     });
 }
 
 /**********************************DOM响应**********************************/
 
 /**********************************其他函数**********************************/
+//提交表单数据
 function postData(){
-    _alert(vm.couponFee);
-    return false;
-    if(!vm.errorMsg){
-//        _alert($api.getStorage('ID'));
-//        _alert(vm.province+vm.number);
-//        _alert(vm.tel);
-        api.ajax({
-            url: website + 'etc.php?action=save',
-            method: 'post',
-            timeout: 30,
-            data: {
-                values: {
-                    ID: $api.getStorage('ID'),
-                    carnum: vm.province+vm.number,
-                    tel: vm.tel
-                },
-            }
-        }, function (ret, err) {
-//            _alert(ret);
-            if(!ret){
-                tea.toast('ajax');
-                return false;
-            }
-            if(ret.succ == '1'){
-                /*ret.data.money = 0;
-                if(ret.data.money == 0){  //如果后台返回金额为0，车辆为vip车辆，直接提示成功
-                    api.toast({
-                        msg: '您的车辆已经加入VIP，无需缴纳任何费用',
-                        duration: 2000,
-                        location: 'middle'
-                    });
-                    toSuccess();
-                }else{
-                    var value = {
-                        paymoney: ret.data.money,
-                        payid: ret.data.payid,
-                        mtype: ret.data.mtype,
-                        carnum: vm.province+vm.number,
+    /*api.openWin({
+        name: 'success',
+        url: '../unit/win.html',
+        bounces: false,
+        pageParam: {
+            folder: 'etc',
+            title: '支付成功',
+            closeToWin: 'main_win',
+            /!*config: {
+                result: '支付成功',
+                item: [
+                    [
+                        {text:'您选择的车辆已成功加入VIP'},
+                        {text:'恭喜您获得500积分'},
+                        {text:'',color:{text:'ETC现金券200元',textColor:'tea-text-orange'}}],
+                ],
+                btnGroup:[
+                    {title:'去购买ETC',styleClass:'tea-bg-blue',func:'etc'},
+                    {title:'返回首页',styleClass:'tea-bg-shallow-blue tea-text-blue border-blue',func:'main'}
+                ],
+                tip:{text:'邀请朋友注册有奖励哦 >',styleClass:'tea-text-blue aui-font-size-12',func:'invite'}
+            }*!/
+            config:{
+                result: '支付成功',
+                item: [
+                    [{text:'小马哥工作人员将会联系您'},{text:'请保持手机通畅',color:{text:'并提供以下手续',textColor:'tea-text-blue'}}],
+                    [{text:'个人车辆'},{text:'身份证、行驶证'}],
+                    [{text:'单位车辆:'},{text:'营业执照副本、委托书'},{text:'经办人身份证、行驶证'}]
+                ],
+                image:{
+                    icon: 'tea-icon-packet',
+                    iconColor: 'aui-text-white',
+                    title: '恭喜获得分享现金红包',
+                    text: '分享后您和朋友都将获得现金红包',
+                    bg: 'tea-bg-blue',
+                    btn: {
+                        text: '发现金券',
+                        styleClass:'tea-text-blue tea-font-weight-bold tea-bg-white',
                     }
-                    toPay(value);
-                }*/
-                var value = {
-                    paymoney: ret.data.money,
-                    payid: ret.data.payid,
-                    mtype: ret.data.mtype,
-                    carnum: vm.province+vm.number,
                 }
-                toPay(value);
             }
-            api.toast({
-                msg: ret.msg,
-                duration: 2000,
-                location: 'middle'
-            });
-        });
+        }
+    });
+    return false;*/
+    checkVip(vm.province+vm.number);
+    var postVal = {
+        ID: $api.getStorage('ID'),
+        carnum: vm.province+vm.number,
+        tel: vm.tel,
+        cartype: vm.carType,
+        install: vm.checkedOn == '1' ? 'arrive' : 'on_spot',
+        addrid: vm.address.addrid,
+        coupon_id: vm.coupon_id,
+    };
+    if(!vm.errorMsg){
+        saveOrder(postVal);
     }else {
         api.toast({
             msg: vm.errorMsg,
@@ -379,39 +395,158 @@ function postData(){
     }
 
 }
-function checkVip(plate){
-
+function saveOrder(postVal){
+    tea.showp('提交中','',true);
+    api.ajax({
+        url: website + 'etc_api.php?action=save',
+        method: 'post',
+        timeout: 30,
+        data: {
+            values: postVal,
+        }
+    }, function (ret, err) {
+        api.hideProgress();
+        if(!ret){
+            tea.toast('ajax');
+            return false;
+        }
+        if(ret.succ == '1'){
+            var value = {
+                paymoney: ret.data.money,
+                payid: ret.data.payid,
+                mtype: ret.data.mtype,
+                carnum: vm.province+vm.number,
+            }
+            toPay(value);
+        }
+        if(ret.succ == '13'){
+            api.confirm({
+                title: '该车辆已办理过ETC',
+                msg: '是否再次购买?',
+                buttons: ['确定', '取消']
+            }, function(ret, err) {
+                if(ret.buttonIndex == '1'){
+                    postVal.check = 'unnecessary';
+                    saveOrder(postVal)
+                }
+            });
+        }
+        api.toast({
+            msg: ret.msg,
+            duration: 2000,
+            location: 'middle'
+        });
+    });
 }
 
-function toPay(value){
-    api.openWin({
+function checkVip(plate){
+    api.ajax({
+        url: website + 'car_api.php?action=checkvip',
+        method: 'post',
+        data: {
+            values: {
+                ID: $api.getStorage('ID'),
+                carnum: plate
+            },
+        }
+    }, function (ret, err) {
+        if(!ret){
+            tea.toast('ajax');
+            return false
+        }
+        if(ret.succ == '1'){
+            vm.is_vip = ret.data.is_vip;
+            return true
+        }
+        api.toast({
+            msg: ret.msg,
+            duration: 2000,
+            location: 'middle'
+        });
+    });
+}
+//根据地址id获取地址信息
+function getAddressDetail(addrid){
+    tea.showp('加载中...')
+    api.ajax({
+        url: website + 'exempt_api.php?action=addrinfo',
+        method: 'post',
+        timeout: 30,
+        data: {
+            values: {
+                ID: $api.getStorage('ID'),
+                addrid: addrid,
+            },
+        }
+    },function(ret,err){
+        api.hideProgress();
+        if(ret.succ == '1'){
+            vm.address = ret.data;
+        }
+    });
+}
+//跳转支付页面
+function toPay(value) {
+    /*var toPage = {
         name: 'pay_win',
         url: '../pay/pay_win.html',
-        pageParam: {
-            title:'支付ETC费用',
+        pageParam:{
+            title: '支付ETC费用',
             money: value.paymoney,
             type: 'etc',
             values: value
-        },
-        vScrollBarEnabled: false
-    });
-}
-/*function toSuccess(){
-    var datas = {
-        '0': ['小马哥工作人员将会联系您','请保持手机通畅并提供以下手续'],
-        '1': ['个人车辆','身份证、行驶证'],
-        '2': ['单位车辆','营业执照副本、委托书','经办人身份证、行驶证'],
-    }
-    api.openWin({
-        name: 'success_win',
-        url: '../unit/success_win.html',
-        bounces: false,
-        pageParam: {
-            title: '支付成功页',
-            result: '支付成功',
-            data: datas
         }
-    });
-}*/
+    };*/
+    if (!vm.is_vip) {
+        api.confirm({
+            title: '重磅优惠',
+            msg: '限时活动，加VIP350减200 实付150元 先到先得，送完即止',
+            buttons: ['直接支付', '成为VIP']
+        }, function (ret, err) {
+            if (ret.buttonIndex == '2') {
+                /*toPage.name = 'vip_join_win';
+                toPage.url = '../vip/vip_join_win.html';
+                toPage.pageParam = {};*/
+                api.openWin({
+                    name: 'vip_join_win',
+                    url: '../vip/vip_join_win.html',
+                    pageParam: {},
+                    vScrollBarEnabled: false
+                });
+            }
+            if (ret.buttonIndex == '1') {
+                api.openWin({
+                    name: 'pay_win',
+                    url: '../pay/pay_win.html',
+                    pageParam: {
+                        title: '支付ETC费用',
+                        money: value.paymoney,
+                        type: 'etc',
+                        values: value
+                    },
+                    vScrollBarEnabled: false
+                });
+            }
+            /*api.openWin({
+                name: toPage.name,
+                url: toPage.url,
+                pageParam: toPage.pageParam,
+                vScrollBarEnabled: false
+            });*/
+        });
+    } else {
+        api.openWin({
+            name: 'pay_win',
+            url: '../pay/pay_win.html',
+            pageParam: {
+                title: '支付ETC费用',
+                money: value.paymoney,
+                type: 'etc',
+                values: value
+            },
+            vScrollBarEnabled: false
+        });
+    }
+}
 </script>
 </html>

@@ -140,9 +140,18 @@ function getData(){
 /**********************************其他函数**********************************/
 function openWinCarCheck(type){
     if(type == 'six'){
-        api.openWin({
+        /*api.openWin({
             name: 'newcar_check_partOne_win',
             url: './newcar_check_partOne_win.html',
+        });*/
+        api.openWin({
+            name: 'newcar_check',
+            url: '../unit/win.html',
+            bounces: false,
+            pageParam: {
+                folder: 'car_check',
+                title: '六年内审车'
+            }
         });
     }else {
         api.openWin({

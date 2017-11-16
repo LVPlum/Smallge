@@ -16,26 +16,45 @@ window.apiready = function() {
         },
         methods: {
             closeWin: function(){
-                api.closeWin();
+                if(api.pageParam.closeToWin){
+                    api.closeToWin({
+                        name: api.pageParam.closeToWin,
+                        animation: {
+                            type: 'none',
+                            subType: 'from_bottom',
+                            duration: 500
+                        }
+                    });
+                }else {
+                    api.closeWin();
+                }
             }
         }
     })
 
-    let pageload = 0;
-    if (api.systemType == "ios") {
-        openFrame();
-    } else {
-        //viewappear事件在ios中首次打开不会调用，在安卓使用以避免切换时加载frame造成卡顿。
+    function initEventListener(){
         api.addEventListener({
-            name: 'viewappear'
-        }, function(ret, err) {
-            if (pageload < 1) {
-                openFrame();
-            }
-            pageload++;
+                name: 'keyback'
+            }, function(ret, err) {
+                vm.closeWin()
         });
-    }
-    
+    } 
+    initEventListener();
+    openFrame();
+    // let pageload = 0;
+    // if (api.systemType == "ios") {
+    //     openFrame();
+    // } else {
+    //     //viewappear事件在ios中首次打开不会调用，在安卓使用以避免切换时加载frame造成卡顿。
+    //     api.addEventListener({
+    //         name: 'viewappear'
+    //     }, function(ret, err) {
+    //         if (pageload < 1) {
+    //             openFrame();
+    //         }
+    //         pageload++;
+    //     });
+    // }
     function openFrame(){
         let frmName = api.winName.replace('_win', '');
         api.openFrame({

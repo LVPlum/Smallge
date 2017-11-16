@@ -61,7 +61,7 @@
 
     <footer id="footer" class="aui-bar aui-bar-tab">
         <div class="aui-bar-tab-item tea-border-t" tapmode @click="openWinFee" style="width: auto;">
-            <span class="tea-text-orange tea-font-weight-bold aui-font-size-16" v-cloak>¥{{ tea.formatMoney(money) }}</span>
+            <span class="tea-text-orange tea-font-weight-bold aui-font-size-16" v-cloak>¥{{ money }}</span>
             <span v-show="!is" :class="frm ? 'tea-text-arrow-up' : 'tea-text-arrow-down' " class="aui-font-size-12">明细</span>
         </div>
         <div :class="is ? 'tea-bg-light-gray' : 'tea-bg-blue' " class="aui-bar-tab-item aui-text-white" tapmode @click="pay" style="width: 50%;">
@@ -121,12 +121,12 @@ function init(){
         el: 'footer',
         data: {
             is: false,
-            money: 0.00,
             frm: false,
+            money: 0.00,
             fee: {
                 ETCFee: 350,
                 installFee: 0,
-                VIPFee: 150,
+                couponFee: 0,
             }
         },
         methods: {
@@ -161,7 +161,16 @@ function init(){
                     hScrollBarEnabled: true
                 });
                 vm.frm = true;
+            },
+            total: function(){
+                vm.money = (vm.fee.ETCFee + vm.fee.installFee) - vm.fee.couponFee ;
+                vm.money = tea.formatMoney(vm.money) < 0 ? 0.00 : tea.formatMoney(vm.money);
+                return vm.money;
             }
+        },
+        computed: {
+        },
+        watch: {
         }
     });
 
@@ -184,6 +193,15 @@ function initEventListener(){
         name: 'formReady'
     }, function (ret, err) {
         vm.is = ret.value.ready;
+        vm.fee = ret.value.fee;
+
+        vm.total()
+    });
+
+    api.addEventListener({
+        name: 'isDetail'
+    }, function (ret, err) {
+        vm.frm = false;
     });
 }
 

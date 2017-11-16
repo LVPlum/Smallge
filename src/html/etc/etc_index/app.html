@@ -1,0 +1,214 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title></title>
+    <!-- api样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <!-- aui样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-skin.css" />
+    <!-- 项目通用样式 -->
+    <link rel="stylesheet" type="text/css" href="../../css/tea.css" />
+    <style type="text/css">
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: #FFFFFF;
+        }
+        .banner img{
+            width: 100%;
+            height: auto;
+        }
+        .bar{
+            width: 92%;
+            position: relative;
+            margin-top: -6.5rem;
+        }
+        .warp{
+            border-radius: 0.3rem;
+            overflow: hidden;
+            line-height: normal;
+            -moz-box-shadow:0 0 0.9rem 0 rgba(107, 65, 65, 0.15);
+            -webkit-box-shadow:0 0 0.9rem 0 rgba(107, 65, 65, 0.15);
+            box-shadow:0 0 0.9rem 0 rgba(107, 65, 65, 0.15);
+        }
+        .border{
+            background-position: 0 bottom !important;
+        }
+        /*修改value的placeholder的颜色*/
+        input::-webkit-input-placeholder, textarea::-webkit-input-placeholder{
+            color:   #CCCCCC;
+        }
+        input:-moz-placeholder, textarea:-moz-placeholder {
+            color:    #CCCCCC;
+        }
+        input:-ms-input-placeholder, textarea:-ms-input-placeholder {
+            color:    #CCCCCC;
+        }
+        .aui-radio:checked, .aui-radio.aui-checked.no{
+            background-color: #ccc;
+            border: solid 1px #ccc;
+        }
+        @media screen and (-webkit-min-device-pixel-ratio: 1.5){
+            .aui-list,.aui-list .aui-list-item {
+                background-image: none;
+            }
+            .aui-list.border-b,.aui-list .aui-list-item.border-b{
+                background-image: -webkit-linear-gradient(90deg,#dddddd,#dddddd 50%,transparent 50%);
+            }
+        }
+        .aui-list .aui-list-item.border-b-t{
+            padding-left: 0;
+            margin-left: 0.75rem;
+            background-size: 100% 1px;
+            background-repeat: no-repeat;
+            background-position: left top,right bottom;
+            background-image: linear-gradient(0,#dddddd,#dddddd 50%,transparent 50%),linear-gradient(0,#dddddd,#dddddd 50%,transparent 50%) !important;
+        }
+        .aui-list .aui-list-item.border-t{
+            padding-left: 0;
+            margin-left: 0.75rem;
+            background-position: left top;
+            background-image: linear-gradient(0,#dddddd,#dddddd 50%,transparent 50%) !important;
+        }
+        .vip{
+            width: 1.25rem;
+            font-size: 0.6rem;
+            color: #fff;
+            font-weight: bolder;
+            text-align: center;
+            background-color: #CCCCCC;
+            border-radius: 4px;
+        }
+        .vip.black{
+            background-color: #333333;
+            color: #f2d394;
+        }
+        .vip-icon:before{
+            content: '';
+            display: inline-block;
+            width: 0.5rem;
+            height: 0.45rem;
+            background-image: url('../../image/etc/VIP-icon.png');
+            background-size: 100%;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak class="tea-bg-white">
+        <header class="banner"><img src="../../image/etc/banner@2x.png" alt="banner"></header>
+        <div class="aui-bar-btn bar">
+            <div class="warp aui-margin-b-10">
+                <input-plate :province="province" v-model="number" @updata="updataMsg">
+                    <div slot="car_type" class="aui-font-size-16 tea-text-title aui-margin-t-10 aui-padded-b-10 aui-border-b">
+                        <span @click="selectCarType('sedan')" style="width: 40%">小车<label class="aui-radio btn aui-checked"></label></span>
+                        <span @click="selectCarType('truck')">货车<span class="tea-text-gray">(即将开通)</span><label class="aui-radio btn aui-checked no"></label></span>
+                    </div>
+                    <div v-if="is_vip" slot="vip" class="aui-margin-r-5">
+                        <div class="vip black">VIP</div>
+                    </div>
+                </input-plate>
+            </div>
+        </div>
+        <div class="aui-content-padded aui-font-size-14 tea-text-default">
+            <p>办理须知</p>
+            <p>1.八桂行卡高速收费优惠5%</p>
+            <p>2.免费上门安装服务，仅限北海市区和合浦县城</p>
+            <p>3.办理ETC，收费{{ETCFee}}元，含电子签证、八桂行卡</p>
+            <p>4.仅限小轿车 (货车期待开通...)</p>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js" ></script>
+<!-- ajax相关 -->
+<script type="text/javascript" src="../../script/conn.js"></script>
+<!-- 消除300毫秒延迟 -->
+<script type="text/javascript" src="../../script/fastclick.min.js"></script>
+<!-- JavaScript模板引擎 -->
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<!-- 项目通用函数库 -->
+<script type="text/javascript" src="../../script/tea.js"></script>
+<!-- HTML模板 -->
+<script type="text/template" id="template">
+</script>
+
+<script type="text/javascript">
+    function getData(){
+        tea.showp('加载中...');
+        api.ajax({
+            url: website + 'etc_api.php?action=index',
+            method: 'post',
+            timeout: 30,
+            data: {
+                values: {
+                    ID: $api.getStorage('ID')
+                },
+            }
+        }, function (ret, err) {
+            api.hideProgress();
+    //        _alert(ret);
+            if(ret.succ == '1'){
+                vm.store = ret.data.shop_address.address;
+                vm.address = ret.data.user_address;
+                vm.ETCFee = ret.data.etc_money;
+                vm.installFee = ret.data.install_money;
+                vm.is_vip = ret.data.is_vip;
+                if(ret.data.carnum){
+                    vm.province = ret.data.carnum.slice(0,2);
+                    vm.number = ret.data.carnum.slice(2);
+                }
+            }
+        });
+    }
+
+    function sendInfo(){
+        checkVip(vm.province+vm.number);
+        api.openWin({
+            name: 'etc_info_win',
+            url: './etc_info_win.html',
+            pageParam: {
+                store : vm.store,
+                address: vm.address,
+                ETCFee: vm.ETCFee,
+                installFee: vm.installFee,
+                is_vip: vm.is_vip,
+                carType: vm.carType,
+                plate: vm.province+vm.number,
+            }
+        });
+    }
+
+    function checkVip(plate){
+        api.ajax({
+            url: website + 'car_api.php?action=checkvip',
+            method: 'post',
+            data: {
+                values: {
+                    ID: $api.getStorage('ID'),
+                    carnum: plate
+                },
+            }
+        }, function (ret, err) {
+            if(!ret){
+                tea.toast('ajax');
+                return false
+            }
+            if(ret.succ == '1'){
+                vm.is_vip = ret.data.is_vip;
+                return true
+            }
+            api.toast({
+                msg: ret.msg,
+                duration: 2000,
+                location: 'middle'
+            });
+        });
+    }
+</script>
+</html>
